@@ -283,35 +283,37 @@ namespace Asv.Gnss
             PsmState = (byte)((flags & 0b0001_1100) >> 2);
             CarrierSolution = (UbxCarrierSolutionStatus)((flags & 0b1100_0000) >> 6);
 
-
-            // UTCConfirmedAvailable = (buffer[byteIndex] & 0b0010_0000) != 0;
-            // UTCConfirmedDate = (buffer[byteIndex] & 0b0100_0000) != 0;
-            // UTCConfirmedTime = (buffer[byteIndex++] & 0b1000_0000) != 0;
+            flags = BinSerialize.ReadByte(ref buffer);
+            UTCConfirmedAvailable = (flags & 0b0010_0000) != 0;
+            UTCConfirmedDate = (flags & 0b0100_0000) != 0;
+            UTCConfirmedTime = (flags & 0b1000_0000) != 0;
             //
-            // NumberOfSatellites = buffer[byteIndex++];
-            // Longitude = BitConverter.ToInt32(buffer, (int)byteIndex) * 1e-7; byteIndex += 4;
-            // Latitude = BitConverter.ToInt32(buffer, (int)byteIndex) * 1e-7; byteIndex += 4;
-            // AltElipsoid = BitConverter.ToInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // AltMsl = BitConverter.ToInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // HorizontalAccuracyEstimate = BitConverter.ToUInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // VerticalAccuracyEstimate = BitConverter.ToUInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // VelocityNorth = BitConverter.ToInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // VelocityEast = BitConverter.ToInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // VelocityDown = BitConverter.ToInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // GroundSpeed2D = BitConverter.ToInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // HeadingOfMotion2D = BitConverter.ToInt32(buffer, (int)byteIndex) * 1e-5; byteIndex += 4;
-            // SpeedAccuracyEstimate = BitConverter.ToUInt32(buffer, (int)byteIndex) * 0.001; byteIndex += 4;
-            // HeadingAccuracyEstimate = BitConverter.ToUInt32(buffer, (int)byteIndex) * 1e-5; byteIndex += 4;
-            // PositionDOP = BitConverter.ToUInt16(buffer, (int)byteIndex) * 0.01; byteIndex += 2;
-            // IsValidLLH = (buffer[byteIndex] & 0b0000_0001) == 0; byteIndex += 6;
-            // HeadingOfVehicle2D = BitConverter.ToInt32(buffer, (int)byteIndex) * 1e-5; byteIndex += 4;
-            // MagneticDeclination = BitConverter.ToInt16(buffer, (int)byteIndex) * 1e-2; byteIndex += 2;
-            // MagneticDeclinationAccuracy = BitConverter.ToUInt16(buffer, (int)byteIndex) * 1e-2; byteIndex += 2;
+            NumberOfSatellites = BinSerialize.ReadByte(ref buffer);
+            Longitude = BinSerialize.ReadInt(ref buffer) * 1e-7;
+            Latitude = BinSerialize.ReadInt(ref buffer) * 1e-7;
+            AltElipsoid = BinSerialize.ReadInt(ref buffer) * 0.001;
+            AltMsl = BinSerialize.ReadInt(ref buffer) * 0.001;
+            HorizontalAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 0.001;
+            VerticalAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 0.001;
+            VelocityNorth = BinSerialize.ReadInt(ref buffer) * 0.001;
+            VelocityEast = BinSerialize.ReadInt(ref buffer) * 0.001;
+            VelocityDown = BinSerialize.ReadInt(ref buffer) * 0.001;
+            GroundSpeed2D = BinSerialize.ReadInt(ref buffer) * 0.001;
+            HeadingOfMotion2D = BinSerialize.ReadInt(ref buffer) * 1e-5;
+            SpeedAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 0.001;
+            HeadingAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 1e-5;
+            PositionDOP =  BinSerialize.ReadUShort(ref buffer) * 0.01;
+            flags = BinSerialize.ReadByte(ref buffer);
+            IsValidLLH = (flags & 0b0000_0001) == 0;
+            buffer = buffer.Slice(5);
+            HeadingOfVehicle2D = BinSerialize.ReadUInt(ref buffer) * 1e-5;
+            MagneticDeclination = BinSerialize.ReadUShort(ref buffer) * 1e-2;
+            MagneticDeclinationAccuracy = BinSerialize.ReadUShort(ref buffer) * 1e-2;
             //
-            // if (FixType >= GNSSFixType.Fix3D && GnssFixOK)
-            // {
-            //     MovingBaseLocation = new GeoPoint(Latitude, Longitude, AltElipsoid);
-            // }
+            if (FixType >= UbxGnssFixType.Fix3D && GnssFixOK)
+            {
+                MovingBaseLocation = new GlobalPosition(new GlobalCoordinates(Latitude, Longitude), AltElipsoid);
+            }
         }
 
         protected override int GetContentByteSize() => 92;

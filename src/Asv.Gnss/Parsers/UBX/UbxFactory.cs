@@ -47,7 +47,6 @@ namespace Asv.Gnss
                 yield return () => new UbxCfgTMode3();
                 yield return () => new UbxNavSat();
                 yield return () => new UbxNavPvt();
-
             }
         }
 
