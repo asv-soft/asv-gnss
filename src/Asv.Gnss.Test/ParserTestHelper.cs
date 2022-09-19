@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using DeepEqual;
 using DeepEqual.Syntax;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace Asv.Gnss.Test
             }
 
             Assert.NotNull(parsedMessage);
-            message.ShouldDeepEqual(parsedMessage);
+            message.WithDeepEqual(parsedMessage).WithCustomComparison(new FloatComparison(0.5,0.5f)).Assert();
         }
     }
 }

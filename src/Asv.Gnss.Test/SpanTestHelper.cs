@@ -1,5 +1,6 @@
 using System;
 using Asv.IO;
+using DeepEqual;
 using DeepEqual.Syntax;
 using Xunit;
 
@@ -23,6 +24,14 @@ namespace Asv.Gnss.Test
         public static void TestType<T>(T type, Func<T> typeFactory, Action<string> output = null, string comment = null)
             where T : ISizedSpanSerializable
         {
+            if (type.GetType().GetCustomAttributes(typeof(SerializationNotSupportedAttribute), true).Length != 0)
+            {
+                output?.Invoke(
+                    $"{"N\\A",-4} | {type.GetType().Name,-25} | {type.ToString().Substring(0, 50),-50} | {type.GetByteSize(),-4} | Serialization not supported");
+                return;
+            }
+
+
             var arr = new byte[type.GetByteSize()];
             var span = new Span<byte>(arr);
             type.Serialize(ref span);
@@ -32,10 +41,17 @@ namespace Asv.Gnss.Test
             var readSpan = new ReadOnlySpan<byte>(arr, 0, type.GetByteSize());
             compare.Deserialize(ref readSpan);
             Assert.Equal(0, readSpan.Length);
-            var result = type.WithDeepEqual(compare).Compare();
-            output?.Invoke(
-                $"{(result ? "OK" : "ERR"),-4} | {type.GetType().Name,-25} | {type.ToString().Substring(0,50),-50} | {type.GetByteSize(),-4} | {comment ?? string.Empty}");
-            type.WithDeepEqual(compare).Assert();
+            try
+            {
+                var result = type.WithDeepEqual(compare).WithCustomComparison(new FloatComparison(0.5, 0.5f)).Compare();
+                output?.Invoke(
+                    $"{(result ? "OK" : "ERR"),-4} | {type.GetType().Name,-25} | {type.ToString().Substring(0, 50),-50} | {type.GetByteSize(),-4} | {comment ?? string.Empty}");
+            }
+            catch (Exception e)
+            {
+                output?.Invoke(
+                    $"{("ERR"),-4} | {type.GetType().Name,-25} | {type.ToString().Substring(0, 50),-50} | {type.GetByteSize(),-4} | {comment ?? string.Empty}");
+            }
         }
 
     }

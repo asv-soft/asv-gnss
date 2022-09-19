@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Asv.Gnss.Shell": {
+      "commandName": "Project",
+      "commandLineArgs": "ubx serial:COM10?br=115200"
+    }
+  }
+}

@@ -4,6 +4,7 @@ using Xunit.Abstractions;
 
 namespace Asv.Gnss.Test
 {
+
     public class AsvMessageV2Test
     {
         private readonly ITestOutputHelper _output;

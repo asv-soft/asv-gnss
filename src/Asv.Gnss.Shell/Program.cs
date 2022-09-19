@@ -1,31 +1,24 @@
 ﻿using System;
+using Spectre.Console.Cli;
+
 
 namespace Asv.Gnss.Shell
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            // create connection with default parsers: Nmea,RTCMv2,RTCMv3,ComNav,Ubx,Sbf
-            var connection = GnssFactory.CreateDefault("tcp://10.10.5.28:64101");
-            // for TCP client connection:               tcp://127.0.0.1:9002
-            // for TCP server(listen) connection:       tcp://127.0.0.1:9002?srv=true
-            // for UDP connection:                      udp://127.0.0.1:1234?rhost=127.0.0.1&rport=1235
-            // for COM\serial port connection Linux:    serial:/dev/ttyACM0?br=115200
-            // for COM\serial port connection Windows:  serial:COM4?br=115200
-            connection
-                .Filter<RtcmV2Message1>()
-                .Subscribe(_ => { /* do something with RTCM Differential GPS Corrections (Fixed) message */ });
-
-            connection
-                .Filter<RtcmV3Message1006>()
-                .Subscribe(_ => { /* do something with RTCM 1006 Stationary RTK Reference Station ARP */ });
-
-            // you can control GNSS receivers through connection too
-            // for example configures the SinoGNSS receiver to fix the height at the last calculated value
-            ComNavAsciiCommandHelper.FixAuto(connection);
-            // enable send NMEA GPGLL messages through 1 sec 
-            ComNavAsciiCommandHelper.LogCommand(connection, ComNavMessageEnum.GPGLL, period: 1, trigger: ComNavTriggerEnum.ONTIME).Wait();
+            var app = new CommandApp();
+            app.Configure(config =>
+            {
+                config.AddCommand<PrintBytesCommand>("print");
+                config.AddCommand<UbxCommand>("ubx");
+#if DEBUG
+                config.PropagateExceptions();
+                config.ValidateExamples();
+#endif
+            });
+            return app.Run(args);
         }
     }
 }
