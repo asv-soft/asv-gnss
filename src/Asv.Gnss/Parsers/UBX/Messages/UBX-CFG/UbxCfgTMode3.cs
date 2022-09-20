@@ -181,7 +181,7 @@ namespace Asv.Gnss
         {
             Location = new GlobalPosition(new GlobalCoordinates(random.Next(-90, 90), random.Next(0, 180)), random.Next(-1000, 1000));
             FixedPosition3DAccuracy = Math.Round(random.NextDouble() * 10, 1);
-            IsGivenInLLA = random.NextDouble() > 0.5;
+            IsGivenInLLA = true;
             Mode = TMode3Enum.FixedMode;
             SurveyInPositionAccuracyLimit = Math.Round(random.NextDouble() * 10, 1);
             SurveyInMinDuration = (uint)random.Next(1, 1000);

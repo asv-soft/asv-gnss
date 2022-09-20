@@ -7,6 +7,15 @@ namespace Asv.Gnss
 {
     public static class UbxDeviceHelper
     {
+        #region MonVer
+
+        public static Task<UbxMonVer> GetMonVer(this IUbxDevice src, CancellationToken cancel = default)
+        {
+            return src.Pool<UbxMonVer, UbxMonVerPool>(new UbxMonVerPool(), cancel);
+        }
+
+        #endregion
+
         #region CfgPort
 
         public static Task<UbxCfgPrt> GetCfgPort(this IUbxDevice src, byte portId, CancellationToken cancel = default)
@@ -217,6 +226,11 @@ namespace Asv.Gnss
         public static Task<UbxNavSat> GetNavSat(this IUbxDevice src, CancellationToken cancel = default)
         {
             return src.Pool<UbxNavSat, UbxNavSatPool>(new UbxNavSatPool(), cancel);
+        }
+
+        public static Task<UbxNavPvt> GetNavPvt(this IUbxDevice src, CancellationToken cancel = default)
+        {
+            return src.Pool<UbxNavPvt, UbxNavPvtPool>(new UbxNavPvtPool(), cancel);
         }
 
         public static async Task SetStationaryMode(this IUbxDevice src, bool movingBase, byte msgRate, CancellationToken cancel = default)

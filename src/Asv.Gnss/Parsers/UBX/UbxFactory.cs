@@ -22,6 +22,7 @@ namespace Asv.Gnss
                 yield return () => new UbxCfgTMode3Pool();
                 yield return () => new UbxNavSatPool();
                 yield return () => new UbxNavPvtPool();
+                yield return () => new UbxMonVerPool();
 
             }
         }
@@ -47,6 +48,7 @@ namespace Asv.Gnss
                 yield return () => new UbxCfgTMode3();
                 yield return () => new UbxNavSat();
                 yield return () => new UbxNavPvt();
+                yield return () => new UbxMonVer();
             }
         }
 
