@@ -1,7 +1,12 @@
 # asv-gnss
 GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET
 
-Example usage:
+## Install via nuget
+
+```bash
+Install-Package Asv.Gnss -Version 1.1.0
+```
+## Example usage
 
 ```csharp
 
@@ -18,9 +23,22 @@ connection
 connection
     .Filter<RtcmV3Message1006>()
     .Subscribe(_ => { /* do something with RTCM 1006 Stationary RTK Reference Station ARP */ });
+    
 // you can control GNSS receivers through connection too
+
+
 // for example configures the SinoGNSS receiver to fix the height at the last calculated value
 ComNavAsciiCommandHelper.FixAuto(connection);
 // enable send NMEA GPGLL messages through 1 sec 
 ComNavAsciiCommandHelper.LogCommand(connection, ComNavMessageEnum.GPGLL, period: 1, trigger: ComNavTriggerEnum.ONTIME).Wait();
+
+
+// UBlox devices 
+var device = new UbxDevice("serial:COM10?br=115200");
+await device.SetupByDefault();
+await device.SetSurveyInMode(minDuration: 60, positionAccuracyLimit: 2);
+device.Connection.Filter<RtcmV3Msm4>().Subscribe(_ => { /* do something with RTCM */ });
+
 ```
+
+
