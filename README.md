@@ -4,7 +4,7 @@ GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF,
 ## Install via nuget
 
 ```bash
-Install-Package Asv.Gnss -Version 1.1.0
+Install-Package Asv.Gnss -Version X.X.X
 ```
 ## Example usage
 
