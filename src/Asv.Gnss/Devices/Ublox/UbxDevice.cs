@@ -79,9 +79,9 @@ namespace Asv.Gnss
                     await using var c1 = linkedCancel.Token.Register(() => tcs.TrySetCanceled());
 #endif
 
-                    using var subscribeAck = Connection.Filter<UbxAckAck>().Where(_=>_.Class == pkt.Class && _.SubClass == pkt.SubClass)
+                    using var subscribeAck = Connection.Filter<UbxAckAck>().Where(_=>_.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
                         .Subscribe(_ => tcs.TrySetResult(Unit.Default));
-                    using var subscribeNak = Connection.Filter<UbxAckNak>().Where(_ => _.Class == pkt.Class && _.SubClass == pkt.SubClass)
+                    using var subscribeNak = Connection.Filter<UbxAckNak>().Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
                         .Subscribe(_ => tcs.TrySetException(new UbxDeviceNakException(Connection.Stream.Name,pkt)));
 
                     await Connection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
@@ -122,7 +122,7 @@ namespace Asv.Gnss
                     using var subscribeAck = Connection.Filter<TPacket>().Where(_ => _.Class == pkt.Class && _.SubClass == pkt.SubClass)
                         .Subscribe(_ => tcs.TrySetResult(_));
 
-                    using var subscribeNak = Connection.Filter<UbxAckNak>().Where(_ => _.Class == pkt.Class && _.SubClass == pkt.SubClass)
+                    using var subscribeNak = Connection.Filter<UbxAckNak>().Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
                         .Subscribe(_ => tcs.TrySetException(new UbxDeviceNakException(Connection.Stream.Name, pkt)));
 
                     await Connection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);

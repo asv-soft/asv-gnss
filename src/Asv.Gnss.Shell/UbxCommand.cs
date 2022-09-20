@@ -20,6 +20,9 @@ namespace Asv.Gnss.Shell
         {
             using var device = new UbxDevice(settings.Cs);
             Test(device).Wait();
+            device.SetupByDefault().Wait();
+            device.SetSurveyInMode().Wait();
+            
             return 0;
         }
 

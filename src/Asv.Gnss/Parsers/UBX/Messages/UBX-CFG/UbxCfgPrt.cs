@@ -105,10 +105,10 @@ namespace Asv.Gnss
         public byte Pin { get; set; }
         public ushort Threshold { get; set; }
 
-        public int DataBits { get; set; }
-        public Parity Parity { get; set; }
-        public StopBits StopBits { get; set; }
-        public int BoundRate { get; set; }
+        public int DataBits { get; set; } = 8;
+        public Parity Parity { get; set; } = Parity.None;
+        public StopBits StopBits { get; set; } = StopBits.One;
+        public int BoundRate { get; set; } = 115200;
 
         
 
