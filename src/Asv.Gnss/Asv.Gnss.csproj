@@ -1,23 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	  <TargetFrameworks>net461;net5.0;net6.0;</TargetFrameworks>
-	  <Version>1.1.1</Version>
-	  <LangVersion>9.0</LangVersion>
-	  <Authors>https://github.com/asvol</Authors>
-	  <Company>https://github.com/asvol</Company>
-	  <Copyright>https://github.com/asvol</Copyright>
-	  <PackageProjectUrl>https://github.com/asvol/asv-gnss</PackageProjectUrl>
-	  <RepositoryUrl>https://github.com/asvol/asv-gnss</RepositoryUrl>
-	  <PackageTags />
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
+    <TargetFrameworks>net461;net5.0;net6.0;</TargetFrameworks>
+    <Version>1.1.1</Version>
+    <LangVersion>9.0</LangVersion>
+    <Authors>https://github.com/asvol</Authors>
+    <Company>https://github.com/asvol</Company>
+    <Copyright>https://github.com/asvol</Copyright>
+    <PackageProjectUrl>https://github.com/asvol/asv-gnss</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/asvol/asv-gnss</RepositoryUrl>
+    <PackageTags />
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Asv.Common" Version="1.2.2" />
     <PackageReference Include="Asv.IO" Version="1.2.2" />
     <PackageReference Include="Geodesy" Version="4.1.0" />
   </ItemGroup>
-
 </Project>

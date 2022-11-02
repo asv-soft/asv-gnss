@@ -1,16 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>net5.0;net6.0;</TargetFrameworks>
+    <TargetFrameworks>net5.0;net6.0;</TargetFrameworks>
+    <Version>1.1.1</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.44.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Asv.Gnss\Asv.Gnss.csproj" />
   </ItemGroup>
-
 </Project>
