@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Reactive.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Asv.Gnss.Test
 {
     public class RTCMv3Test
     {
+        private readonly ITestOutputHelper _output;
+
+        public RTCMv3Test(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void TestMsg1()
         {
@@ -35,6 +43,43 @@ namespace Asv.Gnss.Test
             }
 
             Assert.NotNull(msg);
+        }
+
+        [Fact]
+        public void TestFromData()
+        {
+            
+            var parser = new RtcmV3Parser().RegisterDefaultMessages();
+            parser.OnError.Subscribe(_ =>
+            {
+                //_output.WriteLine("ERR:"+_.Message);
+            });
+            parser.OnMessage.Subscribe(_ =>
+            {
+                _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}");
+            });
+            foreach (var b in TestData.test_rtcm3)
+            {
+                parser.Read(b);
+            }
+        }
+
+        [Fact]
+        public void TestFromData2()
+        {
+            var parser = new RtcmV3Parser().RegisterDefaultMessages();
+            parser.OnError.Subscribe(_ =>
+            {
+               //_output.WriteLine("ERR:"+_.Message);
+            });
+            parser.OnMessage.Subscribe(_ =>
+            {
+                _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}");
+            });
+            foreach (var b in TestData.testglo_rtcm3)
+            {
+                parser.Read(b);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net461;net5.0;net6.0;</TargetFrameworks>
     <IsPackable>false</IsPackable>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DeepEqual" Version="2.0.0" />
@@ -19,5 +19,18 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asv.Gnss\Asv.Gnss.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="TestData.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestData.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="TestData.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestData.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
