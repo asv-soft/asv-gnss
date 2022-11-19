@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,5 +40,8 @@ namespace Asv.Gnss.Test
                 SpanTestHelper.TestType(message, func, _output.WriteLine);
             }
         }
+
+
+        
     }
 }

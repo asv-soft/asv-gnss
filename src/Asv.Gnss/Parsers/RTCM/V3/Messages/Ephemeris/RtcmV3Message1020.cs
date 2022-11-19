@@ -22,41 +22,65 @@ namespace Asv.Gnss
     
             var sys = NavigationSystemEnum.SYS_GLO;
     
-            var prn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6); bitIndex += 6;
-            FrequencyNumber = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5) - 7; bitIndex += 5 + 2 + 2;
+            var prn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
+            FrequencyNumber = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5) - 7;
+
+            AlmanacHealth = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            AlmanacHealthAvailabilityIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            P1Word = SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
+
+
+
+            var tkH = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
+            var tkM = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
+            var tkS = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) * 30.0;
     
-    
-            var tkH = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5); bitIndex += 5;
-            var tkM = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6); bitIndex += 6;
-            var tkS = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) * 30.0; bitIndex += 1;
-    
-            var bn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1); bitIndex += 1 + 1;
-            var tb = SpanBitHelper.GetBitU(buffer, ref bitIndex, 7); bitIndex += 7;
+            var bn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1); 
+            P2Word = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            var tb = SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
     
             Velocity.X = RtcmV3Helper.GetBitG(buffer,ref bitIndex, 24) * RtcmV3Helper.P2_20 * 1E3;
             Position.X = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 27) * RtcmV3Helper.P2_11 * 1E3;
             Acceleration.X = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 5) * RtcmV3Helper.P2_30 * 1E3;
+
             Velocity.Y = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 24) * RtcmV3Helper.P2_20 * 1E3;
             Position.Y = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 27) * RtcmV3Helper.P2_11 * 1E3;
             Acceleration.Y = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 5) * RtcmV3Helper.P2_30 * 1E3;
+
             Velocity.Z = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 24) * RtcmV3Helper.P2_20 * 1E3;
             Position.Z = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 27) * RtcmV3Helper.P2_11 * 1E3;
             Acceleration.Z = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 5) * RtcmV3Helper.P2_30 * 1E3;
-    
-    
+
+            P3Word = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+
             // γn(tb)
             RelativeFreqBias = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 11) * RtcmV3Helper.P2_40;
-            bitIndex += 3;
+
+            MPWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
+            MLThirdStringWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+
+            
             // τn(tb)
             SvClockBias = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 22) * RtcmV3Helper.P2_30;
             // Δτn
             DelayL1ToL2 = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 5) * RtcmV3Helper.P2_30;
             // 
             OperationAge = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5); 
-            bitIndex += 1;
-        
-    
-    
+            
+
+            MP4Word = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            MFtWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 4);
+            MNtWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 11);
+            MMWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
+            AvailabilityOfAdditionalData = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            Na = SpanBitHelper.GetBitU(buffer, ref bitIndex, 11);
+            Tc = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32);
+            MN4 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
+            MTgps = SpanBitHelper.GetBitS(buffer, ref bitIndex, 22);
+            MLFifthStringWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+
+            var reserved = SpanBitHelper.GetBitS(buffer, ref bitIndex, 7);
+
             var sat = RtcmV3Helper.satno(sys, (int)prn);
             if (sat == 0)
             {
@@ -86,6 +110,41 @@ namespace Asv.Gnss
     
             SatelliteCode = RtcmV3Helper.Sat2Code(sat, (int)prn);
         }
+
+        public uint MLFifthStringWord { get; set; }
+
+        public int MTgps { get; set; }
+
+        public uint MN4 { get; set; }
+
+        public int Tc { get; set; }
+
+        public uint Na { get; set; }
+
+        public uint AvailabilityOfAdditionalData { get; set; }
+
+        public uint MMWord { get; set; }
+
+        public uint MNtWord { get; set; }
+
+        public uint MFtWord { get; set; }
+
+        public uint MP4Word { get; set; }
+
+        public uint MLThirdStringWord { get; set; }
+
+        public uint MPWord { get; set; }
+
+        public uint P3Word { get; set; }
+
+        public uint P2Word { get; set; }
+
+        public uint P1Word { get; set; }
+
+        public uint AlmanacHealthAvailabilityIndicator { get; set; }
+
+        public uint AlmanacHealth { get; set; }
+
         /// <summary>
         /// satellite number
         /// </summary>
