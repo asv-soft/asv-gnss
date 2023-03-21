@@ -6,7 +6,7 @@ namespace Asv.Gnss
 {
     public class UbxNavSvinPool : UbxMessageBase
     {
-        public override string Name => "UBX-NAV-SVIN";
+        public override string Name => "UBX-NAV-SVIN-POOL";
         public override byte Class => 0x01;
         public override byte SubClass => 0x3B;
         protected override void SerializeContent(ref Span<byte> buffer)
