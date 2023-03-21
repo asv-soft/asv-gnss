@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Asv.Common;
 using Geodesy;
 
 namespace Asv.Gnss
@@ -209,7 +210,7 @@ namespace Asv.Gnss
             },cancel);
         }
 
-        public static Task SetFixedBaseMode(this IUbxDevice src, GlobalPosition position, double position3DAccuracy = 0.0001, CancellationToken cancel = default)
+        public static Task SetFixedBaseMode(this IUbxDevice src, GeoPoint position, double position3DAccuracy = 0.0001, CancellationToken cancel = default)
         {
             return src.SetCfgTMode3(new UbxCfgTMode3
             {

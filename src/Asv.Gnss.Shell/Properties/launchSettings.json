@@ -2,7 +2,7 @@
   "profiles": {
     "Asv.Gnss.Shell": {
       "commandName": "Project",
-      "commandLineArgs": "ubx serial:COM10?br=115200"
+      "commandLineArgs": "ubx tcp://172.16.0.1:23"
     }
   }
 }
