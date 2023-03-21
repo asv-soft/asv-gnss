@@ -35,6 +35,13 @@ namespace Asv.Gnss
                 new SbfBinaryParser().RegisterDefaultMessages());
         }
 
+        public static IObservable<TMsg> Filter<TMsg,TMsgId>(this IObservable<GnssMessageBase<TMsgId>> src) 
+            where TMsg :GnssMessageBase<TMsgId>, new()
+        {
+            var msg = new TMsg();
+            var id = msg.MessageId;
+            return src.Where(_ => _.MessageId.Equals(id) && _ is TMsg).Cast<TMsg>();
+        }
         public static IObservable<TMsg> Filter<TMsg>(this IGnssConnection src)
         {
             return src.OnMessage.Where(_ => _ is TMsg).Cast<TMsg>();

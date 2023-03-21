@@ -19,7 +19,7 @@ namespace Asv.Gnss
         Task<TPacket> Pool<TPacket, TPoolPacket>(TPoolPacket pkt, CancellationToken cancel = default)
             where TPacket : UbxMessageBase
             where TPoolPacket : UbxMessageBase;
-        IObservable<UbxInfBase> OnMessage { get; }
+        
     }
 
     public class UbxDeviceConfig
@@ -32,7 +32,6 @@ namespace Asv.Gnss
     public class UbxDevice:DisposableOnceWithCancel, IUbxDevice
     {
         private readonly UbxDeviceConfig _config;
-        private readonly Subject<UbxInfBase> _onMessageSubject = new();
 
         public UbxDevice(string connectionString):this(connectionString,UbxDeviceConfig.Default)
         {
@@ -49,11 +48,6 @@ namespace Asv.Gnss
             Connection = connection;
             _config = config;
 
-            Disposable.AddAction(() =>
-            {
-                _onMessageSubject.OnCompleted();
-                _onMessageSubject.Dispose();
-            });
 
             if (disposeConnection)
                 connection.DisposeItWith(Disposable);
@@ -140,6 +134,5 @@ namespace Asv.Gnss
             throw new UbxDeviceTimeoutException(Connection.Stream.Name, pkt, _config.CommandTimeoutMs);
         }
 
-        public IObservable<UbxInfBase> OnMessage => _onMessageSubject;
     }
 }
