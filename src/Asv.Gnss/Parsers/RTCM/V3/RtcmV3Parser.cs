@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reactive.Subjects;
+using Asv.Common;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -6,7 +8,7 @@ namespace Asv.Gnss
     public class RtcmV3Parser : GnssMessageParserBase<RtcmV3MessageBase, ushort>
     {
         public const string GnssProtocolId = "RTCMv3";
-
+        private readonly Subject<RtcmV3RawMessage> _onRawData = new();
         private readonly byte[] _buffer = new byte[1030]; // 3 (preamb.) + 0-1023 bytes data + 3 (CRC)
         private State _state;
         private ushort _payloadReadedBytes;
@@ -23,6 +25,7 @@ namespace Asv.Gnss
             Crc3
         }
 
+       
         
 
         public override string ProtocolId => GnssProtocolId;
@@ -83,7 +86,12 @@ namespace Asv.Gnss
                     {
                         var msgNumber = (ushort)BitHelper.GetBitU(_buffer, 24 /* preamble-8bit + reserved-6bit + length-10bit */, 12);
                         var span = new ReadOnlySpan<byte>(_buffer,0,_payloadLength + 6 /* preamble-8bit + reserved-6bit + length-10bit */ + 3 /*CRC24*/);
+                        if (_onRawData.HasObservers)
+                        {
+                            _onRawData.OnNext(new RtcmV3RawMessage(msgNumber,span));
+                        }
                         ParsePacket(msgNumber, ref span,true); // 
+                        
                         return true;
                     }
                     else
@@ -104,5 +112,13 @@ namespace Asv.Gnss
             _state = State.Sync;
         }
 
+        public IObservable<RtcmV3RawMessage> OnRawMessage => _onRawData;
+
+        protected override void InternalDisposeOnce()
+        {
+            base.InternalDisposeOnce();
+            _onRawData.OnCompleted();
+            _onRawData.Dispose();
+        }
     }
 }

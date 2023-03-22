@@ -10,5 +10,7 @@ namespace Asv.Gnss
         void Reset();
         IObservable<GnssParserException> OnError { get; }
         IObservable<IGnssMessageBase> OnMessage { get; }
+        
+        
     }
 }
