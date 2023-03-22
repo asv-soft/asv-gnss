@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461;net5.0;net6.0;</TargetFrameworks>
+    <TargetFrameworks>net461;net5.0;net6.0;net7.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Version>1.1.5</Version>
   </PropertyGroup>
