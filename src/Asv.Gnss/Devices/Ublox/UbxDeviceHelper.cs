@@ -72,6 +72,13 @@ namespace Asv.Gnss
         {
             return src.SetCfgMsg(new UbxCfgMsg{MsgClass = msgClass,MsgId = msgSubClass,CurrentPortRate = msgRate}, cancel);
         }
+        
+        public static Task SetMessageRate<TMsg>(this IUbxDevice src, byte msgRate, CancellationToken cancel = default) 
+            where TMsg : UbxMessageBase, new()
+        {
+            var msg = new TMsg();
+            return src.SetCfgMsg(new UbxCfgMsg{MsgClass = msg.Class,MsgId = msg.SubClass,CurrentPortRate = msgRate}, cancel);
+        }
 
         #endregion
 
