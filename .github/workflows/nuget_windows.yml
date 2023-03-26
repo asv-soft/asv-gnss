@@ -46,7 +46,7 @@ jobs:
         uses: battila7/get-version-action@v2
         
       - name: Check version
-        run: echo version
+        run: echo ${{ steps.version.outputs.version-without-v }}
 
       - name: Pack projects to Nuget 
         run: |
