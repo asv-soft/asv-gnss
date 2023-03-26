@@ -44,6 +44,9 @@ jobs:
       - name: Get version
         id: version
         uses: battila7/get-version-action@v2
+        
+      - name: Check version
+        run: echo version
 
       - name: Pack projects to Nuget 
         run: |
