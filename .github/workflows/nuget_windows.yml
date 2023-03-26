@@ -22,11 +22,15 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v3
       
-      - name: Setup .Net 6
+      - name: Setup .Net
         uses: actions/setup-dotnet@v3
         with:
-            dotnet-version: '6.x.x'
-      
+            dotnet-version: |
+              7.x.x
+              6.x.x
+              5.x.x
+              3.x.x
+
       - name: Restore dependencies
         run: |
           cd src
@@ -44,7 +48,7 @@ jobs:
       - name: Pack projects to Nuget 
         run: |
           cd src
-          dotnet pack -c Release --no-build --no-restore --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+          dotnet pack -c Release --no-build --no-restore -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       - name: Push package to Nuget 
         run: |
