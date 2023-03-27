@@ -1,12 +1,9 @@
 name: Deploy Nuget for Windows
 
-
 on:
   push:
     tags:
     - 'v*'
-    branches:
-    - origin
     
 env:
   PATH_TO_PROJECTS: ${{ github.workspace }}\src
