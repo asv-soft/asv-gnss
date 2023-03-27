@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace Asv.Gnss
         IObservable<IGnssMessageBase> OnMessage { get; }
         IObservable<IGnssMessageBase> OnTxMessage { get; }
         Task<bool> Send(IGnssMessageBase msg, CancellationToken cancel);
+        
     }
 
 
@@ -35,9 +37,21 @@ namespace Asv.Gnss
                 new SbfBinaryParser().RegisterDefaultMessages());
         }
 
+        public static IObservable<TMsg> Filter<TMsg,TMsgId>(this IObservable<GnssMessageBase<TMsgId>> src) 
+            where TMsg :GnssMessageBase<TMsgId>, new()
+        {
+            var msg = new TMsg();
+            var id = msg.MessageId;
+            return src.Where(_ => _.MessageId.Equals(id) && _ is TMsg).Cast<TMsg>();
+        }
         public static IObservable<TMsg> Filter<TMsg>(this IGnssConnection src)
         {
             return src.OnMessage.Where(_ => _ is TMsg).Cast<TMsg>();
+        }
+        
+        public static IObservable<RtcmV3RawMessage> GetRtcmV3RawMessages(this IGnssConnection src)
+        {
+            return ((RtcmV3Parser)src.Parsers.First(_ => _ is RtcmV3Parser)).OnRawMessage;
         }
 
         public static IObservable<TMsg> FilterWithTag<TMsg>(this IGnssConnection src, Action<TMsg> setTagCallback)

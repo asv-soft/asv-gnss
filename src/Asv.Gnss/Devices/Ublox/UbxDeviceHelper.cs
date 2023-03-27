@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Asv.Common;
 using Geodesy;
 
 namespace Asv.Gnss
@@ -70,6 +71,13 @@ namespace Asv.Gnss
         public static Task SetMessageRate(this IUbxDevice src, byte msgClass, byte msgSubClass, byte msgRate, CancellationToken cancel = default)
         {
             return src.SetCfgMsg(new UbxCfgMsg{MsgClass = msgClass,MsgId = msgSubClass,CurrentPortRate = msgRate}, cancel);
+        }
+        
+        public static Task SetMessageRate<TMsg>(this IUbxDevice src, byte msgRate, CancellationToken cancel = default) 
+            where TMsg : UbxMessageBase, new()
+        {
+            var msg = new TMsg();
+            return src.SetCfgMsg(new UbxCfgMsg{MsgClass = msg.Class,MsgId = msg.SubClass,CurrentPortRate = msgRate}, cancel);
         }
 
         #endregion
@@ -209,7 +217,7 @@ namespace Asv.Gnss
             },cancel);
         }
 
-        public static Task SetFixedBaseMode(this IUbxDevice src, GlobalPosition position, double position3DAccuracy = 0.0001, CancellationToken cancel = default)
+        public static Task SetFixedBaseMode(this IUbxDevice src, GeoPoint position, double position3DAccuracy = 0.0001, CancellationToken cancel = default)
         {
             return src.SetCfgTMode3(new UbxCfgTMode3
             {

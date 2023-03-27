@@ -7,7 +7,7 @@ namespace Asv.Gnss
 
     public class UbxNavSatPool : UbxMessageBase
     {
-        public override string Name => "UBX-NAV-SAT";
+        public override string Name => "UBX-NAV-SAT-POOL";
         public override byte Class => 0x01;
         public override byte SubClass => 0x35;
         protected override void SerializeContent(ref Span<byte> buffer)

@@ -1,4 +1,5 @@
 ﻿using System;
+using Asv.Common;
 using Asv.IO;
 using Geodesy;
 
@@ -69,7 +70,7 @@ namespace Asv.Gnss
         /// </summary>
         public double FixedPosition3DAccuracy { get; set; }
 
-        public GlobalPosition? Location { get; set; }
+        public GeoPoint? Location { get; set; }
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
@@ -84,12 +85,12 @@ namespace Asv.Gnss
                 {
                     throw new Exception($"{nameof(Location)} must be not null, when {nameof(Mode)} == {nameof(TMode3Enum.FixedMode)}");
                 }
-                var lat = (int)Math.Round(Location.Value.Latitude.Degrees * 1e7);
-                var lon = (int)Math.Round(Location.Value.Longitude.Degrees * 1e7);
-                var alt = (int)Math.Round(Location.Value.Elevation * 100.0);
-                var xpX = (long)Math.Round(Location.Value.Latitude.Degrees * 1e9);
-                var xpY = (long)Math.Round(Location.Value.Longitude.Degrees * 1e9);
-                var xpZ = (long)Math.Round(Location.Value.Elevation * 10000.0);
+                var lat = (int)Math.Round(Location.Value.Latitude * 1e7);
+                var lon = (int)Math.Round(Location.Value.Longitude * 1e7);
+                var alt = (int)Math.Round(Location.Value.Altitude * 100.0);
+                var xpX = (long)Math.Round(Location.Value.Latitude * 1e9);
+                var xpY = (long)Math.Round(Location.Value.Longitude * 1e9);
+                var xpZ = (long)Math.Round(Location.Value.Altitude * 10000.0);
                 var latHp = (byte)(xpX - (long)lat * 100);
                 var lonHp = (byte)(xpY - (long)lon * 100);
                 var altHp = (byte)(xpZ - (long)alt * 100);
@@ -152,14 +153,14 @@ namespace Asv.Gnss
                     var lat = position.X * 180.0 / Math.PI;
                     var lon = position.Y * 180.0 / Math.PI;
                     var alt = position.Z;
-                    Location = new GlobalPosition(new GlobalCoordinates(lat, lon), alt);
+                    Location = new GeoPoint(lat, lon, alt);
                 }
                 else
                 {
                     var lat = ecefXorLat * 1e-7 + ecefXOrLatHP * 1e-9;
                     var lon = ecefYorLon * 1e-7 + ecefYOrLonHP * 1e-9;
                     var alt = ecefZorAlt * 0.01 + ecefZOrAltHP * 0.0001;
-                    Location = new GlobalPosition(new GlobalCoordinates(lat, lon), alt);
+                    Location = new GeoPoint(lat, lon, alt);
                 }
             }
             else
@@ -179,7 +180,7 @@ namespace Asv.Gnss
 
         public override void Randomize(Random random)
         {
-            Location = new GlobalPosition(new GlobalCoordinates(random.Next(-90, 90), random.Next(0, 180)), random.Next(-1000, 1000));
+            Location = new GeoPoint(random.Next(-90, 90), random.Next(0, 180), random.Next(-1000, 1000));
             FixedPosition3DAccuracy = Math.Round(random.NextDouble() * 10, 1);
             IsGivenInLLA = true;
             Mode = TMode3Enum.FixedMode;

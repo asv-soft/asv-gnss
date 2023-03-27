@@ -5,12 +5,8 @@ set projects=Asv.Gnss Asv.Gnss.Prometheus
 
 rem ====== projects ======
 
-rem set git to global PATH
-SET BASH_PATH="%SYSTEMDRIVE%\Program Files\Git\bin"
-SET PATH=%BASH_PATH%;%PATH%
-
 rem copy version to text file, then in variable
-%BASH_PATH%\bash.exe tools/get_version.sh > ./version.txt
+git describe --abbrev=0 >./version.txt
 SET /p VERSION=<version.txt
 DEL version.txt
 
