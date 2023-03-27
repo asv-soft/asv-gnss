@@ -33,12 +33,47 @@ namespace Asv.Gnss
         public const byte CODE_NONE = 0;
 
         /// <summary>
+        /// obs code: L1C/A,G1C/A,E1C (GPS,GLO,GAL,QZS,SBS)
+        /// </summary>
+        public const byte CODE_L1C = 1;
+
+        /// <summary>
+        /// obs code: L1P,G1P,B1P (GPS,GLO,BDS)
+        /// </summary>
+        public const byte CODE_L1P = 2;
+
+        /// <summary>
+        /// obs code: L2C/A,G1C/A (GPS,GLO)
+        /// </summary>
+        public const byte CODE_L2C = 14;
+
+        /// <summary>
+        /// obs code: L2 L1C/A-(P2-P1) (GPS)
+        /// </summary>
+        public const byte CODE_L2D = 15;
+        
+        /// <summary>
+        /// obs code: L2C(M+L),B1_2I+Q (GPS,QZS,BDS)
+        /// </summary>
+        public const byte CODE_L2X = 18;
+
+        /// <summary>
+        /// obs code: L2P,G2P (GPS,GLO)
+        /// </summary>
+        public const byte CODE_L2P = 19;
+
+        /// <summary>
+        /// obs code: L2 Z-track (GPS)
+        /// </summary>
+        public const byte CODE_L2W = 20;
+
+        /// <summary>
         /// max number of obs code
         /// </summary>
         public const byte MAXCODE = 68;
 
         /// <summary>
-        /// L1/E1  frequency (Hz)
+        /// L1/E1/B1C  frequency (Hz)
         /// </summary>
         public const double FREQ1 = 1.57542E9;
 
@@ -107,22 +142,7 @@ namespace Asv.Gnss
         /// BDS B3      frequency (Hz) 
         ///  </summary>
         public const double FREQ3_CMP = 1.26852E9;
-
-        /// <summary>
-        /// number of carrier frequencies
-        /// </summary>
-        public const byte NFREQ = 3;
-
-        /// <summary>
-        /// number of carrier frequencies of GLONASS
-        /// </summary>
-        public const byte NFREQGLO = 2;
-
-        /// <summary>
-        /// number of extended obs codes
-        /// </summary>
-        public const byte NEXOBS = 0;
-
+        
         /// <summary>
         /// SNR unit (dBHz)
         /// </summary>
@@ -267,6 +287,20 @@ namespace Asv.Gnss
         /// </summary>
         public const byte MAXSTA = 255;
 
+        /// <summary>
+        /// number of carrier frequencies
+        /// </summary>
+        public const byte NFREQ = 3;
+
+        /// <summary>
+        /// number of carrier frequencies of GLONASS
+        /// </summary>
+        public const byte NFREQGLO = 2;
+
+        /// <summary>
+        /// number of extended obs codes
+        /// </summary>
+        public const byte NEXOBS = 0;
 
         /// <summary>
         /// max number of obs in an epoch
@@ -442,7 +476,7 @@ namespace Asv.Gnss
         };
 
         public readonly static string[][] CodePris={  /* code priority for each freq-index */
-            /*    0         1          2          3         4         5     */
+            /*        0           1          2         3         4         5                   */
             new[] {"CPYWMNSL","PYWCMNDLSX","IQX"     ,""       ,""       ,""      ,""}, /* GPS */
             new[] {"CPABX"   ,"PCABX"     ,"IQX"     ,""       ,""       ,""      ,""}, /* GLO */
             new[] {"CABXZ"   ,"IQX"       ,"IQX"     ,"ABCXZ"  ,"IQX"    ,""      ,""}, /* GAL */
@@ -924,12 +958,52 @@ namespace Asv.Gnss
             return time;
         }
 
-    public static byte Obs2Code(string obs)
+        /// <summary>
+        /// adjust carrier-phase rollover
+        /// </summary>
+        /// <param name="prevCarPhase"></param>
+        /// <param name="nextCarPhase"></param>
+        /// <returns></returns>
+        public static double AdjustCarrierPhase(double prevCarPhase, double nextCarPhase)
         {
-            for (byte i = 0; i < ObsCodes.Length;i++) {
+            if (prevCarPhase == 0.0)
+            {
+            }
+            else if (nextCarPhase < prevCarPhase - 750.0) nextCarPhase += 1500.0;
+            else if (nextCarPhase > prevCarPhase + 750.0) nextCarPhase -= 1500.0;
+            return nextCarPhase;
+        }
+
+        /// <summary>
+        /// loss-of-lock indicator
+        /// </summary>
+        /// <param name="pervLockTime"></param>
+        /// <param name="nextLockTime"></param>
+        /// <returns></returns>
+        public static bool LossOfLock(ushort pervLockTime, ushort nextLockTime)
+        {
+            return (nextLockTime == 0 && pervLockTime == 0) || nextLockTime < pervLockTime;
+        }
+
+        /// <summary>
+        /// S/N ratio
+        /// </summary>
+        /// <param name="snr"></param>
+        /// <returns></returns>
+        public static ushort snratio(double snr)
+        {
+            if (snr <= 0.0 || snr >= 100.0) return 0;
+            return (ushort)Math.Round(snr / SNR_UNIT + 0.5, 0);
+        }
+
+        public static byte Obs2Code(string obs)
+        {
+            for (byte i = 0; i < ObsCodes.Length; i++)
+            {
                 if (!string.Equals(ObsCodes[i], obs)) continue;
                 return i;
             }
+
             return 0;
         }
 
@@ -956,6 +1030,25 @@ namespace Asv.Gnss
                 default:
                     return -1;
             }
+        }
+
+        public static double Code2Freq(NavigationSystemEnum sys, byte code, int fcn = 0 /* GLO Only */)
+        {
+            var freq = 0.0;
+
+            switch (sys)
+            {
+                case NavigationSystemEnum.SYS_GPS: code2freq_GPS(code, ref freq); break;
+                case NavigationSystemEnum.SYS_GLO: code2freq_GLO(code, fcn, ref freq); break;
+                case NavigationSystemEnum.SYS_GAL: code2freq_GAL(code, ref freq); break;
+                case NavigationSystemEnum.SYS_QZS: code2freq_QZS(code, ref freq); break;
+                case NavigationSystemEnum.SYS_SBS: code2freq_SBS(code, ref freq); break;
+                case NavigationSystemEnum.SYS_CMP: code2freq_BDS(code, ref freq); break;
+                case NavigationSystemEnum.SYS_IRN: code2freq_IRN(code, ref freq); break;
+                default:
+                    return 0.0;
+            }
+            return freq;
         }
 
         public static string Code2Obs(byte code)
@@ -1120,23 +1213,6 @@ namespace Asv.Gnss
                         prn - MINPRNSBS + 1;
             }
             return 0;
-        }
-
-        public static double Code2Freq(NavigationSystemEnum sys, byte code, int fcn)
-        {
-            var freq = 0.0;
-
-            switch (sys)
-            {
-                case NavigationSystemEnum.SYS_GPS: code2freq_GPS(code, ref freq); break;
-                case NavigationSystemEnum.SYS_GLO: code2freq_GLO(code, fcn, ref freq); break;
-                case NavigationSystemEnum.SYS_GAL: code2freq_GAL(code, ref freq); break;
-                case NavigationSystemEnum.SYS_QZS: code2freq_QZS(code, ref freq); break;
-                case NavigationSystemEnum.SYS_SBS: code2freq_SBS(code, ref freq); break;
-                case NavigationSystemEnum.SYS_CMP: code2freq_BDS(code, ref freq); break;
-                case NavigationSystemEnum.SYS_IRN: code2freq_IRN(code, ref freq); break;
-            }
-            return freq;
         }
 
         public static double GetMinLockTime(byte indicator)

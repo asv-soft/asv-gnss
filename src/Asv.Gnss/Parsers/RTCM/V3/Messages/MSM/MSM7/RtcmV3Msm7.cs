@@ -211,7 +211,7 @@ namespace Asv.Gnss
                         Satellites[i].Signals[index].LockTime = @lock[k];
                         Satellites[i].Signals[index].HalfCycle = halfCycle[k];
                         // rtcm->obs.data[index].LLI[idx[k]] =
-                        //     lossoflock(rtcm, sat, idx[k],lock[j]) +(halfCycle[j] ? 3 : 0);
+                        //     LossOfLock(rtcm, sat, idx[k],lock[j]) +(halfCycle[j] ? 3 : 0);
                         // rtcm->obs.data[index].SNR[idx[k]] = (uint16_t)(cnr[j] / SNR_UNIT + 0.5);
                         Satellites[i].Signals[index].Cnr = cnr[k] + 0.5;
                         Satellites[i].Signals[index].ObservationCode = sig[j].ObservationCode;

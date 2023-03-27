@@ -11,16 +11,19 @@ namespace Asv.Gnss
     {
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
+            var utc = DateTime.UtcNow;
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
 
             if (MessageId is >= 1001 and <= 1004)
             {
-                EpochTimeTOW = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 30);
+                var tow = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 30) * 0.001;
+                EpochTime = RtcmV3Helper.AdjustWeekly(utc, tow);
             }
 
             if (MessageId is >= 1009 and <= 1012)
             {
-                EpochTimeTOW = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 27);
+                var tod = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 27) * 0.001;
+                EpochTime = RtcmV3Helper.AdjustDailyRoverGlonassTime(utc, tod);
             }
 
             SynchronousGNSSFlag = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 1); 
@@ -60,7 +63,7 @@ namespace Asv.Gnss
         /// ICD as UTC(SU) + 3.0 hours. It rolls over at 86,400 seconds for
         /// GLONASS, except for the leap second, where it rolls over at 86,401. 
         /// </summary>
-        public uint EpochTimeTOW { get; set; }
+        public DateTime EpochTime { get; set; }
 
         /// <summary>
         /// 0 - No further GNSS observables referenced to the same Epoch Time

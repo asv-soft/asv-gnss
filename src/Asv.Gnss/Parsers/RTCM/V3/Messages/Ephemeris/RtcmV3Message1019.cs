@@ -86,7 +86,7 @@ namespace Asv.Gnss
         public int SatelliteNumber { get; set; }
 
         public int SatellitePnr { get; set; }
-
+        
         public string SatelliteCode { get; set; }
         /// <summary>
         /// IODE

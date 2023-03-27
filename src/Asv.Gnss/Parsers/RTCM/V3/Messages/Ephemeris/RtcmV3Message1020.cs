@@ -106,7 +106,7 @@ namespace Asv.Gnss
     
             if (toe < tod - 43200.0) toe += 86400.0;
             else if (toe > tod + 43200.0) toe -= 86400.0;
-            EphemerisEpoch = RtcmV3Helper.GetFromGps(week, tow + toe); /* utc->gpst */
+            EphemerisEpoch = RtcmV3Helper.GetFromGps(week, tow + toe);
     
             SatelliteCode = RtcmV3Helper.Sat2Code(sat, (int)prn);
         }
