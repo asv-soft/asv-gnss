@@ -60,6 +60,6 @@ jobs:
       - name: Push package to github packages
         run: |
           cd src
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GITHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.Prometheus.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GITHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.Prometheus.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
           
