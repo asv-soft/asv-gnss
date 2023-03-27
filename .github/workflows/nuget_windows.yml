@@ -6,7 +6,7 @@ on:
     tags:
     - 'v*'
     branches:
-    - main
+    - origin
     
 env:
   PATH_TO_PROJECTS: ${{ github.workspace }}\src
