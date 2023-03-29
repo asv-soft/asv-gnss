@@ -12,6 +12,7 @@ namespace Asv.Gnss
                 yield return () => new AsvMessageHeartBeat();
                 yield return () => new AsvMessageGbasVdbSend();
                 yield return () => new AsvMessageGbasVdbSendV2();
+                yield return () => new AsvMessageGbasCuSendV2();
             }
         }
 

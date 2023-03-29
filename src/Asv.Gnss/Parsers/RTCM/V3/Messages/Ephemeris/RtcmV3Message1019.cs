@@ -72,7 +72,7 @@ namespace Asv.Gnss
             TTrans = time;
 
             A = sqrtA * sqrtA;
-            SatellitePnr = (int)prn;
+            SatellitePrn = (int)prn;
             SatelliteCode = RtcmV3Helper.Sat2Code(sat, (int)prn);
         }
 
@@ -85,7 +85,7 @@ namespace Asv.Gnss
         /// </summary>
         public int SatelliteNumber { get; set; }
 
-        public int SatellitePnr { get; set; }
+        public int SatellitePrn { get; set; }
         
         public string SatelliteCode { get; set; }
         /// <summary>

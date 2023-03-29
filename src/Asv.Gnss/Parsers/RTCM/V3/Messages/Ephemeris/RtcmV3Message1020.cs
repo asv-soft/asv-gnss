@@ -107,7 +107,8 @@ namespace Asv.Gnss
             if (toe < tod - 43200.0) toe += 86400.0;
             else if (toe > tod + 43200.0) toe -= 86400.0;
             EphemerisEpoch = RtcmV3Helper.GetFromGps(week, tow + toe);
-    
+
+            SatellitePrn = (int)prn;
             SatelliteCode = RtcmV3Helper.Sat2Code(sat, (int)prn);
         }
 
@@ -149,7 +150,9 @@ namespace Asv.Gnss
         /// satellite number
         /// </summary>
         public int SatelliteNumber { get; set; }
-    
+
+        public int SatellitePrn { get; set; }
+
         public string SatelliteCode { get; set; }
         /// <summary>
         /// IODE (0-6 bit of tb field). Временной интервал внутри текущих суток по шкале UTC(SU) + 03 ч 00 мин (tb - 03 ч 00 мин)

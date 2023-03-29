@@ -12,6 +12,7 @@ namespace Asv.Gnss
                 yield return () => new RtcmV3Message1004();
                 yield return () => new RtcmV3Message1005();
                 yield return () => new RtcmV3Message1006();
+                yield return () => new RtcmV3Message1012();
                 yield return () => new RtcmV3Message1013();
                 yield return () => new RtcmV3Message1019();
                 yield return () => new RtcmV3Message1020();
