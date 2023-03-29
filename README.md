@@ -1,5 +1,9 @@
-# asv-gnss
+# asv-gnss 
 GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET
+
+
+
+[![Deploy Nuget for Windows](https://github.com/asv-soft/asv-gnss/actions/workflows/nuget_windows.yml/badge.svg)](https://github.com/asv-soft/asv-gnss/actions/workflows/nuget_windows.yml)
 
 ## Install via nuget
 
