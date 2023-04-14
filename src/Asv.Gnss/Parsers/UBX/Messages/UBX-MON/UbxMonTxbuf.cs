@@ -45,10 +45,19 @@ namespace Asv.Gnss
 
         #region Errors bits
         
+        /// <summary>
+        /// Allocation error (TX buffer full)
+        /// </summary>
         public bool IsAlloc { get; set; }
         
+        /// <summary>
+        /// Memory Allocation error
+        /// </summary>
         public bool IsMem { get; set; }
         
+        /// <summary>
+        /// Buffer limit of corresponding target reached
+        /// </summary>
         public bool IsLimit { get; set; }
         
         #endregion
