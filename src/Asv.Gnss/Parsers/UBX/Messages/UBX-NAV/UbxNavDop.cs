@@ -3,6 +3,28 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    public class UbxNavDopPool : UbxMessageBase
+    {
+        public override string Name => "UBX-NAV-DOP";
+        public override byte Class => 0x01;
+        public override byte SubClass => 0x04;
+        protected override void SerializeContent(ref Span<byte> buffer)
+        {
+             
+        }
+
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
+        {
+             
+        }
+
+        protected override int GetContentByteSize() => 0;
+
+        public override void Randomize(Random random)
+        {
+             
+        }
+    }
     public class UbxNavDop : UbxMessageBase
     {
         public override string Name => "UBX-NAV-DOP";

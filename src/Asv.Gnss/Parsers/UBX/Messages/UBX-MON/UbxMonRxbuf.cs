@@ -3,6 +3,29 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    public class UbxMonRxbufPool : UbxMessageBase
+    {
+        public override string Name => "UBX-MON-RXBUF-POOL";
+        public override byte Class => 0x0A;
+        public override byte SubClass => 0x07;
+        protected override void SerializeContent(ref Span<byte> buffer)
+        {
+            
+        }
+
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
+        {
+            
+        }
+
+        protected override int GetContentByteSize() => 0;
+
+        public override void Randomize(Random random)
+        {
+            
+        }
+    }
+    
     public class UbxMonRxbuf : UbxMessageBase
     {
         public override string Name => "UBX-MON-RXBUF";

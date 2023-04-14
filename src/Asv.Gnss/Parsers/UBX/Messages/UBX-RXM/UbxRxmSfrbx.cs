@@ -1,8 +1,30 @@
 ﻿using System;
 using Asv.Common;
 
-namespace Asv.Gnss.UBX_RXM
+namespace Asv.Gnss
 {
+    public class UbxRxmSfrbxPool : UbxMessageBase
+    {
+        public override string Name => "UBX-RXM-SFRBX-POOL";
+        public override byte Class => 0x02;
+        public override byte SubClass => 0x13;
+        protected override void SerializeContent(ref Span<byte> buffer)
+        {
+             
+        }
+
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
+        {
+             
+        }
+
+        protected override int GetContentByteSize() => 0;
+
+        public override void Randomize(Random random)
+        {
+            
+        }
+    }
     public class UbxRxmSfrbx : UbxMessageBase
     {
         public override string Name => "UBX-RXM-SFRBX";
