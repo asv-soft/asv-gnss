@@ -47,7 +47,7 @@ namespace Asv.Gnss
         /// 1 Enabled integrity
         /// 3 Enabled test mode
         /// </summary>
-        public byte Mode { get; set; }
+        public UbxSbasMode Mode { get; set; }
 
         /// <summary>
         /// SBAS System (WAAS/EGNOS/...)
@@ -58,7 +58,7 @@ namespace Asv.Gnss
         /// 3 GAGAN
         /// 16 GPS
         /// </summary>
-        public sbyte Sys { get; set; }
+        public UbxSbasSystem Sys { get; set; }
 
         /// <summary>
         /// SBAS Services available (see graphic below)
@@ -107,6 +107,13 @@ namespace Asv.Gnss
         /// </summary>
         public byte StatusFlags { get; set; }
 
+        #region StatusFlags bits
+
+        public UbxStatusFlags IntegrityUsed { get; set; } = 
+            UbxStatusFlags.Unknown;
+
+        #endregion
+
         /// <summary>
         /// Reserved 1
         /// </summary>
@@ -123,8 +130,8 @@ namespace Asv.Gnss
         {
             iTOW = BinSerialize.ReadUInt(ref buffer);
             Geo = BinSerialize.ReadByte(ref buffer);
-            Mode = BinSerialize.ReadByte(ref buffer);
-            Sys = BinSerialize.ReadSByte(ref buffer);
+            Mode = (UbxSbasMode)BinSerialize.ReadByte(ref buffer);
+            Sys = (UbxSbasSystem)BinSerialize.ReadSByte(ref buffer);
             Service = BinSerialize.ReadByte(ref buffer);
 
             IsBad = (Service & 0b0001_0000) != 0;
@@ -135,6 +142,16 @@ namespace Asv.Gnss
             
             Cnt = BinSerialize.ReadByte(ref buffer);
             StatusFlags = BinSerialize.ReadByte(ref buffer);
+            
+            if ((StatusFlags & 0b0000_0001) != 0)
+            {
+                IntegrityUsed = UbxStatusFlags.IntegrityUsed;
+            }
+            else if ((StatusFlags & 0b0000_0010) != 0)
+            {
+                IntegrityUsed = UbxStatusFlags.GpsOnly;
+            }
+            
             Reserved1 = BinSerialize.ReadUShort(ref buffer);
 
             SvDatas = new SvData[Cnt];
@@ -169,6 +186,39 @@ namespace Asv.Gnss
         }
     }
 
+    public enum UbxSbasMode
+    {
+        Disabled = 0,
+        EnabledIntegrity = 1,
+        EnabledTestMode = 3
+    }
+    
+    public enum UbxSbasSystem
+    {
+        Unknown = -1,
+        WAAS = 0,
+        EGNOS = 1,
+        MSAS = 2,
+        GAGAN = 3,
+        GPS = 16
+    }
+    
+    public enum UbxStatusFlags
+    {
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        Unknown = 0,
+        /// <summary>
+        /// Integrity information is not available or SBAS integrity is not enabled
+        /// </summary>
+        IntegrityUsed = 1,
+        /// <summary>
+        /// Receiver uses only GPS satellites for which integrity information is available
+        /// </summary>
+        GpsOnly = 2
+    }
+    
     public class SvData
     {
         /// <summary>

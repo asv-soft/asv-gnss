@@ -4,6 +4,16 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    public enum UbxGnssTypeEnum
+    {
+        GPS = 0,
+        SBAS = 1,
+        Galileo = 2,
+        BeiDou = 3,
+        IMES = 4,
+        QZSS = 5,
+        GLONASS = 6,
+    }
     public class UbxRxmSfrbxPool : UbxMessageBase
     {
         public override string Name => "UBX-RXM-SFRBX-POOL";
@@ -31,12 +41,11 @@ namespace Asv.Gnss
         public override string Name => "UBX-RXM-SFRBX";
         public override byte Class => 0x02;
         public override byte SubClass => 0x13;
-        public bool IsGps { get; set; }
         
         /// <summary>
         /// GNSS identifier
         /// </summary>
-        public byte GnssId { get; set; }
+        public UbxGnssTypeEnum UbxGnssId { get; set; }
         
         /// <summary>
         /// Satellite identifier
@@ -52,7 +61,7 @@ namespace Asv.Gnss
         /// Only used for GLONASS: This is the
         /// frequency slot + 7 (range from 0 to 13)
         /// </summary>
-        public byte FreqId { get; set; }
+        public sbyte FreqId { get; set; }
         
         /// <summary>
         /// The number of data words contained in
@@ -63,7 +72,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Reserved
         /// </summary>
-        public byte Reserved2 { get; set; }
+        public byte Chn { get; set; }
         
         /// <summary>
         /// Message version (0x01 for this version)
@@ -73,7 +82,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Reserved
         /// </summary>
-        public byte Reserved3 { get; set; }
+        public byte Reserved2 { get; set; }
         
         /// <summary>
         /// The data words
@@ -87,14 +96,19 @@ namespace Asv.Gnss
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            GnssId = BinSerialize.ReadByte(ref buffer);
+            UbxGnssId = (UbxGnssTypeEnum)BinSerialize.ReadByte(ref buffer);
             SvId = BinSerialize.ReadByte(ref buffer);
             Reserved1 = BinSerialize.ReadByte(ref buffer);
-            FreqId = BinSerialize.ReadByte(ref buffer);
+            FreqId = (sbyte)(BinSerialize.ReadSByte(ref buffer) - 7);
             NumWords = BinSerialize.ReadByte(ref buffer);
-            Reserved2 = BinSerialize.ReadByte(ref buffer);
+            Chn = BinSerialize.ReadByte(ref buffer);
             Version = BinSerialize.ReadByte(ref buffer);
-            Reserved3 = BinSerialize.ReadByte(ref buffer);
+            Reserved2 = BinSerialize.ReadByte(ref buffer);
+
+            if (Version == 0x01)
+            {
+                Chn = 0;
+            }
             
             RawData = new uint[NumWords];
             
@@ -103,19 +117,17 @@ namespace Asv.Gnss
                 RawData[i] = BinSerialize.ReadUInt(ref buffer);
             }
             
-            if (GnssId == 0)
+            if (UbxGnssId == UbxGnssTypeEnum.GPS)
             {
-                IsGps = true;
                 GpsSubFrame = GpsSubFrameFactory.Create(RawData);
             }
-            else if (GnssId == 6)
+            else if (UbxGnssId == UbxGnssTypeEnum.GLONASS)
             {
-                IsGps = false;
                 GlonassWord = GlonassWordFactory.Create(RawData);
             }
         }
 
-        protected override int GetContentByteSize() => RawData.Length;
+        protected override int GetContentByteSize() => 8 + (4 * RawData.Length);
 
         public override void Randomize(Random random)
         {
