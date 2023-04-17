@@ -57,9 +57,8 @@ namespace Asv.Gnss
         /// </summary>
         public byte Reserved1 { get; set; }
         
-        /// <summary>
         /// Only used for GLONASS: This is the
-        /// frequency slot + 7 (range from 0 to 13)
+        /// frequency slot (range from -7 to 6)
         /// </summary>
         public sbyte FreqId { get; set; }
         
