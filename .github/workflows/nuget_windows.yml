@@ -28,6 +28,19 @@ jobs:
               5.x.x
               3.x.x
 
+      - name: Get version
+        id: version
+        uses: battila7/get-version-action@v2
+              
+      - name: Check version
+        run: echo ${{ steps.version.outputs.version-without-v }}
+
+      - name: Set project version   
+        run: |    
+          dotnet tool install -g dotnet-setversion    
+          setversion ${{ steps.version.outputs.version-without-v }} ${{ env.PATH_TO_PROJECTS }}\Asv.Gnss\Asv.Gnss.csproj
+          setversion ${{ steps.version.outputs.version-without-v }} ${{ env.PATH_TO_PROJECTS }}\Asv.Gnss.Prometheus\Asv.Gnss.Prometheus.csproj    
+    
       - name: Restore dependencies
         run: |
           cd src
@@ -37,13 +50,6 @@ jobs:
         run: |
           cd src
           dotnet build -c Release --no-restore
-
-      - name: Get version
-        id: version
-        uses: battila7/get-version-action@v2
-        
-      - name: Check version
-        run: echo ${{ steps.version.outputs.version-without-v }}
 
       - name: Pack projects to Nuget 
         run: |
