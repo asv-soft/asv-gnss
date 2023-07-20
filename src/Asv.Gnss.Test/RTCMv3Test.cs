@@ -36,12 +36,16 @@ namespace Asv.Gnss.Test
             var parser = new RtcmV3Parser().RegisterDefaultMessages();
             RtcmV3MessageBase msg = null;
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
-            for (var index = 0; index < array.Length; index++)
+            foreach (var p in array)
             {
-                var p = array[index];
                 parser.Read(p);
             }
-
+            Assert.NotNull(msg);
+            msg = null;
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
             Assert.NotNull(msg);
         }
 

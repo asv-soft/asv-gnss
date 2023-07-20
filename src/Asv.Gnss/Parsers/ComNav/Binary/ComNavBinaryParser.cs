@@ -87,12 +87,7 @@ namespace Asv.Gnss
                         var crc32Index = _bufferIndex - 4 /* CRC32 */;
                         var calculatedHash = ComNavCrc32.Calc(_buffer, 0, crc32Index);
                         var readedHash = BitConverter.ToUInt32(_buffer, crc32Index);
-                        if (calculatedHash != readedHash)
-                        {
-                            PublishWhenCrcError();
-                            Reset();
-                        }
-                        else
+                        if (calculatedHash == readedHash)
                         {
                             var msgId = BitConverter.ToUInt16(_buffer, 4);
                             var span = new ReadOnlySpan<byte>(_buffer, 0, _stopMessageIndex);
@@ -100,6 +95,8 @@ namespace Asv.Gnss
                             Reset();
                             return true;
                         }
+                        PublishWhenCrcError();
+                        Reset();
                     }
                     break;
                 default:

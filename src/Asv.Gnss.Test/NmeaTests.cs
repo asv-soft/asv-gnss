@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Reactive.Linq;
 using System.Text;
 using Xunit;
@@ -91,7 +92,9 @@ namespace Asv.Gnss.Test
             Assert.Equal(10.409, msg.SdLongitude);
             Assert.Equal(11.396, msg.SdSemiMajorAxis);
             Assert.Equal(3.866, msg.SdSemiMinorAxis);
-            Assert.Equal(DateTime.Parse("20.09.2022 6:04:17"), msg.Time);
+            Assert.Equal(6,msg.Time.Hour);
+            Assert.Equal(04,msg.Time.Minute);
+            Assert.Equal(17,msg.Time.Second);
         }
     }
 }

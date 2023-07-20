@@ -86,6 +86,7 @@ namespace Asv.Gnss
                         var msgId = strMessage.Substring(2, 3).ToUpper();
                         var span = new ReadOnlySpan<byte>(_buffer, 0, _msgReaded);
                         ParsePacket(msgId, ref span);
+                        Reset();
                         return true;
                     }
 

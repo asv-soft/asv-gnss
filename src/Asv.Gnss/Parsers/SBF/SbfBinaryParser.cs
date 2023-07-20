@@ -75,13 +75,11 @@ namespace Asv.Gnss
                         {
                             var span = new ReadOnlySpan<byte>(_buffer,0, _length);
                             ParsePacket(_msgId,ref span, true);
+                            Reset();
                             return true;
                         }
-                        else
-                        {
-                            PublishWhenCrcError();
-                        }
-                        _state = State.Sync1;
+                        PublishWhenCrcError();
+                        Reset();
                     }
                     break;
                 default:

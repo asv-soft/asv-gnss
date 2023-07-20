@@ -90,16 +90,13 @@ namespace Asv.Gnss
                         {
                             _onRawData.OnNext(new RtcmV3RawMessage(msgNumber,span));
                         }
-                        ParsePacket(msgNumber, ref span,true); // 
-                        
+                        ParsePacket(msgNumber, ref span,true);
+                        Reset();
                         return true;
                     }
-                    else
-                    {
-                        PublishWhenCrcError();
-                    }
+                    PublishWhenCrcError();
                     Reset();
-                    return true;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

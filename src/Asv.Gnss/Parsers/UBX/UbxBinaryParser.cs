@@ -88,12 +88,10 @@ namespace Asv.Gnss
                         var msgId = UbxHelper.ReadMessageId(_buffer);
                         var span = new ReadOnlySpan<byte>(_buffer,0, _payloadReadBytes + 8);
                         ParsePacket(msgId,ref span);
+                        Reset();
                         return true;
                     }
-                    else
-                    {
-                        PublishWhenCrcError();
-                    }
+                    PublishWhenCrcError();
                     Reset();
                     break;
                 default:
