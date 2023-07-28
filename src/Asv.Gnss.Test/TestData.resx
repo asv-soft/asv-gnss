@@ -127,4 +127,10 @@
   <data name="test_rtcm3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\GMSD7_20121014.rtcm3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="fw206mrtk_rtcm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\fw206mrtk_rtcm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="imu_rtcm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\imu_rtcm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

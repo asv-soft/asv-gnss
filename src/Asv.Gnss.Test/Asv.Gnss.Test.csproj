@@ -32,5 +32,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TestData.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Remove="Resources\imu_rtcm" />
+    <EmbeddedResource Include="Resources\imu_rtcm" />
+    <None Remove="Resources\fw206mrtk_rtcm" />
+    <EmbeddedResource Include="Resources\fw206mrtk_rtcm" />
   </ItemGroup>
 </Project>

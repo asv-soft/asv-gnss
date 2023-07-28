@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Reactive.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -135,6 +139,75 @@ namespace Asv.Gnss.Test
             }
 
             Assert.NotNull(msg);
+        }
+
+
+        private IDictionary<string,(int,string,bool)> Test_rtcm_base(byte[] data)
+        {
+            var parser = new RtcmV3Parser().RegisterDefaultMessages();
+            var messages = new ConcurrentDictionary<string, (int,string,bool)>();
+            
+            parser.OnError
+                .Where(_=>_ is GnssUnknownMessageException)
+                .Cast<GnssUnknownMessageException>()
+                .Subscribe(_ =>messages.AddOrUpdate($"{_.ProtocolId}.{_.MessageId}", (1,"UNKNOWN",false), (s, i) => (i.Item1+1,i.Item2,false)));
+            parser.OnMessage
+                .Subscribe(_ =>messages.AddOrUpdate($"{_.ProtocolId}.{_.MessageStringId}", (1,_.Name,true), (s, i) => (i.Item1+1,i.Item2,true)));
+            foreach (var b in data)
+            {
+                parser.Read(b);
+            }
+
+            
+
+            return messages;
+        }
+
+        [Fact]
+        public void Test_rtcm3_parser_from_fw206mrtk_rtcm_file()
+        {
+            var messages = Test_rtcm_base(TestData.fw206mrtk_rtcm);
+            var total = messages.Sum(_ => _.Value.Item1);
+            var totalUnknown = messages.Where(_=>!_.Value.Item3).Sum(_ => _.Value.Item1);
+            var totalOk = messages.Where(_=>_.Value.Item3).Sum(_ => _.Value.Item1);
+            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown})");
+            foreach (var message in messages.OrderBy(_=>_.Key))
+            {
+                _output.WriteLine($"{message.Key}: {message.Value.Item1,-5} {message.Value.Item2}");
+            }
+            Assert.Equal(4996,total);
+        }
+        
+        [Fact]
+        public void Test_rtcm3_parser_from_imu_rtcm_file()
+        {
+            var messages = Test_rtcm_base(TestData.imu_rtcm);
+            var total = messages.Sum(_ => _.Value.Item1);
+            var totalUnknown = messages.Where(_=>!_.Value.Item3).Sum(_ => _.Value.Item1);
+            var totalOk = messages.Where(_=>_.Value.Item3).Sum(_ => _.Value.Item1);
+            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown})");
+            foreach (var message in messages.OrderBy(_=>_.Key))
+            {
+                _output.WriteLine($"{message.Key}: {message.Value.Item1,-5} {message.Value.Item2}");
+            }
+            Assert.Equal(761,total);
+            
+        }
+        
+        [Fact]
+        public void Test_rtcm3_parser_from_testglo()
+        {
+            var messages = Test_rtcm_base(TestData.imu_rtcm);
+            var total = messages.Sum(_ => _.Value.Item1);
+            var totalUnknown = messages.Where(_=>!_.Value.Item3).Sum(_ => _.Value.Item1);
+            var totalOk = messages.Where(_=>_.Value.Item3).Sum(_ => _.Value.Item1);
+            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown})");
+            foreach (var message in messages.OrderBy(_=>_.Key))
+            {
+                _output.WriteLine($"{message.Key}: {message.Value.Item1,-5} {message.Value.Item2}");
+            }
+            Assert.Equal(761,total);
+            
         }
     }
 }
