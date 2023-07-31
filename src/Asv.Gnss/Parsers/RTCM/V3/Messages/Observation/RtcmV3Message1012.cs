@@ -26,7 +26,7 @@ namespace Asv.Gnss
         }
 
         public override ushort MessageId => 1012;
-        public override string Name => " Extended L1&L2 GLONASS RTK Observables";
+        public override string Name => "Extended L1&L2 GLONASS RTK Observables";
 
         public GLONASSSatellite[] Satellites { get; set; }
     }

@@ -1,8 +1,7 @@
-﻿using Asv.Gnss;
+﻿using System;
 using Asv.IO;
-using System;
 
-namespace AsvGnssExtend.AntennaDescription
+namespace Asv.Gnss
 {
     internal class RtcmV3Message1008 : RtcmV3Message1007and1008
     {

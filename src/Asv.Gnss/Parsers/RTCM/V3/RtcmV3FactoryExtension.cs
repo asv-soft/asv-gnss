@@ -1,5 +1,4 @@
-﻿using AsvGnssExtend.AntennaDescription;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Asv.Gnss

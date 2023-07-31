@@ -142,15 +142,20 @@ namespace Asv.Gnss.Test
         }
 
 
-        private IDictionary<string,(int,string,bool)> Test_rtcm3_base(byte[] data, out int total,out int totalUnknown, out int totalOk)
+        private IDictionary<string,(int,string,bool)> Test_rtcm3_base(byte[] data, out int total,out int totalUnknown, out int totalOk, out int parserErr)
         {
             var parser = new RtcmV3Parser().RegisterDefaultMessages();
             var messages = new ConcurrentDictionary<string, (int,string,bool)>();
+            var totalError = 0;
             
             parser.OnError
                 .Where(_=>_ is GnssUnknownMessageException)
                 .Cast<GnssUnknownMessageException>()
                 .Subscribe(_ =>messages.AddOrUpdate($"{_.ProtocolId}.{_.MessageId}", (1,"UNKNOWN",false), (s, i) => (i.Item1+1,i.Item2,false)));
+
+            parser.OnError
+                .Subscribe(_ => totalError++);
+            
             parser.OnMessage
                 .Subscribe(_ =>messages.AddOrUpdate($"{_.ProtocolId}.{_.MessageStringId}", (1,_.Name,true), (s, i) => (i.Item1+1,i.Item2,true)));
             foreach (var b in data)
@@ -160,34 +165,37 @@ namespace Asv.Gnss.Test
             total = messages.Sum(_ => _.Value.Item1);
             totalUnknown = messages.Where(_=>!_.Value.Item3).Sum(_ => _.Value.Item1);
             totalOk = messages.Where(_=>_.Value.Item3).Sum(_ => _.Value.Item1);
-            
 
+            parserErr = totalError - totalUnknown;
             return messages;
         }
 
         [Fact]
         public void Test_rtcm3_parser_from_fw206mrtk_rtcm_file()
         {
-            var messages = Test_rtcm3_base(TestData.fw206mrtk_rtcm, out var total, out var totalUnknown,out var totalOk);
+            var messages = Test_rtcm3_base(TestData.fw206mrtk_rtcm, out var total, out var totalUnknown,out var totalOk, out var  err);
            
-            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown})");
+            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown}, ERR:{err})");
             foreach (var message in messages.OrderBy(_=>_.Key))
             {
                 _output.WriteLine($"{message.Key}: {message.Value.Item1,-5} {message.Value.Item2}");
             }
+            Assert.Equal(0,err);
             Assert.Equal(4996,total);
         }
         
         [Fact]
         public void Test_rtcm3_parser_from_imu_rtcm_file()
         {
-            var messages = Test_rtcm3_base(TestData.imu_rtcm, out var total, out var totalUnknown,out var totalOk);
+            var messages = Test_rtcm3_base(TestData.imu_rtcm, out var total, out var totalUnknown,out var totalOk, out var  err);
             
-            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown})");
+            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown}, ERR:{err})");
+            
             foreach (var message in messages.OrderBy(_=>_.Key))
             {
                 _output.WriteLine($"{message.Key}: {message.Value.Item1,-5} {message.Value.Item2}");
             }
+            Assert.Equal(0,err);
             Assert.Equal(761,total);
             
         }
@@ -195,12 +203,13 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Test_rtcm3_parser_from_testglo()
         {
-            var messages = Test_rtcm3_base(TestData.testglo_rtcm3, out var total, out var totalUnknown,out var totalOk);
-            _output.WriteLine($"FILE {nameof(TestData.testglo_rtcm3)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown})");
+            var messages = Test_rtcm3_base(TestData.testglo_rtcm3, out var total, out var totalUnknown,out var totalOk, out var  err);
+            _output.WriteLine($"FILE {nameof(TestData.imu_rtcm)}: {total} messages (OK:{totalOk}, UNK:{totalUnknown}, ERR:{err})");
             foreach (var message in messages.OrderBy(_=>_.Key))
             {
                 _output.WriteLine($"{message.Key}: {message.Value.Item1,-5} {message.Value.Item2}");
             }
+            Assert.Equal(0,err);
             Assert.Equal(429,total);
             Assert.Equal(0,totalUnknown);
             Assert.Equal(186,messages["RTCMv3.1004"].Item1);

@@ -1,5 +1,4 @@
 ﻿using Asv.IO;
-using AsvGnssExtend.AntennaDescription;
 using System;
 
 namespace Asv.Gnss
