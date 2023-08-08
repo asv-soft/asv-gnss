@@ -151,5 +151,58 @@ namespace Asv.Gnss.Test
             Assert.NotNull(msg);
             Assert.Equal("1123", msg.MessageStringId);
         }
+
+        [Fact]
+        public void TestMsg1230()
+        {
+            var array = new byte[]
+            {
+                0xd3, 0x00, 0x0c, 0x4c, 0xe3, 0xfe, 0x0f, 0x03, 0xba, 0x03, 0xba, 0x03, 0xba, 0x03, 0xba, 0x7c, 0x66, 0xda
+            };
+            var parser = new RtcmV3Parser().RegisterExtendedMessages();
+            RtcmV3MessageBase msg = null;
+            parser.OnError.Subscribe(_ =>
+            {
+                var err = "ERR:" + _.Message;
+                //_output.WriteLine("ERR:"+_.Message);
+            });
+            parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+            Assert.NotNull(msg);
+            Assert.Equal("1230", msg.MessageStringId);
+            var msg1230 = msg as Parsers.RTCM.V3.Messages.SysParamAndText.RtcmV3Message1230;
+            Assert.Equal(19.08, msg1230.L1CACodePhaseBias, 2);
+            Assert.Equal(19.08, msg1230.L1PCodePhaseBias, 2);
+            Assert.Equal(19.08, msg1230.L2CACodePhaseBias, 2);
+            Assert.Equal(19.08, msg1230.L2PCodePhaseBias, 2);
+        }
+
+        [Fact]
+        public void TestMsg1032()
+        {
+            var array = new byte[]
+            {
+                0xd3, 0x00, 0x14, 0x40, 0x83, 0xfe, 0x40, 0x10, 0x07, 0xc4, 0xf0, 0xd9, 0x30, 0x0e, 0xb7, 0x12, 0xbe, 0x74, 0xc1, 0x1b, 0xad, 0x89, 0x80, 0xc9, 0x29, 0xe6
+            };
+            var parser = new RtcmV3Parser().RegisterExtendedMessages();
+            RtcmV3MessageBase msg = null;
+            parser.OnError.Subscribe(_ =>
+            {
+                var err = "ERR:" + _.Message;
+                //_output.WriteLine("ERR:"+_.Message);
+            });
+            parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+            Assert.NotNull(msg);
+            Assert.Equal("1032", msg.MessageStringId);
+        }
+
+
     }
 }
