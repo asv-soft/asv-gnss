@@ -138,11 +138,7 @@ namespace Asv.Gnss.Test
             };
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            //parser.OnError.Subscribe(_ =>
-            //{
-            //    var err = "ERR:" + _.Message;
-            //    //_output.WriteLine("ERR:"+_.Message);
-            //});
+
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
@@ -173,7 +169,8 @@ namespace Asv.Gnss.Test
             }
             Assert.NotNull(msg);
             Assert.Equal("1230", msg.MessageStringId);
-            var msg1230 = msg as Parsers.RTCM.V3.Messages.SysParamAndText.RtcmV3Message1230;
+
+            var msg1230 = msg as RtcmV3Message1230;
             Assert.Equal(19.08, msg1230.L1CACodePhaseBias, 2);
             Assert.Equal(19.08, msg1230.L1PCodePhaseBias, 2);
             Assert.Equal(19.08, msg1230.L2CACodePhaseBias, 2);
@@ -203,6 +200,54 @@ namespace Asv.Gnss.Test
             Assert.Equal("1032", msg.MessageStringId);
         }
 
-
+        [Fact]
+        public void TestMsg1030()
+        {
+            var array = new byte[]
+            {
+                0xd3,0x00,0x3f,0x40,0x62,0x08,0x4f,0x3f,0xe0,0xc9,0x08,0x4c,0x00,0x00,0x1e,0x00,0x06,0x00,0x00,0x00,
+                0x00,0x00,0x04,0x05,0x00,0x00,0x08,0x80,0x03,0x06,0x80,0x00,0x04,0xc0,0x02,0x43,0x80,0x00,0x01,0x20,
+                0x02,0x22,0xa0,0x00,0x00,0xd0,0x01,0x31,0x00,0x00,0x00,0x28,0x00,0xa9,0x08,0x00,0x00,0x28,0x00,0x7c,
+                0x24,0x00,0x00,0x12,0x00,0x00,0x52,0x20,0x7d
+            };
+            var parser = new RtcmV3Parser().RegisterExtendedMessages();
+            RtcmV3MessageBase msg = null;
+            parser.OnError.Subscribe(_ =>
+            {
+                var err = "ERR:" + _.Message;
+                //_output.WriteLine("ERR:"+_.Message);
+            });
+            parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+            Assert.NotNull(msg);
+            Assert.Equal("1030", msg.MessageStringId);
+        }
+        [Fact]
+        public void TestMsg1031()
+        {
+            var array = new byte[]
+            {
+                0xd3,0x00,0x32,0x40,0x77,0x07,0x69,0xff,0x06,0x38,0x60,0xc0,0x00,0x00,0xe0,0x00,0x40,0x20,0x00,0x00,
+                0x10,0x00,0x28,0x80,0x00,0x00,0x18,0x00,0x30,0x30,0x00,0x00,0x52,0x00,0x24,0x54,0x00,0x00,0x17,0x00,
+                0x13,0x12,0x00,0x00,0x09,0x80,0x0a,0x03,0x80,0x00,0x02,0x80,0x00,0x38,0x01,0x10
+            };
+            var parser = new RtcmV3Parser().RegisterExtendedMessages();
+            RtcmV3MessageBase msg = null;
+            parser.OnError.Subscribe(_ =>
+            {
+                var err = "ERR:" + _.Message;
+                //_output.WriteLine("ERR:"+_.Message);
+            });
+            parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+            Assert.NotNull(msg);
+            Assert.Equal("1031", msg.MessageStringId);
+        }
     }
 }

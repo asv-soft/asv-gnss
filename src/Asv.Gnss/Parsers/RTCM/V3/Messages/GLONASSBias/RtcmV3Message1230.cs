@@ -1,7 +1,7 @@
 ﻿using Asv.IO;
 using System;
 
-namespace Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText
+namespace Asv.Gnss
 {
     public class RtcmV3Message1230 : RtcmV3MessageBase
     {
@@ -16,31 +16,31 @@ namespace Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText
             ReservedBias = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
             FdmaSignalMask = (FdmaSignalBitmask)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4);
 
-            if((FdmaSignalMask & FdmaSignalBitmask.CAL1Mask) == FdmaSignalBitmask.CAL1Mask)
+            if ((FdmaSignalMask & FdmaSignalBitmask.CAL1Mask) == FdmaSignalBitmask.CAL1Mask)
             {
-                _l1CACodePhaseBias = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
+                _l1CACodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
             if ((FdmaSignalMask & FdmaSignalBitmask.L1PMask) == FdmaSignalBitmask.L1PMask)
             {
-                _l1PCodePhaseBias = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16); 
+                _l1PCodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
             if ((FdmaSignalMask & FdmaSignalBitmask.L2CAMask) == FdmaSignalBitmask.L2CAMask)
             {
-                _l2CACodePhaseBias = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
+                _l2CACodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
             if ((FdmaSignalMask & FdmaSignalBitmask.L2PMask) == FdmaSignalBitmask.L2PMask)
             {
-                _l2PCodePhaseBias = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
+                _l2PCodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
         }
 
         public override ushort MessageId => RtcmMessageId;
 
         private const double DfResol = 0.02;
-        private short _l1CACodePhaseBias;
-        private short _l1PCodePhaseBias;
-        private short _l2CACodePhaseBias;
-        private short _l2PCodePhaseBias;
+        private short _l1CACodePhaseBiasDf;
+        private short _l1PCodePhaseBiasDf;
+        private short _l2CACodePhaseBiasDf;
+        private short _l2PCodePhaseBiasDf;
 
         /// <summary>
         /// The Reference Station ID is determined by the service provider. Its 
@@ -103,7 +103,7 @@ namespace Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText
         /// A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
         /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
         /// </summary>
-        public double L1CACodePhaseBias => _l1CACodePhaseBias * DfResol;
+        public double L1CACodePhaseBias => _l1CACodePhaseBiasDf * DfResol;
 
         /// <summary>
         /// The GLONASS L1 P Code-Phase Bias represents the offset between the
@@ -119,7 +119,7 @@ namespace Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText
         /// A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
         /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
         /// </summary>
-        public double L1PCodePhaseBias => _l1PCodePhaseBias * DfResol;
+        public double L1PCodePhaseBias => _l1PCodePhaseBiasDf * DfResol;
 
         /// <summary>
         //  The GLONASS L2 C/A Code-Phase Bias represents the offset between
@@ -137,7 +137,7 @@ namespace Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText
         //  A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
         //  invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
         /// </summary>
-        public double L2CACodePhaseBias => _l2CACodePhaseBias * DfResol;
+        public double L2CACodePhaseBias => _l2CACodePhaseBiasDf * DfResol;
 
         /// <summary>
         /// The GLONASS L2 P Code-Phase Bias represents the offset between the
@@ -154,7 +154,7 @@ namespace Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText
         /// A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
         /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
         /// </summary>
-        public double L2PCodePhaseBias => _l2PCodePhaseBias * DfResol;
+        public double L2PCodePhaseBias => _l2PCodePhaseBiasDf * DfResol;
 
         [Flags]
         public enum FdmaSignalBitmask

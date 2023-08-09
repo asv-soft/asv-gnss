@@ -1,5 +1,4 @@
-﻿using Asv.Gnss.Parsers.RTCM.V3.Messages.SysParamAndText;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Asv.Gnss
@@ -15,6 +14,8 @@ namespace Asv.Gnss
                 yield return () => new RtcmV3Message1032();
                 yield return () => new RtcmV3Message1033();
 
+                yield return () => new RtcmV3Message1030();
+                yield return () => new RtcmV3Message1031();
                 yield return () => new RtcmV3Message1230();
 
                 yield return () => new RtcmV3Msm3Msg1023();
