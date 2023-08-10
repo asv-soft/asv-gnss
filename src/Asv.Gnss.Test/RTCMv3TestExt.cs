@@ -157,11 +157,6 @@ namespace Asv.Gnss.Test
             };
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                var err = "ERR:" + _.Message;
-                //_output.WriteLine("ERR:"+_.Message);
-            });
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
@@ -182,15 +177,12 @@ namespace Asv.Gnss.Test
         {
             var array = new byte[]
             {
-                0xd3, 0x00, 0x14, 0x40, 0x83, 0xfe, 0x40, 0x10, 0x07, 0xc4, 0xf0, 0xd9, 0x30, 0x0e, 0xb7, 0x12, 0xbe, 0x74, 0xc1, 0x1b, 0xad, 0x89, 0x80, 0xc9, 0x29, 0xe6
+                0xd3, 0x00, 0x14, 0x40, 0x83, 0xfe, 0x40, 0x10, 0x07, 0xc4,
+                0xf0, 0xd9, 0x30, 0x0e, 0xb7, 0x12, 0xbe, 0x74, 0xc1, 0x1b, 
+                0xad, 0x89, 0x80, 0xc9, 0x29, 0xe6
             };
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                var err = "ERR:" + _.Message;
-                //_output.WriteLine("ERR:"+_.Message);
-            });
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
@@ -198,6 +190,9 @@ namespace Asv.Gnss.Test
             }
             Assert.NotNull(msg);
             Assert.Equal("1032", msg.MessageStringId);
+            var msg1032 = msg as RtcmV3Message1032;
+            Assert.Equal((uint)1025, msg1032.PhysicalReferenceStationID);
+            Assert.Equal((uint)1022, msg1032.NonPhysicalReferenceStationID);
         }
 
         [Fact]
@@ -212,11 +207,6 @@ namespace Asv.Gnss.Test
             };
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                var err = "ERR:" + _.Message;
-                //_output.WriteLine("ERR:"+_.Message);
-            });
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
@@ -224,6 +214,13 @@ namespace Asv.Gnss.Test
             }
             Assert.NotNull(msg);
             Assert.Equal("1030", msg.MessageStringId);
+            var msg1030 = msg as RtcmV3Message1030;
+            Assert.Equal((uint)1022, msg1030.ReferenceStationID);
+            Assert.InRange(msg1030.SOc, 0.0, 127 * 0.5);
+            Assert.InRange(msg1030.SOd, 0.0, 5.11 * 0.01);
+            Assert.InRange(msg1030.SOh, 0.0, 5.11 * 0.1);
+            Assert.InRange(msg1030.SIc, 0.0, 511 * 0.5);
+            Assert.InRange(msg1030.SId, 0.0, 10.23 * 0.01);
         }
         [Fact]
         public void TestMsg1031()
@@ -236,11 +233,6 @@ namespace Asv.Gnss.Test
             };
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                var err = "ERR:" + _.Message;
-                //_output.WriteLine("ERR:"+_.Message);
-            });
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
@@ -248,6 +240,13 @@ namespace Asv.Gnss.Test
             }
             Assert.NotNull(msg);
             Assert.Equal("1031", msg.MessageStringId);
+            var msg1031 = msg as RtcmV3Message1031;
+            Assert.Equal((uint)1022, msg1031.ReferenceStationID);
+            Assert.InRange(msg1031.SOc, 0.0, 127 * 0.5);
+            Assert.InRange(msg1031.SOd, 0.0, 5.11 * 0.01);
+            Assert.InRange(msg1031.SOh, 0.0, 5.11 * 0.1);
+            Assert.InRange(msg1031.SIc, 0.0, 511 * 0.5);
+            Assert.InRange(msg1031.SId, 0.0, 10.23 * 0.01);
         }
     }
 }

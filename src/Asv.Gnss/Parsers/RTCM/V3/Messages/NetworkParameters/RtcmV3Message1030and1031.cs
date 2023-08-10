@@ -1,13 +1,14 @@
 ﻿using Asv.IO;
 using System;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Asv.Gnss
 {
-    public abstract class RtcmV3Message1030and1031Base : RtcmV3MessageBase
+    public abstract class RtcmV3Message1030and1031 : RtcmV3MessageBase
     {
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
-            GLONASSResidualsEpoch = SpanBitHelper.GetBitU(buffer, ref bitIndex, 17);
+            ResidualsEpoch = SpanBitHelper.GetBitU(buffer, ref bitIndex, ResidualEpochBitLen);
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             NRefs = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
             NumberSatelliteSignals = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
@@ -18,6 +19,7 @@ namespace Asv.Gnss
             _sIcDf = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
             _sIdDf = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
         }
+        protected abstract int ResidualEpochBitLen { get; }
 
         private const double mm05Res = 0.5;
         private const double ppm001Res = 0.01;
@@ -29,9 +31,10 @@ namespace Asv.Gnss
         private ushort _sIdDf; // 0 - 10.23 ppm
 
         /// <summary>
-        /// GLONASS Residuals Epoch Time(tk)
+        /// GPS Residuals Epoch Time(TOW) - 0 – 604800 s
+        /// GLONASS Residuals Epoch Time(tk) - 0 – 86400 s
         /// </summary>
-        public uint GLONASSResidualsEpoch { get; set; }
+        public uint ResidualsEpoch { get; set; }
 
         /// <summary>
         /// Number of reference stations used to derive residual statistics (1 to
@@ -42,7 +45,7 @@ namespace Asv.Gnss
         public byte NRefs { get; set; }
 
         /// <summary>
-        /// The Number of GLONASS Satellite Signals Processed refers to the
+        /// The Number of Satellite Signals Processed refers to the
         /// number of satellites in the message.It does not necessarily equal the
         /// number of satellites visible to the Reference Station.
         /// </summary>
