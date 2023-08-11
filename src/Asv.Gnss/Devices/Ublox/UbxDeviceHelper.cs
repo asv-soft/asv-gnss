@@ -156,9 +156,9 @@ namespace Asv.Gnss
         {
             return src.Push(new UbxCfgCfg
             {
-                ClearMask = UbxCfgSection.All,
-                SaveMask = UbxCfgSection.All,
-                LoadMask = UbxCfgSection.None,
+                ClearMask = UbxCfgSection.None,
+                SaveMask = UbxCfgSection.None,
+                LoadMask = UbxCfgSection.All,
                 DeviceMask = UbxCfgDeviceMask.DevBbr
             }, cancel);
         }
@@ -180,7 +180,9 @@ namespace Asv.Gnss
 
         public static Task SoftwareGnssReset(this IUbxDevice src, CancellationToken cancel = default)
         {
-            return src.CallCfgReset(BbrMask.ColdStart, ResetMode.ControlledSoftwareResetGnssOnly, cancel);
+            // return src.CallCfgReset(BbrMask.ColdStart, ResetMode.ControlledSoftwareResetGnssOnly, cancel);
+            return src.Connection.Send(
+                new UbxCfgRst { Bbr = BbrMask.ColdStart, Mode = ResetMode.ControlledSoftwareResetGnssOnly }, cancel);
         }
 
         #endregion
@@ -243,7 +245,7 @@ namespace Asv.Gnss
 
         public static async Task SetStationaryMode(this IUbxDevice src, bool movingBase, byte msgRate, CancellationToken cancel = default)
         {
-            if (movingBase)
+            if (!movingBase)
             {
                 await src.SetCfgNav5(new UbxCfgNav5
                 {
@@ -286,7 +288,7 @@ namespace Asv.Gnss
             {
                 try
                 {
-                    var value = src.GetMonHw(cancel);
+                    var value = await src.GetMonHw(cancel);
                     break;
                 }
                 catch (UbxDeviceTimeoutException)
