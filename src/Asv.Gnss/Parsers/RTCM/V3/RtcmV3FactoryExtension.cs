@@ -9,9 +9,18 @@ namespace Asv.Gnss
         {
             get
             {
-                yield return () => new RtcmV3Message1007();
-                yield return () => new RtcmV3Message1008();
-                yield return () => new RtcmV3Message1033();
+
+
+                yield return () => new RtcmV3Message1030();
+                yield return () => new RtcmV3Message1031();
+                yield return () => new RtcmV3Message1032();
+
+                yield return () => new RtcmV3Message1230();
+
+                yield return () => new RtcmV3Msm3Msg1073();
+                yield return () => new RtcmV3Msm3Msg1083();
+                yield return () => new RtcmV3Msm3Msg1093();
+                yield return () => new RtcmV3Msm3Msg1123();
 
                 //yield return () => new RtcmV3Msm4Msg1025();
                 //yield return () => new RtcmV3Msm4Msg1075();
@@ -27,6 +36,7 @@ namespace Asv.Gnss
 
                 //yield return () => new RtcmV3MsmMsg1042();
                 //yield return () => new RtcmV3MsmMsg1046();
+                //yield return () => new RtcmV3MsmMsg1023();
 
             }
         }
