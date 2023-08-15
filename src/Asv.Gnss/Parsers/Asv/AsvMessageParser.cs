@@ -5,7 +5,10 @@ namespace Asv.Gnss
     public class AsvMessageParser : GnssMessageParserBase<AsvMessageBase, ushort>
     {
         public const string GnssProtocolId = "Asv";
-        public const ushort MaxMessageSize = 1012/*DATA*/ + 10/*HEADER*/ + 2/*CRC16*/;
+        public const ushort HeaderSize = 10;
+        public const ushort CrcSize = sizeof(ushort); /*CRC16*/
+        public const ushort DataSize = 1012; /*DATA*/
+        public const ushort MaxMessageSize = DataSize + HeaderSize + CrcSize/*CRC16*/;
         public const byte Sync1 = 0xAA;
         public const byte Sync2 = 0x44;
 

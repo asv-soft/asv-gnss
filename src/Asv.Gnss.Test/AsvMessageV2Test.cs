@@ -15,7 +15,7 @@ namespace Asv.Gnss.Test
         }
 
         [Fact]
-        public void MessagesAndParserTest()
+        public void Generate_random_bytes_and_mix_with_messages_for_test_parser()
         {
             var seed = new Random().Next();
             var r = new Random(seed);
@@ -27,12 +27,12 @@ namespace Asv.Gnss.Test
                 var message = func();
                 message.Randomize(r);
                 SpanTestHelper.TestType(message, func, _output.WriteLine);
-                ParserTestHelper.TestParser(parser, message, r);
+                ParserTestHelper.TestParser(parser, message, r, AsvMessageParser.Sync1);
             }
         }
 
         [Fact]
-        public void MessageHeartBeatParseTEst()
+        public void Heartbeat_message_testing()
         {
             var parser = new AsvMessageParser().RegisterDefaultMessages();
             var buffer = new byte[] { 0xAA, 0x44, 0x07, 0x00, 0x00, 0x00, 0x02, 0x01, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xF7, 0x1B };

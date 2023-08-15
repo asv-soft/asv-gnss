@@ -29,7 +29,7 @@ namespace Asv.Gnss.Test
                 SpanTestHelper.TestType(message, func, _output.WriteLine);
                 if (message.GetType().GetCustomAttributes(typeof(SerializationNotSupportedAttribute), true).Length == 0)
                 {
-                    ParserTestHelper.TestParser(parser, message, r);
+                    ParserTestHelper.TestParser(parser, message, r, AsvMessageParser.Sync1);
                 }
             }
             // this is test for POOL messages (only send to receiver) 

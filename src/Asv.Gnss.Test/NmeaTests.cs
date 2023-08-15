@@ -9,7 +9,7 @@ namespace Asv.Gnss.Test
     public class NmeaTests
     {
         [Fact]
-        public void TestGGA()
+        public void Parsing_GGA_message_from_string()
         {
             var source = "$GPGGA,125319.00,5508.7020098,N,06124.3378698,E,7,08,2.4,259.0000,M,-12.794,M,,*76\r\n";
             var array = Encoding.ASCII.GetBytes(source);
@@ -27,7 +27,7 @@ namespace Asv.Gnss.Test
         }
 
         [Fact]
-        public void TestGLL()
+        public void Parsing_GLL_message_from_string()
         {
             var source = "$GPGLL,5508.7020098,N,06124.3378698,E,130521.00,A,M*64\r\n";
             var array = Encoding.ASCII.GetBytes(source);
@@ -45,7 +45,7 @@ namespace Asv.Gnss.Test
         }
 
         [Fact]
-        public void TestGSV()
+        public void Parsing_GSV_message_from_string()
         {
             var source = "$GPGSV,4,1,15,10,61,242,,08,28,312,,32,13,190,,24,12,105,*72\r\n";
             var array = Encoding.ASCII.GetBytes(source);
@@ -72,7 +72,7 @@ namespace Asv.Gnss.Test
         }
 
         [Fact]
-        public void TestGST()
+        public void Parsing_GST_message_from_string()
         {
             var source = "$GPGST,060417.00,6.167,11.396,3.866,295.633,6.038,10.409,12.671*68\r\n";
             var array = Encoding.ASCII.GetBytes(source);

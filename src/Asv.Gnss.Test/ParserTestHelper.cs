@@ -9,7 +9,7 @@ namespace Asv.Gnss.Test
     public static class ParserTestHelper
     {
         
-        public static void TestParser<TMessage>(IGnssMessageParser parser,TMessage message, Random r)
+        public static void TestParser<TMessage>(IGnssMessageParser parser,TMessage message, Random r, byte syncByteForParser)
             where TMessage: IGnssMessageBase
         {
             var arr = new byte[message.GetByteSize()];
@@ -26,6 +26,8 @@ namespace Asv.Gnss.Test
             parser.Reset();
             foreach (var b in randomBegin)
             {
+                // it is necessary to check random bytes at the beginning, as it may cause parser synchronization and message skipping
+                if (b == syncByteForParser) continue;
                 parser.Read(b);
             }
 
