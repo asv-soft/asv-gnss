@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Asv.IO;
+using System;
 using System.Reactive.Linq;
 using Xunit;
 
@@ -194,9 +195,10 @@ namespace Asv.Gnss.Test
             Assert.NotNull(msg);
             Assert.Equal("1042", msg.MessageStringId);
             var msg1042 = msg as RtcmV3Message1042;
-            var utc = new DateTime(2023, 6, 14);
-            var week = msg1042.GetWeek(utc);
+            Assert.Equal((uint)35, msg1042.SatellitePrn);
             Assert.Equal((uint)910, msg1042.WeekRaw);
+            var week = msg1042.GetWeek(new DateTime(2023, 6, 14));
+            Assert.Equal(910, week);
             Assert.Equal(0, msg1042.Urai);
             Assert.True((-7.16227077646181e-11 - msg1042.IdotRaw) < double.Epsilon);
             Assert.Equal((uint)1, msg1042.Aode);
@@ -249,7 +251,48 @@ namespace Asv.Gnss.Test
             }
             Assert.NotNull(msg);
             Assert.Equal("1046", msg.MessageStringId);
-            var msg1042 = msg as RtcmV3Message1042;
+            var msg1046 = msg as RtcmV3Message1046;
+            Assert.Equal((uint)5, msg1046.SatellitePrn);
+            Assert.Equal((uint)1242, msg1046.WeekRaw);
+            var week = msg1046.GetWeek(new DateTime(2023, 6, 14));
+            Assert.Equal(1242, week);
+            Assert.Equal((uint)7, msg1046.IoDnav);
+            Assert.Equal((byte)107, msg1046.SvSisa);
+            Assert.True((msg1046.IdotRaw - 3.89945853385143e-11) < double.Epsilon );
+            Assert.Equal((uint)311400, msg1046.TocRaw);
+            Assert.Equal(0.0, msg1046.Af2);
+            Assert.True((msg1046.Af1 - 3.524291969370097e-12) < double.Epsilon);
+            Assert.Equal(-5.805457476526499e-05, msg1046.Af0);
+            Assert.Equal(4.15625, msg1046.Crs);
+            Assert.True((msg1046.DeltaN - 1.1166321201017126e-09) < double.Epsilon);
+            Assert.True((0.9122577565722167 - msg1046.M0) < double.Epsilon);
+            Assert.True((1.5273690223693848e-07 - msg1046.Cuc) < double.Epsilon);
+            Assert.True((msg1046.e - 0.0002629421651363373) < double.Epsilon);
+            Assert.True((4.753470420837402e-06 - msg1046.Cus) < double.Epsilon);
+            Assert.True((5440.615968704224 - msg1046.Apow1_2) < double.Epsilon);
+            Assert.Equal((uint)311400, msg1046.ToeRaw);
+            Assert.True((2.421438694000244e-08 - msg1046.Cic) < double.Epsilon);
+            Assert.Equal(-0.7082697916775942, msg1046.OmegaBig0);
+            Assert.True((-4.6566128730773926e-08 - msg1046.Cis) < double.Epsilon);
+            Assert.True((0.30509960977360606 - msg1046.I0) < double.Epsilon);
+            Assert.Equal(241.78125, msg1046.Crc);
+            Assert.True((-0.36332833487540483 - msg1046.Omega) < double.Epsilon);
+            Assert.True((-1.833655005611945e-09 - msg1046.OmegaDot) < double.Epsilon);
+            Assert.True((msg1046.BGdE1E5a - 3.026798367500305e-09) < double.Epsilon);
+            Assert.True((msg1046.BGdE5bE1 - 3.4924596548080444e-09) < double.Epsilon);
+            Assert.Equal(0, msg1046.E5bSignalHealthFlag);
+            Assert.Equal(0, msg1046.E5bDataValidity);
+            Assert.Equal(0, msg1046.E1BSignalHealthFlag);
+            Assert.Equal(0, msg1046.E1BDataValidity);
+            Assert.Equal(0, msg1046.Reserved);
+            Assert.True(msg1046.IsE5bSignalOk);
+            Assert.False(msg1046.IsE5bSignalOuOfService);
+            Assert.False(msg1046.IsE5bSignalWillOuOfService);
+            Assert.False(msg1046.IsE5bSignalInTest);
+            Assert.True(msg1046.IsE1BSignalOk);
+            Assert.False(msg1046.E1BSignalOuOfService);
+            Assert.False(msg1046.E1BSignalWillOuOfService);
+            Assert.False(msg1046.E1BSignalInTest);
         }
 
     }

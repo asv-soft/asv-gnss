@@ -432,7 +432,7 @@ namespace Asv.Gnss
         /// <summary>
         /// 2^-48
         /// </summary>
-        public const double P2_48 = 3.552713678800501E-15;
+        public const double P2_46 = 3.552713678800501E-15;
 
         /// <summary>
         /// 2^-50
@@ -633,10 +633,13 @@ namespace Asv.Gnss
             var time = week.AddSeconds(seconds);
             return time;
         }
-
         public static DateTime GetFromGalileo(int weeknumber, double seconds)
         {
-            var datum = new DateTime(1999, 8, 22, 0, 0, 0, DateTimeKind.Utc);
+            //   var datum = new DateTime(1999, 8, 22, 0, 0, 0, DateTimeKind.Utc);
+
+            // The GST start epoch is defined as 13 seconds before midnight between 21st August and 22nd August 1999.
+            // i.e. GST was equal 13 seconds at 22 nd August 1999 00:00:00 UTC.
+            var datum = new DateTime(1999, 8, 21, 23, 59, 47, DateTimeKind.Utc);
             var week = datum.AddDays(weeknumber * 7);
             var time = week.AddSeconds(seconds);
             return time;
