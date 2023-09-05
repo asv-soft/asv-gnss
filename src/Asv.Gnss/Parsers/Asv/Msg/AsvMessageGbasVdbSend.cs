@@ -62,7 +62,7 @@ namespace Asv.Gnss
             Sequence = (ushort)random.Next(0, ushort.MaxValue);
             TargetId = (byte)random.Next(0,byte.MaxValue);
             SenderId = (byte)random.Next(0, byte.MaxValue);
-            Data = new byte[random.Next(0, AsvMessageParser.MaxMessageSize - 10)];
+            Data = new byte[random.Next(0, AsvMessageParser.DataSize - 10/*  */)];
             random.NextBytes(Data);
             LastByteLength = (byte)random.Next(0, 7);
             Msgs = (AsvGbasMessage)random.Next(0, Enum.GetValues(typeof(AsvGbasMessage)).Length - 1);

@@ -8,7 +8,7 @@ namespace Asv.Gnss.Test
     public class GeodesyTest
     {
         [Fact]
-        public void GlobalPositionConverterTest()
+        public void Global_position_json_serialization_test()
         {
             for (int i = 0; i < 1000; i++)
             {
