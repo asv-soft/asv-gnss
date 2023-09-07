@@ -37,9 +37,4 @@
     <None Remove="Resources\fw206mrtk_rtcm" />
     <EmbeddedResource Include="Resources\fw206mrtk_rtcm" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\..\PSDemo3.rtcm" Link="PSDemo3.rtcm">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>
