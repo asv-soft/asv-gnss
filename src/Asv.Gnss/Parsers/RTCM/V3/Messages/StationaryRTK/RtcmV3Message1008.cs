@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    internal class RtcmV3Message1008 : RtcmV3Message1007and1008
+    public class RtcmV3Message1008 : RtcmV3Message1007and1008
     {
         public const int RtcmMessageId = 1008;
         public override ushort MessageId => RtcmMessageId;
