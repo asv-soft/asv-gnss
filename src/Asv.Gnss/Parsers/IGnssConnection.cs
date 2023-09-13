@@ -30,6 +30,7 @@ namespace Asv.Gnss
             return new GnssConnection(connectionString,
                 new AsvMessageParser().RegisterDefaultMessages(),
                 new ComNavBinaryParser().RegisterDefaultMessages(),
+                new ComNavAsciiParser().RegisterDefaultMessages(),
                 new Nmea0183Parser().RegisterDefaultMessages(),
                 new RtcmV2Parser().RegisterDefaultMessages(),
                 new RtcmV3Parser().RegisterDefaultMessages(),
