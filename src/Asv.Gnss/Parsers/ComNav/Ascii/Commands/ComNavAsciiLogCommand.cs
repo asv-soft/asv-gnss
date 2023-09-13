@@ -5,12 +5,14 @@ namespace Asv.Gnss
 {
     public enum ComNavFormat
     {
+        None,
         Binary,
         Ascii
     }
 
     public enum ComNavMessageEnum
     {
+        UNKNOWN,
         // -------------------------------------------------------
         // |                 Predefined Log Message				 |
         // -------------------------------------------------------
@@ -185,15 +187,19 @@ namespace Asv.Gnss
         /// <summary>
         /// ME B The raw subframe data without parity bits,only 240bits per frame, and only outputs the sub-frames passing the check 4.2.1.16
         /// </summary>
-        RAWGPSSUBFRA = 25,
+        RAWGPSSUBFRAME = 25,
         /// <summary>
         /// B Raw ephemeris 4.2.1.18
         /// </summary>
         RAWEPHEM = 41,
-        /// <summary>
-        /// A Raw SBAS frame data 4.2.10.1
-        /// </summary>
-        RAWSBASFRAME = 973,
+		/// <summary>
+		/// Raw GPS L1 C/A navigation word
+		/// </summary>
+		RAWGPSWORD = 407,
+		/// <summary>
+		/// A Raw SBAS frame data 4.2.10.1
+		/// </summary>
+		RAWSBASFRAME = 973,
         /// <summary>
         /// A, B Base station Position 4.2.11.1
         /// </summary>
@@ -680,6 +686,7 @@ namespace Asv.Gnss
     /// </summary>
     public enum ComNavTriggerEnum
     {
+        NONE,
         /// <summary>
         /// Synch
         /// </summary>

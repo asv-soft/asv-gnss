@@ -51,14 +51,27 @@ namespace Asv.Gnss
             return src.Send(ComNavUnLockoutAllSystemCommand.Default, cancel);
         }
 
-        public static Task SetLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
+        public static Task UnLogAll(IGnssConnection src, CancellationToken cancel = default)
+        {
+	        return src.Send(ComNavUnLogAllCommand.Default, cancel);
+        }
+
+		public static Task SetLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
         {
             return src.Send(new ComNavSetLockoutSystemCommand
             {
                 SatelliteSystem = system
             }, cancel);
         }
-        public static Task SendDgpsStationId(IGnssConnection src, DgpsTxIdEnum type, byte id, CancellationToken cancel = default)
+
+		public static Task SetUnLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
+		{
+			return src.Send(new ComNavSetUnLockoutSystemCommand
+			{
+				SatelliteSystem = system
+			}, cancel);
+		}
+		public static Task SendDgpsStationId(IGnssConnection src, DgpsTxIdEnum type, byte id, CancellationToken cancel = default)
         {
             return src.Send(new ComNavDgpsTxIdCommand
             {

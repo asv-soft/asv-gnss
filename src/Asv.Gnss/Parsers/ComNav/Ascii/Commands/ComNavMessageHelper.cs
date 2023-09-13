@@ -92,8 +92,8 @@ namespace Asv.Gnss
                     return "RANGECMP";
                 case ComNavMessageEnum.RAWALM:
                     return "RAWALM";
-                case ComNavMessageEnum.RAWGPSSUBFRA:
-                    return "RAWGPSSUBFRA";
+                case ComNavMessageEnum.RAWGPSSUBFRAME:
+                    return "rawgpssubframe";
                 case ComNavMessageEnum.RAWEPHEM:
                     return "RAWEPHEM";
                 case ComNavMessageEnum.RAWSBASFRAME:
@@ -324,7 +324,9 @@ namespace Asv.Gnss
                     return "ZZ11AREADID";
                 case ComNavMessageEnum.ZZ11AREADAUTOSEND:
                     return "ZZ11AREADAUTOSEND";
-                default:
+                case ComNavMessageEnum.RAWGPSWORD:
+					return "RAWGPSWORD";
+				default:
                     throw new Exception($"Unknown ComNav message type {src:G}");
             }
         }
