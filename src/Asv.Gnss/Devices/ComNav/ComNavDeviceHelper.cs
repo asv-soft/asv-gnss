@@ -161,14 +161,14 @@ namespace Asv.Gnss
 			await device.Push(new ComNavSaveConfigCommand(), cancel).ConfigureAwait(false);
 		}
 
-		public static async Task SetRoverSettings(this IComNavDevice device, CancellationToken cancel = default)
+		public static Task SetRoverSettings(this IComNavDevice device, CancellationToken cancel = default)
 		{
-
+			return Task.CompletedTask;
 		}
 
-		private static ComNavSatelliteSystemEnum? GetSatelliteSystemFromNmeaGsa(int prn)
+		private static ComNavSatelliteSystemEnum? GetSatelliteSystemFromNmeaGsa(int satId)
 		{
-			return prn switch
+			return satId switch
 			{
 				>= 1 and <= 32 => ComNavSatelliteSystemEnum.GPS,
 				>= 38 and <= 61 => ComNavSatelliteSystemEnum.GLONASS,
@@ -176,6 +176,35 @@ namespace Asv.Gnss
 				>= 141 and <= 177 => ComNavSatelliteSystemEnum.BD2,
 				_ => null
 			};
+		}
+		
+		
+		public static bool GetPrnFromNmeaGsvSatId(this IComNavDevice device, int satId, out int PRN, out NmeaNavigationSystemEnum nav)
+		{
+			nav = NmeaNavigationSystemEnum.SYS_NONE;
+			PRN = -1;
+			if (satId <= 0) return false;
+
+			switch (satId)
+			{
+				case >= 1 and <= 32:
+					nav = NmeaNavigationSystemEnum.SYS_GPS;
+					PRN = satId;
+					return true;
+				case >= 38 and <= 61:
+					nav = NmeaNavigationSystemEnum.SYS_GLO;
+					PRN = satId - 37;
+					return true;
+				case >= 71 and <= 106:
+					nav = NmeaNavigationSystemEnum.SYS_GAL;
+					PRN = satId - 70;
+					return true;
+				case >= 141 and <= 177:
+					nav = NmeaNavigationSystemEnum.SYS_CMP;
+					PRN = satId - 140;
+					return true;
+			}
+			return false;
 		}
 		
 	}
