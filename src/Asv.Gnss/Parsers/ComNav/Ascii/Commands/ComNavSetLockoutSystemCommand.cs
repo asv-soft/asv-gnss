@@ -6,12 +6,10 @@ namespace Asv.Gnss
     public enum ComNavSatelliteSystemEnum
     {
         GPS = 0,
+        BD2 = 4,
         GLONASS = 1,
-        SBAS = 2,
-        Galileo = 5,
-        BeiDou = 6,
-        QZSS = 7,
-        NavIC = 9,
+        GALILEO = 3,
+        BD3 = 7
     }
     /// <summary>
     /// Prevents the receiver from using a system
@@ -33,12 +31,10 @@ namespace Asv.Gnss
             return SatelliteSystem switch
             {
                 ComNavSatelliteSystemEnum.GPS => "LOCKOUTSYSTEM GPS",
+                ComNavSatelliteSystemEnum.BD2 => "LOCKOUTSYSTEM BD2",
                 ComNavSatelliteSystemEnum.GLONASS => "LOCKOUTSYSTEM GLONASS",
-                ComNavSatelliteSystemEnum.SBAS => "LOCKOUTSYSTEM SBAS",
-                ComNavSatelliteSystemEnum.Galileo => "LOCKOUTSYSTEM Galileo",
-                ComNavSatelliteSystemEnum.BeiDou => "LOCKOUTSYSTEM BeiDou",
-                ComNavSatelliteSystemEnum.QZSS => "LOCKOUTSYSTEM QZSS",
-                ComNavSatelliteSystemEnum.NavIC => "LOCKOUTSYSTEM NavIC",
+                ComNavSatelliteSystemEnum.GALILEO => "LOCKOUTSYSTEM GALILEO",
+                ComNavSatelliteSystemEnum.BD3 => "LOCKOUTSYSTEM BD3",
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

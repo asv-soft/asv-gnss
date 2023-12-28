@@ -477,7 +477,7 @@ namespace Asv.Gnss
                 }, cancel);
 
                 // 4072
-                await src.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xFE, msgRate, cancel);
+                await src.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xFE, 0, cancel);
             }
             else
             {
@@ -488,7 +488,7 @@ namespace Asv.Gnss
                 }, cancel);
 
                 // 4072
-                await src.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xFE, 0, cancel);
+                await src.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xFE, msgRate, cancel);
             }
         }
 

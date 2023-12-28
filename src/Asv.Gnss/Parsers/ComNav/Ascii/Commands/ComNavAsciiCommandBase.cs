@@ -52,7 +52,7 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer to serialize.</param>
         public override void Serialize(ref Span<byte> buffer)
         {
-            SerializeToAsciiString().CopyTo(ref buffer, Encoding.ASCII);
+            SerializeToAsciiString().CopyTo(ref buffer,Encoding.ASCII);
             BinSerialize.WriteByte(ref buffer, 0x0D);
             BinSerialize.WriteByte(ref buffer, 0x0A);
         }
@@ -63,7 +63,7 @@ namespace Asv.Gnss
         /// <returns>The byte size of the serialized object.</returns>
         public override int GetByteSize()
         {
-            return SerializeToAsciiString().Length + 2; /* END of message 0x0D & 0x0A */
+            return SerializeToAsciiString().Length + 2 /* END of message 0x0D & 0x0A */;
         }
     }
 
@@ -91,14 +91,12 @@ namespace Asv.Gnss
             return src.Send(ComNavUnLockoutAllSystemCommand.Default, cancel);
         }
 
-        /// <summary>
-        /// Sends a SetLockoutSystem command to the given GNSS connection.
-        /// </summary>
-        /// <param name="src">The GNSS connection to which the command is sent.</param>
-        /// <param name="system">The satellite system to be set.</param>
-        /// <param name="cancel">An optional cancellation token.</param>
-        /// <returns>A Task that represents the asynchronous operation.</returns>
-        public static Task SetLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
+        public static Task UnLogAll(IGnssConnection src, CancellationToken cancel = default)
+        {
+	        return src.Send(ComNavUnLogAllCommand.Default, cancel);
+        }
+
+		public static Task SetLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
         {
             return src.Send(new ComNavSetLockoutSystemCommand
             {
@@ -106,15 +104,14 @@ namespace Asv.Gnss
             }, cancel);
         }
 
-        /// <summary>
-        /// Sends a SendDgpsStationId command to the given GNSS connection.
-        /// </summary>
-        /// <param name="src">The GNSS connection to which the command is sent.</param>
-        /// <param name="type">The type of DGPS station.</param>
-        /// <param name="id">The ID of the DGPS station.</param>
-        /// <param name="cancel">An optional cancellation token.</param>
-        /// <returns>A Task that represents the asynchronous operation.</returns>
-        public static Task SendDgpsStationId(IGnssConnection src, DgpsTxIdEnum type, byte id, CancellationToken cancel = default)
+		public static Task SetUnLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
+		{
+			return src.Send(new ComNavSetUnLockoutSystemCommand
+			{
+				SatelliteSystem = system
+			}, cancel);
+		}
+		public static Task SendDgpsStationId(IGnssConnection src, DgpsTxIdEnum type, byte id, CancellationToken cancel = default)
         {
             return src.Send(new ComNavDgpsTxIdCommand
             {

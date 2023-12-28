@@ -1,20 +1,20 @@
 ﻿using System;
- using System.Collections.Generic;
+using System.Collections.Generic;
 
- namespace Asv.Gnss
- {
-     /// <summary>
-     /// Factory to create and register ComNav binary messages.
-     /// </summary>
-     public static class ComNavBinaryFactory
-     {
-         /// <summary>
-         /// Gets the default ComNav binary messages.
-         /// </summary>
-         public static IEnumerable<Func<ComNavBinaryMessageBase>> DefaultMessages
-         {
-             get { yield return () => new ComNavBinaryPsrPosPacket(); }
-         }
+namespace Asv.Gnss
+{
+    public static class ComNavBinaryFactory
+    {
+        public static IEnumerable<Func<ComNavBinaryMessageBase>> DefaultMessages
+        {
+            get
+            {
+                yield return () => new ComNavBinaryPsrPosPacket();
+                yield return () => new ComNavBinaryPsrDopPacket();
+                yield return () => new ComNavBinaryRawGpsSubFramePacket();
+                yield return () => new ComNavBinaryRawGloEphemPacket();
+            }
+        }
 
          /// <summary>
          /// Registers the default messages in the specified ComNav binary parser.
