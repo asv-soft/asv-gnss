@@ -2,8 +2,16 @@
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Helper class for retrieving message names from ComNavMessageEnum values.
+    /// </summary>
     public static class ComNavMessageHelper
     {
+        /// <summary>
+        /// Gets the name of the ComNav message.
+        /// </summary>
+        /// <param name="src">The ComNav message enum value.</param>
+        /// <returns>The name of the ComNav message.</returns>
         public static string GetMessageName(this ComNavMessageEnum src)
         {
             switch (src)
@@ -329,6 +337,11 @@ namespace Asv.Gnss
             }
         }
 
+        /// <summary>
+        /// Gets the trigger name based on the provided ComNavTriggerEnum value.
+        /// </summary>
+        /// <param name="src">The ComNavTriggerEnum value.</param>
+        /// <returns>The trigger name as a string.</returns>
         public static string GetTriggerName(this ComNavTriggerEnum src)
         {
             switch (src)

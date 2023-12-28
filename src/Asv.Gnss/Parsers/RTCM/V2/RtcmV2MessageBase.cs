@@ -3,20 +3,66 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Base class for RTCMv2 messages.
+    /// </summary>
+    /// <typeparam name="T">The type of the RTCMv2 message ID.</typeparam>
     public abstract class RtcmV2MessageBase : GnssMessageBase<ushort>
     {
+        /// <summary>
+        /// Gets the protocol identifier for the RTCM V2 parser.
+        /// </summary>
+        /// <value>
+        /// The protocol identifier.
+        /// </value>
         public override string ProtocolId => RtcmV2Parser.GnssProtocolId;
 
+        /// <summary>
+        /// Gets or sets the value of Udre.
+        /// </summary>
+        /// <value>
+        /// The value of Udre.
+        /// </value>
         public double Udre { get; set; }
 
+        /// <summary>
+        /// Gets or sets the sequence number.
+        /// </summary>
+        /// <value>
+        /// The sequence number.
+        /// </value>
         public byte SequenceNumber { get; set; }
 
+        /// <summary>
+        /// Gets or sets the GPS time.
+        /// </summary>
         public DateTime GpsTime { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of the ZCount property.
+        /// </summary>
+        /// <value>
+        /// The value of the ZCount property.
+        /// </value>
         public double ZCount { get; set; }
 
+        /// <summary>
+        /// Gets or sets the reference station ID.
+        /// </summary>
+        /// <remarks>
+        /// The reference station ID is a 16-bit unsigned integer that uniquely identifies a reference station.
+        /// It is used to establish a link between the current station and a specific reference station.
+        /// </remarks>
+        /// <value>
+        /// The reference station ID.
+        /// </value>
         public ushort ReferenceStationId { get; set; }
 
+        /// <summary>
+        /// Deserialize the buffer into the current object.
+        /// </summary>
+        /// <param name="buffer">The buffer containing the data to be deserialized.</param>
+        /// <exception cref="System.Exception">Thrown when deserialization fails or when the buffer length is too small.</exception>
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             var bitIndex = 0;
@@ -52,18 +98,37 @@ namespace Asv.Gnss
             buffer = bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
         }
 
+        /// <summary>
+        /// Deserialize the content of a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer containing the content to be deserialized.</param>
+        /// <param name="bitIndex">The starting bit index from where to begin deserialization.</param>
+        /// <param name="payloadLength">The length of the content payload.</param>
         protected abstract void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength);
 
+        /// <summary>
+        /// Serializes the object and writes it to the specified buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write the serialized object to. The length of the buffer must be sufficient to hold the serialized object.</param>
+        /// <exception cref="System.NotImplementedException">Thrown when the method is not implemented.</exception>
         public override void Serialize(ref Span<byte> buffer)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the byte size of the object.
+        /// </summary>
+        /// <returns>The byte size of the object.</returns>
         public override int GetByteSize()
         {
             throw new NotImplementedException();
         }
 
+        /// Adjusts the hour of the current UTC time based on the given zcnt value.
+        /// @param zcnt The value used to adjust the hour of the current UTC time.
+        /// @return The adjusted DateTime value.
+        /// /
         protected virtual DateTime Adjhour(double zcnt)
         {
             var utc = DateTime.UtcNow;
@@ -83,6 +148,22 @@ namespace Asv.Gnss
             return RtcmV3Helper.GetFromGps(week, hour * 3600 + zcnt);
         }
 
+        /// <summary>
+        /// Returns the Udre (Uncertainty to Define a Reference Element) value based on the given rsHealth value.
+        /// </summary>
+        /// <param name="rsHealth">The health value of a satellite receiver. Should be a byte value between 0 and 7.</param>
+        /// <returns>
+        /// The Udre value based on the rsHealth value.
+        /// If rsHealth is 0, the Udre value is 1.0.
+        /// If rsHealth is 1, the Udre value is 0.75.
+        /// If rsHealth is 2, the Udre value is 0.5.
+        /// If rsHealth is 3, the Udre value is 0.3.
+        /// If rsHealth is 4, the Udre value is 0.2.
+        /// If rsHealth is 5, the Udre value is 0.1.
+        /// If rsHealth is 6, the Udre value is NaN (Not a Number).
+        /// If rsHealth is 7, the Udre value is 0.0.
+        /// If rsHealth is not within the valid range of 0 to 7, the Udre value is NaN (Not a Number).
+        /// </returns>
         private double GetUdre(byte rsHealth)
         {
             switch (rsHealth)

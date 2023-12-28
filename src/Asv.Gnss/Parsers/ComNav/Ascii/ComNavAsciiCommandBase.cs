@@ -6,51 +6,98 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a base class for Communication Navigation ASCII commands.
+    /// </summary>
     public abstract class ComNavAsciiCommandBase : GnssMessageBase<string>
     {
+        /// <summary>
+        /// Serializes the class into an ASCII string.
+        /// </summary>
+        /// <returns>The serialized ASCII string.</returns>
         protected abstract string SerializeToAsciiString();
 
+        /// <summary>
+        /// Gets the name of the message.
+        /// </summary>
         public override string Name => MessageId;
 
+        /// <summary>
+        /// Gets the protocol identifier.
+        /// </summary>
         public override string ProtocolId => "ComNavAscii";
 
+        /// <summary>
+        /// Converts the class into its string equivalent.
+        /// </summary>
+        /// <returns>A string that represents the object.</returns>
         public override string ToString()
         {
             return SerializeToAsciiString();
         }
 
+        /// <summary>
+        /// Deserializes the object from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to deserialize from.</param>
+        /// <exception cref="NotImplementedException">Always thrown in this implementation.</exception>
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Serializes the object to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to serialize.</param>
         public override void Serialize(ref Span<byte> buffer)
         {
-            SerializeToAsciiString().CopyTo(ref buffer,Encoding.ASCII);
+            SerializeToAsciiString().CopyTo(ref buffer, Encoding.ASCII);
             BinSerialize.WriteByte(ref buffer, 0x0D);
             BinSerialize.WriteByte(ref buffer, 0x0A);
         }
 
+        /// <summary>
+        /// Gets the byte size of the serialized object.
+        /// </summary>
+        /// <returns>The byte size of the serialized object.</returns>
         public override int GetByteSize()
         {
-            return SerializeToAsciiString().Length + 2 /* END of message 0x0D & 0x0A */;
+            return SerializeToAsciiString().Length + 2; /* END of message 0x0D & 0x0A */
         }
     }
 
-
-
     public static class ComNavAsciiCommandHelper
     {
+        /// <summary>
+        /// Sends a SaveConfig command to the given GNSS connection.
+        /// </summary>
+        /// <param name="src">The GNSS connection to which the command is sent.</param>
+        /// <param name="cancel">An optional cancellation token.</param>
+        /// <returns>A Task that represents the asynchronous operation. The Task's result is a boolean indicating whether the operation was completed successfully.</returns>
         public static Task<bool> SaveConfig(IGnssConnection src, CancellationToken cancel = default)
         {
             return src.Send(ComNavSaveConfigCommand.Default, cancel);
         }
 
+        /// <summary>
+        /// Sends an UnlockoutAllSystem command to the given GNSS connection.
+        /// </summary>
+        /// <param name="src">The GNSS connection to which the command is sent.</param>
+        /// <param name="cancel">An optional cancellation token.</param>
+        /// <returns>A Task that represents the asynchronous operation.</returns>
         public static Task UnlockoutAllSystem(IGnssConnection src, CancellationToken cancel = default)
         {
             return src.Send(ComNavUnLockoutAllSystemCommand.Default, cancel);
         }
 
+        /// <summary>
+        /// Sends a SetLockoutSystem command to the given GNSS connection.
+        /// </summary>
+        /// <param name="src">The GNSS connection to which the command is sent.</param>
+        /// <param name="system">The satellite system to be set.</param>
+        /// <param name="cancel">An optional cancellation token.</param>
+        /// <returns>A Task that represents the asynchronous operation.</returns>
         public static Task SetLockoutSystem(IGnssConnection src, ComNavSatelliteSystemEnum system, CancellationToken cancel = default)
         {
             return src.Send(new ComNavSetLockoutSystemCommand
@@ -58,6 +105,15 @@ namespace Asv.Gnss
                 SatelliteSystem = system
             }, cancel);
         }
+
+        /// <summary>
+        /// Sends a SendDgpsStationId command to the given GNSS connection.
+        /// </summary>
+        /// <param name="src">The GNSS connection to which the command is sent.</param>
+        /// <param name="type">The type of DGPS station.</param>
+        /// <param name="id">The ID of the DGPS station.</param>
+        /// <param name="cancel">An optional cancellation token.</param>
+        /// <returns>A Task that represents the asynchronous operation.</returns>
         public static Task SendDgpsStationId(IGnssConnection src, DgpsTxIdEnum type, byte id, CancellationToken cancel = default)
         {
             return src.Send(new ComNavDgpsTxIdCommand
@@ -67,7 +123,17 @@ namespace Asv.Gnss
             }, cancel);
         }
 
-
+        /// <summary>
+        /// Logs a command to the given GNSS connection.
+        /// </summary>
+        /// <param name="src">The GNSS connection on which the command will be logged.</param>
+        /// <param name="message">The command message.</param>
+        /// <param name="portName">The name of the port. If not specified, the default port will be used.</param>
+        /// <param name="format">The format of the log. If not specified, the default format will be used.</param>
+        /// <param name="trigger">The trigger for the log. If not specified, the default trigger will be used.</param>
+        /// <param name="period">The period for the log. If not specified, the default period will be used.</param>
+        /// <param name="cancel">An optional cancellation token.</param>
+        /// <returns>A Task that represents the asynchronous operation.</returns>
         public static Task LogCommand(IGnssConnection src, ComNavMessageEnum message, string portName = default, ComNavFormat? format = default,
             ComNavTriggerEnum? trigger = default,
             uint? period = default,
@@ -80,7 +146,6 @@ namespace Asv.Gnss
                 PortName = portName,
                 Trigger = trigger,
                 Period = period,
-
             }, cancel);
         }
         /// <summary>

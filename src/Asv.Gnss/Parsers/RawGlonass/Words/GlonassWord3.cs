@@ -1,9 +1,22 @@
 ﻿namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a Glonass Word 3 message.
+    /// </summary>
     public class GlonassWord3 : GlonassWordBase
     {
+        /// <summary>
+        /// Gets the identifier of the word.
+        /// </summary>
+        /// <value>
+        /// The identifier of the word.
+        /// </value>
         public override byte WordId => 3;
 
+        /// <summary>
+        /// Deserializes the byte array data.
+        /// </summary>
+        /// <param name="data">The byte array data to deserialize.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);

@@ -3,8 +3,15 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Factory class for creating RTCMv3 messages.
+    /// </summary>
     public static class RtcmV3Factory
     {
+        /// <summary>
+        /// Gets the default messages.
+        /// </summary>
+        /// <returns>An enumerable of functions that create instances of default messages.</returns>
         public static IEnumerable<Func<RtcmV3MessageBase>> DefaultMessages
         {
             get
@@ -35,6 +42,13 @@ namespace Asv.Gnss
             }
         }
 
+        /// <summary>
+        /// Registers default messages into the RtcmV3Parser instance.
+        /// </summary>
+        /// <param name="src">The RtcmV3Parser instance to register the default messages into.</param>
+        /// <returns>
+        /// The RtcmV3Parser instance with the default messages registered.
+        /// </returns>
         public static RtcmV3Parser RegisterDefaultMessages(this RtcmV3Parser src)
         {
             foreach (var func in DefaultMessages)

@@ -6,12 +6,34 @@
     /// </summary>
     public class ComNavUnLockoutAllSystemCommand : ComNavAsciiCommandBase
     {
+        /// <summary>
+        /// Gets the default instance of the ComNavUnLockoutAllSystemCommand class.
+        /// </summary>
+        /// <remarks>
+        /// This property represents the default instance of the ComNavUnLockoutAllSystemCommand class.
+        /// It is used to access the ComNavUnLockoutAllSystemCommand without having to instantiate a new object.
+        /// </remarks>
         public static ComNavUnLockoutAllSystemCommand Default { get; } = new();
 
+        /// <summary>
+        /// Represents the content of a message.
+        /// </summary>
         public const string MessageContent = "UNLOCKOUTALL";
 
+        /// <summary>
+        /// This method serializes the message content to an ASCII string.
+        /// </summary>
+        /// <returns>
+        /// The serialized ASCII string representation of the message content.
+        /// </returns>
         protected override string SerializeToAsciiString() => MessageContent;
 
+        /// <summary>
+        /// Gets or sets the identifier of the message.
+        /// </summary>
+        /// <value>
+        /// The identifier of the message.
+        /// </value>
         public override string MessageId => MessageContent;
     }
 }

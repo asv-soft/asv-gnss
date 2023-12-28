@@ -2,10 +2,25 @@
 
 namespace Asv.Gnss
 {
+    /// GlonassWord1 class extends GlonassWordBase class and represents a Glonass word with ID 1.
+    /// /
     public class GlonassWord1 : GlonassWordBase
     {
+        /// <summary>
+        /// The ID of the word represented by this object.
+        /// </summary>
+        /// <remarks>
+        /// This property specifies the unique identifier for the word. It is an override of the base class property.
+        /// </remarks>
+        /// <value>
+        /// The ID of the word.
+        /// </value>
         public override byte WordId => 1;
 
+        /// <summary>
+        /// Deserializes the byte array data into object properties.
+        /// </summary>
+        /// <param name="data">The byte array data to be deserialized.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);
@@ -24,6 +39,13 @@ namespace Asv.Gnss
 
         }
 
+        /// <summary>
+        /// Retrieves the DateTime representation of a given time in hours, minutes, and seconds.
+        /// </summary>
+        /// <param name="hh">The hour component of the time.</param>
+        /// <param name="mm">The minute component of the time.</param>
+        /// <param name="ss">The second component of the time.</param>
+        /// <returns>The DateTime representation of the given time.</returns>
         private DateTime GetDateTime(byte hh, byte mm, int ss)
         {
             var utc = DateTime.UtcNow;
@@ -41,8 +63,26 @@ namespace Asv.Gnss
             return GlonassRawHelper.GetFromUtc(week, tow + tof).AddHours(3.0);
         }
 
+        /// <summary>
+        /// Gets or sets the value of property P1.
+        /// </summary>
+        /// <value>
+        /// The value of property P1.
+        /// </value>
+        /// <remarks>
+        /// This property represents a byte value.
+        /// </remarks>
         public byte P1 { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of Tk property.
+        /// </summary>
+        /// <value>
+        /// The value of the Tk property.
+        /// </value>
+        /// <remarks>
+        /// The Tk property represents a DateTime value.
+        /// </remarks>
         public DateTime Tk { get; set; }
 
         /// <summary>

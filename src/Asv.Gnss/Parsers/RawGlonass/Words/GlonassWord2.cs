@@ -2,10 +2,23 @@
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a Glonass Word 2 object.
+    /// </summary>
     public class GlonassWord2 : GlonassWordBase
     {
+        /// <summary>
+        /// Gets the ID of the word.
+        /// </summary>
+        /// <value>
+        /// The ID of the word.
+        /// </value>
         public override byte WordId => 2;
 
+        /// <summary>
+        /// Deserializes the given byte array and assigns the extracted values to the corresponding properties.
+        /// </summary>
+        /// <param name="data">The byte array to deserialize.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);
@@ -21,6 +34,11 @@ namespace Asv.Gnss
             // PositionY = GlonassRawHelper.GetBitU(data, bitIndex, 27) * GlonassRawHelper.P2_11 * 1E3; bitIndex += 27;
         }
 
+        /// <summary>
+        /// Calculates the DateTime based on a given time base.
+        /// </summary>
+        /// <param name="tb">The time base.</param>
+        /// <returns>The calculated DateTime value.</returns>
         private DateTime GetDateTime(uint tb)
         {
             var utc = DateTime.UtcNow;
@@ -36,12 +54,34 @@ namespace Asv.Gnss
             return RtcmV3Helper.GetFromGps(week, tow + toe).AddHours(3.0);
         }
 
+        /// <summary>
+        /// Gets or sets the TbRaw property.
+        /// </summary>
         public byte TbRaw { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of the property Tb.
+        /// </summary>
+        /// <value>
+        /// The value of the property Tb.
+        /// </value>
         public DateTime Tb { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Bn property.
+        /// </summary>
+        /// <value>
+        /// The value of the Bn property.
+        /// </value>
         public byte Bn { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of property P2.
+        /// </summary>
+        /// <remarks>
+        /// This property is of type byte and can store values ranging from 0 to 255.
+        /// </remarks>
+        /// <value>The value of property P2.</value>
         public byte P2 { get; set; }
         /// <summary>
         /// satellite position (ecef) (m). Координаты n-го спутника в системе координат ПЗ-90 на момент времени tb

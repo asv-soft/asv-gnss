@@ -3,19 +3,62 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a parser for RTCM version 2 messages.
+    /// </summary>
     public class RtcmV2Parser : GnssMessageParserBase<RtcmV2MessageBase, ushort>
     {
+        /// <summary>
+        /// Constant variable representing the GNSS protocol ID used for communication.
+        /// </summary>
+        /// <remarks>
+        /// This GNSS protocol ID indicates that the communication is using the RtcmV2 protocol.
+        /// </remarks>
         public const string GnssProtocolId = "RtcmV2";
+
+        /// <summary>
+        /// The synchronization byte used for communication.
+        /// </summary>
         public const byte SyncByte = 0x66;
 
+        /// <summary>
+        /// Private readonly variable representing a message buffer.
+        /// </summary>
         private readonly byte[] _buffer = new byte[33 * 3]; /* message buffer   */
+
+        /// <summary>
+        /// Private variable to hold the word buffer for rtcm 2.
+        /// </summary>
         private uint _word;                /* word buffer for rtcm 2            */
+
+        /// <summary>
+        /// Number of bytes in the message buffer.
+        /// </summary>
         private int _readedBytes;          /* number of bytes in message buffer */
+
+        /// <summary>
+        /// The number of bits in the word buffer.
+        /// </summary>
         private int _readedBits;           /* number of bits in word buffer     */
+
+        /// <summary>
+        /// Represents the length of a message in bytes.
+        /// </summary>
         private int _len;                  /* message length (bytes)            */
 
+        /// <summary>
+        /// Gets the identifier of the protocol.
+        /// </summary>
+        /// <value>
+        /// The identifier of the protocol.
+        /// </value>
         public override string ProtocolId => GnssProtocolId;
 
+        /// <summary>
+        /// Reads the specified data byte.
+        /// </summary>
+        /// <param name="data">The data byte to be read.</param>
+        /// <returns>True if the read operation is successful; otherwise, false.</returns>
         public override bool Read(byte data)
         {
             if ((data & 0xC0) != 0x40)
@@ -73,6 +116,16 @@ namespace Asv.Gnss
             return false;
         }
 
+        /// <summary>
+        /// Decodes a word using a hamming code and populates a byte array with the decoded data.
+        /// </summary>
+        /// <param name="word">The word to be decoded.</param>
+        /// <param name="data">The byte array to populate with the decoded data.</param>
+        /// <param name="offset">The starting index in the byte array to populate with the decoded data.</param>
+        /// <returns>
+        /// True if the word is successfully decoded and the byte array is populated with the decoded data.
+        /// False otherwise.
+        /// </returns>
         private static bool DecodeWord(uint word, byte[] data, int offset)
         {
             var hamming = new uint[] { 0xBB1F3480, 0x5D8F9A40, 0xAEC7CD00, 0x5763E680, 0x6BB1F340, 0x8B7A89C0 };
@@ -92,6 +145,9 @@ namespace Asv.Gnss
             return true;
         }
 
+        /// <summary>
+        /// Resets the object to its initial state.
+        /// </summary>
         public override void Reset()
         {
             //_word = 0;

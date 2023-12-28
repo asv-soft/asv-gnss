@@ -2,8 +2,15 @@
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// This class provides a method for calculating the CRC24 checksum used in the RTCM v3 protocol.
+    /// </summary>
     public static class RtcmV3Crc24
     {
+        /// <summary>
+        /// The CRC24Qtab variable is an array of 256 32-bit unsigned integers.
+        /// Each element in the array represents a value used in the calculation of the CRC24Q checksum.
+        /// </summary>
         private static readonly uint[] Crc24Qtab =
         {
                 0x000000, 0x864CFB, 0x8AD50D, 0x0C99F6, 0x93E6E1, 0x15AA1A, 0x1933EC, 0x9F7F17,
@@ -40,22 +47,15 @@ namespace Asv.Gnss
                 0x42FA2F, 0xC4B6D4, 0xC82F22, 0x4E63D9, 0xD11CCE, 0x575035, 0x5BC9C3, 0xDD8538
             };
 
-        /** Calculate Qualcomm 24-bit Cyclical Redundancy Check (CRC-24Q).
-         *
-         * The CRC polynomial used is:
-         * \f[
-         *   x^{24} + x^{23} + x^{18} + x^{17} + x^{14} + x^{11} + x^{10} +
-         *   x^7    + x^6    + x^5    + x^4    + x^3    + x+1
-         * \f]
-         * Mask 0x1864CFB, not reversed, not XOR'd
-         *
-         * \param buf Array of data to calculate CRC for
-         * \param len Length of data array
-         * \param crc Initial CRC value
-         *
-         * \return CRC-24Q value
-         */
-
+        /// <summary>
+        /// Calculate Qualcomm 24-bit Cyclical Redundancy Check (CRC-24Q). </summary> <remarks>
+        /// The CRC polynomial used is:
+        /// x^24 + x^23 + x^18 + x^17 + x^14 + x^11 + x^10 +
+        /// x^7    + x^6    + x^5    + x^4    + x^3    + x+1
+        /// Mask: 0x1864CFB
+        /// Reversed: No
+        /// XOR'd: No </remarks> <param name="buf">Array of data to calculate CRC for</param> <param name="len">Length of data array</param> <param name="crc">Initial CRC value</param> <returns>CRC-24Q value</returns>
+        /// /
         public static uint Calc(byte[] buf, uint len, uint crc)
         {
             for (uint i = 0; i < len; i++)
@@ -63,6 +63,13 @@ namespace Asv.Gnss
             return crc;
         }
 
+        /// <summary>
+        /// Calculates CRC24 checksum for a given buffer.
+        /// </summary>
+        /// <param name="buf">The buffer containing the data to calculate CRC24 for.</param>
+        /// <param name="len">The length of the buffer.</param>
+        /// <param name="crc">The initial CRC value.</param>
+        /// <returns>The calculated CRC24 checksum.</returns>
         public static uint Calc(ReadOnlySpan<byte> buf, int len, uint crc)
         {
             for (int i = 0; i < len; i++)

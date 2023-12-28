@@ -77,65 +77,107 @@ namespace Asv.Gnss
         /// </summary>
         public ushort GpsWeek { get; set; }
 
-        protected abstract void InternalContentDeserialize(ref ReadOnlySpan<byte> buffer);
-        protected abstract void InternalContentSerialize(ref Span<byte> buffer);
-        protected abstract int InternalGetContentByteSize();
-
-
-        public override void Serialize(ref Span<byte> buffer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int GetByteSize()
-        {
-            return /*in current version, the length of header is always 28 bytes.*/ 28 + InternalGetContentByteSize() + 4 /*CRC32*/;
-        }
-
-        public static DateTime GetFromGps(int weeknumber, double seconds)
-        {
-            var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
-            var week = datum.AddDays(weeknumber * 7);
-            var time = week.AddSeconds(seconds);
-            return time;
-        }
-
-        public static DateTime Gps2Utc(DateTime t)
-        {
-            return t.AddSeconds(-LeapSecondsGPS(t.Year, t.Month));
-        }
-
-        public static int LeapSecondsGPS(int year, int month)
-        {
-            return LeapSecondsTAI(year, month) - 19;
-        }
-
-        public static int LeapSecondsTAI(int year, int month)
-        {
-            //http://maia.usno.navy.mil/ser7/tai-utc.dat
-
-            var yyyymm = year * 100 + month;
-            if (yyyymm >= 201701) return 37;
-            if (yyyymm >= 201507) return 36;
-            if (yyyymm >= 201207) return 35;
-            if (yyyymm >= 200901) return 34;
-            if (yyyymm >= 200601) return 33;
-            if (yyyymm >= 199901) return 32;
-            if (yyyymm >= 199707) return 31;
-            if (yyyymm >= 199601) return 30;
-            if (yyyymm >= 199407) return 29;
-            if (yyyymm >= 199307) return 28;
-            if (yyyymm >= 199207) return 27;
-            if (yyyymm >= 199101) return 26;
-            if (yyyymm >= 199001) return 25;
-            if (yyyymm >= 198801) return 24;
-            if (yyyymm >= 198507) return 23;
-            if (yyyymm >= 198307) return 22;
-            if (yyyymm >= 198207) return 21;
-            if (yyyymm >= 198107) return 20;
-            if (yyyymm >= 0) return 19;
-
-            return 0;
-        }
+        /// <summary>
+         /// Internal method for content deserialization. 
+         /// </summary>
+         /// <param name="buffer"></param>
+         protected abstract void InternalContentDeserialize(ref ReadOnlySpan<byte> buffer);
+         
+         /// <summary>
+         /// Internal method for content serialization.
+         /// </summary>
+         /// <param name="buffer"></param>
+         protected abstract void InternalContentSerialize(ref Span<byte> buffer);
+         
+         /// <summary>
+         /// Internal method for getting byte size of content.
+         /// </summary>
+         /// <returns>Byte size of the content.</returns>
+         protected abstract int InternalGetContentByteSize();
+         
+         /// <summary>
+         /// Overrides the base method for serialization.
+         /// </summary>
+         /// <param name="buffer"></param>
+         public override void Serialize(ref Span<byte> buffer)
+         {
+             throw new NotImplementedException();
+         }
+         
+         /// <summary>
+         /// Overrides the base method for getting byte size.
+         /// </summary>
+         /// <returns>Byte size of the object.</returns>
+         public override int GetByteSize()
+         {
+             return /*in current version, the length of header is always 28 bytes.*/ 28 + InternalGetContentByteSize() + 4 /*CRC32*/;
+         }
+         
+         /// <summary>
+         /// Converts GPS timestamp to DateTime.
+         /// </summary>
+         /// <param name="weeknumber">Week number.</param>
+         /// <param name="seconds">Seconds.</param>
+         /// <returns>DateTime.</returns>
+         public static DateTime GetFromGps(int weeknumber, double seconds)
+         {
+             var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
+             var week = datum.AddDays(weeknumber * 7);
+             var time = week.AddSeconds(seconds);
+             return time;
+         }
+         
+         /// <summary>
+         /// Converts GPS timestamp to UTC Time.
+         /// </summary>
+         /// <param name="t">GPS DateTime.</param>
+         /// <returns>UTC DateTime.</returns>
+         public static DateTime Gps2Utc(DateTime t)
+         {
+             return t.AddSeconds(-LeapSecondsGPS(t.Year, t.Month));
+         }
+         
+         /// <summary>
+         /// Computes Leap seconds for GPS.
+         /// </summary>
+         /// <param name="year">Year.</param>
+         /// <param name="month">Month.</param>
+         /// <returns>Number of Leap seconds.</returns>
+         public static int LeapSecondsGPS(int year, int month)
+         {
+             return LeapSecondsTAI(year, month) - 19;
+         }
+         
+         /// <summary>
+         /// Computes Leap seconds for TAI system.
+         /// </summary>
+         /// <param name="year">Year.</param>
+         /// <param name="month">Month.</param>
+         /// <returns>Number of Leap seconds.</returns>
+         public static int LeapSecondsTAI(int year, int month)
+         {
+             //http://maia.usno.navy.mil/ser7/tai-utc.dat
+             var yyyymm = year * 100 + month;
+             if (yyyymm >= 201701) return 37;
+             if (yyyymm >= 201507) return 36;
+             if (yyyymm >= 201207) return 35;
+             if (yyyymm >= 200901) return 34;
+             if (yyyymm >= 200601) return 33;
+             if (yyyymm >= 199901) return 32;
+             if (yyyymm >= 199707) return 31;
+             if (yyyymm >= 199601) return 30;
+             if (yyyymm >= 199407) return 29;
+             if (yyyymm >= 199307) return 28;
+             if (yyyymm >= 199207) return 27;
+             if (yyyymm >= 199101) return 26;
+             if (yyyymm >= 199001) return 25;
+             if (yyyymm >= 198801) return 24;
+             if (yyyymm >= 198507) return 23;
+             if (yyyymm >= 198307) return 22;
+             if (yyyymm >= 198207) return 21;
+             if (yyyymm >= 198107) return 20;
+             if (yyyymm >= 0) return 19;
+             return 0;
+         }
     }
 }

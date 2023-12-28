@@ -2,8 +2,16 @@
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a RTCM V2 Message Type 31: Differential GLONASS Corrections (Tentative).
+    /// </summary>
     public class RtcmV2Message31 : RtcmV2MessageBase
     {
+        /// <summary>
+        /// Adjusts the hour component of the current UTC time based on the given zcnt value.
+        /// </summary>
+        /// <param name="zcnt">The zcnt value used to adjust the hour component of the current UTC time.</param>
+        /// <returns>The adjusted hour component of the current GPS time based on the zcnt value.</returns>
         protected override DateTime Adjhour(double zcnt)
         {
             var time = DateTime.UtcNow;
@@ -20,13 +28,38 @@ namespace Asv.Gnss
             return RtcmV3Helper.Utc2Gps(RtcmV3Helper.GetFromGps(week, hour * 3600 + zcnt));
         }
 
+        /// <summary>
+        /// The identifier of the RTCM message.
+        /// </summary>
         public const int RtcmMessageId = 31;
 
+        /// <summary>
+        /// Gets the unique identifier for the message.
+        /// </summary>
+        /// <value>
+        /// The identifier for the message.
+        /// </value>
         public override ushort MessageId => RtcmMessageId;
+
+        /// <summary>
+        /// Gets the name of the property.
+        /// </summary>
+        /// <value>
+        /// The name of the property.
+        /// </value>
         public override string Name => "Differential GLONASS Corrections (Tentative)";
 
+        /// <summary>
+        /// Gets or sets the collection of observation items.
+        /// </summary>
+        /// <value>
+        /// An array of DObservationItem containing the observation items.
+        /// </value>
         public DObservationItem[] ObservationItems { get; set; }
 
+        /// <summary>
+        /// Deserializes the content of the buffer into the ObservationItems array. </summary> <param name="buffer">The buffer containing the serialized data.</param> <param name="bitIndex">The current bit index within the buffer.</param> <param name="payloadLength">The length of the payload within the buffer.</param> <returns>None</returns>
+        /// /
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
         {
             var itmCnt = payloadLength / 5;

@@ -32,10 +32,21 @@ namespace Asv.Gnss
     /// </summary>
     public class Nmea0183MessageGGA : Nmea0183MessageBase
     {
+        /// <summary>
+        /// Represents the NMEA message ID.
+        /// </summary>
         public const string NmeaMessageId = "GGA";
 
+        /// Gets the message ID associated with the NMEA message.
+        /// This property is read-only and returns the NMEA message ID.
+        /// @return The message ID as a string.
+        /// /
         public override string MessageId => NmeaMessageId;
 
+        /// <summary>
+        /// Deserializes an array of strings into the internal properties of the class.
+        /// </summary>
+        /// <param name="items">Array of strings representing the properties of the object.</param>
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             Time = Nmea0183Helper.ParseTime(items[1]);
@@ -54,6 +65,12 @@ namespace Asv.Gnss
             ReferenceStationID = Nmea0183Helper.ParseInt(items[14]);
         }
 
+        /// <summary>
+        /// Gets or sets the reference station ID.
+        /// </summary>
+        /// <value>
+        /// The reference station ID.
+        /// </value>
         public int? ReferenceStationID { get; set; }
         /// <summary>
         /// Age of differential GPS data, time in seconds since last SC104
@@ -86,14 +103,36 @@ namespace Asv.Gnss
         /// </summary>
         public int? NumberOfSatellites { get; set; }
 
+        /// <summary>
+        /// Gets or sets the GPS quality of the NMEA data.
+        /// </summary>
+        /// <value>
+        /// The GPS quality. This property represents the quality of the GPS signal received, indicating the accuracy of the reported data.
+        /// </value>
         public NmeaGpsQuality GpsQuality { get; set; }
 
+        /// <summary>
+        /// The EastWest property represents the east-west direction.
+        /// </summary>
+        /// <value>
+        /// A string value that represents the east-west direction.
+        /// </value>
         public string EastWest { get; set; }
 
+        /// Gets or sets the longitude of a location.
+        /// /
         public double Longitude { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of the NorthSouth property.
+        /// </summary>
+        /// <value>
+        /// The value of the NorthSouth property.
+        /// </value>
         public string NorthSouth { get; set; }
 
+        /// Gets or sets a value representing the latitude.
+        /// /
         public double Latitude { get; set; }
         /// <summary>
         /// Time (UTC)

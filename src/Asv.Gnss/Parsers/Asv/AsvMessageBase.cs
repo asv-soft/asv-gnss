@@ -3,14 +3,46 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Base class for ASV (Autonomous Surface Vehicle) messages used in GNSS communication.
+    /// </summary>
+    /// <typeparam name="T">The type of the message identifier.</typeparam>
     public abstract class AsvMessageBase:GnssMessageBase<ushort>
     {
+        /// <summary>
+        /// Gets the protocol ID for the message parser.
+        /// </summary>
+        /// <remarks>
+        /// The protocol ID is used to identify the specific GNSS protocol that the message parser
+        /// is associated with.
+        /// </remarks>
+        /// <returns>
+        /// The protocol ID for the GNSS message parser.
+        /// </returns>
         public override string ProtocolId => AsvMessageParser.GnssProtocolId;
 
+        /// <summary>
+        /// Gets or sets the sequence value.
+        /// </summary>
+        /// <value>
+        /// The sequence value.
+        /// </value>
         public ushort Sequence { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target ID.
+        /// </summary>
+        /// <remarks>
+        /// The target ID is used to specify the ID of the target element.
+        /// </remarks>
         public byte TargetId { get; set; }
         public byte SenderId { get; set; }
 
+        /// <summary>
+        /// Deserializes the provided byte buffer and updates the object's state accordingly.
+        /// </summary>
+        /// <param name="buffer">Reference to the byte buffer to deserialize.</param>
+        /// <exception cref="Exception">Thrown when an error occurs during deserialization.</exception>
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             var crcSpan = buffer;
@@ -43,6 +75,10 @@ namespace Asv.Gnss
             buffer = buffer.Slice(length + 2 /*CRC16*/);
         }
 
+        /// <summary>
+        /// Serializes the data into a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to be serialized into.</param>
         public override void Serialize(ref Span<byte> buffer)
         {
             var originSpan = buffer;
@@ -59,12 +95,32 @@ namespace Asv.Gnss
             BinSerialize.WriteUShort(ref buffer, crc);
         }
 
+        /// <summary>
+        /// This method is responsible for deserializing the internal content of a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer containing the internal content to be deserialized.</param>
         protected abstract void InternalContentDeserialize(ref ReadOnlySpan<byte> buffer);
+
+        /// <summary> Serializes the internal content into a specified buffer. </summary>
+        /// <param name="buffer"> The buffer to store the serialized content. </param>
         protected abstract void InternalContentSerialize(ref Span<byte> buffer);
+
+        /// <summary>
+        /// Calculates the byte size of the content.
+        /// </summary>
+        /// <returns>The byte size of the content.</returns>
         protected abstract int InternalGetContentByteSize();
 
+        /// <summary>
+        /// Calculates the total byte size of an object, including the header and CRC. </summary> <returns>
+        /// The byte size of the object. </returns>
+        /// /
         public override int GetByteSize() => 10 /*HEADER*/  + InternalGetContentByteSize() + 2 /*CRC*/;
 
+        /// <summary>
+        /// Randomizes the objects or properties of the derived class using the provided Random object.
+        /// </summary>
+        /// <param name="random">The Random object used for generating random values.</param>
         public abstract void Randomize(Random random);
 
     }

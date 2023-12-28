@@ -1,13 +1,25 @@
 ﻿namespace Asv.Gnss
 {
+    /// GlonassWord5 represents a Glonass Word 5 message.
+    /// /
     public class GlonassWord5 : GlonassWordBase
     {
+        /// <summary>
+        /// Gets the unique identifier for the word.
+        /// </summary>
+        /// <value>
+        /// The unique identifier for the word.
+        /// </value>
         public override byte WordId
         {
             get => 5;
             protected set { }
         }
 
+        /// <summary>
+        /// Deserialize method used to deserialize data from byte array.
+        /// </summary>
+        /// <param name="data">The byte array containing the serialized data.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);

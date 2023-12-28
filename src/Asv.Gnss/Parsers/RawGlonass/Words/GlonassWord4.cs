@@ -1,9 +1,25 @@
 ﻿namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a Glonass Word 4 object.
+    /// </summary>
     public class GlonassWord4 : GlonassWordBase
     {
+        /// <summary>
+        /// Gets the unique identifier for the word.
+        /// </summary>
+        /// <remarks>
+        /// The WordId property is an override of the base class property and returns the byte value 4.
+        /// </remarks>
+        /// <value>
+        /// The unique identifier for the word. The value is always 4.
+        /// </value>
         public override byte WordId => 4;
 
+        /// <summary>
+        /// Deserialize the given byte array and populate the object with the deserialized values.
+        /// </summary>
+        /// <param name="data">The byte array containing the serialized data.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);
@@ -66,10 +82,30 @@
         // public byte n { get; set; }
 
         /// <summary>
-        /// Модификация НКА, излучающего данный навигационный сигнал. Значение "00" означает НКА «Глонасс», "01" – НКА «Глонасс-М»
+        /// This method returns the time correction value (Ft) for a given navigation signal.
+        /// The input parameter ft is a byte that represents the modification of the emitting satellite.
+        /// A value of "00" indicates the satellite is "Glonass", "01" indicates the satellite is "Glonass-M".
         /// </summary>
+        /// <param name="ft">The byte value representing the satellite modification</param>
+        /// <returns>
+        /// - If ft is 0, returns 1
+        /// - If ft is 1, returns 2
+        /// - If ft is 2, returns 2.5
+        /// - If ft is 3, returns 4
+        /// - If ft is 4, returns 5
+        /// - If ft is 5, returns 7
+        /// - If ft is 6, returns 10
+        /// - If ft is 7, returns 12
+        /// - If ft is 8, returns 14
+        /// - If ft is 9, returns 16
+        /// - If ft is 10, returns 32
+        /// - If ft is 11, returns 64
+        /// - If ft is 12, returns 128
+        /// - If ft is 13, returns 256
+        /// - If ft is 14, returns 512
+        /// - If ft is any other value, returns NaN (Not a Number)
+        /// </returns>
         // public byte M { get; set; }
-
         private double GetFt(byte ft)
         {
             switch (ft)

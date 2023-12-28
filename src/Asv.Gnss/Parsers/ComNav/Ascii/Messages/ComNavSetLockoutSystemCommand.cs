@@ -19,8 +19,15 @@ namespace Asv.Gnss
     /// </summary>
     public class ComNavSetLockoutSystemCommand:ComNavAsciiCommandBase
     {
+        /// Gets or sets the satellite system of the property.
         public ComNavSatelliteSystemEnum SatelliteSystem { get; set; }
 
+        /// <summary>
+        /// Serializes the satellite system information to an ASCII string representation.
+        /// </summary>
+        /// <returns>
+        /// The ASCII string representation of the satellite system information.
+        /// </returns>
         protected override string SerializeToAsciiString()
         {
             return SatelliteSystem switch
@@ -36,6 +43,9 @@ namespace Asv.Gnss
             };
         }
 
+        /// <summary>
+        /// Gets the unique identifier for the message.
+        /// </summary>
         public override string MessageId => "LOCKOUTSYSTEM";
     }
 
