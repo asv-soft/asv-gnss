@@ -10,9 +10,59 @@
 
 GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET
     
-This solution should be used with the main project Asv.Drones, you can find out more about it [here](https://docs.asv.me/).
+This solution can be used with the main project Asv.Drones, you can find out more about it [here](https://docs.asv.me/).
+You can also use it in your own projects installing this library via nuget
+```bash
+    Install-Package Asv.Gnss -Version X.X.X
+```
 
-## 2. Getting Started
+## 2. Example usage
+
+### 2.1 If you want to use this library in your project, then here are some guidelines on how to use it:
+
+```bash
+// create connection with default parsers: Nmea,RTCMv2,RTCMv3,ComNav,Ubx,Sbf
+var connection = GnssFactory.CreateDefault("tcp://10.10.5.28:64101");
+// for TCP client connection:               tcp://127.0.0.1:9002
+// for TCP server(listen) connection:       tcp://127.0.0.1:9002?srv=true
+// for UDP connection:                      udp://127.0.0.1:1234?rhost=127.0.0.1&rport=1235
+// for COM\serial port connection Linux:    serial:/dev/ttyACM0?br=115200
+// for COM\serial port connection Windows:  serial:COM4?br=115200
+connection
+    .Filter<RtcmV2Message1>()
+    .Subscribe(_ => { /* do something with RTCM Differential GPS Corrections (Fixed) message */ });
+connection
+    .Filter<RtcmV3Message1006>()
+    .Subscribe(_ => { /* do something with RTCM 1006 Stationary RTK Reference Station ARP */ });
+    
+// you can control GNSS receivers through connection too
+
+
+// for example configures the SinoGNSS receiver to fix the height at the last calculated value
+ComNavAsciiCommandHelper.FixAuto(connection);
+// enable send NMEA GPGLL messages through 1 sec 
+ComNavAsciiCommandHelper.LogCommand(connection, ComNavMessageEnum.GPGLL, period: 1, trigger: ComNavTriggerEnum.ONTIME).Wait();
+```
+
+### 2.2 And here is an example for UBlox devices:
+
+```bash
+var device = new UbxDevice("serial:COM10?br=115200");
+await device.SetupByDefault();
+await device.SetSurveyInMode(minDuration: 60, positionAccuracyLimit: 2);
+device.Connection.Filter<RtcmV3Msm4>().Subscribe(_ => { /* do something with RTCM */ });
+```
+
+### 2.3 How To Build Asv-GNSS using Asv.Drones
+
+#### 2.3.1 Setup required dependencies for Asv.Drones: Make sure next components installed:
+
+.NET SDK 7 - https://dotnet.microsoft.com/en-us/download/dotnet/7.0 ;
+AvaloniaUI - https://docs.avaloniaui.net/docs/get-started/install ;
+Execute dotnet install (package name) command to setup required packages.
+#### 2.3.2 Clone project repository: git clone https://github.com/your-repository-url.git
+
+## 3. Getting Started
 
 ### Setting Up the Development Environment
 
@@ -69,11 +119,11 @@ To ensure a smooth development experience, follow the steps below to set up your
 
 Congratulations! Your development environment is now set up, and you are ready to start contributing to the project. If you encounter any issues during the setup process, refer to the project's documentation or reach out to the development team for assistance.
 
-## 3. Code Structure
+## 4. Code Structure
 
 The organization of the codebase plays a crucial role in maintaining a clean, scalable, and easily understandable project. This section outlines the structure of our codebase, highlighting key directories and their purposes.
 
-### 3.1 Solution Organization
+### 4.1 Solution Organization
 
 Our solution is organized the following way:
 
@@ -99,7 +149,7 @@ Our solution is organized the following way:
   
   ```
 
-### 3.2 Naming Conventions
+### 4.2 Naming Conventions
 
 Consistent naming conventions are essential for code readability. Throughout the codebase, we follow the guidelines outlined [in our documentation](https://docs.asv.me/use-cases/for-developers)
 
@@ -107,13 +157,13 @@ These conventions contribute to a unified and coherent codebase.
 
 By adhering to this organized structure and naming conventions, we aim to create a codebase that is easy to navigate, scalable, and conducive to collaboration among developers.
 
-## 4. Coding Style
+## 5. Coding Style
 
 Maintaining a consistent coding style across the project enhances readability, reduces errors, and facilitates collaboration. The following guidelines outline our preferred coding style for C#:
 
-### 4.1 C# Coding Style
+### 5.1 C# Coding Style
 
-#### 4.1.1 Formatting
+#### 5.1.1 Formatting
 
 - **Indentation:** Use tabs for indentation. Each level of indentation should consist of one tab.
 - **Brace Placement:** Place opening braces on the same line as the statement they belong to, and closing braces on a new line.
@@ -131,7 +181,7 @@ Maintaining a consistent coding style across the project enhances readability, r
     }
     ```
 
-#### 4.1.2 Naming Conventions
+#### 5.1.2 Naming Conventions
 
 - **Pascal Case:** Use Pascal case for class names, method names, and property names.
 
@@ -147,7 +197,7 @@ Maintaining a consistent coding style across the project enhances readability, r
     }
     ```
 
-#### 4.1.3 Language Features
+#### 5.1.3 Language Features
 
 - **Expression-bodied Members:** Utilize expression-bodied members for concise one-liners.
 
@@ -172,9 +222,9 @@ Maintaining a consistent coding style across the project enhances readability, r
     int length = (text != null) ? text.Length : 0;
     ```
 
-### 4.2 Documentation
+### 5.2 Documentation
 
-#### 4.2.1 Comments
+#### 5.2.1 Comments
 
 - **XML Documentation:** Include XML comments for classes, methods, and properties to provide comprehensive documentation.
 
@@ -197,19 +247,19 @@ Maintaining a consistent coding style across the project enhances readability, r
     }
     ```
 
-#### 4.2.2 Code Comments
+#### 5.2.2 Code Comments
 
 - Use comments sparingly and focus on explaining complex or non-intuitive code sections.
 
 By adhering to these coding style guidelines, we aim to create code that is easy to read, understand, and maintain.
 
-## 5. Version Control
+## 6. Version Control
 
 Version control is a fundamental aspect of our development process, providing a systematic way to track changes, collaborate with team members, and manage the evolution of our codebase. We utilize Git as our version control system.
 
-### 5.1 Branching Strategy
+### 6.1 Branching Strategy
 
-#### 5.1.1 Feature Branches
+#### 6.1.1 Feature Branches
 
 For each new feature or bug fix, create a dedicated feature branch. The branch name should be descriptive of the feature or issue it addresses.
 
@@ -227,7 +277,7 @@ In case of critical issues in the production environment, create a hotfix branch
 git checkout -b hotfix/1.0.1
 ```
 
-### 5.2 Commit Messages
+### 6.2 Commit Messages
 
 Write clear and concise commit messages that convey the purpose of the change. Follow these guidelines:
 
@@ -244,7 +294,7 @@ git commit -m "Add user authentication feature"
 git commit -m "Updated stuff"
 ```
 
-### 5.3 Pull Requests
+### 6.3 Pull Requests
 
 Before merging changes into the main branch, create a pull request (PR). This allows for code review and ensures that changes adhere to coding standards.
 
@@ -252,7 +302,7 @@ Before merging changes into the main branch, create a pull request (PR). This al
 - Include a clear description of the changes.
 - Ensure that automated tests pass before merging.
 
-### 5.4 Merging Strategy
+### 6.4 Merging Strategy
 
 Adopt a merging strategy based on the nature of the changes:
 
@@ -265,17 +315,17 @@ git checkout main
 git merge --no-ff feature/my-new-feature
 ```
 
-### 5.5 Repository Hosting
+### 6.5 Repository Hosting
 
 Our Git repository is hosted on [GitHub](https://github.com/asv-soft/asv-gnss). Ensure that you have the necessary permissions and follow best practices for repository management.
 
 By following these version control practices, we aim to maintain a well-organized and collaborative development process.
 
-## 6. Build and Deployment
+## 7. Build and Deployment
 
 The build and deployment processes are crucial components of our development workflow. This section outlines the steps for building the project and deploying it using GitHub Releases.
 
-### 6.1 Build Process
+### 7.1 Build Process
 
 To compile the project, use the following command:
 
@@ -285,17 +335,17 @@ dotnet build
 
 This command compiles the code and produces executable binaries.
 
-### 6.2 Deployment using GitHub Releases
+### 7.2 Deployment using GitHub Releases
 
 Our application is deployed using [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases). 
 
 Latest release can be found [here](https://github.com/asv-soft/asv-gnss/releases).
 
-## 7. Contributing
+## 8. Contributing
 
 We welcome contributions from the community to help enhance and improve our project. Before contributing, please take a moment to review this guide.
 
-### 7.1 Code Reviews
+### 8.1 Code Reviews
 
 All code changes undergo a review process to ensure quality and consistency. Here are the steps to follow:
 
@@ -320,7 +370,7 @@ All code changes undergo a review process to ensure quality and consistency. Her
 
 6. **Merge:** Once the code review is complete and the changes are approved, your pull request will be merged into the main branch.
 
-### 7.2 Submitting Changes
+### 8.2 Submitting Changes
 
 Before submitting changes, ensure the following:
 
@@ -330,7 +380,7 @@ Before submitting changes, ensure the following:
 
 - **Documentation:** Update relevant documentation, including code comments and external documentation, to reflect your changes.
 
-### 7.3 Communication
+### 8.3 Communication
 
 For larger changes or feature additions, it's beneficial to discuss the proposed changes beforehand. Engage with the community through:
 
@@ -338,17 +388,17 @@ For larger changes or feature additions, it's beneficial to discuss the proposed
 
 - **Joining Discussions:** Participate in existing discussions related to the project. Your insights and feedback are valuable.
 
-### 7.4 Contributor License Agreement (CLA)
+### 8.4 Contributor License Agreement (CLA)
 
 By contributing to this project, you agree that your contributions will be licensed under the project's license. If a Contributor License Agreement (CLA) is required, it will be provided in the repository.
 
 We appreciate your contributions, and together we can make this project even better!
 
-## 8. Code Documentation
+## 9. Code Documentation
 
 Clear and comprehensive code documentation is essential for ensuring that developers can easily understand, use, and contribute to the project. Follow these guidelines for documenting your code:
 
-### 8.1 Inline Comments
+### 9.1 Inline Comments
 
 Use inline comments to explain specific sections of your code, especially for complex logic or non-intuitive implementations. Follow these principles:
 
@@ -368,7 +418,7 @@ int CalculateSum(int a, int b)
 }
 ```
 
-### 8.2 XML Documentation
+### 9.2 XML Documentation
 
 For classes, methods, properties, and other significant code elements, use XML documentation comments to provide comprehensive information. Follow these guidelines:
 
@@ -401,7 +451,7 @@ public class MathUtility
 }
 ```
 
-### 8.3 Consistency
+### 9.3 Consistency
 
 Ensure consistency in your documentation style across the codebase. Consistent documentation makes it easier for developers to navigate and understand the project.
 
@@ -411,9 +461,9 @@ By following these documentation guidelines, we aim to create a codebase that is
 
 Ensuring the security of our software is paramount to maintaining the integrity and confidentiality of user data. Developers should adhere to best practices and follow guidelines outlined in this section.
 
-### 9.1 Code Security Practices
+### 10.1 Code Security Practices
 
-#### 9.1.1 Input Validation
+#### 10.1.1 Input Validation
 
 Always validate and sanitize user input to prevent injection attacks and ensure the integrity of your application.
 
@@ -430,49 +480,49 @@ public ActionResult ProcessUserInput(string userInput)
 }
 ```
 
-#### 9.1.2 Authentication and Authorization
+#### 10.1.2 Authentication and Authorization
 
 Implement secure authentication and authorization mechanisms to control access to sensitive functionalities and data. Leverage industry-standard protocols like OAuth when applicable.
 
-#### 9.1.3 Secure Communication
+#### 10.1.3 Secure Communication
 
 Ensure that communication between components, APIs, and external services is encrypted using secure protocols (e.g., HTTPS).
 
-### 9.2 Dependency Security
+### 10.2 Dependency Security
 
-#### 9.2.1 Dependency Scanning
+#### 10.2.1 Dependency Scanning
 
 Regularly scan and update dependencies to identify and address security vulnerabilities. Leverage tools and services that provide automated dependency analysis.
 
-#### 9.2.2 Minimal Dependencies
+#### 10.2.2 Minimal Dependencies
 
 Keep dependencies to a minimum and only include libraries and packages that are actively maintained and have a good security track record.
 
-### 9.3 Data Protection
+### 10.3 Data Protection
 
-#### 9.3.1 Encryption
+#### 10.3.1 Encryption
 
 Sensitive data, both at rest and in transit, should be encrypted. Utilize strong encryption algorithms and ensure proper key management.
 
-#### 9.3.2 Data Backups
+#### 10.3.2 Data Backups
 
 Implement regular data backup procedures to prevent data loss in the event of security incidents or system failures.
 
-### 9.4 Secure Coding Standards
+### 10.4 Secure Coding Standards
 
 Adhere to secure coding standards to mitigate common vulnerabilities. Follow principles such as the [OWASP Top Ten](https://owasp.org/www-project-top-ten/) to address security concerns in your codebase.
 
-### 9.5 Reporting Security Issues
+### 10.5 Reporting Security Issues
 
 If you discover a security vulnerability or have concerns about the security of the project, please report it immediately to our team at [our telegram channel](https://t.me/asvsoft). Do not disclose security-related issues publicly until they have been addressed.
 
-### 9.6 Security Training
+### 10.6 Security Training
 
 Encourage ongoing security training for all team members to stay informed about the latest security threats and best practices. Knowledgeable developers are key to maintaining a secure codebase.
 
 By incorporating security practices into our development process, we aim to create a robust and secure software environment for our users.
 
-## 10. License
+## 11. License
 
 This project is licensed under the terms of the MIT License. A copy of the MIT License is provided in the [LICENSE](https://github.com/asv-soft/asv-gnss?tab=MIT-1-ov-file) file.
 
@@ -510,17 +560,17 @@ By contributing to this project, you agree that your contributions will be licen
 
 For more details about the MIT License, please visit [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT).
 
-## 11. Contact
+## 12. Contact
 
 If you have questions, suggestions, or need assistance with the project, we encourage you to reach out through the following channels:
 
-### 11.1 Telegram Channel
+### 12.1 Telegram Channel
 
 Visit our Telegram channel: [ASVSoft on Telegram](https://t.me/asvsoft)
 
 Feel free to join our Telegram community to engage in discussions, seek help, or share your insights.
 
-### 11.2 GitHub Issues
+### 12.2 GitHub Issues
 
 For bug reports, feature requests, or any project-related discussions, please use our GitHub Issues:
 
@@ -528,11 +578,11 @@ For bug reports, feature requests, or any project-related discussions, please us
 
 Our GitHub repository is the central hub for project-related discussions and issue tracking. Please check existing issues before creating new ones to avoid duplication.
 
-### 11.3 Security Concerns
+### 12.3 Security Concerns
 
 If you discover a security vulnerability or have concerns about the security of the project, please report it immediately to our telegram channel: [ASVSoft on Telegram](https://t.me/asvsoft). Do not disclose security-related issues publicly until they have been addressed.
 
-### 11.4 General Inquiries
+### 12.4 General Inquiries
 
 For general inquiries or if you prefer email communication, you can reach us at [me@asv.me](mailto:me@asv.me).
 
