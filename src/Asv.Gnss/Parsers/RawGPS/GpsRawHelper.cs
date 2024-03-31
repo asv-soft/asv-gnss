@@ -4,11 +4,66 @@ namespace Asv.Gnss
 {
     public static class GpsRawHelper
     {
-
+        /// <summary>
+        /// 2^-5
+        /// </summary>
+        public const double P2_5 = 3.125E-2;
+        /// <summary>
+        /// 2^-11
+        /// </summary>
+        public const double P2_11 = 4.882812500000000E-04;
+        /// <summary>
+        /// 2^-17
+        /// </summary>
+        public const double P2_17 = 7.629394531250000E-06;
+        /// <summary>
+        /// 2^-19
+        /// </summary>
+        public const double P2_19 = 1.9073486328125E-6;
+        /// <summary>
+        /// 2^-20
+        /// </summary>
+        public const double P2_20 = 9.536743164062500E-07;
+        /// <summary>
+        /// 2^-21
+        /// </summary>
+        public const double P2_21 = 4.768371582031250E-07;
+        /// <summary>
+        /// 2^-23
+        /// </summary>
+        public const double P2_23 = 1.192092895507810E-07;
+        /// <summary>
+        /// 2^-24
+        /// </summary>
+        public const double P2_24 = 5.960464477539063E-08;
+        /// <summary>
+        /// 2^-27
+        /// </summary>
+        public const double P2_27 = 7.450580596923828E-09;
+        /// <summary>
+        /// 2^-29
+        /// </summary>
+        public const double P2_29 = 1.862645149230957E-9;
+        /// <summary>
+        /// 2^-30
+        /// </summary>
+        public const double P2_30 = 9.313225746154785E-10;
         /// <summary>
         /// 2^-31
         /// </summary>
         public const double P2_31 = 4.656612873077393E-10;
+        /// <summary>
+        /// 2^-33
+        /// </summary>
+        public const double P2_33 = 1.164153218269348E-10;
+        /// <summary>
+        /// 2^-38
+        /// </summary>
+        public const double P2_38 = 3.637978807091710E-12;
+        /// <summary>
+        /// 2^-50
+        /// </summary>
+        public const double P2_50 = 8.881784197001252E-16;
         /// <summary>
         /// 2^-55
         /// </summary>
@@ -17,9 +72,13 @@ namespace Asv.Gnss
         /// 2^-43
         /// </summary>
         public const double P2_43 = 1.136868377216160E-13;
-
+        /// <summary>
+        /// semi-circle to radian (IS-GPS)
+        /// </summary>
+        public const double SC2RAD = 3.1415926535898;
 
         public const byte GpsSubframePreamble = 0x8B;
+        
 
         public static byte[] GetRawDataWithoutParity(uint[] navBits)
         {
@@ -57,6 +116,13 @@ namespace Asv.Gnss
             for (i = pos; i < pos + len; i++)
                 bits = (uint)((bits << 1) + ((buff[i / 8] >> (int)(7 - i % 8)) & 1u));
             return bits;
+        }
+
+        public static int GetBitS(byte[] buff, uint pos, int len)
+        {
+            var bits = GetBitU(buff, pos, (uint)len);
+            if (len <= 0 || 32 <= len || (bits & (1u << (len - 1))) == 0) return (int)bits;
+            return (int)(bits | (~0u << len)); /* extend sign */
         }
 
         public static bool CheckPreamble(uint[] navBits)
@@ -114,12 +180,104 @@ namespace Asv.Gnss
             }
         }
 
-        // public static int SubFrameId(UInt32[] navBits)
-        // {
-        //     return (navBits[1]>>)
-        // }
+        /// <summary>
+        /// Adjust GPS week number using cpu time
+        /// </summary>
+        /// <param name="utc">CPU UTC time</param>
+        /// <param name="week">Not-adjusted GPS week number</param>
+        /// <returns>Adjusted GPS week number</returns>
+        public static int AdjustGpsWeek(DateTime utc, int week)
+        {
+            var w = 0;
+            var tow = 0.0;
+            Time2Gps(Utc2Gps(utc), ref w, ref tow);
+            if (w < 1560) w = 1560; /* use 2009/12/1 if time is earlier than 2009/12/1 */
+            return week + (w - week + 512) / 1024 * 1024;
+        }
+
+        /// <summary>
+        /// Convert UTC to GPS Time considering leap seconds
+        /// </summary>
+        /// <param name="t">Time expressed in UTC</param>
+        /// <returns>Time expressed in GPS Time</returns>
+        public static DateTime Utc2Gps(DateTime t)
+        {
+            return t.AddSeconds(LeapSecondsGPS(t.Year, t.Month));
+        }
+
+        /// <summary>
+        /// Convert GPS to UTC Time considering leap seconds
+        /// </summary>
+        /// <param name="t">Time expressed in GPS</param>
+        /// <returns>Time expressed in UTC Time</returns>
+        public static DateTime Gps2Utc(DateTime t)
+        {
+            return t.AddSeconds(-LeapSecondsGPS(t.Year, t.Month));
+        }
+
+        /// <summary>
+        /// Convert DateTime struct to week and tow in gps time
+        /// </summary>
+        /// <param name="time">DateTime struct</param>
+        /// <param name="week">Week number in GPS time</param>
+        /// <param name="tow">Time of week in GPS time (s)</param>
+        public static void Time2Gps(DateTime time, ref int week, ref double tow)
+        {
+            var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
+            var dif = time - datum;
+            var weeks = (int) (dif.TotalDays / 7);
+            week = weeks;
+            dif = time - datum.AddDays(weeks * 7);
+            tow = dif.TotalSeconds;
+        }
+        
+        /// <summary>
+        /// Convert week and tow in GPS Time to DateTime struct
+        /// </summary>
+        /// <param name="week">Week number in GPS Time</param>
+        /// <param name="sec">Time of week in GPS Time (s)</param>
+        /// <returns></returns>
+        public static DateTime Gps2Time(int week, double sec)
+        {
+            var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
+            return datum.AddDays(week * 7).AddSeconds(sec);
+        }
+        
+        private static int LeapSecondsGPS(int year, int month)
+        {
+            return LeapSecondsTAI(year, month) - 19;
+        }
+
+        private static int LeapSecondsTAI(int year, int month)
+        {
+            //http://maia.usno.navy.mil/ser7/tai-utc.dat
+
+            var yyyymm = year * 100 + month;
+            if (yyyymm >= 201701) return 37;
+            if (yyyymm >= 201507) return 36;
+            if (yyyymm >= 201207) return 35;
+            if (yyyymm >= 200901) return 34;
+            if (yyyymm >= 200601) return 33;
+            if (yyyymm >= 199901) return 32;
+            if (yyyymm >= 199707) return 31;
+            if (yyyymm >= 199601) return 30;
+            if (yyyymm >= 199407) return 29;
+            if (yyyymm >= 199307) return 28;
+            if (yyyymm >= 199207) return 27;
+            if (yyyymm >= 199101) return 26;
+            if (yyyymm >= 199001) return 25;
+            if (yyyymm >= 198801) return 24;
+            if (yyyymm >= 198507) return 23;
+            if (yyyymm >= 198307) return 22;
+            if (yyyymm >= 198207) return 21;
+            if (yyyymm >= 198107) return 20;
+            if (yyyymm >= 0) return 19;
+
+            return 0;
+        }
     }
 
+    
     
 
 

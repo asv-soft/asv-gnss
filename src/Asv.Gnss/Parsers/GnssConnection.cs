@@ -60,13 +60,17 @@ namespace Asv.Gnss
             lock (_sync)
             {
                 _rxBytesSubject.OnNext(buffer.Length);
+                IGnssMessageParser parser1;
+                var index = 0;
                 foreach (var data in buffer)
                 {
+                    index++;
                     try
                     {
                         var packetFound = false;
                         foreach (var parser in _parsers)
                         {
+                            parser1 = parser;
                             if (!parser.Read(data)) continue;
                             packetFound = true;
                             break;

@@ -5,12 +5,14 @@ namespace Asv.Gnss
 {
     
 
-    public class SbfPacketMeasEpoch : SbfMessageBase
+    public class SbfPacketMeasEpochRev1 : SbfMessageBase
     {
         public override ushort MessageType => 4027;
+        
+        public override ushort MessageRevision => 1;
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            N1 = BinSerialize.ReadByte(ref buffer);
+            var n1 = BinSerialize.ReadByte(ref buffer);
             SB1Length = BinSerialize.ReadByte(ref buffer);
             SB2Length = BinSerialize.ReadByte(ref buffer);
             CommonFlags = (MeasEpochCommonFlags)BinSerialize.ReadByte(ref buffer);
@@ -19,15 +21,14 @@ namespace Asv.Gnss
                 CumClkJumps = BinSerialize.ReadByte(ref buffer) * 0.001;
             }
             Reserved = BinSerialize.ReadByte(ref buffer);
-            SubBlocks = new MeasEpochChannelType1[N1];
+            SubBlocks = new MeasEpochChannelType1[n1];
             for (var index = 0; index < SubBlocks.Length; index++)
             {
                 SubBlocks[index] = new MeasEpochChannelType1();
-                SubBlocks[index].Deserialize(ref buffer, SB1Length);
+                SubBlocks[index].Deserialize(ref buffer, SB1Length, out var n2);
+                if (n2 != 0) buffer = buffer.Slice(n2 * SB2Length);
             }
         }
-
-        public override ushort MessageRevision => 0;
 
         public override string Name => "MeasEpochV2";
 
@@ -56,13 +57,6 @@ namespace Asv.Gnss
         /// Length of a MeasEpochChannelType1 sub-block, excluding the nested MeasEpochChannelType2 sub-blocks
         /// </summary>
         public byte SB1Length { get; set; }
-
-        /// <summary>
-        /// Number of MeasEpochChannelType1 sub-blocks in this MeasEpoch block
-        /// </summary>
-        public byte N1 { get; set; }
-
-       
     }
 
     public enum AntennaId
@@ -119,25 +113,54 @@ namespace Asv.Gnss
 
     public class MeasEpochChannelType1
     {
-        public void Deserialize(ref ReadOnlySpan<byte> buffer, uint blockLength)
+        private const byte SB1Length = 20;
+        public void Deserialize(ref ReadOnlySpan<byte> buffer, byte length, out byte n2)
         {
+            if (length != SB1Length) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF type-1 sub-block. Length type-1 sub-block should be [{SB1Length}], but it is [{length}]");
             RxChannel = BinSerialize.ReadByte(ref buffer);
-            TypeBitfield = BinSerialize.ReadByte(ref buffer);
-            SignalNumber = (TypeBitfield & 0b00011111);
-            Antenna = (AntennaId)(TypeBitfield >> 5);
+            var typeBitfield1 = BinSerialize.ReadByte(ref buffer);
+            var signalNumber = (typeBitfield1 & 0b00011111);
+            Antenna = (AntennaId)(typeBitfield1 >> 5);
             SVID = BinSerialize.ReadByte(ref buffer);
-            Misc = BinSerialize.ReadByte(ref buffer);
-            CodeLSB = BinSerialize.ReadUInt(ref buffer);
-            PRtype1 = ((Misc & 0b00000111) * 4294967296 + CodeLSB) * 0.001;
+            var misc = BinSerialize.ReadByte(ref buffer);
+            var codeLSB = BinSerialize.ReadUInt(ref buffer);
+            PR = ((misc & 0b00000111) * 4294967296 + codeLSB) * 0.001;
             DopplerHz = BinSerialize.ReadUInt(ref buffer) * 0.0001;
-            CarrierLSB = BinSerialize.ReadUShort(ref buffer);
-            CarrierMSB = (sbyte)BinSerialize.ReadByte(ref buffer);
-            // SbfHelper.GetSignalType(SignalNumber,)
-            // FullCarrierPhase = PRtype1 / (299792458 / Freq) + (CarrierMSB * 65536 + CarrierLSB) * 0.001;
-            //TODO: implement block deserialization
+            var carrierLSB = BinSerialize.ReadUShort(ref buffer);
+            var carrierMSB = (sbyte)BinSerialize.ReadByte(ref buffer);
+            CN0 = BinSerialize.ReadByte(ref buffer) * 0.25;
+            LockTime = BinSerialize.ReadUShort(ref buffer);
+            var typeBitfield2 = BinSerialize.ReadByte(ref buffer);
+            n2 = BinSerialize.ReadByte(ref buffer);
+            IsSmoothed = (typeBitfield2 & 0x1) == 1;
+            IsHalfCycleAmbiguity = ((typeBitfield2 >> 2) & 0x1) == 1;
+            var freqNum = typeBitfield2 >> 3;
+            SbfHelper.GetSignalType((byte)signalNumber, (byte)freqNum, out var sys, out var freq, out var rinexCode);
+            Frequency = freq * 1000000;
+            RinexCode = rinexCode;
+            SatSys = sys;
+            var lambda = 299792458 / Frequency; 
+            FullCarrierPhase = PR / lambda + (carrierMSB * 65536 + carrierLSB) * 0.001;
         }
 
-        public int? SignalNumber { get; set; }
+        public bool IsSmoothed { get; set; }
+        public bool IsHalfCycleAmbiguity { get; set; }
+        public SbfNavSysEnum SatSys { get; set; }
+        public string RinexCode { get; set; }
+        public double Frequency { get; set; }
+
+
+        /// <summary>
+        /// Duration of continuous carrier phase. The lock-time is reset at the initial
+        /// lock of the phase-locked-loop, and whenever a loss of lock condition occurs.
+        /// </summary>
+        public ushort LockTime { get; set; }
+
+        /// <summary>
+        /// The C/N0 in dB-Hz
+        /// </summary>
+        public double CN0 { get; set; }
+
 
         public AntennaId Antenna { get; set; }
 
@@ -151,25 +174,15 @@ namespace Asv.Gnss
         /// </summary>
         public double FullCarrierPhase { get; set; }
 
-        public sbyte CarrierMSB { get; set; }
-
-        public ushort CarrierLSB { get; set; }
-
         public double DopplerHz { get; set; }
         /// <summary>
         /// SB of the pseudorange. The pseudorange expressed in meters
         /// is computed as follows: PRtype1[m] = (CodeMSB*4294967296+CodeLSB)*0.001
         /// where CodeMSB is part of the Misc field
         /// </summary>
-        public double PRtype1 { get; set; }
-
-        public uint CodeLSB { get; set; }
-
-        public byte Misc { get; set; }
+        public double PR { get; set; }
 
         public byte SVID { get; set; }
-
-        public byte TypeBitfield { get; set; }
 
         public byte RxChannel { get; set; }
     }

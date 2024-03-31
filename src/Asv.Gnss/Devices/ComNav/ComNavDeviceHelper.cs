@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+using Asv.Common;
 
 namespace Asv.Gnss
 {
@@ -74,53 +75,67 @@ namespace Asv.Gnss
 			await device.SetUnLockoutSystem(ComNavSatelliteSystemEnum.GPS, cancel).ConfigureAwait(false);
 			await device.SetUnLockoutSystem(ComNavSatelliteSystemEnum.GLONASS, cancel).ConfigureAwait(false);
 
-			var gsa = new List<Nmea0183MessageGSA>();
-			if (gsa == null) throw new ArgumentNullException(nameof(gsa));
+			var att = 1;
+			while (att <= 3)
+			{
+				Console.WriteLine($"Att: {att}");
+				var sys = (await GetActiveGnssSystem(device, cancel).ConfigureAwait(false)).ToArray();
+				Console.Write("Active satellite system: ");
+				sys.ForEach(_ =>
+				{
+					var str = _ != null ? $"{_:G}" : "null";
+					Console.Write($"{str} ");
+				});
+				Console.WriteLine();
+				return;
+				if (sys.Length == 2 && sys.Contains(ComNavSatelliteSystemEnum.GPS) &&
+				    sys.Contains(ComNavSatelliteSystemEnum.GLONASS)) return;
+				att++;
+			}
+			throw new Exception("Erorr to set only GPS and Glonass system!");
+		}
+
+		private static async Task<IEnumerable<ComNavSatelliteSystemEnum?>> GetActiveGnssSystem(this IComNavDevice device, CancellationToken cancel = default)
+		{
+			var gsa = new List<ComNavSatelliteSystemEnum?>();
+			
 			var activeSatPkt = new ComNavAsciiLogCommand
 				{ Type = ComNavMessageEnum.GPGSA, Format = ComNavFormat.Ascii };
 
+			var timeOutToken = new CancellationTokenSource();
 			try
 			{
-				var timeOutToken = new CancellationToken();
-				using var linkedCancel = CancellationTokenSource.CreateLinkedTokenSource(cancel, timeOutToken);
-				linkedCancel.CancelAfter(TimeSpan.FromMilliseconds(3000));
-				var tcs = new TaskCompletionSource<Unit>();
-#if NETFRAMEWORK
-				using var c1 = linkedCancel.Token.Register(() => tcs.TrySetCanceled());
-#else
-				await using var c1 = linkedCancel.Token.Register(() => tcs.TrySetCanceled());
-#endif
-				using var subscribeGsa = device.Connection.Filter<Nmea0183MessageGSA>().Subscribe(_ => gsa.Add(_));
+				using var subscribeGsa = device.Connection.Filter<Nmea0183MessageGSA>().Subscribe(_ =>
+				{
+					foreach (var i in _.SatelliteId)
+					{
+						Console.Write($"{i}, ");
+					}
+					Console.WriteLine();
+					gsa.AddRange(_.SatelliteId.Select(GetSatelliteSystemFromNmeaGsa));
+				});
+				await device.Push(activeSatPkt, cancel).ConfigureAwait(false);
 
-				await device.Push(activeSatPkt, linkedCancel.Token).ConfigureAwait(false);
+
+				var tcs = new TaskCompletionSource<Unit>();
+				timeOutToken.CancelAfter(1000);
+#if NETFRAMEWORK
+				using var c1 = timeOutToken.Token.Register(() => tcs.TrySetCanceled());
+#else
+				await using var c1 = timeOutToken.Token.Register(() => tcs.TrySetCanceled());
+#endif
 				await tcs.Task.ConfigureAwait(false);
 			}
 			catch (TaskCanceledException)
 			{
-				if (cancel.IsCancellationRequested)
+				if (!timeOutToken.Token.IsCancellationRequested)
 				{
 					throw;
 				}
 			}
-
-			var isGps = gsa.Any(_ =>
-				_.SatelliteId.All(__ => GetSatelliteSystemFromNmeaGsa(__) == ComNavSatelliteSystemEnum.GPS));
-			var isGlo = gsa.Any(_ =>
-				_.SatelliteId.All(__ => GetSatelliteSystemFromNmeaGsa(__) == ComNavSatelliteSystemEnum.GLONASS));
-			var isGal = gsa.Any(_ =>
-				_.SatelliteId.All(__ => GetSatelliteSystemFromNmeaGsa(__) == ComNavSatelliteSystemEnum.GALILEO));
-			var isBds = gsa.Any(_ =>
-				_.SatelliteId.All(__ =>
-				{
-					var satSys = GetSatelliteSystemFromNmeaGsa(__);
-					return satSys is ComNavSatelliteSystemEnum.BD2 or ComNavSatelliteSystemEnum.BD3;
-				}));
-
-			if (isGps && isGlo && !isGal && !isBds) return;
-
-			throw new Exception("Erorr to set only GPS and Glonass system!");
+			return gsa.Distinct();
 		}
-
+		
 		#endregion
 
 		#region PPSControl
@@ -146,15 +161,17 @@ namespace Asv.Gnss
 
 			await device.SetLogMessage(ComNavMessageEnum.RTCM1, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
 			await device.SetLogMessage(ComNavMessageEnum.RTCM31, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
-			await device.SetLogMessage(ComNavMessageEnum.RAWGPSSUBFRAME, ComNavTriggerEnum.ONCHANGED, cancel: cancel).ConfigureAwait(false);
-			await device.SetLogMessage(ComNavMessageEnum.GLORAWEPHEM, ComNavTriggerEnum.ONTIME, 5, cancel: cancel).ConfigureAwait(false);
+			await device.SetLogMessage(ComNavMessageEnum.RAWGPSSUBFRAME, ComNavTriggerEnum.ONTIME, 1, cancel: cancel).ConfigureAwait(false);
+			await device.SetLogMessage(ComNavMessageEnum.GLORAWEPHEM, ComNavTriggerEnum.ONTIME, 1, cancel: cancel).ConfigureAwait(false);
 			await device.SetLogMessage(ComNavMessageEnum.RTCM1004, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
+			await device.SetLogMessage(ComNavMessageEnum.RANGE, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
 			await device.SetLogMessage(ComNavMessageEnum.RTCM1012, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
-			await device.SetLogMessage(ComNavMessageEnum.RTCM1019, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
-			await device.SetLogMessage(ComNavMessageEnum.RTCM1020, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
-			await device.SetLogMessage(ComNavMessageEnum.PSRDOP, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
+			await device.SetLogMessage(ComNavMessageEnum.RTCM1019, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
+			await device.SetLogMessage(ComNavMessageEnum.RTCM1020, ComNavTriggerEnum.ONTIME, 1, cancel).ConfigureAwait(false);
+			await device.SetLogMessage(ComNavMessageEnum.RTCM1005, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
+			// await device.SetLogMessage(ComNavMessageEnum.PSRDOP, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
 			await device.SetLogMessage(ComNavMessageEnum.PSRPOS, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
-			await device.SetLogMessage(ComNavMessageEnum.GPGSV, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
+			// await device.SetLogMessage(ComNavMessageEnum.GPGSV, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
 			
 			await device.Push(new ComNavFixCommand { FixType = ComNavFixType.Auto }, cancel).ConfigureAwait(false);
 			
@@ -206,6 +223,8 @@ namespace Asv.Gnss
 			}
 			return false;
 		}
+
+
 		
 	}
 }

@@ -36,6 +36,7 @@ namespace Asv.Gnss
 						RawData[k][i] |= (uint)(BinSerialize.ReadByte(ref buffer) << (24 - j * 8));
 					}
 				}
+				
 				var reserved = BinSerialize.ReadByte(ref buffer);
 
 				// Смещаем 85-ый bit на 88-ю (11 byte * 8) позицию

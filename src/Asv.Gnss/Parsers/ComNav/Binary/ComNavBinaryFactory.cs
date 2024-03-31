@@ -13,6 +13,7 @@ namespace Asv.Gnss
                 yield return () => new ComNavBinaryPsrDopPacket();
                 yield return () => new ComNavBinaryRawGpsSubFramePacket();
                 yield return () => new ComNavBinaryRawGloEphemPacket();
+                yield return () => new ComNavBinaryObservationInfo();
             }
         }
 

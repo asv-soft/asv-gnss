@@ -35,7 +35,6 @@ namespace Asv.Gnss
 
         public UbxDevice(string connectionString):this(connectionString,UbxDeviceConfig.Default)
         {
-            
         }
 
         public UbxDevice(string connectionString, UbxDeviceConfig config) :this(GnssFactory.CreateDefault(connectionString),config)

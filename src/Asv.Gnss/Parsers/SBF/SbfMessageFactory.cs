@@ -11,7 +11,7 @@ namespace Asv.Gnss
             {
                 yield return () => new SbfPacketGpsRawCa();
                 yield return () => new SbfPacketGloRawCa();
-                // yield return () => new SbfPacketMeasEpoch(); // TODO: not complete
+                yield return () => new SbfPacketMeasEpochRev1(); // TODO: not complete
                 yield return () => new SbfPacketPvtGeodeticRev2();
                 yield return () => new SbfPacketDOP();
                 yield return () => new SbfPacketReceiverStatusRev1();

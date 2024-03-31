@@ -5,7 +5,7 @@ namespace Asv.Gnss
     public class ComNavBinaryParser : GnssMessageParserBase<ComNavBinaryMessageBase, ushort>
     {
         public const string GnssProtocolId = "ComNavBinary";
-        public const int MaxPacketSize = 1024 * 4;
+        public const int MaxPacketSize = 1024 * 10;
         public const byte FirstSyncByte = 0xAA;
         public const byte SecondSyncByte = 0x44;
         public const byte ThirdSyncByte = 0x12;
@@ -91,6 +91,10 @@ namespace Asv.Gnss
                         {
                             var msgId = BitConverter.ToUInt16(_buffer, 4);
                             var span = new ReadOnlySpan<byte>(_buffer, 0, _stopMessageIndex);
+                            if (_messageLength == 5328)
+                            {
+                                
+                            }
                             ParsePacket(msgId, ref span);
                             Reset();
                             return true;

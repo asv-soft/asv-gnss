@@ -47,11 +47,15 @@ namespace Asv.Gnss
 
             var msgId = BinSerialize.ReadUShort(ref buffer);
             var messageType = (ushort)(msgId & 0x1fff << 0);
-            var messageRevision = (ushort)(msgId >> 13);
+            if (messageType == 4027)
+            {
+                
+            }
+            var messageRevision = (ushort)((msgId >> 13) & 0x7);
 
-            if (messageType != MessageType) throw new GnssParserException(ComNavBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])");
-            if (messageRevision != MessageRevision) throw new GnssParserException(ComNavBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. Id not equal (want [{MessageRevision}] read [{messageRevision}])");
-            if (msgId != MessageId) throw new GnssParserException(ComNavBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. Id not equal (want [{MessageId}] read [{msgId}])");
+            if (messageType != MessageType) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])");
+            if (messageRevision != MessageRevision) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. Id not equal (want [{MessageRevision}] read [{messageRevision}])");
+            if (msgId != MessageId) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. Id not equal (want [{MessageId}] read [{msgId}])");
 
             // The Length field is a 2-byte unsigned integer containing the size of the SBF block. It is
             // the total number of bytes in the SBF block including the header. It is always a multiple of 4

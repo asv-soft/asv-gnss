@@ -13,6 +13,11 @@ namespace Asv.Gnss
                 yield return () => new AsvMessageGbasVdbSend();
                 yield return () => new AsvMessageGbasVdbSendV2();
                 yield return () => new AsvMessageGbasCuSendV2();
+                yield return () => new AsvMessageGpsObservations();
+                yield return () => new AsvMessageGloObservations();
+                yield return () => new AsvMessageGpsRawCa();
+                yield return () => new AsvMessageGloRawCa();
+                yield return () => new AsvMessagePvtGeo();
             }
         }
 

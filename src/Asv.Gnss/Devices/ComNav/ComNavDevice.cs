@@ -36,38 +36,54 @@ namespace Asv.Gnss
 		private readonly ComNavDeviceConfig _config;
 		private ComNavPortEnum _mainPort;
 		private ComNavPortEnum _rtcmV2Port;
-		private ComNavPortEnum _configPort;
+		
 
-		public ComNavDevice(string connectionString, string rtcmV2ConnectionString, string cfgConnectionString) : this(
-			connectionString, rtcmV2ConnectionString, cfgConnectionString, ComNavDeviceConfig.Default)
+		public ComNavDevice(string connectionString) : this(
+			connectionString, ComNavDeviceConfig.Default)
 		{
 
 		}
 
-		public ComNavDevice(string connectionString, string rtcmV2ConnectionString, string cfgConnectionString,
-			ComNavDeviceConfig config) 
+		public ComNavDevice(string connectionString, ComNavDeviceConfig config) 
 			: this(
 				new GnssConnection(connectionString,
 					new ComNavBinaryParser().RegisterDefaultMessages(),
 					new ComNavAsciiParser().RegisterDefaultMessages(),
+					new ComNavSimpleAnswerParser().RegisterDefaultMessages(),
+					new Nmea0183Parser().RegisterDefaultMessages(),
+					new RtcmV3Parser().RegisterDefaultMessages(),
+					new RtcmV2Parser().RegisterDefaultMessages()),
+				config)
+		{
+
+		}
+		
+		public ComNavDevice(string connectionString, string rtcmV2ConnectionString) : this(
+			connectionString, rtcmV2ConnectionString, ComNavDeviceConfig.Default)
+		{
+
+		}
+
+		public ComNavDevice(string connectionString, string rtcmV2ConnectionString, ComNavDeviceConfig config) 
+			: this(
+				new GnssConnection(connectionString,
+					new ComNavBinaryParser().RegisterDefaultMessages(),
+					new ComNavAsciiParser().RegisterDefaultMessages(),
+					new ComNavSimpleAnswerParser().RegisterDefaultMessages(),
 					new Nmea0183Parser().RegisterDefaultMessages(),
 					new RtcmV3Parser().RegisterDefaultMessages()),
 				new GnssConnection(rtcmV2ConnectionString, 
 					new RtcmV2Parser().RegisterDefaultMessages(),
 					new ComNavAsciiParser().RegisterDefaultMessages()),
-				new GnssConnection(cfgConnectionString,
-					new ComNavAsciiParser().RegisterDefaultMessages(),
-					new ComNavSimpleAnswerParser().RegisterDefaultMessages()),
 				config)
 		{
 
 		}
 
-		public ComNavDevice(IGnssConnection connection, IGnssConnection rtcmV2Connection, IGnssConnection cfgConnection, ComNavDeviceConfig config, bool disposeConnection = true)
+		public ComNavDevice(IGnssConnection connection, IGnssConnection rtcmV2Connection, ComNavDeviceConfig config, bool disposeConnection = true)
 		{
 			Connection = connection;
 			RtcmV2Connection = rtcmV2Connection;
-			_cfgConnection = cfgConnection;
 			_config = config;
 
 			if (disposeConnection)
@@ -76,7 +92,21 @@ namespace Asv.Gnss
 				{
 					Connection?.Dispose();
 					RtcmV2Connection?.Dispose();
-					_cfgConnection?.Dispose();
+				});
+			}
+		}
+		
+		public ComNavDevice(IGnssConnection connection, ComNavDeviceConfig config, bool disposeConnection = true)
+		{
+			Connection = connection;
+			RtcmV2Connection = connection;
+			_config = config;
+
+			if (disposeConnection)
+			{
+				Disposable.AddAction(() =>
+				{
+					Connection?.Dispose();
 				});
 			}
 		}
@@ -96,7 +126,6 @@ namespace Asv.Gnss
 
 				using var conn = Observable.Zip(
 						((IPort)Connection.Stream).State,
-						((IPort)_cfgConnection.Stream).State,
 						((IPort)RtcmV2Connection.Stream).State)
 					.Where(_ => _.All(__ => __ == PortState.Connected)).Subscribe(_ => tcs.TrySetResult(Unit.Default));
 				
@@ -117,15 +146,13 @@ namespace Asv.Gnss
 			var rtcmV2Port = await Pool<ComNavComConfigAMessage, ComNavAsciiLogCommand>(new ComNavAsciiLogCommand()
 				{ Format = ComNavFormat.Ascii, Type = ComNavMessageEnum.COMCONFIG }, RtcmV2Connection, cancel).ConfigureAwait(false);
 			
-			var cfgPort = await Pool<ComNavComConfigAMessage, ComNavAsciiLogCommand>(new ComNavAsciiLogCommand()
-				{ Format = ComNavFormat.Ascii, Type = ComNavMessageEnum.COMCONFIG }, _cfgConnection, cancel).ConfigureAwait(false);
-
 			_mainPort = port.Source;
-			_configPort = cfgPort.Source;
 			_rtcmV2Port = rtcmV2Port.Source;
+			
+			Console.WriteLine($"Main port ({Connection.Stream.Name}): '{port.Source:G}'");
+			Console.WriteLine($"RtcmV2 port ({RtcmV2Connection.Stream.Name}): '{rtcmV2Port.Source:G}'");
 		}
-
-		private readonly IGnssConnection _cfgConnection;
+		
 		public IGnssConnection Connection { get; }
 		public IGnssConnection RtcmV2Connection { get; }
 
@@ -158,11 +185,11 @@ namespace Asv.Gnss
                     await using var c1 = linkedCancel.Token.Register(() => tcs.TrySetCanceled());
 #endif
 
-					using var subscribeOk = _cfgConnection.Filter<ComNavSimpleOkMessage>().Subscribe(_ => tcs.TrySetResult(Unit.Default));
-					using var subscribeTransmit = _cfgConnection.Filter<ComNavSimpleTransmitMessage>().Subscribe(_ => tcs.TrySetResult(Unit.Default));
-					using var subscribeError = _cfgConnection.Filter<ComNavSimpleErrorMessage>().Subscribe(_ => tcs.TrySetException(new ComNavDeviceResponseException(_cfgConnection.Stream.Name, pkt)));
+					using var subscribeOk = Connection.Filter<ComNavSimpleOkMessage>().Subscribe(_ => tcs.TrySetResult(Unit.Default));
+					using var subscribeTransmit = Connection.Filter<ComNavSimpleTransmitMessage>().Subscribe(_ => tcs.TrySetResult(Unit.Default));
+					using var subscribeError = Connection.Filter<ComNavSimpleErrorMessage>().Subscribe(_ => tcs.TrySetException(new ComNavDeviceResponseException(Connection.Stream.Name, pkt)));
 
-					await _cfgConnection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
+					await Connection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
 					await tcs.Task.ConfigureAwait(false);
 					return;
 				}
@@ -176,14 +203,14 @@ namespace Asv.Gnss
 				}
 			}
 
-			throw new ComNavDeviceTimeoutException(_cfgConnection.Stream.Name, pkt, _config.CommandTimeoutMs);
+			throw new ComNavDeviceTimeoutException(Connection.Stream.Name, pkt, _config.CommandTimeoutMs);
 		}
 
 		public Task<TPacket> Pool<TPacket, TPoolPacket>(TPoolPacket pkt, CancellationToken cancel = default)
 			where TPacket : ComNavAsciiMessageBase
 			where TPoolPacket : ComNavAsciiCommandBase
 		{
-			return Pool<TPacket, TPoolPacket>(pkt, _cfgConnection, cancel);
+			return Pool<TPacket, TPoolPacket>(pkt, Connection, cancel);
 		}
 
 		private async Task<TPacket> Pool<TPacket, TPoolPacket>(TPoolPacket pkt, IGnssConnection srcConnection, CancellationToken cancel = default)

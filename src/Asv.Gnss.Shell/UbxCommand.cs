@@ -11,7 +11,7 @@ namespace Asv.Gnss.Shell
     {
         public sealed class Settings : CommandSettings
         {
-            [Description("Connection string for EVSG")]
+            [Description("Connection string for UBX")]
             [CommandArgument(0, "[connectionString]")]
             public string Cs { get; set; } = "serial:COM10?br=115200";
         }

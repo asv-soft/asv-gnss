@@ -5,6 +5,10 @@ namespace Asv.Gnss
 {
     public abstract class ComNavBinaryMessageBase : GnssMessageBase<ushort>
     {
+	    /// <summary>
+	    /// In current version, the length of header is always 28 bytes.
+	    /// </summary>
+	    private const int HeaderLength = 28;
         public override string ProtocolId => ComNavBinaryParser.GnssProtocolId;
 
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
@@ -14,34 +18,43 @@ namespace Asv.Gnss
             var sync = BinSerialize.ReadByte(ref buffer);
             if (sync != ComNavBinaryParser.FirstSyncByte) throw new GnssParserException(ProtocolId,$"First sync byte error: want {ComNavBinaryParser.FirstSyncByte}, got {sync}");
             sync = BinSerialize.ReadByte(ref buffer);
-            if (sync != ComNavBinaryParser.SecondSyncByte) throw new GnssParserException(ProtocolId, $"Second sync byte error: want {ComNavBinaryParser.SecondSyncByte}, got {sync}");
+			if (sync != ComNavBinaryParser.SecondSyncByte) throw new GnssParserException(ProtocolId, $"Second sync byte error: want {ComNavBinaryParser.SecondSyncByte}, got {sync}");
             sync = BinSerialize.ReadByte(ref buffer);
-            if (sync != ComNavBinaryParser.ThirdSyncByte) throw new GnssParserException(ProtocolId, $"Third sync byte error: want {ComNavBinaryParser.ThirdSyncByte}, got {sync}");
+			if (sync != ComNavBinaryParser.ThirdSyncByte) throw new GnssParserException(ProtocolId, $"Third sync byte error: want {ComNavBinaryParser.ThirdSyncByte}, got {sync}");
             var headerLength = BinSerialize.ReadByte(ref buffer);
+			
             var msgId = BinSerialize.ReadUShort(ref buffer);
-            if (msgId != MessageId) throw new GnssParserException(ProtocolId, $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{msgId}])");
-            Reserved1 = BinSerialize.ReadByte(ref buffer);
-            Reserved2 = BinSerialize.ReadByte(ref buffer);
-            var messageLength = BinSerialize.ReadUShort(ref buffer);
+			if (msgId != MessageId) throw new GnssParserException(ProtocolId, $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{msgId}])");
+			
+			var messageType = (BinSerialize.ReadByte(ref buffer) >> 7) == 1
+				? ComNavMessageTypeEnum.Response
+				: ComNavMessageTypeEnum.Original;
 
-            Reserved3 = BinSerialize.ReadByte(ref buffer);
-            Reserved4 = BinSerialize.ReadByte(ref buffer);
-            Reserved5 = BinSerialize.ReadByte(ref buffer);
+			Source = (ComNavPortEnum)BinSerialize.ReadByte(ref buffer);
+            MessageLength = BinSerialize.ReadUShort(ref buffer);
 
-            GpsWeek = BinSerialize.ReadUShort(ref buffer);
-            GpsTime = BinSerialize.ReadUShort(ref buffer);
-            TGpsTime = GetFromGps(GpsWeek, GpsTime / 1000.0);
-            UtcTime = Gps2Utc(TGpsTime);
+            Reserved3 = BinSerialize.ReadUShort(ref buffer); // Sequence 
+			Reserved4 = BinSerialize.ReadByte(ref buffer); // Idle time
+			TimeStatus = (ComNavTimeStatusEnum)BinSerialize.ReadByte(ref buffer);
 
-            Reserved6 = BinSerialize.ReadByte(ref buffer);
-            Reserved7 = BinSerialize.ReadByte(ref buffer);
+			GpsWeek = BinSerialize.ReadUShort(ref buffer);
+            GpsMSecs = BinSerialize.ReadUInt(ref buffer);
+            GpsTime = GetFromGps(GpsWeek, GpsMSecs / 1000.0);
+            UtcTime = Gps2Utc(GpsTime);
+
+            Reserved6 = BinSerialize.ReadUInt(ref buffer); // Receiver Status
+            Reserved7 = BinSerialize.ReadUShort(ref buffer);
 
             ReceiverSwVersion = BinSerialize.ReadUShort(ref buffer);
-            
-            InternalContentDeserialize(ref buffer);
 
-            var calculatedHash = ComNavCrc32.Calc(originBuffer, headerLength + messageLength); // 32-bit CRC performed on all data including the header
-            var crcStart = originBuffer.Slice(headerLength + messageLength);
+			// In current version, the length of header is always 28 bytes.
+			// But fields may be appended in the future. =>
+			buffer = originBuffer.Slice(headerLength);
+			
+			InternalContentDeserialize(ref buffer);
+
+            var calculatedHash = ComNavCrc32.Calc(originBuffer, headerLength + MessageLength); // 32-bit CRC performed on all data including the header
+            var crcStart = originBuffer.Slice(headerLength + MessageLength);
             var readedHash = BinSerialize.ReadUInt(ref crcStart);
             if (calculatedHash != readedHash)
             {
@@ -51,19 +64,19 @@ namespace Asv.Gnss
             buffer = crcStart;
         }
 
-        public byte Reserved7 { get; set; }
-        public byte Reserved6 { get; set; }
-        public byte Reserved5 { get; set; }
-        public byte Reserved4 { get; set; }
-        public byte Reserved3 { get; set; }
-        public byte Reserved2 { get; set; }
-        public byte Reserved1 { get; set; }
+        public ushort MessageLength { get; set; }
 
+        public ushort Reserved7 { get; set; }
+        public uint Reserved6 { get; set; }
+        public ComNavTimeStatusEnum TimeStatus { get; set; }
+        public byte Reserved4 { get; set; }
+        public ushort Reserved3 { get; set; }
+        public ComNavPortEnum Source { get; set; }
         public DateTime UtcTime { get; set; }
         /// <summary>
-        /// GPS Time (TGPS)
+        /// GPS Time
         /// </summary>
-        public DateTime TGpsTime { get; set; }
+        public DateTime GpsTime { get; set; }
         /// <summary>
         /// This is a value (0 - 65535) that represents the receiver software build number
         /// </summary>
@@ -71,7 +84,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Milliseconds from the beginning of the GPS week.
         /// </summary>
-        public uint GpsTime { get; set; }
+        public uint GpsMSecs { get; set; }
         /// <summary>
         /// GPS week number.
         /// </summary>
@@ -84,15 +97,54 @@ namespace Asv.Gnss
 
         public override void Serialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+			var originBuffer = buffer;
+
+			BinSerialize.WriteByte(ref buffer, ComNavBinaryParser.FirstSyncByte);
+			BinSerialize.WriteByte(ref buffer, ComNavBinaryParser.SecondSyncByte);
+			BinSerialize.WriteByte(ref buffer, ComNavBinaryParser.ThirdSyncByte);
+
+			// In current version, the length of header is always 28 bytes.
+			BinSerialize.WriteByte(ref buffer, HeaderLength);
+			BinSerialize.WriteUShort(ref buffer, MessageId);
+			BinSerialize.WriteByte(ref buffer, 2); // Indicate the measurement source
+			BinSerialize.WriteByte(ref buffer, (byte)Source);
+			MessageLength = (ushort)InternalGetContentByteSize();
+			BinSerialize.WriteUShort(ref buffer, MessageLength);
+			BinSerialize.WriteUShort(ref buffer, Reserved3);
+			BinSerialize.WriteByte(ref buffer, Reserved4);
+			BinSerialize.WriteByte(ref buffer, (byte)TimeStatus);
+
+			GpsTime = Utc2Gps(UtcTime);
+			var gpsWeek = 0;
+			var gpsSecs = 0.0;
+			GetFromTime(GpsTime, ref gpsWeek, ref gpsSecs);
+
+			GpsWeek = (ushort)gpsWeek;
+			GpsMSecs = (uint)Math.Round(gpsSecs * 1000);
+			BinSerialize.WriteUShort(ref buffer, GpsWeek);
+			BinSerialize.WriteUInt(ref buffer, GpsMSecs);
+
+			BinSerialize.WriteUInt(ref buffer, Reserved6);
+			BinSerialize.WriteUShort(ref buffer, Reserved7);
+
+			BinSerialize.WriteUShort(ref buffer, ReceiverSwVersion);
+
+			// In current version, the length of header is always 28 bytes.
+			// But fields may be appended in the future. =>
+			// buffer = originBuffer.Slice(HeaderLength);
+
+			InternalContentSerialize(ref buffer);
+
+			var calculatedHash = ComNavCrc32.Calc(originBuffer, HeaderLength + MessageLength); // 32-bit CRC performed on all data including the header
+			BinSerialize.WriteUInt(ref buffer, calculatedHash);
         }
 
-        public override int GetByteSize()
+		public override int GetByteSize()
         {
-            return /*in current version, the length of header is always 28 bytes.*/ 28 + InternalGetContentByteSize() + 4 /*CRC32*/;
+            return /*in current version, the length of header is always 28 bytes.*/ HeaderLength + InternalGetContentByteSize() + 4 /*CRC32*/;
         }
 
-        public static DateTime GetFromGps(int weeknumber, double seconds)
+        private static DateTime GetFromGps(int weeknumber, double seconds)
         {
             var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
             var week = datum.AddDays(weeknumber * 7);
@@ -100,17 +152,37 @@ namespace Asv.Gnss
             return time;
         }
 
-        public static DateTime Gps2Utc(DateTime t)
+        private static void GetFromTime(DateTime time, ref int week, ref double seconds)
+        {
+	        var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
+
+	        var dif = time - datum;
+
+	        var weeks = (int)(dif.TotalDays / 7);
+
+	        week = weeks;
+
+	        dif = time - datum.AddDays(weeks * 7);
+
+	        seconds = dif.TotalSeconds;
+        }
+
+        private static DateTime Gps2Utc(DateTime t)
         {
             return t.AddSeconds(-LeapSecondsGPS(t.Year, t.Month));
         }
 
-        public static int LeapSecondsGPS(int year, int month)
+        private static DateTime Utc2Gps(DateTime t)
+        {
+	        return t.AddSeconds(LeapSecondsGPS(t.Year, t.Month));
+        }
+
+        private static int LeapSecondsGPS(int year, int month)
         {
             return LeapSecondsTAI(year, month) - 19;
         }
 
-        public static int LeapSecondsTAI(int year, int month)
+        private static int LeapSecondsTAI(int year, int month)
         {
             //http://maia.usno.navy.mil/ser7/tai-utc.dat
 
