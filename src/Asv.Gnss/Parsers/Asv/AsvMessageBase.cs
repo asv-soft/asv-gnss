@@ -11,50 +11,31 @@ namespace Asv.Gnss
         public byte TargetId { get; set; }
         public byte SenderId { get; set; }
 
-        private uint GetBitU(ReadOnlySpan<byte> buff, ref int pos, int len)
-        {
-            uint bits = 0;
-            for (var i = pos; i < pos + len; i++)
-            {
-                bits = (uint)((bits << 1) + ((buff[i / 8] >> (7 - i % 8)) & 1u));
-            }
-            pos += len;
-            return bits;
-        }
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             var crcSpan = buffer;
             var bitIndex = 0;
-            var sync1 = GetBitU(buffer, ref bitIndex, 8);
-            var sync2 = GetBitU(buffer, ref bitIndex, 8);
-            // var sync1 = BinSerialize.ReadByte(ref buffer);
-            // var sync2 = BinSerialize.ReadByte(ref buffer);
+            var sync1 = BinSerialize.ReadByte(ref buffer);
+            var sync2 = BinSerialize.ReadByte(ref buffer);
             
             if (sync1 != AsvMessageParser.Sync1 || sync2 != AsvMessageParser.Sync2)
             {
                 throw new Exception($"Error to deserialize {ProtocolId}.{Name}");
             }
-            var length = (int)GetBitU(buffer, ref bitIndex, 16);
-            // var length = BinSerialize.ReadUShort(ref buffer);
+            var length = BinSerialize.ReadUShort(ref buffer);
             var crc = AsvCrc16.Calc(crcSpan, length + 10);
             crcSpan = crcSpan.Slice(length + 10);
             var crcIndex = (length + 10) * 8;
-            var crcOrigin = (int)GetBitU(buffer, ref crcIndex, 16);
-            // var crcOrigin = BinSerialize.ReadUShort(ref crcSpan);
+            var crcOrigin = BinSerialize.ReadUShort(ref crcSpan);
             if (crc != crcOrigin)
             {
                 throw new Exception($"Error to deserialize {ProtocolId}.{Name}: CRC error. Want {crc}. Got {crcOrigin}");
             }
 
-            Sequence = (ushort)GetBitU(buffer, ref bitIndex, 16);;
-            SenderId = (byte)GetBitU(buffer, ref bitIndex, 8);;
-            TargetId = (byte)GetBitU(buffer, ref bitIndex, 8);;
-            var msgId = (ushort)GetBitU(buffer, ref bitIndex, 16);;
-            
-            // Sequence = BinSerialize.ReadUShort(ref buffer);
-            // SenderId = BinSerialize.ReadByte(ref buffer);
-            // TargetId = BinSerialize.ReadByte(ref buffer);
-            // var msgId = BinSerialize.ReadUShort(ref buffer);
+            Sequence = BinSerialize.ReadUShort(ref buffer);
+            SenderId = BinSerialize.ReadByte(ref buffer);
+            TargetId = BinSerialize.ReadByte(ref buffer);
+            var msgId = BinSerialize.ReadUShort(ref buffer);
             if (MessageId != msgId)
             {
                 throw new Exception($"Error to deserialize {ProtocolId}.{Name}: Message id not equals. Want '{MessageId}. Got '{msgId}''");

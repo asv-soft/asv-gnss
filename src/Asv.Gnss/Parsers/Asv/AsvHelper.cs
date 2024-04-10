@@ -332,7 +332,9 @@ namespace Asv.Gnss
         public static int GetBitS(ReadOnlySpan<byte> buff, ref int pos, int len)
         {
             var bitU = GetBitU(buff, ref pos, len);
-            return len <= 0 || 32 <= len || ((int)bitU & 1 << len - 1) == 0 ? (int)bitU : (int)bitU | -1 << len;
+            return len <= 0 || 32 <= len || ((int)bitU & (1 << (len - 1))) == 0
+                ? (int)bitU
+                : (int)bitU | (int)(~0u << len);
         }
 
         public static void SetBitU(Span<byte> buff, uint data, ref int pos, int len)
@@ -347,6 +349,13 @@ namespace Asv.Gnss
             }
 
             pos += len;
+        }
+
+        public static void SetBitS(Span<byte> buff, int data, ref int pos, int len)
+        {
+            if (data < 0) data |= 1 << (len - 1);
+            else data &= ~(1 << (len - 1));
+            SetBitU(buff, (uint)data, ref pos, len);
         }
 
         public static DateTime Gps2Utc(DateTime t)

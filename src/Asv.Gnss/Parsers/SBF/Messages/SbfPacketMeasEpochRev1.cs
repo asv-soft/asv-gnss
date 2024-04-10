@@ -139,8 +139,8 @@ namespace Asv.Gnss
             Frequency = freq * 1000000;
             RinexCode = rinexCode;
             SatSys = sys;
-            var lambda = 299792458 / Frequency; 
-            FullCarrierPhase = PR / lambda + (carrierMSB * 65536 + carrierLSB) * 0.001;
+            // var lambda = 299792458 / Frequency; 
+            CarrierPhase = (carrierMSB * 65536 + carrierLSB) * 0.001;
         }
 
         public bool IsSmoothed { get; set; }
@@ -172,7 +172,7 @@ namespace Asv.Gnss
         /// λ=299792458/fL m, with fL the carrier frequency as listed
         /// in section 4.1.10.
         /// </summary>
-        public double FullCarrierPhase { get; set; }
+        public double CarrierPhase { get; set; }
 
         public double DopplerHz { get; set; }
         /// <summary>
