@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <Version>1.1.7</Version>
     <LangVersion>9.0</LangVersion>
     <Authors>https://github.com/asvol</Authors>
@@ -16,8 +16,8 @@
     <DocumentationFile>bin\Release\Asv.Gnss.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Asv.Common" Version="1.10.2" />
-    <PackageReference Include="Asv.IO" Version="1.10.2" />
+    <PackageReference Include="Asv.Common" Version="2.0.0" />
+    <PackageReference Include="Asv.IO" Version="2.0.0" />
     <PackageReference Include="Geodesy" Version="4.1.0" />
   </ItemGroup>
 </Project>
