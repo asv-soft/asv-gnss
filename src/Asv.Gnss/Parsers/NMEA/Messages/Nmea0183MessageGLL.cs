@@ -13,8 +13,18 @@ namespace Asv.Gnss
     /// </summary>
     public class Nmea0183MessageGLL : Nmea0183MessageBase
     {
+        /// <summary>
+        /// Gets the message ID.
+        /// </summary>
+        /// <value>
+        /// The message ID.
+        /// </value>
         public override string MessageId => "GLL";
 
+        /// <summary>
+        /// Deserializes an array of string items and assigns them to the appropriate properties of the current object.
+        /// </summary>
+        /// <param name="items">An array of string items containing the data to be deserialized.</param>
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             Latitude = Nmea0183Helper.ParseLatitude(items[1]);
@@ -30,14 +40,42 @@ namespace Asv.Gnss
         /// </summary>
         public DateTime Time { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of the EastWest property.
+        /// </summary>
+        /// <value>
+        /// A string representing the EastWest property value.
+        /// </value>
         public string EastWest { get; set; }
 
+        /// <summary>
+        /// Gets or sets the longitude of a location.
+        /// </summary>
+        /// <value>The longitude value.</value>
         public double Longitude { get; set; }
 
+        /// <summary>
+        /// Gets or sets the string representing the North or South direction.
+        /// </summary>
+        /// <value>
+        /// The string representing the North or South direction.
+        /// </value>
         public string NorthSouth { get; set; }
 
+        /// <summary>
+        /// Gets or sets the latitude value for a location.
+        /// </summary>
+        /// <value>
+        /// The latitude value for a location.
+        /// </value>
         public double Latitude { get; set; }
 
+        /// <summary>
+        /// Gets or sets the status of the NmeaData.
+        /// </summary>
+        /// <value>
+        /// The status of the NmeaData.
+        /// </value>
         public NmeaDataStatus Status { get; set; }
     }
 }

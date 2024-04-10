@@ -2,8 +2,21 @@
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// The GlonassWordFactory class is responsible for creating GlonassWordBase objects based on the provided navigation bits.
+    /// </summary>
     public static class GlonassWordFactory
     {
+        /// <summary>
+        /// Creates a GlonassWordBase object based on the given navigation bits array.
+        /// </summary>
+        /// <param name="navBits">The array of navigation bits.</param>
+        /// <returns>
+        /// A GlonassWordBase object representing the created Glonass word.
+        /// </returns>
+        /// <exception cref="System.Exception">
+        /// Thrown when the given Glonass word ID is unknown.
+        /// </exception>
         public static GlonassWordBase Create(uint[] navBits)
         {
             var wordId = GlonassRawHelper.GetWordId(navBits);

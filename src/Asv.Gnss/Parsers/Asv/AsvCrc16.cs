@@ -3,10 +3,13 @@
 namespace Asv.Gnss
 {
     /// <summary>
-    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm
+    /// AsvCrc16 class for calculating CRC-16 checksum.
     /// </summary>
     public static class AsvCrc16
     {
+        /// <summary>
+        /// Lookup table for CRC-16 CCITT calculation.
+        /// </summary>
         static readonly ushort[] Crc16CcitLookUp =
         {
             0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
@@ -43,6 +46,13 @@ namespace Asv.Gnss
             0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
         };
 
+        /// <summary>
+        /// Calculates the CRC16-CCIT checksum for a given byte array.
+        /// </summary>
+        /// <param name="buff">The byte array for which the checksum is calculated.</param>
+        /// <param name="seedInBytes">The index in the byte array from where to start calculating the checksum.</param>
+        /// <param name="len">The number of bytes to consider for calculating the checksum.</param>
+        /// <returns>The calculated CRC16-CCIT checksum.</returns>
         public static ushort Calc(byte[] buff, int seedInBytes, int len)
         {
             int i;
@@ -55,6 +65,12 @@ namespace Asv.Gnss
             return crc;
         }
 
+        /// <summary>
+        /// Calculates the CRC16 CCIT checksum of the specified byte buffer.
+        /// </summary>
+        /// <param name="buff">The byte buffer to calculate the checksum for.</param>
+        /// <param name="len">The length of the byte buffer.</param>
+        /// <returns>The calculated CRC16 CCIT checksum.</returns>
         public static ushort Calc(ReadOnlySpan<byte> buff, int len)
         {
             int i;

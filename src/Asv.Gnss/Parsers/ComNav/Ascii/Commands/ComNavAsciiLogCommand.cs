@@ -719,17 +719,75 @@ namespace Asv.Gnss
         ONCE
     }
 
+    /// Represents a command to enable or disable ASCII logging on a ComNav device.
+    /// This command is used to configure and control logging of ASCII messages on a ComNav device.
+    /// @inherits ComNavAsciiCommandBase
+    /// /
     public class ComNavAsciiLogCommand: ComNavAsciiCommandBase
     {
+        /// <summary>
+        /// Gets or sets the Type of the ComNavMessageEnum.
+        /// </summary>
+        /// <value>
+        /// The Type of the ComNavMessageEnum.
+        /// </value>
         public ComNavMessageEnum Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trigger for a ComNav Trigger.
+        /// </summary>
+        /// <value>
+        /// The trigger for a ComNav Trigger, represented by a <see cref="ComNavTriggerEnum"/> value.
+        /// </value>
         public ComNavTriggerEnum? Trigger { get; set; }
+
+        /// <summary>
+        /// Gets or sets the period.
+        /// </summary>
+        /// <value>
+        /// The period in months.
+        /// </value>
+        /// <remarks>
+        /// This property represents the period in months.
+        /// </remarks>
         public uint? Period { get; set; }
+
+        /// <summary>
+        /// Gets or sets the offset time in milliseconds.
+        /// </summary>
+        /// <value>
+        /// The offset time in milliseconds.
+        /// </value>
         public uint? OffsetTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the format of the property.
+        /// </summary>
+        /// <value>
+        /// The format of the property.
+        /// </value>
         public ComNavFormat? Format { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the port.
+        /// </summary>
+        /// <value>
+        /// The name of the port.
+        /// </value>
         public string PortName { get; set; }
 
+        /// <summary>
+        /// Gets the unique identifier of the message.
+        /// </summary>
+        /// <value>
+        /// The message identifier.
+        /// </value>
         public override string MessageId => "LOG";
 
+        /// <summary>
+        /// Serializes the object to an ASCII string representation.
+        /// </summary>
+        /// <returns>The serialized ASCII string.</returns>
         protected override string SerializeToAsciiString()
         {
             var sb = new StringBuilder();

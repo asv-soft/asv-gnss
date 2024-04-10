@@ -10,10 +10,26 @@ namespace Asv.Gnss
     /// </summary>
     public class Nmea0183MessageGST : Nmea0183MessageBase
     {
+        /// <summary>
+        /// Represents the NMEA message ID.
+        /// </summary>
         public const string NmeaMessageId = "GST";
 
+        /// <summary>
+        /// Gets the message ID for the NMEA message.
+        /// </summary>
+        /// <value>
+        /// The message ID.
+        /// </value>
+        /// <remarks>
+        /// This property overrides the base class implementation and returns the NmeaMessageId.
+        /// </remarks>
         public override string MessageId => NmeaMessageId;
 
+        /// <summary>
+        /// Deserialize a string array and set the corresponding properties of the object.
+        /// </summary>
+        /// <param name="items">An array of strings containing the values to be deserialized.</param>
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             Time = Nmea0183Helper.ParseTime(items[1]);

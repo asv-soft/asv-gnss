@@ -15,10 +15,20 @@
     /// </summary>
     public class Nmea0183MessageGSV : Nmea0183MessageBase
     {
+        /// <summary>
+        /// Represents the GNSS message ID.
+        /// </summary>
         public const string GnssMessageId = "GSV";
 
+        /// Gets the message ID associated with this message.
+        /// @return The message ID as a string.
+        /// /
         public override string MessageId => GnssMessageId;
 
+        /// <summary>
+        /// Internal method to deserialize an array of strings into the object properties.
+        /// </summary>
+        /// <param name="items">Array of strings representing the properties of the object</param>
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             if (!string.IsNullOrEmpty(items[1])) TotalNumberOfMsg = int.Parse(items[1]);
@@ -65,23 +75,87 @@
             }
         }
 
+        /// Gets or sets the total number of messages.
+        /// /
         public int TotalNumberOfMsg { get; set; }
 
+        /// <summary>
+        /// Gets or sets the message number.
+        /// </summary>
+        /// <value>
+        /// The message number.
+        /// </value>
         public int MessageNumber { get; set; }
 
+        /// <summary>
+        /// Gets or sets the number of satellites in view.
+        /// </summary>
+        /// <remarks>
+        /// The SatellitesInView property represents the number of satellites currently in view of the GPS receiver.
+        /// This property is typically used in navigation systems to determine the availability and reliability of satellite signals.
+        /// </remarks>
         public int SatellitesInView { get; set; }
 
+        /// <summary>
+        /// Represents a satellite object.
+        /// </summary>
         public class Satellite
         {
+            /// <summary>
+            /// Gets or sets the value of the Number property.
+            /// </summary>
+            /// <value>
+            /// An integer representing the value of the Number.
+            /// </value>
             public int Number { get; set; }
+
+            /// <summary>
+            /// The elevation in degrees.
+            /// </summary>
+            /// <value>
+            /// An integer representing the elevation in degrees.
+            /// </value>
             public int ElevationDeg { get; set; }
+
+            /// <summary>
+            /// Gets or sets the azimuth degree value.
+            /// </summary>
+            /// <value>
+            /// The azimuth degree value.
+            /// </value>
             public int AzimuthDeg { get; set; }
+
+            /// <summary>
+            /// Gets or sets the SNR (Signal-to-Noise Ratio) in decibels.
+            /// </summary>
+            /// <value>
+            /// The SNR value in decibels.
+            /// </value>
             public int SnrdB { get; set; }
             // extended computed values
+            /// <summary>
+            /// Gets or sets the extended PRN (Pseudo-Random Number) value.
+            /// </summary>
+            /// <value>
+            /// The extended PRN value.
+            /// </value>
             public int? ExtPRN { get; set; }
+
+            /// <summary>
+            /// Gets or sets the external navigation system.
+            /// </summary>
+            /// <value>
+            /// The external navigation system. It is represented as <see cref="NmeaNavigationSystemEnum"/>.
+            /// </value>
             public NmeaNavigationSystemEnum? ExtNavSys { get; set; }
         }
 
+        /// <summary>
+        /// Gets or sets the array of Satellites.
+        /// </summary>
+        /// <value>
+        /// An array of Satellite objects.
+        /// </value>
         public Satellite[] Satellites { get; set; }
     }
 }

@@ -55,7 +55,13 @@ namespace Asv.Gnss
         /// 2^-40
         /// </summary>
         public const double P2_40 = 9.094947017729280E-13;
-
+        
+        /// <summary>
+        /// Retrieves the week number and number of seconds from a given DateTime
+        /// </summary>
+        /// <param name="time">The DateTime value for which the week number and number of seconds are to be obtained</param>
+        /// <param name="week">A reference to an integer variable that will hold the week number</param>
+        /// <param name="seconds">A reference to a double variable that will hold the number of seconds</param>
         public static void TimeToGps(DateTime time, ref int week, ref double seconds)
         {
             var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
@@ -71,6 +77,12 @@ namespace Asv.Gnss
             seconds = dif.TotalSeconds;
         }
 
+        /// <summary>
+        /// Converts the given week number and seconds to a DateTime object in UTC time zone.
+        /// </summary>
+        /// <param name="weeknumber">The week number.</param>
+        /// <param name="seconds">The seconds value.</param>
+        /// <returns>A DateTime object representing the specified week number and seconds in UTC.</returns>
         public static DateTime GpsToTime(int weeknumber, double seconds)
         {
 
@@ -182,6 +194,15 @@ namespace Asv.Gnss
             return date.AddSeconds((gloTime - date).TotalSeconds % 86400);
         }
 
+        /// <summary>
+        /// Retrieves the word ID from the specified array of unsigned integers.
+        /// </summary>
+        /// <param name="navBits">The array of unsigned integers representing the navigation bits.</param>
+        /// <returns>The word ID extracted from the navigation bits.</returns>
+        /// <exception cref="Exception">
+        /// Thrown when the length of the <paramref name="navBits"/> array is not equal to 3 u32 words,
+        /// or when the value of bits 85 is not 0 (as per GLONASS ICD superframe structure).
+        /// </exception>
         public static byte GetWordId(uint[] navBits)
         {
             if (navBits.Length != 3)
@@ -192,6 +213,15 @@ namespace Asv.Gnss
             return (byte)((navBits[0] >> 27) & 0xF); // 27 bits offset, 4 bit
         }
 
+        /// <summary>
+        /// Retrieves the bits from a byte array starting at a specified position.
+        /// </summary>
+        /// <param name="buff">The byte array from which to retrieve the bits.</param>
+        /// <param name="pos">The starting position within the byte array.</param>
+        /// <param name="len">The number of bits to retrieve.</param>
+        /// <returns>
+        /// The retrieved bits as an unsigned integer.
+        /// </returns>
         public static uint GetBitU(byte[] buff, uint pos, uint len)
         {
             uint bits = 0;
@@ -201,6 +231,20 @@ namespace Asv.Gnss
             return bits;
         }
 
+        /// <summary>
+        /// Sets bits in a byte array at specified position for specified length using data.
+        /// </summary>
+        /// <param name="buff">The byte array to modify.</param>
+        /// <param name="pos">The starting position to set bits.</param>
+        /// <param name="len">The length of bits to set.</param>
+        /// <param name="data">The data to set in the byte array.</param>
+        /// <remarks>
+        /// The method sets bits in the given byte array at the specified position.
+        /// It uses the data to set the bits.
+        /// The position must be within the range of the byte array.
+        /// The length of bits must be greater than 0 and less or equal to 32.
+        /// The method modifies the input byte array directly.
+        /// </remarks>
         public static void SetBitU(byte[] buff, uint pos, uint len, uint data)
         {
             var mask = 1u << (int)(len - 1);
@@ -226,16 +270,18 @@ namespace Asv.Gnss
             return GetBitU(buff, pos, 1) != 0 ? -value : value;
         }
 
+        /// <summary>
+        /// Convert an array of 32-bit unsigned integers into a byte array.
+        /// </summary>
+        /// <param name="navBits">The array of 32-bit unsigned integers containing the data.</param>
+        /// <returns>A byte array representing the raw data.</returns>
         public static byte[] GetRawData(uint[] navBits)
         {
             uint bitIndex = 3;
             var result = new byte[11];
-            SetBitU(result, bitIndex, 32, navBits[0]);
-            bitIndex += 32;
-            SetBitU(result, bitIndex, 32, navBits[1]);
-            bitIndex += 32;
-            SetBitU(result, bitIndex, 21, navBits[2] >> 11);
-            bitIndex += 21;
+            SetBitU(result, bitIndex, 32, navBits[0]); bitIndex += 32;
+            SetBitU(result, bitIndex, 32, navBits[1]); bitIndex += 32;
+            SetBitU(result, bitIndex, 21, navBits[2] >> 11); bitIndex += 21;
             return result;
         }
 

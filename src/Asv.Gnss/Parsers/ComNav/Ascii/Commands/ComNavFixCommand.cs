@@ -52,10 +52,25 @@ namespace Asv.Gnss
 
     }
 
+    /// <summary>
+    /// Represents a command to fix the navigation in ComNav ASCII protocol.
+    /// </summary>
     public class ComNavFixCommand: ComNavAsciiCommandBase
     {
+        /// <summary>
+        /// Gets or sets the fix type of the ComNav device.
+        /// </summary>
+        /// <remarks>
+        /// The fix type represents the current status of the ComNav device's navigation fix.
+        /// </remarks>
         public ComNavFixType FixType { get; set; }
 
+        /// <summary>
+        /// Serializes the FixType property to an ASCII string representation.
+        /// </summary>
+        /// <returns>
+        /// The serialized ASCII string representation of the FixType.
+        /// </returns>
         protected override string SerializeToAsciiString()
         {
             switch (FixType)
@@ -74,10 +89,33 @@ namespace Asv.Gnss
             
         }
 
+        /// <summary>
+        /// Gets or sets the latitude coordinate.
+        /// </summary>
         public double Lat { get; set; } = Double.NaN;
+
+        /// <summary>
+        /// Gets or sets the longitude value.
+        /// </summary>
+        /// <value>
+        /// The longitude value. If the value is undefined, it is set to Double.NaN.
+        /// </value>
         public double Lon { get; set; } = Double.NaN;
+
+        /// <summary>
+        /// Gets or sets the altitude.
+        /// </summary>
+        /// <value>
+        /// The altitude value. The default value is "NaN" (not a number).
+        /// </value>
         public double Alt { get; set; } = Double.NaN;
 
+        /// <summary>
+        /// The unique identifier for the message.
+        /// </summary>
+        /// <value>
+        /// The MessageId property represents the unique identifier of the message.
+        /// </value>
         public override string MessageId => "FIX";
     }
 }

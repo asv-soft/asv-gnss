@@ -7,15 +7,30 @@ using Spectre.Console.Cli;
 
 namespace Asv.Gnss.Shell
 {
+    /// <summary>
+    /// Represents a command that prints bytes received from a connection.
+    /// </summary>
+    /// <typeparam name="Settings">The settings for the command.</typeparam>
     internal class PrintBytesCommand:Command<PrintBytesCommand.Settings>
     {
+        /// <summary>
+        /// Represents the settings for a command.
+        /// </summary>
         public sealed class Settings : CommandSettings
         {
+            /// <summary>
+            /// Gets or sets the connection string for EVSG.
+            /// </summary>
+            /// <value>
+            /// The connection string for EVSG.
+            /// </value>
             [Description("Connection string for EVSG")]
             [CommandArgument(0, "[connectionString]")]
             public string Cs { get; set; } = "tcp://10.10.6.137:64536";
         }
 
+        /// Executes the command. </summary> <param name="context">Command context</param> <param name="settings">Execution settings</param>
+        /// <returns>Integer value indicating the execution status</returns>**/
         public override int Execute(CommandContext context, Settings settings)
         {
             

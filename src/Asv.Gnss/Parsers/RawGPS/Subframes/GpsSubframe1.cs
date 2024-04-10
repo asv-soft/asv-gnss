@@ -3,11 +3,23 @@ using Newtonsoft.Json;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a GPS subframe 1.
+    /// </summary>
     public class GpsSubframe1: GpsSubframeBase
     {
-        
+        /// <summary>
+        /// Gets the subframe identifier.
+        /// </summary>
+        /// <value>
+        /// The subframe identifier.
+        /// </value>
         public override byte SubframeId => 1;
 
+        /// <summary>
+        /// Deserialize the data to extract satellite information.
+        /// </summary>
+        /// <param name="dataWithoutParity">The byte array containing the data without parity.</param>
         public override void Deserialize(byte[] dataWithoutParity)
         {
             base.Deserialize(dataWithoutParity);
@@ -43,10 +55,43 @@ namespace Asv.Gnss
         public int iodc { get; set; }
         
         public double[] Tgd { get; set; } = new double[1];
+        
+        /// <summary>
+        /// Gets or sets the satellite accuracy in byte value.
+        /// </summary>
         public byte SatelliteAccuracy { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the health status of the satellite.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The health status is represented as a byte value.
+        /// </para>
+        /// <para>
+        /// The value ranges from 0 to 255, where 0 represents a completely malfunctioning satellite
+        /// and 255 represents a perfectly functioning satellite.
+        /// </para>
+        /// </remarks>
+        /// <value>
+        /// The health status of the satellite.
+        /// </value>
         public byte SatelliteHealth { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the week number.
+        /// </summary>
+        /// <value>
+        /// The week number.
+        /// </value>
         public int WeekNumber { get; set; }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);

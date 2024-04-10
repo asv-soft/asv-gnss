@@ -77,9 +77,17 @@ namespace Asv.Gnss
         /// </summary>
         public const double SC2RAD = 3.1415926535898;
 
+        /// <summary>
+        /// The GPS subframe preamble constant.
+        /// </summary>
         public const byte GpsSubframePreamble = 0x8B;
         
 
+        /// <summary>
+        /// Retrieves raw data from the given navigation bits array without parity bits.
+        /// </summary>
+        /// <param name="navBits">The navigation bits array. Length must be 10 uint words (as GPS ICD subframe length).</param>
+        /// <returns>An array of bytes containing the raw data without parity bits.</returns>
         public static byte[] GetRawDataWithoutParity(uint[] navBits)
         {
             if (navBits.Length != 10) throw new Exception($"Length of {nameof(navBits)} array must be 10 u32 word (as GPS ICD subframe length)");
@@ -95,6 +103,13 @@ namespace Asv.Gnss
             return result;
         }
 
+        /// <summary>
+        /// Sets a range of bits in the given byte array to the specified value.
+        /// </summary>
+        /// <param name="buff">The byte array to modify.</param>
+        /// <param name="pos">The starting position of the range.</param>
+        /// <param name="len">The length of the range.</param>
+        /// <param name="data">The value to set the bits to.</param>
         public static void SetBitU(byte[] buff, uint pos, uint len, uint data)
         {
             var mask = 1u << (int)(len - 1);
@@ -109,6 +124,14 @@ namespace Asv.Gnss
                     buff[i / 8] &= (byte)(~(1u << (int)(7 - i % 8)));
             }
         }
+
+        /// <summary>
+        /// Gets the unsigned value of a specified range of bits from a byte array.
+        /// </summary>
+        /// <param name="buff">The byte array from which to retrieve the bits.</param>
+        /// <param name="pos">The starting position of the bit range.</param>
+        /// <param name="len">The length of the bit range.</param>
+        /// <returns>The unsigned value of the specified range of bits.</returns>
         public static uint GetBitU(byte[] buff, uint pos, uint len)
         {
             uint bits = 0;
@@ -125,6 +148,14 @@ namespace Asv.Gnss
             return (int)(bits | (~0u << len)); /* extend sign */
         }
 
+        /// <summary>
+        /// Checks if the given preamble is equal to the GPS subframe preamble.
+        /// </summary>
+        /// <param name="navBits">An array of unsigned integers representing the navigation bits.</param>
+        /// <returns>
+        /// True if the preamble is equal to the GPS subframe preamble;
+        /// otherwise, false.
+        /// </returns>
         public static bool CheckPreamble(uint[] navBits)
         {
             var val = GetPreamble(navBits);
@@ -153,6 +184,18 @@ namespace Asv.Gnss
             return (navBits[1] >> 13) & 0x1FFFF; // 17 bits
         }
 
+        /// <summary>
+        /// Gets the subframe ID from the given array of navigation bits.
+        /// </summary>
+        /// <param name="navBits">An array of navigation bit words.</param>
+        /// <returns>The subframe ID.</returns>
+        /// <exception cref="Exception">Thrown if the length of the navBits array is not 10.</exception>
+        /// <remarks>
+        /// This method extracts the subframe ID from the navBits array. The navBits array must have a length of 10,
+        /// which corresponds to the GPS ICD subframe length. The subframe ID is obtained by shifting the second word
+        /// of the navBits array by 8 bits to the right, and then applying a bitwise AND operation with 0x07 to extract
+        /// the lower 3 bits.
+        /// </remarks>
         public static byte GetSubframeId(uint[] navBits)
         {
             if (navBits.Length != 10) throw new Exception($"Length of {nameof(navBits)} array must be 10 u32 word (as GPS ICD subframe length)");
@@ -161,6 +204,11 @@ namespace Asv.Gnss
 
         }
 
+        /// <summary>
+        /// Converts a subframe ID to its corresponding value.
+        /// </summary>
+        /// <param name="subframeId">The subframe ID to convert.</param>
+        /// <returns>The corresponding value of the subframe ID.</returns>
         public static byte GetSubframeId(int subframeId)
         {
             switch (subframeId)
@@ -277,7 +325,6 @@ namespace Asv.Gnss
         }
     }
 
-    
     
 
 

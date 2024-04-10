@@ -5,10 +5,17 @@ using System.Threading.Tasks;
 
 namespace Asv.Gnss
 {
-
-
+    /// <summary>
+    /// UbxFactory class provides functions to create default instances of UbxMessageBase derived classes and register them with a UbxBinaryParser.
+    /// </summary>
     public static class UbxFactory
     {
+        /// <summary>
+        /// Returns a collection of functions that creates instances of various UBX message types.
+        /// </summary>
+        /// <returns>
+        /// An IEnumerable of Func&lt;UbxMessageBase&gt;, where each Func&lt;UbxMessageBase&gt; represents a function that creates a specific UBX message instance.
+        /// </returns>
         public static IEnumerable<Func<UbxMessageBase>> DefaultPoolMessages
         {
             get
@@ -27,6 +34,12 @@ namespace Asv.Gnss
             }
         }
 
+        /// <summary>
+        /// Gets the collection of default messages.
+        /// </summary>
+        /// <returns>
+        /// An enumerable collection of functions that create instances of UbxMessageBase objects.
+        /// </returns>
         public static IEnumerable<Func<UbxMessageBase>> DefaultMessages
         {
             get
@@ -53,6 +66,11 @@ namespace Asv.Gnss
             }
         }
 
+        /// <summary>
+        /// Register the default messages in the UbxBinaryParser.
+        /// </summary>
+        /// <param name="src">The UbxBinaryParser object.</param>
+        /// <returns>The UbxBinaryParser object with the default messages registered.</returns>
         public static UbxBinaryParser RegisterDefaultMessages(this UbxBinaryParser src)
         {
             foreach (var func in DefaultMessages)

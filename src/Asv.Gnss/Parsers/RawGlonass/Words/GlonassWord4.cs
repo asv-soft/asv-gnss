@@ -1,9 +1,25 @@
 ﻿namespace Asv.Gnss
 {
+    /// <summary>
+    /// Represents a Glonass Word 4 object.
+    /// </summary>
     public class GlonassWord4 : GlonassWordBase
     {
+        /// <summary>
+        /// Gets the unique identifier for the word.
+        /// </summary>
+        /// <remarks>
+        /// The WordId property is an override of the base class property and returns the byte value 4.
+        /// </remarks>
+        /// <value>
+        /// The unique identifier for the word. The value is always 4.
+        /// </value>
         public override byte WordId => 4;
 
+        /// <summary>
+        /// Deserialize the given byte array and populate the object with the deserialized values.
+        /// </summary>
+        /// <param name="data">The byte array containing the serialized data.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);
@@ -66,7 +82,9 @@
         public byte Slot { get; set; }
 
         /// <summary>
-        /// Модификация НКА, излучающего данный навигационный сигнал. Значение "00" означает НКА «Глонасс», "01" – НКА «Глонасс-М»
+        /// This method returns the time correction value (Ft) for a given navigation signal.
+        /// The input parameter ft is a byte that represents the modification of the emitting satellite.
+        /// A value of "00" indicates the satellite is "Glonass", "01" indicates the satellite is "Glonass-M".
         /// </summary>
         public byte M { get; set; }
 

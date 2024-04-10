@@ -2,8 +2,16 @@
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// This class is responsible for creating GPS subframes based on the input bit data.
+    /// </summary>
     public static class GpsSubFrameFactory
     {
+        /// <summary>
+        /// Creates a GpsSubframeBase object from the given navigation bits.
+        /// </summary>
+        /// <param name="navBits">An array of uint representing the navigation bits.</param>
+        /// <returns>A GpsSubframeBase object representing the parsed subframe.</returns>
         public static GpsSubframeBase Create(uint[] navBits)
         {
             if (GpsRawHelper.CheckPreamble(navBits) == false)  throw new Exception("Preamble error");

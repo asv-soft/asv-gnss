@@ -3,29 +3,90 @@ using System.Text;
 
 namespace Asv.Gnss
 {
+    /// <summary>
+    /// The Nmea0183Parser class is responsible for parsing NMEA 0183 messages.
+    /// </summary>
     public class Nmea0183Parser:GnssMessageParserBase<Nmea0183MessageBase,string>
     {
+        /// <summary>
+        /// The constant variable representing the GNSS protocol ID.
+        /// </summary>
         public const string GnssProtocolId = "NMEA0183";
+
+        /// <summary>
+        /// The current state of the object.
+        /// </summary>
         private State _state;
+
+        /// <summary>
+        /// Represents a byte array buffer with a fixed size of 1024 bytes.
+        /// </summary>
         private readonly byte[] _buffer = new byte[1024];
+
+        /// <summary>
+        /// The cyclic redundancy check (CRC) buffer.
+        /// </summary>
         private readonly byte[] crcBuffer = new byte[2];
+
+        /// <summary>
+        /// Represents the number of read messages.
+        /// </summary>
         private int _msgReaded;
 
-       
 
+        /// <summary>
+        /// Represents the state of the system.
+        /// </summary>
         private enum State
         {
+            /// <summary>
+            /// Represents the synchronization state of a process.
+            /// </summary>
             Sync,
+
+            /// <summary>
+            /// Represents the state of the messaging process.
+            /// </summary>
             Msg,
+
+            /// <summary>
+            /// Represents the Crc1 state of the State enum.
+            /// </summary>
             Crc1,
+
+            /// <summary>
+            /// Represents the Crc2 state in the State enum.
+            /// </summary>
             Crc2,
+
+            /// <summary>
+            /// Represents the End1 state of the State enum.
+            /// </summary>
             End1,
+
+            /// <summary>
+            /// Represents the 'End2' state of the State enum.
+            /// </summary>
             End2,
         }
 
 
+        /// <summary>
+        /// Gets the ProtocolId property.
+        /// </summary>
+        /// <value>
+        /// The identifier of the GNSS protocol.
+        /// </value>
         public override string ProtocolId => GnssProtocolId;
 
+        /// <summary>
+        /// Reads a byte of data and processes it according to the current state.
+        /// </summary>
+        /// <param name="data">The data byte to be read and processed.</param>
+        /// <returns>
+        /// <c>true</c> if the byte is successfully processed and the message is valid;
+        /// otherwise, <c>false</c> if the byte is invalid or the message fails the CRC check.
+        /// </returns>
         public override bool Read(byte data)
         {
              switch (_state)
@@ -99,8 +160,10 @@ namespace Asv.Gnss
             return false;
         }
 
-       
 
+        /// <summary>
+        /// Resets the state of the object to the initial state.
+        /// </summary>
         public override void Reset()
         {
             _state = State.Sync;

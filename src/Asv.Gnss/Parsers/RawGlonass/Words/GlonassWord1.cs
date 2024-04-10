@@ -2,10 +2,25 @@
 
 namespace Asv.Gnss
 {
+    /// GlonassWord1 class extends GlonassWordBase class and represents a Glonass word with ID 1.
+    /// /
     public class GlonassWord1 : GlonassWordBase
     {
+        /// <summary>
+        /// The ID of the word represented by this object.
+        /// </summary>
+        /// <remarks>
+        /// This property specifies the unique identifier for the word. It is an override of the base class property.
+        /// </remarks>
+        /// <value>
+        /// The ID of the word.
+        /// </value>
         public override byte WordId => 1;
 
+        /// <summary>
+        /// Deserializes the byte array data into object properties.
+        /// </summary>
+        /// <param name="data">The byte array data to be deserialized.</param>
         public override void Deserialize(byte[] data)
         {
             base.Deserialize(data);
