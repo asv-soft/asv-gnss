@@ -109,7 +109,7 @@ namespace Asv.Gnss
             var pkt = factory();
             _factory.Add(pkt.MessageId, factory);
         }
-
+        
         /// <summary>
         /// Gets the statistic input bytes.
         /// </summary>

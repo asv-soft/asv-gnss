@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Asv.Gnss
@@ -32,6 +33,8 @@ namespace Asv.Gnss
         /// Represents the number of read messages.
         /// </summary>
         private int _msgReaded;
+
+        private readonly List<Nmea0183GetMessageIdDelegate> _proprietaryMessageIdGetterList = new(2);
 
 
         /// <summary>
@@ -69,7 +72,6 @@ namespace Asv.Gnss
             /// </summary>
             End2,
         }
-
 
         /// <summary>
         /// Gets the ProtocolId property.
@@ -142,15 +144,33 @@ namespace Asv.Gnss
                     var strMessage = Encoding.ASCII.GetString(_buffer, 0, _msgReaded);
                     var readCrc = Encoding.ASCII.GetString(crcBuffer);
                     var calcCrc = NmeaCrc.Calc(new ReadOnlySpan<byte>(_buffer,0,_msgReaded));
+                    string msgId = null;
                     if (readCrc == calcCrc)
                     {
-                        var msgId = strMessage.Substring(2, 3).ToUpper();
+                        if (strMessage.StartsWith('P')) // proprietary message
+                        {
+                            foreach (var idDelegate in _proprietaryMessageIdGetterList)
+                            {
+                                if (!idDelegate(strMessage, out var parsedMessageId)) continue;
+                                msgId = parsedMessageId;
+                                break;
+                            }
+                        }
+                        else // standard message
+                        {
+                            msgId = strMessage.Substring(2, 3).ToUpper();
+                        }
+                        if (msgId == null)
+                        {
+                            Reset();
+                            return false;
+                        }
                         var span = new ReadOnlySpan<byte>(_buffer, 0, _msgReaded);
                         ParsePacket(msgId, ref span);
                         Reset();
                         return true;
+                        
                     }
-
                     PublishWhenCrcError();
                     Reset();
                     break;
@@ -160,6 +180,11 @@ namespace Asv.Gnss
             return false;
         }
 
+        public void RegisterProprietary(Nmea0183GetMessageIdDelegate idGetter,Func<Nmea0183MessageBase> factory)
+        {
+            _proprietaryMessageIdGetterList.Add(idGetter);
+            base.Register(factory);
+        }
 
         /// <summary>
         /// Resets the state of the object to the initial state.
@@ -171,4 +196,6 @@ namespace Asv.Gnss
 
         
     }
+    
+    public delegate bool Nmea0183GetMessageIdDelegate(string rawNmeaSentence, out string messageId);
 }

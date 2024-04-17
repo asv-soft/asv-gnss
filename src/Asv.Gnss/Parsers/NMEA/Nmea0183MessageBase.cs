@@ -66,7 +66,7 @@ namespace Asv.Gnss
         {
             if (buffer.Length < 5) throw new Exception("Too small string for NMEA");
             var message = buffer.GetString(Encoding.ASCII);
-            SourceId = message.Substring(0, 2);
+            SourceId = message.StartsWith('P') ? "P" : message[..2];
             var items = message.Trim().Split(',');
             InternalDeserializeFromStringArray(items);
             buffer = buffer.Slice(buffer.Length);

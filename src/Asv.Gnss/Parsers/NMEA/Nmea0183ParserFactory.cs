@@ -19,6 +19,14 @@ namespace Asv.Gnss
                 yield return () => new Nmea0183MessageGSV();
             }
         }
+        
+        public static IEnumerable<(Nmea0183GetMessageIdDelegate,Func<Nmea0183MessageBase>)> DefaultProprietaryMessages
+        {
+            get
+            {
+                yield return (Nmea0183ProprietaryMessageGRMZ.MessageIdGetter,() => new Nmea0183ProprietaryMessageGRMZ());
+            }
+        }
 
         /// <summary>
         /// Registers the default messages to the Nmea0183Parser instance.
@@ -31,6 +39,11 @@ namespace Asv.Gnss
             {
                 src.Register(func);
             }
+            foreach (var func in DefaultProprietaryMessages)
+            {
+                src.RegisterProprietary(func.Item1,func.Item2);
+            }
+            
             return src;
         }
     }
