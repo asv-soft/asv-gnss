@@ -105,6 +105,11 @@ namespace Asv.Gnss
                     {
                         _state = State.Crc1;
                     }
+                    else if (data == 0x0D)
+                    {
+                        _state = State.End2;
+                        //TODO: create local variable that will allow to skip crc in End2 step
+                    }
                     else
                     {
                         if (_msgReaded >= (_buffer.Length - 2))
