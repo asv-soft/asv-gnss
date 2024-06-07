@@ -74,7 +74,7 @@ namespace Asv.Gnss
             SignalType = SbfHelper.GetSignalType(Source, FreqNr, out var constellation, out var carrierFreq, out var signalRinexCode);
 
             if (constellation != NavSystem) throw new Exception("Navigation system code not euqals");
-            CarrierFreq = carrierFreq;
+            CarrierFreq = carrierFreq * 1000000.0;
             RindexSignalCode = signalRinexCode;
             RxChannel = BinSerialize.ReadByte(ref buffer);
             NAVBitsU32 = new uint[NavBitsU32Length];

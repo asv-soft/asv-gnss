@@ -69,10 +69,10 @@ namespace Asv.Gnss
             var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1);
             var pr1 = (double)AsvHelper.GetBitU(buffer, ref bitIndex, 24);
             var ppr1 = AsvHelper.GetBitS(buffer, ref bitIndex, 20);
-            L1LockTime = (byte)AsvHelper.GetBitU(buffer, ref bitIndex, 7);
+            L1LockTime = AsvHelper.GetLockTime((byte)AsvHelper.GetBitU(buffer, ref bitIndex, 7));
             var amb = AsvHelper.GetBitU(buffer, ref bitIndex, 8);
             ParticipationIndicator = AsvHelper.GetBitU(buffer, ref bitIndex, 1) == 1;
-            ReasonForException = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
+            ReasonForException = (ReasonForException)AsvHelper.GetBitU(buffer, ref bitIndex, 4);
             bitIndex += 3;
             Elevation = AsvHelper.GetBitU(buffer, ref bitIndex, 10) * 0.1;
             Azimuth = AsvHelper.GetBitS(buffer, ref bitIndex, 12) * 0.1;
@@ -149,7 +149,7 @@ namespace Asv.Gnss
         /// <summary>
         /// 
         /// </summary>
-        public byte L1LockTime { get; set; }
+        public ushort L1LockTime { get; set; }
 
         /// <summary>
         /// 
@@ -159,7 +159,7 @@ namespace Asv.Gnss
         /// <summary>
         /// 
         /// </summary>
-        public uint ReasonForException { get; set; }
+        public ReasonForException ReasonForException { get; set; }
 
 
         /// <summary>

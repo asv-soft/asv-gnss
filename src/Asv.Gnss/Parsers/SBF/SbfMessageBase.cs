@@ -47,10 +47,6 @@ namespace Asv.Gnss
 
             var msgId = BinSerialize.ReadUShort(ref buffer);
             var messageType = (ushort)(msgId & 0x1fff << 0);
-            if (messageType == 4027)
-            {
-                
-            }
             var messageRevision = (ushort)((msgId >> 13) & 0x7);
 
             if (messageType != MessageType) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])");

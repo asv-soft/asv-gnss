@@ -37,7 +37,7 @@
 
             Satellites = new Satellite[(items.Length - 4)/4];
             var index = 0;
-            for (var i = 4; i < 4 + Satellites.Length * 4; i+=4)
+            for (var i = 4; i < 4 + Satellites.Length * 4; i += 4)
             {
                 var number = 0;
                 var elevationDeg = 0;
@@ -45,38 +45,27 @@
                 var snrdB = 0;
 
                 if (!string.IsNullOrEmpty(items[i])) number = int.Parse(items[i]);
-                if (!string.IsNullOrEmpty(items[i+1])) elevationDeg = int.Parse(items[i+1]);
-                if (!string.IsNullOrEmpty(items[i+2])) azimuthDeg = int.Parse(items[i+2]);
-                if (!string.IsNullOrEmpty(items[i+3])) snrdB = int.Parse(items[i+3]);
-                if (Nmea0183Helper.GetPrnFromNmeaSatId(number, out var PRN, out var nav))
+                if (!string.IsNullOrEmpty(items[i + 1])) elevationDeg = int.Parse(items[i + 1]);
+                if (!string.IsNullOrEmpty(items[i + 2])) azimuthDeg = int.Parse(items[i + 2]);
+                if (!string.IsNullOrEmpty(items[i + 3])) snrdB = int.Parse(items[i + 3]);
+                Satellites[index] = new Satellite
                 {
-                    Satellites[index] = new Satellite
-                    {
-                        Number = number,
-                        ElevationDeg = elevationDeg,
-                        AzimuthDeg = azimuthDeg,
-                        SnrdB = snrdB,
-                        ExtPRN = PRN,
-                        ExtNavSys = nav,
-                    };
-                }
-                else
+                    Number = number,
+                    ElevationDeg = elevationDeg,
+                    AzimuthDeg = azimuthDeg,
+                    SnrdB = snrdB
+                };
+                if (Nmea0183Helper.GetPrnFromNmeaSatId(number, out var prn, out var nav))
                 {
-                    Satellites[index] = new Satellite
-                    {
-                        Number = number,
-                        ElevationDeg = elevationDeg,
-                        AzimuthDeg = azimuthDeg,
-                        SnrdB = snrdB
-                    };
+                    Satellites[index].ExtPRN = prn;
+                    Satellites[index].ExtNavSys = nav;
                 }
-                
+
                 index++;
             }
         }
 
         /// Gets or sets the total number of messages.
-        /// /
         public int TotalNumberOfMsg { get; set; }
 
         /// <summary>

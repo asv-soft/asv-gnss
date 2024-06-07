@@ -39,8 +39,6 @@ namespace Asv.Gnss
             Af0 = GpsRawHelper.GetBitS(dataWithoutParity, word1Start, 22) * GpsRawHelper.P2_31; word1Start += 24;
 
             Tgd[0] = tgd == -128 ? 0.0 : tgd * GpsRawHelper.P2_31;
-            Toc = GpsRawHelper.Gps2Time(WeekNumber, TocSec);
-            /* adjustment for week handover */
         }
 
         public DateTime Toc { get; set; }

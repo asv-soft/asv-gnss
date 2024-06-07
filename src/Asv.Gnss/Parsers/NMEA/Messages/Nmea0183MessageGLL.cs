@@ -38,7 +38,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Time (UTC)
         /// </summary>
-        public DateTime Time { get; set; }
+        public DateTime? Time { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the EastWest property.

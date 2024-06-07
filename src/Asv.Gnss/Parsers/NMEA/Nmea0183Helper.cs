@@ -160,8 +160,8 @@ namespace Asv.Gnss
                 case "LC":
                     return "Loran C";
 
-                case "P ":
-                    return "roprietary Code";
+                case "P":
+                    return "Proprietary Code";
 
                 case "RA":
                     return "RADAR and/or ARPA";
@@ -216,16 +216,16 @@ namespace Asv.Gnss
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static DateTime ParseTime(string token)
+        public static DateTime? ParseTime(string token)
         {
-            var temp = double.Parse(token, CultureInfo.InvariantCulture);
-
+            var now = DateTime.UtcNow;
+            if (!double.TryParse(token, NumberStyles.Any, CultureInfo.InvariantCulture, out var temp)) return null;
+            
             var sss = (int)((temp - (int)temp) * 1000.0);
             var hh = (int)((int)temp / 10000.0);
             var mm = (int)(((int)temp - hh * 10000.0) / 100.0);
             var ss = (int)((int)temp - hh * 10000.0 - mm * 100.0);
 
-            var now = DateTime.Now;
             return new DateTime(now.Year, now.Month, now.Day, hh, mm, ss, sss);
 
             // var hh = int.Parse(value.Substring(0, 2), CultureInfo.InvariantCulture);
@@ -240,20 +240,19 @@ namespace Asv.Gnss
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static DateTime ParseDate(string token)
+        public static DateTime? ParseDate(string token)
         {
-            if (token.Length != 6)
+            if (string.IsNullOrWhiteSpace(token) || token.Length != 6)
             {
-                throw new ArgumentException(string.Format("Date format incorrect in \"{0}\" (must be ddmmyy)", token));
+                // throw new ArgumentException(string.Format("Date format incorrect in \"{0}\" (must be ddMMyy)", token));
+                return null;
             }
-                
-
+            
             var date = Convert.ToInt32(token.Substring(0, 2));
             var month = Convert.ToInt32(token.Substring(2, 2));
             var year = Convert.ToInt32(token.Substring(4, 2)) + 2000;
 
-            return new DateTime(year, month, date);
-
+            return new DateTime(year, month, date, 0, 0, 0, DateTimeKind.Utc);
         }
 
         /// <summary>
@@ -269,7 +268,7 @@ namespace Asv.Gnss
             {
                 throw new ArgumentException(string.Format("Date format incorrect in \"{0}\" (must be dd/mm/yy)",  token));
             }
-                
+            
             var date = int.Parse(splits[0]);
             var month = int.Parse(splits[1]);
             var year = int.Parse(splits[2]) + 2000;
@@ -285,12 +284,10 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static double ParseLatitude(string token)
         {
-            var temp = double.Parse(token, CultureInfo.InvariantCulture);
-
+            var temp = double.Parse(token, NumberStyles.Any, CultureInfo.InvariantCulture);
             double degree = (int)((int)temp / 100.0);
             var minutes = ((int)temp - degree * 100.0);
             var seconds = (temp - (int)temp) * 60.0;
-
             return degree + minutes / 60.0 + seconds / 3600.0;
 
             // var deg = int.Parse(token.Substring(0, 2), CultureInfo.InvariantCulture);
