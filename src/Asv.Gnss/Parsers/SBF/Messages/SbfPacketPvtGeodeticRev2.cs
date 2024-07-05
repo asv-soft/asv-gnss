@@ -3,8 +3,6 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    
-
     public class SbfPacketPvtGeodeticRev2:SbfMessageBase
     {
         public override ushort MessageRevision => 2;
@@ -18,15 +16,15 @@ namespace Asv.Gnss
             Solution = (SbfPVTSolution)(Mode & 0b0000_1111);
             Flag2D3D = (Mode >> 7) != 0;
             Error = BinSerialize.ReadByte(ref buffer);
-            Latitude = CheckNan(BinSerialize.ReadDouble(ref buffer));
-            Longitude = CheckNan(BinSerialize.ReadDouble(ref buffer));
+            Latitude = CheckNan(BinSerialize.ReadDouble(ref buffer)) * 180.0 / Math.PI;
+            Longitude = CheckNan(BinSerialize.ReadDouble(ref buffer)) * 180.0 / Math.PI;
             Height = CheckNan(BinSerialize.ReadDouble(ref buffer));
             Undulation = CheckNan(BinSerialize.ReadFloat(ref buffer));
             Vn = CheckNan(BinSerialize.ReadFloat(ref buffer));
             Ve = CheckNan(BinSerialize.ReadFloat(ref buffer));
             Vu = CheckNan(BinSerialize.ReadFloat(ref buffer));
             COG = CheckNan(BinSerialize.ReadFloat(ref buffer));
-            RxClkBias = CheckNan(BinSerialize.ReadDouble(ref buffer));
+            RxClkBias = CheckNan(BinSerialize.ReadDouble(ref buffer)) / 1000.0;
             RxClkDrift = CheckNan(BinSerialize.ReadFloat(ref buffer));
             TimeSystem = (SbfPVTSolutionTime)BinSerialize.ReadByte(ref buffer);
             Datum = (SbfDatum)BinSerialize.ReadByte(ref buffer);

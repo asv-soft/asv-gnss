@@ -191,7 +191,7 @@ namespace Asv.Gnss
             var td = diff.TotalDays;
             var n4 = (int)(td / 1461) + 1;
             var date = datum.AddYears(4 * (n4 - 1)).AddDays(na - 1);
-            return date.AddSeconds((gloTime - date).TotalSeconds % 86400);
+            return date.AddSeconds((gloTime - date).TotalSeconds % 86400).AddHours(-3);
         }
 
         /// <summary>

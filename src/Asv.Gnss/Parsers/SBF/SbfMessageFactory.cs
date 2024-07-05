@@ -16,6 +16,7 @@ namespace Asv.Gnss
                 yield return () => new SbfPacketDOP();
                 yield return () => new SbfPacketReceiverStatusRev1();
                 yield return () => new SbfPacketQualityInd();
+                yield return () => new SbfPacketGpsNav();
             }
         }
 

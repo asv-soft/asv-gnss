@@ -15,10 +15,11 @@ namespace Asv.Gnss
             var day = (int)AsvHelper.GetBitU(buffer, ref bitIndex, 11);
             var cycle = (int)AsvHelper.GetBitU(buffer, ref bitIndex, 5);
 
-            EpochTime = new DateTime(1996, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            Tod = new DateTime(1996, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 .AddYears((cycle - 1) * 4)
                 .AddDays(day - 1)
-                .AddSeconds(tod);
+                .AddSeconds(tod)
+                .AddHours(-3);
             TimeOffset = AsvHelper.GetBitS(buffer, ref bitIndex, 22) * GpsRawHelper.P2_30;
             var svNum = AsvHelper.GetBitU(buffer, ref bitIndex, 5);
             bitIndex += 2;
@@ -39,7 +40,7 @@ namespace Asv.Gnss
         /// <summary>
         /// GPS Epoch Time
         /// </summary>
-        public DateTime EpochTime { get; set; }
+        public DateTime Tod { get; set; }
 
         /// <summary>
         /// GPS Receiver Time Offset
