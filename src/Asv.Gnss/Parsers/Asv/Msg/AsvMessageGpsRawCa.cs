@@ -30,16 +30,37 @@ namespace Asv.Gnss
                 NAVBitsU32[i] = BinSerialize.ReadUInt(ref buffer);
             }
             GpsSubFrame = GpsSubFrameFactory.Create(NAVBitsU32);
+            L1Code = code1 != 0 ? AsvHelper.CODE_L1P : AsvHelper.CODE_L1C;
         }
 
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+            var week = 0;
+            double tow = 0;
+            GpsRawHelper.Time2Gps(AsvHelper.Utc2Gps(UtcTime), ref week, ref tow);
+            var cycle = (uint)(week / 1024);
+            week %= 1024;
+            var bitIndex = 0;
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(tow * 1000.0), ref bitIndex, 30);
+            AsvHelper.SetBitU(buffer, (uint)week, ref bitIndex, 10);
+            AsvHelper.SetBitU(buffer, cycle, ref bitIndex, 4);
+            AsvHelper.SetBitU(buffer, (uint)Prn, ref bitIndex, 6);
+            AsvHelper.SetBitU(buffer, (uint)(CrcPassed ? 1 : 0), ref bitIndex, 1);
+            AsvHelper.SetBitU(buffer, (uint)(L1Code == AsvHelper.CODE_L1C ? 0 : 1), ref bitIndex, 1);
+            bitIndex += 4;
+            var byteIndex = bitIndex / 8;
+            buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
+            if (NAVBitsU32 == null) return;
+            for (var i = 0; i < NavBitsU32Length; i++)
+            {
+                BinSerialize.WriteUInt(ref buffer, NAVBitsU32[i]);
+            }
+            
         }
 
         protected override int InternalGetContentByteSize()
         {
-            throw new NotImplementedException();
+            return 7 + (NAVBitsU32?.Length ?? 0) * sizeof(uint);
         }
 
         public override void Randomize(Random random)
@@ -55,6 +76,10 @@ namespace Asv.Gnss
         
         public int SatelliteId { get; set; }
         public bool CrcPassed { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public byte L1Code { get; set; }
         public ushort SvId { get; set; }
         public string RinexSatCode { get; set; }
         public GnssSignalTypeEnum SignalType { get; set; }
