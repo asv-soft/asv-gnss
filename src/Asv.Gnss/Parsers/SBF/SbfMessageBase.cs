@@ -62,7 +62,7 @@ namespace Asv.Gnss
             TOW = BinSerialize.ReadUInt(ref buffer);
             WNc = BinSerialize.ReadUShort(ref buffer);
 
-            UtcTime = new DateTime(1980, 1, 06, 0, 0, 0, DateTimeKind.Utc).AddDays(7 * WNc).AddMilliseconds(TOW/* ms in 1 week */);
+            UtcTime = GpsRawHelper.Gps2Utc(new DateTime(1980, 1, 06, 0, 0, 0, DateTimeKind.Utc).AddDays(7 * WNc).AddMilliseconds(TOW/* ms in 1 week */));
             DeserializeContent(ref buffer);
         }
 
