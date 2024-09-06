@@ -305,8 +305,9 @@ namespace Asv.Gnss
             PositionDOP =  BinSerialize.ReadUShort(ref buffer) * 0.01;
             flags = BinSerialize.ReadByte(ref buffer);
             IsValidLLH = (flags & 0b0000_0001) == 0;
-            buffer = buffer.Slice(5);
+            buffer = buffer[5..];
             HeadingOfVehicle2D = BinSerialize.ReadUInt(ref buffer) * 1e-5;
+            if (!IsValidVehicleHeading) HeadingOfVehicle2D = double.NaN;
             MagneticDeclination = BinSerialize.ReadUShort(ref buffer) * 1e-2;
             MagneticDeclinationAccuracy = BinSerialize.ReadUShort(ref buffer) * 1e-2;
             //
@@ -314,7 +315,22 @@ namespace Asv.Gnss
             {
                 MovingBaseLocation = new GlobalPosition(new GlobalCoordinates(Latitude, Longitude), AltElipsoid);
             }
+
+            UtcTime = new DateTime(Year, Month, Day, Hour, Min, Sec, DateTimeKind.Utc)
+                .AddSeconds(UTCFractionOfSecond * 1e-9);
+            
+            var week = 0;
+            var towP = 0.0;
+            var tow = iTOW * 1e-3;
+            GpsRawHelper.Time2Gps(GpsRawHelper.Utc2Gps(UtcTime), ref week, ref towP);
+            if (tow < towP - 302400.0) week += 1;
+            else if (tow > towP + 302400.0) week -= 1;
+            GpsTime = GpsRawHelper.Gps2Time(week, tow);
         }
+
+        public DateTime GpsTime { get; set; }
+
+        public DateTime UtcTime { get; set; }
 
         protected override int GetContentByteSize() => 92;
         

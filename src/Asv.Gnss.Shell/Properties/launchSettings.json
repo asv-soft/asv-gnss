@@ -2,7 +2,7 @@
   "profiles": {
     "Asv.Gnss.Shell": {
       "commandName": "Project",
-      "commandLineArgs": "ubx tcp://172.16.0.1:23"
+      "commandLineArgs": "pvt tcp://10.10.6.199:30 true 1"
     }
   }
 }
