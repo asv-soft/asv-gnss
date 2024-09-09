@@ -49,56 +49,158 @@ namespace Asv.Gnss
 
     public static class Nmea0183Helper
     {
+        
         public static bool GetPrnFromNmeaSatId(int NMEASatId, out int PRN, out NmeaNavigationSystemEnum nav)
         {
             nav = NmeaNavigationSystemEnum.SYS_NONE;
             PRN = -1;
             if (NMEASatId <= 0) return false;
-            if (NMEASatId <= 32)
+            
+            switch (NMEASatId)
             {
-                nav = NmeaNavigationSystemEnum.SYS_GPS;
-                PRN = NMEASatId;
-                return true;
+                case <= 32:
+                    PRN = NMEASatId;
+                    nav = NmeaNavigationSystemEnum.SYS_GPS;
+                    return true;
+                case <= 54:
+                    PRN = NMEASatId + 87;
+                    nav = NmeaNavigationSystemEnum.SYS_SBS;
+                    return true;
+                case >= 65 and <= 96:
+                    PRN = NMEASatId - 64;
+                    nav = NmeaNavigationSystemEnum.SYS_GLO;
+                    return true;
+                case >= 193 and <= 199:
+                    PRN = NMEASatId - 192;
+                    nav = NmeaNavigationSystemEnum.SYS_QZS;
+                    return true;
+                case >= 201 and <= 235:
+                    PRN = NMEASatId - 200;
+                    nav = NmeaNavigationSystemEnum.SYS_CMP;
+                    return true;
+                case >= 301 and <= 336:
+                    PRN = NMEASatId - 300;
+                    nav = NmeaNavigationSystemEnum.SYS_GAL;
+                    return true;
+                case >= 401 and <= 414:
+                    PRN = NMEASatId - 400;
+                    nav = NmeaNavigationSystemEnum.SYS_IRN;
+                    return true;
             }
-
-            if (NMEASatId <= 54)
-            {
-                nav = NmeaNavigationSystemEnum.SYS_SBS;
-                PRN = NMEASatId + 87;
-                return true;
-            }
-
-            if (NMEASatId <= 64)
-            {
-                return false;
-            }
-
-            if (NMEASatId <= 96)
-            {
-                nav = NmeaNavigationSystemEnum.SYS_GLO;
-                PRN = NMEASatId - 64;
-                return true;
-            }
-
-            // TODO: 
+            
+            
             // 1 - 32	GPS
             // 33 - 54	Various SBAS systems (EGNOS, WAAS, SDCM, GAGAN, MSAS)
             // 55 - 64	not used (might be assigned to further SBAS systems)
             // 65 - 88	GLONASS
-            // 89 - 96	GLONASS (future extensions?)
+            // 89 - 96	GLONASS (future extensions)
             // 97 - 119	not used
             // 120 - 151	not used (SBAS PRNs occupy this range)
             // 152 - 158	Various SBAS systems (EGNOS, WAAS, SDCM, GAGAN, MSAS)
             // 159 - 172	not used
             // 173 - 182	IMES
-            // 193 - 197	QZSS
-            // 196 - 200	QZSS (future extensions?)
+            // 193 - 199	QZSS
             // 201 - 235	BeiDou (u-blox, not NMEA)
             // 301 - 336	GALILEO
-            // 401 - 437	BeiDou (NMEA)
+            // 401 - 414	IRNSS
+            // 415 - 437	IRNSS (future extensions)
             return false;
         }
 
+        public static bool GetPrnFromNmeaSatId(string talkerId, int NMEASatId, out int PRN,
+            out NmeaNavigationSystemEnum nav)
+        {
+            if (NMEASatId is >= 120 and <= 158)
+            {
+                PRN = NMEASatId;
+                nav = NmeaNavigationSystemEnum.SYS_SBS;
+                return true;
+            }
+
+            switch (talkerId)
+            {
+                case "GN":
+                    return GetPrnFromNmeaSatId(NMEASatId, out PRN, out nav);
+                case "GP":
+                    switch (NMEASatId)
+                    {
+                        case <= 32:
+                            PRN = NMEASatId;
+                            nav = NmeaNavigationSystemEnum.SYS_GPS;
+                            return true;
+                        case <= 64:
+                            PRN = NMEASatId + 87;
+                            nav = NmeaNavigationSystemEnum.SYS_SBS;
+                            return true;
+                    }
+                    break;
+                case "GL":
+                    if (NMEASatId is >= 65 and <= 96)
+                    {
+                        PRN = NMEASatId - 64;
+                        nav = NmeaNavigationSystemEnum.SYS_GLO;
+                        return true;
+                    }
+                    break;
+                case "GQ":
+                    switch (NMEASatId)
+                    {
+                        case >= 1 and <= 7:
+                            PRN = NMEASatId;
+                            nav = NmeaNavigationSystemEnum.SYS_QZS;
+                            return true;
+                        case >= 193 and <= 199:
+                            PRN = NMEASatId - 192;
+                            nav = NmeaNavigationSystemEnum.SYS_QZS;
+                            return true;
+                    }
+                    break;
+                case "GB":
+                case "BD":
+                    switch (NMEASatId)
+                    {
+                        case >= 1 and <= 35:
+                            PRN = NMEASatId;
+                            nav = NmeaNavigationSystemEnum.SYS_CMP;
+                            return true;
+                        case >= 201 and <= 235:
+                            PRN = NMEASatId - 200;
+                            nav = NmeaNavigationSystemEnum.SYS_CMP;
+                            return true;
+                    }
+                    break;
+                case "GA":
+                    switch (NMEASatId)
+                    {
+                        case >= 1 and <= 36:
+                            PRN = NMEASatId;
+                            nav = NmeaNavigationSystemEnum.SYS_GAL;
+                            return true;
+                        case >= 301 and <= 336:
+                            PRN = NMEASatId - 300;
+                            nav = NmeaNavigationSystemEnum.SYS_GAL;
+                            return true;
+                    }
+                    break;
+                case "GI":
+                    switch (NMEASatId)
+                    {
+                        case >= 1 and <= 14:
+                            PRN = NMEASatId;
+                            nav = NmeaNavigationSystemEnum.SYS_IRN;
+                            return true;
+                        case >= 401 and <= 414:
+                            PRN = NMEASatId - 400;
+                            nav = NmeaNavigationSystemEnum.SYS_IRN;
+                            return true;
+                    }
+                    break;
+            }
+
+            PRN = -1;
+            nav = NmeaNavigationSystemEnum.SYS_NONE;
+            return false;
+        }
 
         public static string TryFindSourceTitleById(string value)
         {
@@ -106,9 +208,13 @@ namespace Asv.Gnss
             {
                 case "AG":
                     return "Autopilot - General";
+                
                 case "AP":
                     return "Autopilot - Magnetic";
 
+                case "BD":
+                    return "BeiDou Navigation Satellite System";
+                
                 case "CD":
                     return "Communications – Digital Selective Calling (DSC)";
 
@@ -139,9 +245,27 @@ namespace Asv.Gnss
                 case "ER":
                     return "Engine Room Monitoring Systems";
 
+                case "GA":
+                    return "Galileo Navigation Satellite System";
+                
+                case "GB":
+                    return "BeiDou Navigation Satellite System";
+                
+                case "GI":
+                    return "Indian Regional Navigation Satellite System (IRNSS)";
+                
+                case "GL":
+                    return "GLONASS Navigation Satellite System";
+                
+                case "GN":
+                    return "Global Navigation";
+                
                 case "GP":
                     return "Global Positioning System (GPS)";
-
+                
+                case "GQ":
+                    return "Quasi-Zenith Satellite System (QZSS)";
+                    
                 case "HC":
                     return "Heading – Magnetic Compass";
 
