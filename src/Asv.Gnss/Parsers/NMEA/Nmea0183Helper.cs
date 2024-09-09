@@ -70,6 +70,10 @@ namespace Asv.Gnss
                     PRN = NMEASatId - 64;
                     nav = NmeaNavigationSystemEnum.SYS_GLO;
                     return true;
+                case >= 120 and <= 158:
+                    PRN = NMEASatId;
+                    nav = NmeaNavigationSystemEnum.SYS_SBS;
+                    return true;
                 case >= 193 and <= 199:
                     PRN = NMEASatId - 192;
                     nav = NmeaNavigationSystemEnum.SYS_QZS;
