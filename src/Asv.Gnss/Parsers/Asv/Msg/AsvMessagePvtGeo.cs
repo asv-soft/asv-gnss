@@ -55,12 +55,34 @@ namespace Asv.Gnss
 
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+            var week = 0;
+            double tow = 0;
+            GpsRawHelper.Time2Gps(Tow, ref week, ref tow);
+            var cycle = (uint)(week / 1024);
+            week %= 1024;
+            var bitIndex = 0;
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(tow * 1000.0), ref bitIndex, 30);
+            AsvHelper.SetBitU(buffer, (uint)week, ref bitIndex, 10);
+            AsvHelper.SetBitU(buffer, cycle, ref bitIndex, 4);
+            AsvHelper.SetBitU(buffer, (uint)PosType, ref bitIndex, 4);
+            AsvHelper.SetBitU(buffer, Error, ref bitIndex, 4);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(Latitude * 3600.0 / 0.0005), ref bitIndex, 32);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(Longitude * 3600.0 / 0.0005), ref bitIndex, 32);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(Height / 0.01), ref bitIndex, 24);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(Undulation / 0.01), ref bitIndex, 16);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(RxClkBias / GpsRawHelper.P2_30), ref bitIndex, 22);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(RxClkDrift / GpsRawHelper.P2_30), ref bitIndex, 12);
+            AsvHelper.SetBitU(buffer, (uint)TimeSystem, ref bitIndex, 2);
+            AsvHelper.SetBitU(buffer, (uint)Datum, ref bitIndex, 2);
+            AsvHelper.SetBitU(buffer, NrSv, ref bitIndex, 6);
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(MeanCorrAge / 0.01), ref bitIndex, 16);
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(HAccuracy / 0.01), ref bitIndex, 16);
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(VAccuracy / 0.01), ref bitIndex, 16);
         }
 
         protected override int InternalGetContentByteSize()
         {
-            throw new NotImplementedException();
+            return 31;
         }
 
         public override void Randomize(Random random)

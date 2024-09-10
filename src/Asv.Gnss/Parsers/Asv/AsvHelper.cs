@@ -401,19 +401,35 @@ namespace Asv.Gnss
             return 0;
         }
 
-        public static int GetLockTime(int lockTimeIndicator)
+        public static ushort GetLockTime(byte lockTimeIndicator)
         {
             return lockTimeIndicator switch
             {
                 > 0 and <= 23 => lockTimeIndicator,
-                > 23 and <= 47 => lockTimeIndicator * 2 - 24,
-                > 47 and <= 71 => lockTimeIndicator * 4 - 120,
-                > 71 and <= 95 => lockTimeIndicator * 8 - 408,
-                > 95 and <= 119 => lockTimeIndicator * 16 - 1176,
-                > 119 and <= 126 => lockTimeIndicator * 32 - 3096,
+                > 23 and <= 47 => (ushort)(lockTimeIndicator * 2 - 24),
+                > 47 and <= 71 => (ushort)(lockTimeIndicator * 4 - 120),
+                > 71 and <= 95 => (ushort)(lockTimeIndicator * 8 - 408),
+                > 95 and <= 119 => (ushort)(lockTimeIndicator * 16 - 1176),
+                > 119 and <= 126 => (ushort)(lockTimeIndicator * 32 - 3096),
                 127 => 937,
                 _ => throw new ArgumentException(
                     $"Lock time '{lockTimeIndicator}', must be greater than or equal to 0 and less than or equal to 127")
+            };
+        }
+
+        public static byte GetLockTimeIndicator(ushort lockTime)
+        {
+            return lockTime switch
+            {
+                > 0 and <= 23 => (byte)lockTime,
+                > 23 and <= 70 => (byte)((lockTime + 24) / 2),
+                > 70 and <= 164 => (byte)((lockTime + 120) / 4),
+                > 164 and <= 352 => (byte)((lockTime + 408) / 8),
+                > 352 and <= 728 => (byte)((lockTime + 1176) / 16),
+                > 728 and <= 936 => (byte)((lockTime + 3096) / 32),
+                937 => 127,
+                _ => throw new ArgumentException(
+                    $"Lock time '{lockTime}', must be greater than or equal to 0 and less than or equal to 937")
             };
         }
     }

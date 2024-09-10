@@ -17,6 +17,8 @@ namespace Asv.Gnss
                 yield return () => new Nmea0183MessageGSA();
                 yield return () => new Nmea0183MessageGST();
                 yield return () => new Nmea0183MessageGSV();
+                yield return () => new Nmea0183MessageGBS();
+                yield return () => new Nmea0183MessageRMC();
             }
         }
         

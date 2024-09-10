@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -45,12 +46,31 @@ namespace Asv.Gnss
 
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+            var week = 0;
+            double tow = 0;
+            GpsRawHelper.Time2Gps(Tow, ref week, ref tow);
+            var cycle = (uint)(week / 1024);
+            week %= 1024;
+            var bitIndex = 0;
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(tow * 1000.0), ref bitIndex, 30);
+            AsvHelper.SetBitU(buffer, (uint)week, ref bitIndex, 10);
+            AsvHelper.SetBitU(buffer, cycle, ref bitIndex, 4);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(TimeOffset / GpsRawHelper.P2_30), ref bitIndex, 22);
+            AsvHelper.SetBitU(buffer, (uint)(Observations?.Length ?? 0), ref bitIndex, 5);
+            bitIndex += 1;
+            var byteIndex = bitIndex / 8;
+            buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
+
+            if (Observations == null) return;
+            foreach (var obs in Observations)
+            {
+                obs.Serialize(ref buffer);
+            }
         }
 
         protected override int InternalGetContentByteSize()
         {
-            throw new NotImplementedException();
+            return 9 + (Observations?.Sum(_ => _.GetByteSize()) ?? 0);
         }
 
         public override void Randomize(Random random)
@@ -69,10 +89,10 @@ namespace Asv.Gnss
             var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1);
             var pr1 = (double)AsvHelper.GetBitU(buffer, ref bitIndex, 24);
             var ppr1 = AsvHelper.GetBitS(buffer, ref bitIndex, 20);
-            L1LockTime = (byte)AsvHelper.GetBitU(buffer, ref bitIndex, 7);
+            L1LockTime = AsvHelper.GetLockTime((byte)AsvHelper.GetBitU(buffer, ref bitIndex, 7));
             var amb = AsvHelper.GetBitU(buffer, ref bitIndex, 8);
             ParticipationIndicator = AsvHelper.GetBitU(buffer, ref bitIndex, 1) == 1;
-            ReasonForException = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
+            ReasonForException = (ReasonForException)AsvHelper.GetBitU(buffer, ref bitIndex, 4);
             bitIndex += 3;
             Elevation = AsvHelper.GetBitU(buffer, ref bitIndex, 10) * 0.1;
             Azimuth = AsvHelper.GetBitS(buffer, ref bitIndex, 12) * 0.1;
@@ -108,7 +128,26 @@ namespace Asv.Gnss
 
         public void Serialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+            var bitIndex = 0;
+            AsvHelper.SetBitU(buffer, Prn >= 120 ? (uint)(Prn - 80) : (uint)Prn, ref bitIndex, 6);
+            AsvHelper.SetBitU(buffer, L1Code == AsvHelper.CODE_L1C ? (uint)0 : 1, ref bitIndex, 1);
+            var amb = (uint)(L1PseudoRange / AsvHelper.PRUNIT_GPS);
+            var pr1 = (uint)Math.Round((L1PseudoRange % AsvHelper.PRUNIT_GPS) * 50.0);
+            AsvHelper.SetBitU(buffer, pr1, ref bitIndex, 24);
+            var ppr1 = double.IsNaN(L1CarrierPhase)
+                ? -524288
+                : (int)Math.Round(L1CarrierPhase * 20000 * AsvHelper.CLIGHT / 1.57542E9);
+            AsvHelper.SetBitS(buffer, ppr1, ref bitIndex, 20);
+            AsvHelper.SetBitU(buffer, AsvHelper.GetLockTimeIndicator(L1LockTime), ref bitIndex, 7);
+            AsvHelper.SetBitU(buffer, amb, ref bitIndex, 8);
+            AsvHelper.SetBitU(buffer, ParticipationIndicator ? (uint)1 : 0, ref bitIndex, 1);
+            AsvHelper.SetBitU(buffer, (uint)ReasonForException, ref bitIndex, 4);
+            bitIndex += 3;
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(Elevation * 10.0), ref bitIndex, 10);
+            AsvHelper.SetBitS(buffer, (int)Math.Round(Azimuth * 10.0), ref bitIndex, 12);
+            AsvHelper.SetBitU(buffer, (uint)Math.Round(L1CNR * 4.0), ref bitIndex, 8);
+            var byteIndex = bitIndex / 8;
+            buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
         }
 
         public int GetByteSize()
@@ -149,7 +188,7 @@ namespace Asv.Gnss
         /// <summary>
         /// 
         /// </summary>
-        public byte L1LockTime { get; set; }
+        public ushort L1LockTime { get; set; }
 
         /// <summary>
         /// 
@@ -159,7 +198,7 @@ namespace Asv.Gnss
         /// <summary>
         /// 
         /// </summary>
-        public uint ReasonForException { get; set; }
+        public ReasonForException ReasonForException { get; set; }
 
 
         /// <summary>

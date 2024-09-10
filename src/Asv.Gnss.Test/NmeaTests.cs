@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using Xunit;
@@ -72,6 +73,75 @@ namespace Asv.Gnss.Test
         }
 
         [Fact]
+        public void Parsing_multi_constellation_GSV_message_from_string()
+        {
+            var source = new[]
+            {
+                "$GLGSV,3,1,10,81,63,034,51,82,53,272,51,80,52,292,,79,38,200,49*6A\r\n",
+                "$GLGSV,3,2,10,65,24,046,42,66,16,105,47,73,15,334,46,88,14,062,46*61\r\n",
+                "$GLGSV,3,3,10,83,11,253,,72,07,001,44*68\r\n",
+                "$GPGSV,4,1,16,02,80,085,53,11,76,091,,12,61,180,51,25,58,284,52*79\r\n",
+                "$GPGSV,4,2,16,20,42,142,50,06,33,056,47,29,28,280,47,05,19,166,47*7F\r\n",
+                "$GPGSV,4,3,16,31,15,321,46,19,08,093,46,04,04,025,,09,03,055,*78\r\n",
+                "$GPGSV,4,4,16,44,32,184,48,51,31,171,48,48,31,194,47,46,30,199,48*7E\r\n",
+                "$GAGSV,3,1,09,34,72,231,53,30,65,251,53,36,51,059,51,02,36,170,49*62\r\n",
+                "$GAGSV,3,2,09,27,25,314,47,15,19,236,47,04,08,037,46,09,04,085,*65\r\n",
+                "$GAGSV,3,3,09,11,03,057,*50\r\n",
+                "$GQGSV,1,1,01,02,08,309,37*4D\r\n",
+                "$BDGSV,5,1,18,34,85,015,53,11,67,274,51,12,55,069,49,43,39,265,50*61\r\n",
+                "$BDGSV,5,2,18,23,37,289,50,25,36,225,48,44,31,078,49,22,25,064,46*69\r\n",
+                "$BDGSV,5,3,18,21,20,119,45,16,11,320,42,06,10,325,40,09,10,340,38*6D\r\n",
+                "$BDGSV,5,4,18,39,08,310,40,37,07,331,45,59,06,288,,19,05,017,*64\r\n",
+                "$BDGSV,5,5,18,31,03,333,,24,02,179,*68\r\n",
+                "$GIGSV,1,1,00,,,,*60\r\n"
+            };
+            var array = source.Select(_ => Encoding.ASCII.GetBytes(_)).SelectMany(__ => __).ToArray();
+            var msgs = new Nmea0183MessageGSV[17];
+            var index = 0;
+            var parser = new Nmea0183Parser().RegisterDefaultMessages();
+            parser.OnMessage.Cast<Nmea0183MessageGSV>().Subscribe(_ =>
+            {
+                if (index >= 17) return;
+                msgs[index++] = _;
+            });
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+
+            var targetConstellation = new (NmeaNavigationSystemEnum Sys, int?[] SatPrn)[17];
+            targetConstellation[0] = (Sys: NmeaNavigationSystemEnum.SYS_GLO, SatPrn: new int?[] { 17, 18, 16, 15 });
+            targetConstellation[1] = (Sys: NmeaNavigationSystemEnum.SYS_GLO, SatPrn: new int?[] { 1, 2, 9, 24 });
+            targetConstellation[2] = (Sys: NmeaNavigationSystemEnum.SYS_GLO, SatPrn: new int?[] { 19, 8 });
+            targetConstellation[3] = (Sys: NmeaNavigationSystemEnum.SYS_GPS, SatPrn: new int?[] { 02, 11, 12, 25 });
+            targetConstellation[4] = (Sys: NmeaNavigationSystemEnum.SYS_GPS, SatPrn: new int?[] { 20, 06, 29, 05 });
+            targetConstellation[5] = (Sys: NmeaNavigationSystemEnum.SYS_GPS, SatPrn: new int?[] { 31, 19, 04, 09 });
+            targetConstellation[6] = (Sys: NmeaNavigationSystemEnum.SYS_SBS, SatPrn: new int?[] { 131, 138, 135, 133 });
+            targetConstellation[7] = (Sys: NmeaNavigationSystemEnum.SYS_GAL, SatPrn: new int?[] { 34, 30, 36, 02 });
+            targetConstellation[8] = (Sys: NmeaNavigationSystemEnum.SYS_GAL, SatPrn: new int?[] { 27, 15, 04, 09 });
+            targetConstellation[9] = (Sys: NmeaNavigationSystemEnum.SYS_GAL, SatPrn: new int?[] { 11 });
+            targetConstellation[10] = (Sys: NmeaNavigationSystemEnum.SYS_QZS, SatPrn: new int?[] { 2 });
+            targetConstellation[11] = (Sys: NmeaNavigationSystemEnum.SYS_CMP, SatPrn: new int?[] { 34, 11, 12, null });
+            targetConstellation[12] = (Sys: NmeaNavigationSystemEnum.SYS_CMP, SatPrn: new int?[] { 23, 25, null, 22 });
+            targetConstellation[13] = (Sys: NmeaNavigationSystemEnum.SYS_CMP, SatPrn: new int?[] { 21, 16, 06, 09 });
+            targetConstellation[14] = (Sys: NmeaNavigationSystemEnum.SYS_CMP, SatPrn: new int?[] { null, null, null, 19 });
+            targetConstellation[15] = (Sys: NmeaNavigationSystemEnum.SYS_CMP, SatPrn: new int?[] { 31, 24 });
+            targetConstellation[16] = (Sys: NmeaNavigationSystemEnum.SYS_IRN, SatPrn: Array.Empty<int?>());
+
+            for (var i = 0; i < 17; i++)
+            {
+                Assert.NotNull(msgs[i]);
+                Assert.Equal(targetConstellation[i].SatPrn.Length, msgs[i].Satellites.Length);
+                for (var j = 0; j < msgs[i].Satellites.Length; j++)
+                {
+                    Assert.Equal(targetConstellation[i].SatPrn[j], msgs[i].Satellites[j].ExtPRN);
+                    if (msgs[i].Satellites[j].ExtPRN != null)
+                        Assert.Equal(targetConstellation[i].Sys, msgs[i].Satellites[j].ExtNavSys);
+                }
+            }
+        }
+
+        [Fact]
         public void Parsing_GST_message_from_string()
         {
             var source = "$GPGST,060417.00,6.167,11.396,3.866,295.633,6.038,10.409,12.671*68\r\n";
@@ -92,9 +162,9 @@ namespace Asv.Gnss.Test
             Assert.Equal(10.409, msg.SdLongitude);
             Assert.Equal(11.396, msg.SdSemiMajorAxis);
             Assert.Equal(3.866, msg.SdSemiMinorAxis);
-            Assert.Equal(6,msg.Time.Hour);
-            Assert.Equal(04,msg.Time.Minute);
-            Assert.Equal(17,msg.Time.Second);
+            Assert.Equal(6,msg.Time?.Hour);
+            Assert.Equal(04,msg.Time?.Minute);
+            Assert.Equal(17,msg.Time?.Second);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a GbasCuSendV2 message.
     /// </summary>
-    public class AsvMessageGbasCuSendV2 : AsvMessageBase
+    public class AsvMessageGbasMonDevSendV2 : AsvMessageBase
     {
         /// <summary>
         /// Gets the unique identifier for the message.
@@ -71,7 +71,7 @@ namespace Asv.Gnss
             // GbasMessageId = (byte)(slotAndMsg >> 3);
 
             var flags = BinSerialize.ReadByte(ref buffer);
-            IsLastSlotInFrame = (flags & 0b0000_0001) != 0;
+            IsLastSlotInFrame = (flags & 0b0000_1000) != 0;
             // LastByteOffset = (byte)((flags >> 1) & 0b0000_0111);
             // ReservedFlgas = (byte)(flags >> 4);
 
@@ -88,8 +88,8 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer to write the serialized data into.</param>
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
-            BinSerialize.WriteByte(ref buffer, (byte)((byte)Slot)); // | (GbasMessageId << 3)));
-            BinSerialize.WriteByte(ref buffer, (byte)(((IsLastSlotInFrame ? 1 : 0)))); // | ((LastByteOffset & 0b0000_0111) << 1) | (ReservedFlgas << 4)));
+            BinSerialize.WriteByte(ref buffer, (byte)Slot); // | (GbasMessageId << 3)));
+            BinSerialize.WriteByte(ref buffer, (byte)((IsLastSlotInFrame ? 1 : 0) << 3)); // | ((LastByteOffset & 0b0000_0111) << 1) | (ReservedFlgas << 4)));
             BinSerialize.WriteByte(ref buffer, LifeTime);
             BinSerialize.WriteUShort(ref buffer, MsgLength);
             BinSerialize.WriteUShort(ref buffer, MsgCrc);

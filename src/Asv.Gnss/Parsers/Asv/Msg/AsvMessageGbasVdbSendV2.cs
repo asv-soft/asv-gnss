@@ -116,7 +116,8 @@ namespace Asv.Gnss
             BinSerialize.WriteByte(ref buffer, (byte)((byte)Slot | (GbasMessageId << 3)));
             BinSerialize.WriteByte(ref buffer,(byte)ActiveSlots);
             BinSerialize.WriteByte(ref buffer, LifeTime);
-            BinSerialize.WriteByte(ref buffer, (byte)((LastByteOffset & 0b0000_0111) | ((IsLastSlotInFrame ? 1:0) << 3) | (ReservedFlgas << 4)) );
+            BinSerialize.WriteByte(ref buffer,
+                (byte)((LastByteOffset & 0b0000_0111) | ((IsLastSlotInFrame ? 1 : 0) << 3) | (ReservedFlgas << 4)));
             Data.CopyTo(buffer);
             buffer = buffer.Slice(Data.Length);
         }

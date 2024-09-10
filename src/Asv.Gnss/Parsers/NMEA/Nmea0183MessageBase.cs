@@ -65,11 +65,11 @@ namespace Asv.Gnss
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             if (buffer.Length < 5) throw new Exception("Too small string for NMEA");
-            var message = buffer.GetString(Encoding.ASCII);
+            var message = buffer.GetString(Encoding.ASCII).Trim();
             SourceId = message.StartsWith('P') ? "P" : message[..2];
-            var items = message.Trim().Split(',');
+            var items = message.Split(',');
             InternalDeserializeFromStringArray(items);
-            buffer = buffer.Slice(buffer.Length);
+            buffer = buffer[buffer.Length..];
         }
 
         /// <summary>

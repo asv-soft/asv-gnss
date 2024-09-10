@@ -51,9 +51,9 @@ namespace Asv.Gnss
         {
             Time = Nmea0183Helper.ParseTime(items[1]);
             Latitude = Nmea0183Helper.ParseLatitude(items[2]);
-            NorthSouth = Nmea0183Helper.ParseNorthSouth(items[3]);
+            if (string.Equals(items[3], "S", StringComparison.InvariantCultureIgnoreCase)) Latitude *= -1;
             Longitude = Nmea0183Helper.ParseLongitude(items[4]);
-            EastWest = Nmea0183Helper.ParseEastWest(items[5]);
+            if (string.Equals(items[5], "W", StringComparison.InvariantCultureIgnoreCase)) Longitude *= -1;
             GpsQuality = Nmea0183Helper.ParseGpsQuality(items[6]);
             NumberOfSatellites = Nmea0183Helper.ParseInt(items[7]);
             HorizontalDilutionPrecision = Nmea0183Helper.ParseDouble(items[8]);
@@ -117,7 +117,7 @@ namespace Asv.Gnss
         /// <value>
         /// A string value that represents the east-west direction.
         /// </value>
-        public string EastWest { get; set; }
+        // public string EastWest { get; set; }
 
         /// Gets or sets the longitude of a location.
         /// /
@@ -129,7 +129,7 @@ namespace Asv.Gnss
         /// <value>
         /// The value of the NorthSouth property.
         /// </value>
-        public string NorthSouth { get; set; }
+        // public string NorthSouth { get; set; }
 
         /// Gets or sets a value representing the latitude.
         /// /
@@ -137,6 +137,6 @@ namespace Asv.Gnss
         /// <summary>
         /// Time (UTC)
         /// </summary>
-        public DateTime Time { get; set; }
+        public DateTime? Time { get; set; }
     }
 }

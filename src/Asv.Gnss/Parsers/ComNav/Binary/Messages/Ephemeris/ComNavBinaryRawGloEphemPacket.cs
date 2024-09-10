@@ -12,7 +12,7 @@ namespace Asv.Gnss
 		protected override void InternalContentDeserialize(ref ReadOnlySpan<byte> buffer)
 		{
 			SvId = BinSerialize.ReadUShort(ref buffer);
-			Frequency = 1602.00 + (BinSerialize.ReadUShort(ref buffer) - 7f) * 9 / 16;
+			Frequency = 1.60200E9 + (BinSerialize.ReadUShort(ref buffer) - 7f) * 9E6 / 16;
 			SatPrn = ComNavBinaryHelper.GetPnrAndRinexCode(ComNavSatelliteSystemEnum.GLONASS, SvId, out var rCore);
 			SignalType = GnssSignalTypeEnum.L1CA;
 			RindexSignalCode = "1C";

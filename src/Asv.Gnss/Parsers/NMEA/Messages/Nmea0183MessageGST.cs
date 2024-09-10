@@ -44,7 +44,7 @@ namespace Asv.Gnss
         /// <summary>
         /// TC time of associated GGA fix
         /// </summary>
-        public DateTime Time { get; set; }
+        public DateTime? Time { get; set; }
         /// <summary>
         /// Total RMS standard deviation of ranges inputs to the navigation solution
         /// </summary>

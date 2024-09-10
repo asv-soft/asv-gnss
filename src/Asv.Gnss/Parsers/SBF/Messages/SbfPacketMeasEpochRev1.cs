@@ -124,10 +124,10 @@ namespace Asv.Gnss
             SVID = BinSerialize.ReadByte(ref buffer);
             var misc = BinSerialize.ReadByte(ref buffer);
             var codeLSB = BinSerialize.ReadUInt(ref buffer);
-            PR = ((misc & 0b00000111) * 4294967296 + codeLSB) * 0.001;
-            DopplerHz = BinSerialize.ReadUInt(ref buffer) * 0.0001;
+            PR = ((misc & 0b00001111) * 4294967296.0 + codeLSB) * 0.001;
+            DopplerHz = BinSerialize.ReadInt(ref buffer) * 0.0001;
             var carrierLSB = BinSerialize.ReadUShort(ref buffer);
-            var carrierMSB = (sbyte)BinSerialize.ReadByte(ref buffer);
+            var carrierMSB = BinSerialize.ReadSByte(ref buffer);
             CN0 = BinSerialize.ReadByte(ref buffer) * 0.25;
             LockTime = BinSerialize.ReadUShort(ref buffer);
             var typeBitfield2 = BinSerialize.ReadByte(ref buffer);
@@ -140,7 +140,7 @@ namespace Asv.Gnss
             RinexCode = rinexCode;
             SatSys = sys;
             // var lambda = 299792458 / Frequency; 
-            CarrierPhase = (carrierMSB * 65536 + carrierLSB) * 0.001;
+            CarrierPhase = (carrierMSB * 65536.0 + carrierLSB) * 0.001;
         }
 
         public bool IsSmoothed { get; set; }

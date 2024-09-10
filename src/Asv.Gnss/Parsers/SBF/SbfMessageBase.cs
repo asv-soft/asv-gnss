@@ -47,10 +47,6 @@ namespace Asv.Gnss
 
             var msgId = BinSerialize.ReadUShort(ref buffer);
             var messageType = (ushort)(msgId & 0x1fff << 0);
-            if (messageType == 4027)
-            {
-                
-            }
             var messageRevision = (ushort)((msgId >> 13) & 0x7);
 
             if (messageType != MessageType) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])");
@@ -66,7 +62,7 @@ namespace Asv.Gnss
             TOW = BinSerialize.ReadUInt(ref buffer);
             WNc = BinSerialize.ReadUShort(ref buffer);
 
-            UtcTime = new DateTime(1980, 1, 06, 0, 0, 0, DateTimeKind.Utc).AddDays(7 * WNc).AddMilliseconds(TOW/* ms in 1 week */);
+            UtcTime = GpsRawHelper.Gps2Utc(new DateTime(1980, 1, 06, 0, 0, 0, DateTimeKind.Utc).AddDays(7 * WNc).AddMilliseconds(TOW/* ms in 1 week */));
             DeserializeContent(ref buffer);
         }
 

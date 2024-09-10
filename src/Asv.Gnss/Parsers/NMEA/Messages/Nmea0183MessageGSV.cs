@@ -1,4 +1,6 @@
-﻿namespace Asv.Gnss
+﻿using System.Collections.Generic;
+
+namespace Asv.Gnss
 {
     /// <summary>
     /// GSV Satellites in view 
@@ -35,48 +37,38 @@
             if (!string.IsNullOrEmpty(items[2])) MessageNumber = int.Parse(items[2]);
             if (!string.IsNullOrEmpty(items[3])) SatellitesInView = int.Parse(items[3]);
 
-            Satellites = new Satellite[(items.Length - 4)/4];
-            var index = 0;
-            for (var i = 4; i < 4 + Satellites.Length * 4; i+=4)
+            var length = (items.Length - 4) / 4;
+            var satellites = new List<Satellite>();
+            for (var i = 4; i < 4 + length * 4; i += 4)
             {
-                var number = 0;
+                int number;
                 var elevationDeg = 0;
                 var azimuthDeg = 0;
                 var snrdB = 0;
 
                 if (!string.IsNullOrEmpty(items[i])) number = int.Parse(items[i]);
-                if (!string.IsNullOrEmpty(items[i+1])) elevationDeg = int.Parse(items[i+1]);
-                if (!string.IsNullOrEmpty(items[i+2])) azimuthDeg = int.Parse(items[i+2]);
-                if (!string.IsNullOrEmpty(items[i+3])) snrdB = int.Parse(items[i+3]);
-                if (Nmea0183Helper.GetPrnFromNmeaSatId(number, out var PRN, out var nav))
+                else continue;
+                if (!string.IsNullOrEmpty(items[i + 1])) elevationDeg = int.Parse(items[i + 1]);
+                if (!string.IsNullOrEmpty(items[i + 2])) azimuthDeg = int.Parse(items[i + 2]);
+                if (!string.IsNullOrEmpty(items[i + 3])) snrdB = int.Parse(items[i + 3]);
+                var sat = new Satellite
                 {
-                    Satellites[index] = new Satellite
-                    {
-                        Number = number,
-                        ElevationDeg = elevationDeg,
-                        AzimuthDeg = azimuthDeg,
-                        SnrdB = snrdB,
-                        ExtPRN = PRN,
-                        ExtNavSys = nav,
-                    };
-                }
-                else
+                    Number = number,
+                    ElevationDeg = elevationDeg,
+                    AzimuthDeg = azimuthDeg,
+                    SnrdB = snrdB
+                };
+                if (Nmea0183Helper.GetPrnFromNmeaSatId(SourceId, number, out var prn, out var nav))
                 {
-                    Satellites[index] = new Satellite
-                    {
-                        Number = number,
-                        ElevationDeg = elevationDeg,
-                        AzimuthDeg = azimuthDeg,
-                        SnrdB = snrdB
-                    };
+                    sat.ExtPRN = prn;
+                    sat.ExtNavSys = nav;
                 }
-                
-                index++;
+                satellites.Add(sat);
             }
+            Satellites = satellites.ToArray();
         }
 
         /// Gets or sets the total number of messages.
-        /// /
         public int TotalNumberOfMsg { get; set; }
 
         /// <summary>

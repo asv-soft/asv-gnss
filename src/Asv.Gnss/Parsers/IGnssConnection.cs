@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -139,7 +140,7 @@ namespace Asv.Gnss
         /// <returns>An Observable that contains only the messages of type TMsg.</returns>
         public static IObservable<TMsg> Filter<TMsg>(this IGnssConnection src)
         {
-            return src.OnMessage.Where(_ => _ is TMsg).Cast<TMsg>();
+            return src.OnMessage.ObserveOn(Scheduler.Default).Where(_ => _ is TMsg).Cast<TMsg>();
         }
 
         /// <summary>

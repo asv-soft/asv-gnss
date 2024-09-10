@@ -13,7 +13,7 @@ namespace Asv.Gnss
 		{
 			var frameDecoderNum = BinSerialize.ReadInt(ref buffer);
 			SvId = (ushort)BinSerialize.ReadUInt(ref buffer);
-			Frequency = 1575.42;
+			Frequency = 1.57542E9;
 			SatPrn = ComNavBinaryHelper.GetPnrAndRinexCode(ComNavSatelliteSystemEnum.GPS, SvId, out var rCore);
 			SignalType = GnssSignalTypeEnum.L1CA;
 			RindexSignalCode = "1C";
