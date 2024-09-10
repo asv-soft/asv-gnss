@@ -71,6 +71,11 @@ namespace Asv.Gnss
             /// Represents the 'End2' state of the State enum.
             /// </summary>
             End2,
+            
+            /// <summary>
+            /// Represents the NoCheckSum state of the State enum
+            /// </summary>
+            NoChecksum,
         }
 
         /// <summary>
@@ -94,7 +99,7 @@ namespace Asv.Gnss
              switch (_state)
             {
                 case State.Sync:
-                     if (data == 0x24 /*'$'*/ || data == 0x21/*'!'*/)
+                    if (data == 0x24 /*'$'*/ || data == 0x21 /*'!'*/)
                     {
                         _msgReaded = 0;
                         _state = State.Msg;
@@ -107,8 +112,7 @@ namespace Asv.Gnss
                     }
                     else if (data == 0x0D)
                     {
-                        _state = State.End2;
-                        //TODO: create local variable that will allow to skip crc in End2 step
+                        _state = State.NoChecksum;
                     }
                     else
                     {
@@ -179,6 +183,36 @@ namespace Asv.Gnss
                     PublishWhenCrcError();
                     Reset();
                     break;
+                case State.NoChecksum:
+                    if (data != 0x0A)
+                    {
+                        Reset();
+                        return false;
+                    }
+                    var strMessage1 = Encoding.ASCII.GetString(_buffer, 0, _msgReaded);
+                    string msgId1 = null;
+                    if (strMessage1.StartsWith('P')) // proprietary message
+                    {
+                        foreach (var idDelegate in _proprietaryMessageIdGetterList)
+                        {
+                            if (!idDelegate(strMessage1, out var parsedMessageId)) continue;
+                            msgId1 = parsedMessageId;
+                            break;
+                        }
+                    }
+                    else // standard message
+                    {
+                        msgId1 = strMessage1.Substring(2, 3).ToUpper();
+                    }
+                    if (msgId1 == null)
+                    {
+                        Reset();
+                        return false;
+                    }
+                    var span1 = new ReadOnlySpan<byte>(_buffer, 0, _msgReaded);
+                    ParsePacket(msgId1, ref span1);
+                    Reset();
+                    return true;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
