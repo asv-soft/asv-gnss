@@ -58,6 +58,17 @@ namespace Asv.Gnss
             }
         }
 
+        private byte Sync = 0x24;
+        private byte Separator = 0x2C;
+        private byte CrcSync = 0x2A;
+
+        protected byte North = 0x4E;
+        protected byte South = 0x53;
+        protected byte West = 0x57;
+        protected byte East = 0x45;
+
+        private readonly byte[] _endOfLine = { 0x0D, 0x0A };
+
         /// <summary>
         /// Deserializes a byte buffer into the current instance.
         /// </summary>
@@ -86,9 +97,31 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer to write the serialized data to.</param>
         public override void Serialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+            var origin = buffer;
+            buffer[0] = Sync; buffer = buffer[1..];
+            if (string.IsNullOrWhiteSpace(SourceId))
+            {
+                "GN".CopyTo(ref buffer, Encoding.ASCII);
+            }
+            else
+            {
+                SourceId.CopyTo(ref buffer, Encoding.ASCII);
+            }
+            MessageId.CopyTo(ref buffer, Encoding.ASCII);
+            buffer[0] = Separator; buffer = buffer[1..];
+            InternalSerialize(ref buffer, Separator, Encoding.ASCII);
+            var length = origin.Length - buffer.Length;
+            var crc = NmeaCrc.Calc(origin.Slice(1, length - 1));
+            buffer[0] = CrcSync; buffer = buffer[1..];
+            crc.CopyTo(ref buffer, Encoding.ASCII);
+            _endOfLine.CopyTo(buffer); buffer = buffer[_endOfLine.Length..];
         }
 
+        protected virtual void InternalSerialize(ref Span<byte> buffer, byte separator, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+        
         /// <summary>
         /// Gets the byte size of the object.
         /// </summary>

@@ -354,7 +354,7 @@ namespace Asv.Gnss
             var mm = (int)(((int)temp - hh * 10000.0) / 100.0);
             var ss = (int)((int)temp - hh * 10000.0 - mm * 100.0);
 
-            return new DateTime(now.Year, now.Month, now.Day, hh, mm, ss, sss);
+            return new DateTime(now.Year, now.Month, now.Day, hh, mm, ss, sss, DateTimeKind.Utc);
 
             // var hh = int.Parse(value.Substring(0, 2), CultureInfo.InvariantCulture);
             // var mm = int.Parse(value.Substring(2, 2), CultureInfo.InvariantCulture);
@@ -362,7 +362,15 @@ namespace Asv.Gnss
             // return new DateTime(0,0,0,hh,mm,00).AddSeconds(ss);
 
         }
-
+        public static string SerializeTime(DateTime? time)
+        {
+            if (!time.HasValue) return string.Empty;
+            var hh = time.Value.Hour * 10000;
+            var mm = time.Value.Minute * 100;
+            var ss = time.Value.Second;
+            var sss = time.Value.Millisecond / 10;
+            return sss > 0 ? $"{hh + mm + ss}.{sss}" : $"{hh + mm + ss}";
+        }
         /// <summary>
         /// ddmmyy
         /// </summary>
@@ -383,6 +391,13 @@ namespace Asv.Gnss
             return new DateTime(year, month, date, 0, 0, 0, DateTimeKind.Utc);
         }
 
+        public static string SerializeDate(DateTime? date)
+        {
+            return !date.HasValue
+                ? string.Empty
+                : $"{date.Value.Day * 10000 + date.Value.Month * 100 + date.Value.Year % 100:000000}";
+        }
+        
         /// <summary>
         /// dd/mm/yy
         /// </summary>
@@ -406,22 +421,56 @@ namespace Asv.Gnss
         }
         
         /// <summary>
-        /// llll.ll
+        /// from ddmm.mm to ddmm.mmmmmmm
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
         public static double ParseLatitude(string token)
         {
             var temp = double.Parse(token, NumberStyles.Any, CultureInfo.InvariantCulture);
-            double degree = (int)((int)temp / 100.0);
-            var minutes = ((int)temp - degree * 100.0);
-            var seconds = (temp - (int)temp) * 60.0;
-            return degree + minutes / 60.0 + seconds / 3600.0;
+            var degree = (int)temp / 100;
+            var minutes = temp - degree * 100;
+            return degree + minutes / 60.0;
 
             // var deg = int.Parse(token.Substring(0, 2), CultureInfo.InvariantCulture);
             // var min = double.Parse(token.Substring(2, 5), CultureInfo.InvariantCulture);
             // return deg + min / 60.0;
         }
+
+        public static string SerializeLatitude(double latitude)
+        {
+            latitude = Math.Abs(latitude);
+            var degree = (int)latitude;
+            var minute = (latitude - degree) * 60.0;
+            var integerMin = (int)minute;
+            var fractionalMin = (int)((minute - integerMin) * 10000000);
+            var strFormat = "00";
+            for (var i = 0; i < 6; i++)
+            {
+                if (fractionalMin % 10 != 0)
+                {
+                    strFormat = GetLatLonFractionalStringFormat(7 - i);
+                    break;
+                }
+                fractionalMin /= 10;
+            }
+            return $"{degree:00}{integerMin:00}.{fractionalMin.ToString(strFormat)}";
+        }
+
+        private static string GetLatLonFractionalStringFormat(int length)
+        {
+            return length switch
+            {
+                2 => "00",
+                3 => "000",
+                4 => "0000",
+                5 => "00000",
+                6 => "000000",
+                7 => "0000000",
+                _ => "000"
+            };
+        }
+        
         /// <summary>
         /// yyyyy.yy
         /// </summary>
@@ -439,6 +488,26 @@ namespace Asv.Gnss
             // var deg = int.Parse(token.Substring(0, 3), CultureInfo.InvariantCulture);
             // var min = double.Parse(token.Substring(2, 5), CultureInfo.InvariantCulture);
             // return deg + min / 60.0;
+        }
+        
+        public static string SerializeLongitude(double latitude)
+        {
+            latitude = Math.Abs(latitude);
+            var degree = (int)latitude;
+            var minute = (latitude - degree) * 60.0;
+            var integerMin = (int)minute;
+            var fractionalMin = (int)((minute - integerMin) * 10000000);
+            var strFormat = "00";
+            for (var i = 0; i < 6; i++)
+            {
+                if (fractionalMin % 10 != 0)
+                {
+                    strFormat = GetLatLonFractionalStringFormat(7 - i);
+                    break;
+                }
+                fractionalMin /= 10;
+            }
+            return $"{degree:000}{integerMin:00}.{fractionalMin.ToString(strFormat)}";
         }
 
         /// <summary>
