@@ -454,7 +454,7 @@ namespace Asv.Gnss
                 }
                 fractionalMin /= 10;
             }
-            return $"{degree:00}{integerMin:00}.{fractionalMin.ToString(strFormat)}";
+            return $"{degree * 100 + integerMin:0000}.{fractionalMin.ToString(strFormat)}";
         }
 
         private static string GetLatLonFractionalStringFormat(int length)
@@ -478,7 +478,7 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static double ParseLongitude(string token)
         {
-            var temp = double.Parse(token, CultureInfo.InvariantCulture);
+            var temp = double.Parse(token,NumberStyles.Any, CultureInfo.InvariantCulture);
 
             double degree = (int)((int)temp / 100.0);
             var minutes = ((int)temp - degree * 100.0);
@@ -490,11 +490,11 @@ namespace Asv.Gnss
             // return deg + min / 60.0;
         }
         
-        public static string SerializeLongitude(double latitude)
+        public static string SerializeLongitude(double longitude)
         {
-            latitude = Math.Abs(latitude);
-            var degree = (int)latitude;
-            var minute = (latitude - degree) * 60.0;
+            longitude = Math.Abs(longitude);
+            var degree = (int)longitude;
+            var minute = (longitude - degree) * 60.0;
             var integerMin = (int)minute;
             var fractionalMin = (int)((minute - integerMin) * 10000000);
             var strFormat = "00";
@@ -507,7 +507,7 @@ namespace Asv.Gnss
                 }
                 fractionalMin /= 10;
             }
-            return $"{degree:000}{integerMin:00}.{fractionalMin.ToString(strFormat)}";
+            return $"{degree * 100 + integerMin:00000}.{fractionalMin.ToString(strFormat)}";
         }
 
         /// <summary>
@@ -519,7 +519,7 @@ namespace Asv.Gnss
         {
             if (string.IsNullOrWhiteSpace(token)) return Double.NaN;
 
-            var temp = double.Parse(token, CultureInfo.InvariantCulture);
+            var temp = double.Parse(token, NumberStyles.Any, CultureInfo.InvariantCulture);
 
             double degree = (int)((int)temp / 100.0);
             var minutes = ((int)temp - degree * 100.0);
@@ -544,11 +544,26 @@ namespace Asv.Gnss
             return (NmeaGpsQuality) int.Parse(value, CultureInfo.InvariantCulture);
         }
 
+        public static string SerializeGpsQuality(NmeaGpsQuality quality)
+        {
+            return quality == NmeaGpsQuality.Unknown ? string.Empty : ((int)quality).ToString();
+        }
+
         public static NmeaDataStatus ParseDataStatus(string value)
         {
             if (string.Equals(value, "A", StringComparison.InvariantCultureIgnoreCase)) return NmeaDataStatus.Valid;
             if (string.Equals(value, "V", StringComparison.InvariantCultureIgnoreCase)) return NmeaDataStatus.Invalid;
             return NmeaDataStatus.Unknown;
+        }
+
+        public static string SerializeDataStatus(NmeaDataStatus status)
+        {
+            return status switch
+            {
+                NmeaDataStatus.Valid => "A",
+                NmeaDataStatus.Invalid => "V",
+                _ => string.Empty
+            };
         }
 
         /// <summary>
@@ -569,7 +584,7 @@ namespace Asv.Gnss
         public static double ParseDouble(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return double.NaN;
-            return double.Parse(value, CultureInfo.InvariantCulture);
+            return double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
 

@@ -58,14 +58,14 @@ namespace Asv.Gnss
             }
         }
 
-        private byte Sync = 0x24;
-        private byte Separator = 0x2C;
-        private byte CrcSync = 0x2A;
+        private const byte Sync = 0x24;
+        private const byte Separator = 0x2C;
+        private const byte CrcSync = 0x2A;
 
-        protected byte North = 0x4E;
-        protected byte South = 0x53;
-        protected byte West = 0x57;
-        protected byte East = 0x45;
+        protected const byte North = 0x4E;
+        protected const byte South = 0x53;
+        protected const byte West = 0x57;
+        protected const byte East = 0x45;
 
         private readonly byte[] _endOfLine = { 0x0D, 0x0A };
 
@@ -109,7 +109,7 @@ namespace Asv.Gnss
             }
             MessageId.CopyTo(ref buffer, Encoding.ASCII);
             buffer[0] = Separator; buffer = buffer[1..];
-            InternalSerialize(ref buffer, Separator, Encoding.ASCII);
+            InternalSerialize(ref buffer, Encoding.ASCII);
             var length = origin.Length - buffer.Length;
             var crc = NmeaCrc.Calc(origin.Slice(1, length - 1));
             buffer[0] = CrcSync; buffer = buffer[1..];
@@ -117,7 +117,19 @@ namespace Asv.Gnss
             _endOfLine.CopyTo(buffer); buffer = buffer[_endOfLine.Length..];
         }
 
-        protected virtual void InternalSerialize(ref Span<byte> buffer, byte separator, Encoding encoding)
+        protected void InsertSeparator(ref Span<byte> buffer)
+        {
+            buffer[0] = Separator;
+            buffer = buffer[1..];
+        }
+        
+        protected static void InsertByte(ref Span<byte> buffer, byte value)
+        {
+            buffer[0] = value;
+            buffer = buffer[1..];
+        } 
+
+        protected virtual void InternalSerialize(ref Span<byte> buffer, Encoding encoding)
         {
             throw new NotImplementedException();
         }
