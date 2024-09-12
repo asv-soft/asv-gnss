@@ -365,11 +365,18 @@ namespace Asv.Gnss
         public static string SerializeTime(DateTime? time)
         {
             if (!time.HasValue) return string.Empty;
-            var hh = time.Value.Hour * 10000;
-            var mm = time.Value.Minute * 100;
+            var hh = time.Value.Hour;
+            var mm = time.Value.Minute;
             var ss = time.Value.Second;
-            var sss = time.Value.Millisecond / 10;
-            return sss > 0 ? $"{hh + mm + ss}.{sss}" : $"{hh + mm + ss}";
+            var sss = (int)Math.Round(time.Value.Millisecond / 10.0, 0);
+            ss += sss / 100;
+            mm += ss / 60;
+            hh += mm / 60;
+            hh %= 24;
+            mm %= 60;
+            ss %= 60;
+            sss %= 100;
+            return sss > 0 ? $"{hh * 10000 + mm * 100 + ss:000000}.{sss}" : $"{hh * 10000 + mm * 100 + ss:000000}";
         }
         /// <summary>
         /// ddmmyy
@@ -443,7 +450,12 @@ namespace Asv.Gnss
             var degree = (int)latitude;
             var minute = (latitude - degree) * 60.0;
             var integerMin = (int)minute;
-            var fractionalMin = (int)((minute - integerMin) * 10000000);
+            var fractionalMin = (int)Math.Round((minute - integerMin) * 10000000.0, 0);
+            integerMin += fractionalMin / 10000000;
+            degree += integerMin / 60;
+            integerMin %= 60;
+            fractionalMin %= 10000000;
+            
             var strFormat = "00";
             for (var i = 0; i < 6; i++)
             {
@@ -496,7 +508,12 @@ namespace Asv.Gnss
             var degree = (int)longitude;
             var minute = (longitude - degree) * 60.0;
             var integerMin = (int)minute;
-            var fractionalMin = (int)((minute - integerMin) * 10000000);
+            var fractionalMin = (int)Math.Round((minute - integerMin) * 10000000.0, 0);
+            integerMin += fractionalMin / 10000000;
+            degree += integerMin / 60;
+            integerMin %= 60;
+            fractionalMin %= 10000000;
+            
             var strFormat = "00";
             for (var i = 0; i < 6; i++)
             {

@@ -88,26 +88,26 @@ namespace Asv.Gnss
             InsertSeparator(ref buffer);
             var hdop = double.IsNaN(HorizontalDilutionPrecision)
                 ? string.Empty
-                : HorizontalDilutionPrecision.ToString("F1", CultureInfo.InvariantCulture);
+                : Math.Round(HorizontalDilutionPrecision, 1).ToString("F1", CultureInfo.InvariantCulture);
             hdop.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             var alt = double.IsNaN(AntennaAltitudeMsl)
                 ? string.Empty
-                : AntennaAltitudeMsl.ToString("F3", CultureInfo.InvariantCulture);
+                : Math.Round(AntennaAltitudeMsl, 3).ToString("F3", CultureInfo.InvariantCulture);
             alt.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             InsertByte(ref buffer, Unit);
             InsertSeparator(ref buffer);
             var sep = double.IsNaN(GeoidalSeparation)
                 ? string.Empty
-                : GeoidalSeparation.ToString("F3", CultureInfo.InvariantCulture);
+                : Math.Round(GeoidalSeparation, 3).ToString("F3", CultureInfo.InvariantCulture);
             sep.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             InsertByte(ref buffer, Unit);
             InsertSeparator(ref buffer);
             var ageDGps = double.IsNaN(AgeOfDifferentialGPSData)
                 ? string.Empty
-                : AgeOfDifferentialGPSData.ToString("00.0", CultureInfo.InvariantCulture);
+                : Math.Round(AgeOfDifferentialGPSData, 1).ToString("00.0", CultureInfo.InvariantCulture);
             ageDGps.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             var refId = ReferenceStationID.HasValue ? ReferenceStationID.Value.ToString("0000") : "0000";

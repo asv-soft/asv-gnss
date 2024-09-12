@@ -60,7 +60,7 @@ namespace Asv.Gnss.Test
             }
 
             var targetMsg = GetNmeaMessages(msg);
-            Assert.Equal("$GPGGA,125319,5508.7020098,N,06124.3378697,E,7,08,2.4,259.000,M,-12.794,M,,0000*67\r\n", targetMsg);
+            Assert.Equal("$GPGGA,125319,5508.7020098,N,06124.3378698,E,7,08,2.4,259.000,M,-12.794,M,,0000*68\r\n", targetMsg);
         }
         
         
@@ -293,7 +293,7 @@ namespace Asv.Gnss.Test
             }
 
             var targetMsg = GetNmeaMessages(msg);
-            Assert.Equal("$GPRMC,123519,A,4807.0379999,N,01131.00,E,022.4,084.4,230394,003.1,W*55\r\n", targetMsg);
+            Assert.Equal("$GPRMC,123519,A,4807.038,N,01131.00,E,022.4,084.4,230394,003.1,W*5A\r\n", targetMsg);
         }
     }
 }

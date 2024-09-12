@@ -69,12 +69,12 @@ namespace Asv.Gnss
             InsertSeparator(ref buffer);
             var speed = double.IsNaN(SpeedOverGroundKnots)
                 ? string.Empty
-                : SpeedOverGroundKnots.ToString("000.0", CultureInfo.InvariantCulture);
+                : Math.Round(SpeedOverGroundKnots, 1).ToString("000.0", CultureInfo.InvariantCulture);
             speed.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             var track = double.IsNaN(TrackMadeGoodDegreesTrue)
                 ? string.Empty
-                : TrackMadeGoodDegreesTrue.ToString("000.0", CultureInfo.InvariantCulture);
+                : Math.Round(TrackMadeGoodDegreesTrue, 1).ToString("000.0", CultureInfo.InvariantCulture);
             track.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             Nmea0183Helper.SerializeDate(Date).CopyTo(ref buffer, encoding);
@@ -85,7 +85,7 @@ namespace Asv.Gnss
             }
             else
             {
-                Math.Abs(MagneticVariationDegrees).ToString("000.0", CultureInfo.InvariantCulture)
+                Math.Round(Math.Abs(MagneticVariationDegrees), 1).ToString("000.0", CultureInfo.InvariantCulture)
                     .CopyTo(ref buffer, encoding);
                 InsertSeparator(ref buffer);
                 InsertByte(ref buffer, MagneticVariationDegrees < 0 ? West : East);

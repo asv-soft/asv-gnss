@@ -24,6 +24,7 @@ namespace Asv.Gnss.Shell
     public interface IPvtLogger
     {
         IRxValue<PvtInfo> OnPvtInfo { get; }
+        IRxValue<Nmea0183MessageBase> OnNmea { get; }
         public void Init();
     }
     public class UbxPvtLoggerConfig
@@ -54,6 +55,7 @@ namespace Asv.Gnss.Shell
         private readonly ILogger<UbxPvtLogger> _logger;
         private readonly UbxPvtLoggerConfig _cfg;
         private readonly RxValue<PvtInfo> _onPvtInfo;
+        private readonly RxValue<Nmea0183MessageBase> _onNmea;
 
         /// <summary>
         /// This private variable indicates whether the initialization process has been completed.
@@ -62,10 +64,11 @@ namespace Asv.Gnss.Shell
 
         private UbxDevice? _device;
         private int _busy;
+        
 
-        
         public IRxValue<PvtInfo> OnPvtInfo => _onPvtInfo;
-        
+        public IRxValue<Nmea0183MessageBase> OnNmea => _onNmea;
+
         public UbxPvtLogger(UbxPvtLoggerConfig cfg)
         {
             using var factory = LoggerFactory.Create(logging =>
@@ -89,6 +92,7 @@ namespace Asv.Gnss.Shell
             }
 
             _onPvtInfo = new RxValue<PvtInfo>().DisposeItWith(Disposable);
+            _onNmea = new RxValue<Nmea0183MessageBase>().DisposeItWith(Disposable);
 
         }
 
@@ -215,6 +219,36 @@ namespace Asv.Gnss.Shell
                             HeadingOfMotion2D = _.HeadingOfMotion2D
                         })
                         .Subscribe(_onPvtInfo)
+                        .DisposeItWith(Disposable);
+                    _device?.Connection.Filter<UbxNavPvt>()
+                        .Select(_ => new Nmea0183MessageGGA
+                        {
+                            Time = _.UtcTime,
+                            Latitude = _.Latitude,
+                            Longitude = _.Longitude,
+                            GpsQuality = _.GnssFixOK ? NmeaGpsQuality.GPSFix : NmeaGpsQuality.FixNotAvailable,
+                            NumberOfSatellites = _.NumberOfSatellites,
+                            HorizontalDilutionPrecision = _.PositionDOP,
+                            AntennaAltitudeMsl = _.AltMsl,
+                            GeoidalSeparation = _.AltMsl - _.AltElipsoid,
+                            AgeOfDifferentialGPSData = double.NaN,
+                            ReferenceStationID = null
+                        })
+                        .Subscribe(_onNmea)
+                        .DisposeItWith(Disposable);
+                    _device?.Connection.Filter<UbxNavPvt>()
+                        .Select(_ => new Nmea0183MessageRMC
+                        {
+                            TimeUtc = _.UtcTime,
+                            Status = PositionFixStatus.Valid,
+                            Latitude = _.Latitude,
+                            Longitude = _.Longitude,
+                            SpeedOverGroundKnots = _.GroundSpeed2D,
+                            TrackMadeGoodDegreesTrue = _.HeadingOfMotion2D,
+                            Date = _.UtcTime,
+                            MagneticVariationDegrees = _.IsValidMagneticDeclination ? _.MagneticDeclination : double.NaN
+                        })
+                        .Subscribe(_onNmea)
                         .DisposeItWith(Disposable);
                 }
 

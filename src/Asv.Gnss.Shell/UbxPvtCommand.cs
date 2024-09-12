@@ -1,7 +1,11 @@
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Reactive.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Asv.Common;
 using Newtonsoft.Json;
 using Spectre.Console.Cli;
 
@@ -44,7 +48,8 @@ namespace Asv.Gnss.Shell
                 waitForProcessShutdownStart.Set();
             };
 
-            using var device = new UbxPvtLogger(new UbxPvtLoggerConfig { ConnectionString = settings.Cs, IsEnabled = settings.IsEnabled, PvtRate = settings.RateRate});
+            using var device = new UbxPvtLogger(new UbxPvtLoggerConfig
+                { ConnectionString = settings.Cs, IsEnabled = settings.IsEnabled, PvtRate = settings.RateRate });
             device.Init();
             Test(device).Wait();
 
@@ -56,12 +61,34 @@ namespace Asv.Gnss.Shell
 
         public async Task Test(IPvtLogger logger)
         {
+
             var s = JsonSerializer.Create(new JsonSerializerSettings());
             logger.OnPvtInfo.Subscribe(_ =>
             {
                 s.Serialize(Console.Out, _);
                 Console.WriteLine();
             });
+            logger.OnNmea.Select(GetNmeaMessages)
+                .Buffer(TimeSpan.FromSeconds(5))
+                .Subscribe(_ =>
+                {
+                    using var wrt = File.AppendText($"GnssPvtLog_{DateTime.UtcNow:dd-MM-yy}.txt");
+                    foreach (var value in _)
+                    {
+                        wrt.Write(value);
+                    }
+                    wrt.Flush();
+                });
+        }
+        
+        private string GetNmeaMessages(Nmea0183MessageBase msg)
+        {
+            var byteBuff = new byte[1024];
+            var byteSpan = new Span<byte>(byteBuff);
+            var origSpan = byteSpan;
+            msg.Serialize(ref byteSpan);
+            var length = origSpan.Length - byteSpan.Length;
+            return Encoding.ASCII.GetString(origSpan[..length]);
         }
     }
 }
