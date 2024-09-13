@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Buffers;
 using System.Globalization;
+using System.Text;
 
 namespace Asv.Gnss
 {
@@ -376,7 +378,7 @@ namespace Asv.Gnss
             mm %= 60;
             ss %= 60;
             sss %= 100;
-            return sss > 0 ? $"{hh * 10000 + mm * 100 + ss:000000}.{sss}" : $"{hh * 10000 + mm * 100 + ss:000000}";
+            return sss > 0 ? $"{hh * 10000 + mm * 100 + ss:000000}.{sss.ToString().TrimEnd('0')}" : $"{hh * 10000 + mm * 100 + ss:000000}";
         }
         /// <summary>
         /// ddmmyy
@@ -604,6 +606,22 @@ namespace Asv.Gnss
             return double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
+        public static string GetNmeaMessage(this Nmea0183MessageBase msg)
+        {
+            var array = ArrayPool<byte>.Shared.Rent(1024);
+            try
+            {
+                var buffer = new Span<byte>(array, 0, 1024);
+                var origin = buffer;
+                msg.Serialize(ref buffer);
+                var length = origin.Length - buffer.Length;
+                return Encoding.ASCII.GetString(origin[..length]);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(array);
+            }
+        }
 
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Asv.Common;
@@ -21,13 +22,13 @@ namespace Asv.Gnss.Shell
         public double GroundSpeed2D { get; set; }
         public double HeadingOfMotion2D { get; set; }
     }
-    public interface IPvtLogger
+    public interface ITrackLogger
     {
         IRxValue<PvtInfo> OnPvtInfo { get; }
         IRxValue<Nmea0183MessageBase> OnNmea { get; }
         public void Init();
     }
-    public class UbxPvtLoggerConfig
+    public class UbxTrackLoggerConfig
     {
         /// <summary>
         /// Connection string for UBX.
@@ -50,10 +51,24 @@ namespace Asv.Gnss.Shell
         public int ReconnectTimeoutMs { get; set; } = 10_000;
     }
 
-    public class UbxPvtLogger : DisposableOnceWithCancel, IPvtLogger
+    public class GnssTimeProvider : TimeProvider, ITimeService
     {
-        private readonly ILogger<UbxPvtLogger> _logger;
-        private readonly UbxPvtLoggerConfig _cfg;
+        public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.Utc;
+        public override DateTimeOffset GetUtcNow() => new(Now);
+
+        private long _correction;
+
+        public void SetCorrection(long correctionIn100NanosecondsTicks) =>
+            Interlocked.Exchange(ref _correction, correctionIn100NanosecondsTicks);
+
+        public DateTime Now => DateTime.UtcNow.AddTicks(Interlocked.Read(ref _correction));
+    }
+    
+    
+    public class UbxTrackLogger : DisposableOnceWithCancel, ITrackLogger
+    {
+        private readonly ILogger<UbxTrackLogger> _logger;
+        private readonly UbxTrackLoggerConfig _cfg;
         private readonly RxValue<PvtInfo> _onPvtInfo;
         private readonly RxValue<Nmea0183MessageBase> _onNmea;
 
@@ -67,21 +82,35 @@ namespace Asv.Gnss.Shell
         
 
         public IRxValue<PvtInfo> OnPvtInfo => _onPvtInfo;
+        
+        /// <summary>
+        /// GGA and RMC
+        /// </summary>
         public IRxValue<Nmea0183MessageBase> OnNmea => _onNmea;
 
-        public UbxPvtLogger(UbxPvtLoggerConfig cfg)
+        public UbxTrackLogger(UbxTrackLoggerConfig cfg)
         {
             using var factory = LoggerFactory.Create(logging =>
             {
                 logging.SetMinimumLevel(LogLevel.Trace);
 
                 // Add ZLogger provider to ILoggingBuilder
-                logging.AddZLoggerConsole();
+                // logging.AddZLoggerConsole();
+                logging.AddZLoggerFile("log.txt",
+                    options =>
+                    {
+                        options.UseJsonFormatter(conf =>
+                        {
+                            conf.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                            conf.UseUtcTimestamp = true;
+                        });
+                        options.TimeProvider = TimeProvider.System;
+                    });
 
                 // Output Structured Logging, setup options
                 logging.AddZLoggerConsole(options => options.UseJsonFormatter());
             });
-            _logger = factory.CreateLogger<UbxPvtLogger>();
+            _logger = factory.CreateLogger<UbxTrackLogger>();
 
 
             _cfg = cfg ?? throw new ArgumentNullException(nameof(cfg));
@@ -307,7 +336,7 @@ namespace Asv.Gnss.Shell
         /// </summary>
         /// <param name="cancel">The cancellation token to cancel the operation.</param>
         /// <returns>The result of the operation.</returns>
-        public async Task<bool> StartIdleMode(CancellationToken cancel)
+        private async Task<bool> StartIdleMode(CancellationToken cancel)
         {
             if (CheckInitAndBeginCall() == false) return false;
             try
