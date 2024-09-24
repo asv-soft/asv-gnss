@@ -110,7 +110,7 @@ namespace Asv.Gnss
                 : Math.Round(AgeOfDifferentialGPSData, 1).ToString("00.0", CultureInfo.InvariantCulture);
             ageDGps.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
-            var refId = ReferenceStationID.HasValue ? ReferenceStationID.Value.ToString("0000") : "0000";
+            var refId = ReferenceStationID.HasValue ? ReferenceStationID.Value.ToString("0000") : string.Empty;
             refId.CopyTo(ref buffer, encoding);
         }
 

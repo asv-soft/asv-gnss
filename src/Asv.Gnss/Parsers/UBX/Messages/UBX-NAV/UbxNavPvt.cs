@@ -306,9 +306,9 @@ namespace Asv.Gnss
             flags = BinSerialize.ReadByte(ref buffer);
             IsValidLLH = (flags & 0b0000_0001) == 0;
             buffer = buffer[5..];
-            HeadingOfVehicle2D = BinSerialize.ReadUInt(ref buffer) * 1e-5;
+            HeadingOfVehicle2D = BinSerialize.ReadInt(ref buffer) * 1e-5;
             if (!IsValidVehicleHeading) HeadingOfVehicle2D = double.NaN;
-            MagneticDeclination = BinSerialize.ReadUShort(ref buffer) * 1e-2;
+            MagneticDeclination = BinSerialize.ReadShort(ref buffer) * 1e-2;
             MagneticDeclinationAccuracy = BinSerialize.ReadUShort(ref buffer) * 1e-2;
             //
             if (FixType >= UbxGnssFixType.Fix3D && GnssFixOK)

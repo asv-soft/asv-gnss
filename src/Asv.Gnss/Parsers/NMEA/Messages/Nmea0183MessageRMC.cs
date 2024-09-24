@@ -51,7 +51,21 @@ namespace Asv.Gnss
             {
                 MagneticVariationDegrees = double.NaN;
             }
+
+            if (items.Length > 12)
+            {
+                PositioningSystemMode = items[12];
+            }
+
+            if (items.Length > 13)
+            {
+                NavigationalStatus = Nmea0183Helper.GetNavigationalStatus(items[13]);
+            }
         }
+
+        public NmeaNavigationalStatusEnum? NavigationalStatus { get; set; }
+
+        public string PositioningSystemMode { get; set; } = "A";
 
         protected override void InternalSerialize(ref Span<byte> buffer, Encoding encoding)
         {
@@ -90,6 +104,15 @@ namespace Asv.Gnss
                 InsertSeparator(ref buffer);
                 InsertByte(ref buffer, MagneticVariationDegrees < 0 ? West : East);
             }
+
+            if (string.IsNullOrWhiteSpace(PositioningSystemMode)) return;
+            
+            InsertSeparator(ref buffer);
+            PositioningSystemMode.CopyTo(ref buffer, encoding);
+
+            // if (!NavigationalStatus.HasValue) return;
+            // InsertSeparator(ref buffer);
+            // NavigationalStatus.Value.SetNavigationalStatus().CopyTo(ref buffer, encoding);
         }
 
 

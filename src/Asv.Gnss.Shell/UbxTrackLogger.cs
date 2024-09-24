@@ -22,19 +22,21 @@ namespace Asv.Gnss.Shell
         public double GroundSpeed2D { get; set; }
         public double HeadingOfMotion2D { get; set; }
     }
+
     public interface ITrackLogger
     {
         IRxValue<PvtInfo> OnPvtInfo { get; }
         IRxValue<Nmea0183MessageBase> OnNmea { get; }
         public void Init();
     }
+
     public class UbxTrackLoggerConfig
     {
         /// <summary>
         /// Connection string for UBX.
         /// </summary>
-        public string ConnectionString { get; set; } = "serial:COM10?br=115200";
-        
+        public string ConnectionString { get; set; } = "tcp://10.10.5.16:30"; //"serial:COM10?br=115200";
+
         public bool IsEnabled { get; set; } = true;
 
         /// <summary>
@@ -51,20 +53,7 @@ namespace Asv.Gnss.Shell
         public int ReconnectTimeoutMs { get; set; } = 10_000;
     }
 
-    public class GnssTimeProvider : TimeProvider, ITimeService
-    {
-        public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.Utc;
-        public override DateTimeOffset GetUtcNow() => new(Now);
 
-        private long _correction;
-
-        public void SetCorrection(long correctionIn100NanosecondsTicks) =>
-            Interlocked.Exchange(ref _correction, correctionIn100NanosecondsTicks);
-
-        public DateTime Now => DateTime.UtcNow.AddTicks(Interlocked.Read(ref _correction));
-    }
-    
-    
     public class UbxTrackLogger : DisposableOnceWithCancel, ITrackLogger
     {
         private readonly ILogger<UbxTrackLogger> _logger;
@@ -79,10 +68,10 @@ namespace Asv.Gnss.Shell
 
         private UbxDevice? _device;
         private int _busy;
-        
+
 
         public IRxValue<PvtInfo> OnPvtInfo => _onPvtInfo;
-        
+
         /// <summary>
         /// GGA and RMC
         /// </summary>
@@ -108,7 +97,7 @@ namespace Asv.Gnss.Shell
                     });
 
                 // Output Structured Logging, setup options
-                logging.AddZLoggerConsole(options => options.UseJsonFormatter());
+                // logging.AddZLoggerConsole(options => options.UseJsonFormatter());
             });
             _logger = factory.CreateLogger<UbxTrackLogger>();
 
@@ -142,7 +131,8 @@ namespace Asv.Gnss.Shell
         /// <returns>A default instance of <see cref="IGnssConnection"/>.</returns>
         private IGnssConnection GetDefaultUbxConnection(IPort? port)
         {
-            return new GnssConnection(port, new UbxBinaryParser().RegisterDefaultMessages());
+            return new GnssConnection(port, new UbxBinaryParser().RegisterDefaultMessages(),
+                new Nmea0183Parser().RegisterDefaultMessages());
         }
 
         /// <summary>
@@ -236,6 +226,10 @@ namespace Asv.Gnss.Shell
                                 .DisposeItWith(Disposable);
                     }
 
+                    _device?.Connection.Filter<Nmea0183MessageBase>()
+                        .Subscribe(_onNmea)
+                        .DisposeItWith(Disposable);
+
                     _device?.Connection.Filter<UbxNavPvt>().Select(_ => new PvtInfo
                         {
                             UtcTime = _.UtcTime,
@@ -249,36 +243,45 @@ namespace Asv.Gnss.Shell
                         })
                         .Subscribe(_onPvtInfo)
                         .DisposeItWith(Disposable);
-                    _device?.Connection.Filter<UbxNavPvt>()
-                        .Select(_ => new Nmea0183MessageGGA
-                        {
-                            Time = _.UtcTime,
-                            Latitude = _.Latitude,
-                            Longitude = _.Longitude,
-                            GpsQuality = _.GnssFixOK ? NmeaGpsQuality.GPSFix : NmeaGpsQuality.FixNotAvailable,
-                            NumberOfSatellites = _.NumberOfSatellites,
-                            HorizontalDilutionPrecision = _.PositionDOP,
-                            AntennaAltitudeMsl = _.AltMsl,
-                            GeoidalSeparation = _.AltMsl - _.AltElipsoid,
-                            AgeOfDifferentialGPSData = double.NaN,
-                            ReferenceStationID = null
-                        })
-                        .Subscribe(_onNmea)
-                        .DisposeItWith(Disposable);
-                    _device?.Connection.Filter<UbxNavPvt>()
-                        .Select(_ => new Nmea0183MessageRMC
-                        {
-                            TimeUtc = _.UtcTime,
-                            Status = PositionFixStatus.Valid,
-                            Latitude = _.Latitude,
-                            Longitude = _.Longitude,
-                            SpeedOverGroundKnots = _.GroundSpeed2D,
-                            TrackMadeGoodDegreesTrue = _.HeadingOfMotion2D,
-                            Date = _.UtcTime,
-                            MagneticVariationDegrees = _.IsValidMagneticDeclination ? _.MagneticDeclination : double.NaN
-                        })
-                        .Subscribe(_onNmea)
-                        .DisposeItWith(Disposable);
+
+
+
+                    // _device?.Connection.Filter<UbxNavPvt>()
+                    //     .Select(_ =>
+                    //     {
+                    //         var gga = new Nmea0183MessageGGA
+                    //         {
+                    //             Time = _.UtcTime,
+                    //             Latitude = _.Latitude,
+                    //             Longitude = _.Longitude,
+                    //             GpsQuality = _.GnssFixOK ? NmeaGpsQuality.GPSFix : NmeaGpsQuality.FixNotAvailable,
+                    //             NumberOfSatellites = _.NumberOfSatellites,
+                    //             HorizontalDilutionPrecision = _.PositionDOP,
+                    //             AntennaAltitudeMsl = _.AltMsl,
+                    //             GeoidalSeparation = _.AltMsl - _.AltElipsoid,
+                    //             AgeOfDifferentialGPSData = double.NaN,
+                    //             ReferenceStationID = null
+                    //         };
+                    //         var rmc = new Nmea0183MessageRMC
+                    //         {
+                    //             TimeUtc = _.UtcTime,
+                    //             Status = PositionFixStatus.Valid,
+                    //             Latitude = _.Latitude,
+                    //             Longitude = _.Longitude,
+                    //             SpeedOverGroundKnots = _.GroundSpeed2D * 1.94384,
+                    //             TrackMadeGoodDegreesTrue = _.HeadingOfMotion2D,
+                    //             Date = _.UtcTime,
+                    //             MagneticVariationDegrees = _.IsValidMagneticDeclination ? _.MagneticDeclination : double.NaN
+                    //         };
+                    //         return new Nmea0183MessageBase[] { gga, rmc };
+                    //     })
+                    //     .Subscribe(msgs =>
+                    //     {
+                    //         _onNmea.OnNext(msgs[0]);
+                    //         _onNmea.OnNext(msgs[1]);
+                    //     })
+                    //     .DisposeItWith(Disposable);
+
                 }
 
                 var ver = await _device.GetMonVer(DisposeCancel);
@@ -306,14 +309,17 @@ namespace Asv.Gnss.Shell
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x13, 0, DisposeCancel);
                 await _device.TurnOffNmea(DisposeCancel);
 
-
                 await _device.SetCfgRate(
-                    new UbxCfgRate { NavRate = 1, RateHz = 10, TimeSystem = UbxCfgRate.TimeSystemEnum.Utc },
+                    new UbxCfgRate { NavRate = 1, RateHz = _cfg.PvtRate, TimeSystem = UbxCfgRate.TimeSystemEnum.Utc },
                     DisposeCancel);
                 // surveyin msg - for feedback
                 await _device.SetMessageRate<UbxNavSvin>(2, DisposeCancel);
                 // pvt msg - for feedback
-                await _device.SetMessageRate<UbxNavPvt>(_cfg.PvtRate, DisposeCancel);
+                await _device.SetMessageRate<UbxNavPvt>(1, DisposeCancel);
+                // Turn On NMEA GGA
+                await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, 0x00, 1, DisposeCancel);
+                // Turn On NMEA RMC
+                await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, 0x04, 1, DisposeCancel);
                 // mon-hw - 2s
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.MON, 0x09, 2, DisposeCancel);
 
@@ -330,7 +336,7 @@ namespace Asv.Gnss.Shell
                     .Subscribe(_ => InitUbxDevice(), DisposeCancel);
             }
         }
-        
+
         /// <summary>
         /// Starts the idle mode of the receiver.
         /// </summary>
@@ -359,7 +365,7 @@ namespace Asv.Gnss.Shell
                 EndCall();
             }
         }
-        
+
         /// <summary>
         /// Ends the call and updates the '_busy' flag to indicate that the call has ended.
         /// </summary>

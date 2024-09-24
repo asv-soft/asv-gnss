@@ -623,6 +623,30 @@ namespace Asv.Gnss
             }
         }
 
+        public static NmeaNavigationalStatusEnum? GetNavigationalStatus(string status)
+        {
+            return status switch
+            {
+                "S" => NmeaNavigationalStatusEnum.Safe,
+                "C" => NmeaNavigationalStatusEnum.Caution,
+                "U" => NmeaNavigationalStatusEnum.Unsafe,
+                "V" => NmeaNavigationalStatusEnum.NotValid,
+                _ => null
+            };
+        }
+
+        public static string SetNavigationalStatus(this NmeaNavigationalStatusEnum status)
+        {
+            return status switch
+            {
+                NmeaNavigationalStatusEnum.Safe => "S",
+                NmeaNavigationalStatusEnum.Caution => "C",
+                NmeaNavigationalStatusEnum.Unsafe => "U",
+                NmeaNavigationalStatusEnum.NotValid => "V",
+                _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
+            };
+        }
+
     }
 
     public enum NmeaGpsQuality
@@ -647,5 +671,23 @@ namespace Asv.Gnss
         Unknown,
         Valid,
         Invalid
+    }
+    
+    public enum NmeaNavigationalStatusEnum
+    {
+        Safe,
+        Caution,
+        Unsafe,
+        NotValid
+    }
+
+    public enum NmeaPositionModeEnum
+    {
+        NoFix, //N,
+        Estimated, //E
+        Autonomous, //A
+        Differential, //D
+        RtkFloat, //F
+        RtkFixed //R
     }
 }
