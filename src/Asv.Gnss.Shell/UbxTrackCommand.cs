@@ -1,5 +1,9 @@
 using System;
+using System.Buffers;
 using System.ComponentModel;
+using System.IO;
+using System.Reactive.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -7,7 +11,7 @@ using Spectre.Console.Cli;
 
 namespace Asv.Gnss.Shell
 {
-    internal class UbxPvtCommand : Command<UbxPvtCommand.Settings>
+    internal class UbxTrackCommand : Command<UbxTrackCommand.Settings>
     {
         public sealed class Settings : CommandSettings
         {
@@ -44,7 +48,8 @@ namespace Asv.Gnss.Shell
                 waitForProcessShutdownStart.Set();
             };
 
-            using var device = new UbxPvtLogger(new UbxPvtLoggerConfig { ConnectionString = settings.Cs, IsEnabled = settings.IsEnabled, PvtRate = settings.RateRate});
+            using var device = new UbxTrackLogger(new UbxTrackLoggerConfig
+                { ConnectionString = settings.Cs, IsEnabled = settings.IsEnabled, PvtRate = settings.RateRate });
             device.Init();
             Test(device).Wait();
 
@@ -54,14 +59,26 @@ namespace Asv.Gnss.Shell
             return 0;
         }
 
-        public async Task Test(IPvtLogger logger)
+        public async Task Test(ITrackLogger logger)
         {
+
             var s = JsonSerializer.Create(new JsonSerializerSettings());
             logger.OnPvtInfo.Subscribe(_ =>
             {
                 s.Serialize(Console.Out, _);
                 Console.WriteLine();
             });
+            logger.OnNmea.Select(_ => _.GetNmeaMessage())
+                .Buffer(TimeSpan.FromSeconds(5))
+                .Subscribe(_ =>
+                {
+                    using var wrt = File.AppendText($"GnssPvtLog_{DateTime.UtcNow:dd-MM-yy}.txt");
+                    foreach (var value in _)
+                    {
+                        wrt.Write(value);
+                    }
+                    wrt.Flush();
+                });
         }
     }
 }

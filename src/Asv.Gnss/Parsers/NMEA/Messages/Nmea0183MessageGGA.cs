@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Globalization;
+using System.Text;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -36,6 +39,8 @@ namespace Asv.Gnss
         /// Represents the NMEA message ID.
         /// </summary>
         public const string NmeaMessageId = "GGA";
+        
+        private const byte Unit = 0x4D;
 
         /// Gets the message ID associated with the NMEA message.
         /// This property is read-only and returns the NMEA message ID.
@@ -65,6 +70,50 @@ namespace Asv.Gnss
             ReferenceStationID = Nmea0183Helper.ParseInt(items[14]);
         }
 
+        protected override void InternalSerialize(ref Span<byte> buffer, Encoding encoding)
+        {
+            Nmea0183Helper.SerializeTime(Time).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            Nmea0183Helper.SerializeLatitude(Latitude).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            InsertByte(ref buffer, Latitude < 0 ? South : North);
+            InsertSeparator(ref buffer);
+            Nmea0183Helper.SerializeLongitude(Longitude).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            InsertByte(ref buffer, Longitude < 0 ? West : East);
+            InsertSeparator(ref buffer);
+            Nmea0183Helper.SerializeGpsQuality(GpsQuality).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            (NumberOfSatellites.HasValue ? NumberOfSatellites.Value.ToString("00") : "00").CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            var hdop = double.IsNaN(HorizontalDilutionPrecision)
+                ? string.Empty
+                : Math.Round(HorizontalDilutionPrecision, 1).ToString("F1", CultureInfo.InvariantCulture);
+            hdop.CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            var alt = double.IsNaN(AntennaAltitudeMsl)
+                ? string.Empty
+                : Math.Round(AntennaAltitudeMsl, 3).ToString("F3", CultureInfo.InvariantCulture);
+            alt.CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            InsertByte(ref buffer, Unit);
+            InsertSeparator(ref buffer);
+            var sep = double.IsNaN(GeoidalSeparation)
+                ? string.Empty
+                : Math.Round(GeoidalSeparation, 3).ToString("F3", CultureInfo.InvariantCulture);
+            sep.CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            InsertByte(ref buffer, Unit);
+            InsertSeparator(ref buffer);
+            var ageDGps = double.IsNaN(AgeOfDifferentialGPSData)
+                ? string.Empty
+                : Math.Round(AgeOfDifferentialGPSData, 1).ToString("00.0", CultureInfo.InvariantCulture);
+            ageDGps.CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            var refId = ReferenceStationID.HasValue ? ReferenceStationID.Value.ToString("0000") : string.Empty;
+            refId.CopyTo(ref buffer, encoding);
+        }
+
         /// <summary>
         /// Gets or sets the reference station ID.
         /// </summary>
@@ -82,6 +131,7 @@ namespace Asv.Gnss
         /// <summary>
         ///  Geoidal separation, the difference between the WGS-84 earth
         ///  ellipsoid and mean-sea-level(geoid), "-" means mean-sea-level below ellipsoid
+        /// return MSL - Ellipsoid
         /// </summary>
         public double GeoidalSeparation { get; set; }
         /// <summary>

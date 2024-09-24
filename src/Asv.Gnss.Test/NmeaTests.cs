@@ -9,6 +9,17 @@ namespace Asv.Gnss.Test
 {
     public class NmeaTests
     {
+
+        private string GetNmeaMessages(Nmea0183MessageBase msg)
+        {
+            var byteBuff = new byte[1024];
+            var byteSpan = new Span<byte>(byteBuff);
+            var origSpan = byteSpan;
+            msg.Serialize(ref byteSpan);
+            var length = origSpan.Length - byteSpan.Length;
+            return Encoding.ASCII.GetString(origSpan[..length]);
+        }
+        
         [Fact]
         public void Parsing_GGA_message_from_string()
         {
@@ -21,12 +32,38 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
+            
             Assert.NotNull(msg);
             Assert.Equal("GP",msg.SourceId);
             Assert.Equal(55.14503349666667, msg.Latitude, 7);
             Assert.Equal(61.405631163333325, msg.Longitude, 7);
         }
 
+        [Fact]
+        public void Serialize_GGA_message_from_byteArray()
+        {
+            var array = new byte[]
+            {
+                0x24, 0x47, 0x50, 0x47, 0x47, 0x41, 0x2C, 0x31, 0x32, 0x35, 0x33, 0x31, 0x39, 0x2E, 0x30, 0x30, 0x2C,
+                0x35, 0x35, 0x30, 0x38, 0x2E, 0x37, 0x30, 0x32, 0x30, 0x30, 0x39, 0x38, 0x2C, 0x4E, 0x2C, 0x30, 0x36,
+                0x31, 0x32, 0x34, 0x2E, 0x33, 0x33, 0x37, 0x38, 0x36, 0x39, 0x38, 0x2C, 0x45, 0x2C, 0x37, 0x2C, 0x30,
+                0x38, 0x2C, 0x32, 0x2E, 0x34, 0x2C, 0x32, 0x35, 0x39, 0x2E, 0x30, 0x30, 0x30, 0x30, 0x2C, 0x4D, 0x2C,
+                0x2D, 0x31, 0x32, 0x2E, 0x37, 0x39, 0x34, 0x2C, 0x4D, 0x2C, 0x2C, 0x2A, 0x37, 0x36, 0x0D, 0x0A
+            };
+            Nmea0183MessageGGA msg = null;
+            var parser = new Nmea0183Parser().RegisterDefaultMessages();
+            parser.OnMessage.Cast<Nmea0183MessageGGA>().Subscribe(_ => msg = _);
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+
+            var targetMsg = GetNmeaMessages(msg);
+            Assert.Equal("$GPGGA,125319,5508.7020098,N,06124.3378698,E,7,08,2.4,259.000,M,-12.794,M,,0000*68\r\n", targetMsg);
+        }
+        
+        
         [Fact]
         public void Parsing_GLL_message_from_string()
         {
@@ -234,6 +271,29 @@ namespace Asv.Gnss.Test
                         Assert.Equal(targetConstellation[i].Sys, msgs[i].Satellites[j].ExtNavSys);
                 }
             }
+        }
+        
+        [Fact]
+        public void Serialize_RMC_message_from_byteArray()
+        {
+            var array = new byte[]
+            {
+                0x24, 0x47, 0x50, 0x52, 0x4D, 0x43, 0x2C, 0x31, 0x32, 0x33, 0x35, 0x31, 0x39, 0x2C, 0x41, 0x2C, 0x34,
+                0x38, 0x30, 0x37, 0x2E, 0x30, 0x33, 0x38, 0x2C, 0x4E, 0x2C, 0x30, 0x31, 0x31, 0x33, 0x31, 0x2E, 0x30,
+                0x30, 0x30, 0x2C, 0x45, 0x2C, 0x30, 0x32, 0x32, 0x2E, 0x34, 0x2C, 0x30, 0x38, 0x34, 0x2E, 0x34, 0x2C,
+                0x32, 0x33, 0x30, 0x33, 0x39, 0x34, 0x2C, 0x30, 0x30, 0x33, 0x2E, 0x31, 0x2C, 0x57, 0x2A, 0x36, 0x41,
+                0x0D, 0x0A
+            };
+            Nmea0183MessageRMC msg = null;
+            var parser = new Nmea0183Parser().RegisterDefaultMessages();
+            parser.OnMessage.Cast<Nmea0183MessageRMC>().Subscribe(_ => msg = _);
+            foreach (var p in array)
+            {
+                parser.Read(p);
+            }
+
+            var targetMsg = GetNmeaMessages(msg);
+            Assert.Equal("$GPRMC,123519,A,4807.038,N,01131.00,E,022.4,084.4,230394,003.1,W*5A\r\n", targetMsg);
         }
     }
 }

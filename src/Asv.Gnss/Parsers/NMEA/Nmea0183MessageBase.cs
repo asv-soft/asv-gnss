@@ -58,6 +58,17 @@ namespace Asv.Gnss
             }
         }
 
+        private const byte Sync = 0x24;
+        private const byte Separator = 0x2C;
+        private const byte CrcSync = 0x2A;
+
+        protected const byte North = 0x4E;
+        protected const byte South = 0x53;
+        protected const byte West = 0x57;
+        protected const byte East = 0x45;
+
+        private readonly byte[] _endOfLine = { 0x0D, 0x0A };
+
         /// <summary>
         /// Deserializes a byte buffer into the current instance.
         /// </summary>
@@ -86,9 +97,43 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer to write the serialized data to.</param>
         public override void Serialize(ref Span<byte> buffer)
         {
-            throw new NotImplementedException();
+            var origin = buffer;
+            buffer[0] = Sync; buffer = buffer[1..];
+            if (string.IsNullOrWhiteSpace(SourceId))
+            {
+                "GN".CopyTo(ref buffer, Encoding.ASCII);
+            }
+            else
+            {
+                SourceId.CopyTo(ref buffer, Encoding.ASCII);
+            }
+            MessageId.CopyTo(ref buffer, Encoding.ASCII);
+            buffer[0] = Separator; buffer = buffer[1..];
+            InternalSerialize(ref buffer, Encoding.ASCII);
+            var length = origin.Length - buffer.Length;
+            var crc = NmeaCrc.Calc(origin.Slice(1, length - 1));
+            buffer[0] = CrcSync; buffer = buffer[1..];
+            crc.CopyTo(ref buffer, Encoding.ASCII);
+            _endOfLine.CopyTo(buffer); buffer = buffer[_endOfLine.Length..];
         }
 
+        protected void InsertSeparator(ref Span<byte> buffer)
+        {
+            buffer[0] = Separator;
+            buffer = buffer[1..];
+        }
+        
+        protected static void InsertByte(ref Span<byte> buffer, byte value)
+        {
+            buffer[0] = value;
+            buffer = buffer[1..];
+        } 
+
+        protected virtual void InternalSerialize(ref Span<byte> buffer, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+        
         /// <summary>
         /// Gets the byte size of the object.
         /// </summary>

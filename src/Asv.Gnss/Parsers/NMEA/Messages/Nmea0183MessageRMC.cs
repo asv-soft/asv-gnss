@@ -1,4 +1,7 @@
 using System;
+using System.Globalization;
+using System.Text;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -38,7 +41,7 @@ namespace Asv.Gnss
             SpeedOverGroundKnots = Nmea0183Helper.ParseDouble(items[7]);
             TrackMadeGoodDegreesTrue = Nmea0183Helper.ParseDouble(items[8]);
             Date = Nmea0183Helper.ParseDate(items[9]);
-            if (double.TryParse(items[10], out var magneticVariation))
+            if (double.TryParse(items[10], NumberStyles.Any, CultureInfo.InvariantCulture, out var magneticVariation))
             {
                 MagneticVariationDegrees = magneticVariation;
                 if (string.Equals(items[11], "W", StringComparison.InvariantCultureIgnoreCase))
@@ -48,10 +51,71 @@ namespace Asv.Gnss
             {
                 MagneticVariationDegrees = double.NaN;
             }
+
+            if (items.Length > 12)
+            {
+                PositioningSystemMode = items[12];
+            }
+
+            if (items.Length > 13)
+            {
+                NavigationalStatus = Nmea0183Helper.GetNavigationalStatus(items[13]);
+            }
         }
-        
-        
-        
+
+        public NmeaNavigationalStatusEnum? NavigationalStatus { get; set; }
+
+        public string PositioningSystemMode { get; set; } = "A";
+
+        protected override void InternalSerialize(ref Span<byte> buffer, Encoding encoding)
+        {
+            Nmea0183Helper.SerializeTime(TimeUtc).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            Status.Serialize().CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            Nmea0183Helper.SerializeLatitude(Latitude).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            InsertByte(ref buffer, Latitude < 0 ? South : North);
+            InsertSeparator(ref buffer);
+            Nmea0183Helper.SerializeLongitude(Longitude).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            InsertByte(ref buffer, Longitude < 0 ? West : East);
+            InsertSeparator(ref buffer);
+            var speed = double.IsNaN(SpeedOverGroundKnots)
+                ? string.Empty
+                : Math.Round(SpeedOverGroundKnots, 1).ToString("000.0", CultureInfo.InvariantCulture);
+            speed.CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            var track = double.IsNaN(TrackMadeGoodDegreesTrue)
+                ? string.Empty
+                : Math.Round(TrackMadeGoodDegreesTrue, 1).ToString("000.0", CultureInfo.InvariantCulture);
+            track.CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            Nmea0183Helper.SerializeDate(Date).CopyTo(ref buffer, encoding);
+            InsertSeparator(ref buffer);
+            if (double.IsNaN(MagneticVariationDegrees))
+            {
+                InsertSeparator(ref buffer);
+            }
+            else
+            {
+                Math.Round(Math.Abs(MagneticVariationDegrees), 1).ToString("000.0", CultureInfo.InvariantCulture)
+                    .CopyTo(ref buffer, encoding);
+                InsertSeparator(ref buffer);
+                InsertByte(ref buffer, MagneticVariationDegrees < 0 ? West : East);
+            }
+
+            if (string.IsNullOrWhiteSpace(PositioningSystemMode)) return;
+            
+            InsertSeparator(ref buffer);
+            PositioningSystemMode.CopyTo(ref buffer, encoding);
+
+            // if (!NavigationalStatus.HasValue) return;
+            // InsertSeparator(ref buffer);
+            // NavigationalStatus.Value.SetNavigationalStatus().CopyTo(ref buffer, encoding);
+        }
+
+
         /// <summary>
         /// UTC of position fix
         /// </summary>
@@ -80,17 +144,22 @@ namespace Asv.Gnss
     {
         public static PositionFixStatus GetPositionFixStatus(this char src)
         {
-            switch (src)
+            return src switch
             {
-                case 'a':
-                case 'A':
-                    return PositionFixStatus.Valid;
-                case 'v':
-                case 'V':
-                    return PositionFixStatus.Warning;
-                default:
-                    return PositionFixStatus.Unknown;
-            }
+                'a' or 'A' => PositionFixStatus.Valid,
+                'v' or 'V' => PositionFixStatus.Warning,
+                _ => PositionFixStatus.Unknown
+            };
+        }
+
+        public static string Serialize(this PositionFixStatus src)
+        {
+            return src switch
+            {
+                PositionFixStatus.Valid => "A",
+                PositionFixStatus.Warning => "V",
+                _ => string.Empty
+            };
         }
     }
 }
