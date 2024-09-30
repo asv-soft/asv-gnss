@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <ProductVersion>1.6.1</ProductVersion>
+        <ProductVersion>1.6.2</ProductVersion>
         <AsvCommonVersion>2.0.0</AsvCommonVersion>
     </PropertyGroup>
 </Project>
