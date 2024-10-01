@@ -3,7 +3,7 @@ using Geodesy;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     public class GeodesyTest
     {

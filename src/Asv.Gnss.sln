@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Prometheus", "Asv.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Shell", "Asv.Gnss.Shell\Asv.Gnss.Shell.csproj", "{FD48B35E-72E7-4409-8F24-4CA244D8FD65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Test", "Asv.Gnss.Test\Asv.Gnss.Test.csproj", "{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Tests", "Asv.Gnss.Tests\Asv.Gnss.Tests.csproj", "{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0E4A5931-F541-42C7-B9A8-78137C0A953B}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.github\workflows\release-debug-version.yml = ..\.github\workflows\release-debug-version.yml
 		..\.github\workflows\release-pre-version.yml = ..\.github\workflows\release-pre-version.yml
 		Directory.Build.props = Directory.Build.props
+		Asv.Gnss.nuspec = Asv.Gnss.nuspec
 	EndProjectSection
 EndProject
 Global

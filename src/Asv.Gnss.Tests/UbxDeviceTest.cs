@@ -5,7 +5,7 @@ using Asv.Common;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     // public class UbxDeviceTest
     // {

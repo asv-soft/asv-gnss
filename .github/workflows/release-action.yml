@@ -28,10 +28,14 @@ jobs:
         run: dotnet nuget add source ${{ env.GITHUB_PACKAGES_URL }} \--username '${{secrets.USER_NAME}}' \--password '${{secrets.GIHUB_NUGET_AUTH_TOKEN}}' \--store-password-in-clear-text
 
       - name: Install dependencies
-        run: dotnet restore ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj
+        run: |
+          dotnet restore ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj
+          dotnet restore ./src/${{env.PROJECT_NAME}}.Prometheus/${{env.PROJECT_NAME}}.Prometheus.csproj
 
       - name: Build
-        run: dotnet build ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj --configuration Release --no-restore
+        run: |
+          dotnet build ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj --configuration Release --no-restore
+          dotnet build ./src/${{env.PROJECT_NAME}}.Prometheus/${{env.PROJECT_NAME}}.Prometheus.csproj --configuration Release --no-restore
 
       - name: Set version variable
         env:
@@ -52,7 +56,7 @@ jobs:
           fi
 
       - name: Pack package
-        run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} --no-build -o .
+        run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} /p:NuspecFile=./src/Asv.Gnss.nuspec --no-build -o .
 
       - name: List output files
         run: ls -la

@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Text;
 using Xunit;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     public class NmeaTests
     {

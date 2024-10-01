@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Asv.Gnss.Test {
+namespace Asv.Gnss.Tests {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Asv.Gnss.Test {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Asv.Gnss.Test.TestData", typeof(TestData).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Asv.Gnss.Tests.TestData", typeof(TestData).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

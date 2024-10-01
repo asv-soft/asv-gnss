@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using Xunit;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     public class RTCMv3Msm3Test
     {

@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     public class RTCMv3Test
     {

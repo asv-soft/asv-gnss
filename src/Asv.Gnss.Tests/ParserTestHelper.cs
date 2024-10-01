@@ -4,7 +4,7 @@ using DeepEqual;
 using DeepEqual.Syntax;
 using Xunit;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     public static class ParserTestHelper
     {

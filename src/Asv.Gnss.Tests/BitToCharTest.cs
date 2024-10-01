@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Xunit;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Tests
 {
     public class BitToCharTest
     {
