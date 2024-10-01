@@ -56,7 +56,7 @@ jobs:
           fi
 
       - name: Pack package
-        run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} /p:NuspecFile=./src/Asv.Gnss.nuspec --no-build -o .
+        run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} /p:NuspecFile=Asv.Gnss.nuspec --no-build -o .
 
       - name: List output files
         run: ls -la
