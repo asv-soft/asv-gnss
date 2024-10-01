@@ -2,6 +2,11 @@
 <package>
     <metadata>
         <id>Asv.Gnss</id>
+        <version>1.0.0</version>
+        <title>$title$</title>
+        <authors>$authors$</authors>
+        <owners>$owners$</owners>
+        <description>$description$</description>
         <dependencies>
             <group targetFramework="net8.0"/>
             <group targetFramework="net7.0"/>
