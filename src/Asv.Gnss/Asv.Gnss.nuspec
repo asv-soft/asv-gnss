@@ -3,10 +3,10 @@
     <metadata>
         <id>Asv.Gnss</id>
         <version>1.0.0</version>
-        <title>$title$</title>
-        <authors>$authors$</authors>
-        <owners>$owners$</owners>
-        <description>$description$</description>
+        <title>Asv.Gnss</title>
+        <authors>Asv</authors>
+        <owners>Asv</owners>
+        <description>Asv.Gnss</description>
         <dependencies>
             <group targetFramework="net8.0"/>
             <group targetFramework="net7.0"/>
