@@ -38,8 +38,15 @@ namespace Asv.Gnss
             
             Longitude = Nmea0183Helper.ParseLongitude(items[5]);
             if (string.Equals(items[6], "W", StringComparison.InvariantCultureIgnoreCase)) Longitude *= -1;
-            SpeedOverGroundKnots = Nmea0183Helper.ParseDouble(items[7]);
-            TrackMadeGoodDegreesTrue = Nmea0183Helper.ParseDouble(items[8]);
+            SpeedOverGroundKnots =
+                double.TryParse(items[7], NumberStyles.Any, CultureInfo.InvariantCulture, out var speedKnots)
+                    ? speedKnots
+                    : double.NaN;
+            TrackMadeGoodDegreesTrue =
+                double.TryParse(items[8], NumberStyles.Any, CultureInfo.InvariantCulture, out var trackMade)
+                    ? trackMade
+                    : double.NaN;
+            
             Date = Nmea0183Helper.ParseDate(items[9]);
             if (double.TryParse(items[10], NumberStyles.Any, CultureInfo.InvariantCulture, out var magneticVariation))
             {
