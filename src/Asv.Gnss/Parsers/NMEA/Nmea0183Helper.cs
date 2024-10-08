@@ -647,6 +647,12 @@ namespace Asv.Gnss
             };
         }
 
+        public static double KnotsToKph(double knots)
+        {
+            if (double.IsNaN(knots)) return double.NaN;
+            return knots * 1.852;
+        }
+
     }
 
     public enum NmeaGpsQuality
@@ -690,4 +696,6 @@ namespace Asv.Gnss
         RtkFloat, //F
         RtkFixed //R
     }
+    
+    
 }
