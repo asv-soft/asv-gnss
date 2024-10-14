@@ -81,7 +81,25 @@ namespace Asv.Gnss
 
         public override void Randomize(Random random)
         {
-            throw new NotImplementedException();
+            Tod = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc);
+            var length = (random.Next() % 6) + 4;
+            var randomPrn = new int[length];
+            var index = 0;
+            while (index < length)
+            {
+                var prn = random.Next() % 24 + 1;
+                if (randomPrn.Any(_ => _ == prn)) continue;
+                randomPrn[index] = prn;
+                index++;
+            }
+            Observations = new AsvGloObservation[length];
+            
+            for (var i = 0; i < length; i++)
+            {
+                var obs = new AsvGloObservation();
+                obs.Randomize(random, randomPrn[i]);
+                Observations[i] = obs;
+            }
         }
     }
 
@@ -233,6 +251,15 @@ namespace Asv.Gnss
         /// </summary>
         public double L1CNR { get; set; }
 
+        public void Randomize(Random random, int prn)
+        {
+            Prn = prn;
+            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GLO, Prn);
+            SatelliteCode = AsvHelper.Sat2Code(SatelliteId, Prn);
+            L1Code = AsvHelper.CODE_L1C;
+            Frequency = 1602000000 + (random.Next() % 16 - 7) * 562500;
+            L1LockTime = 937;
+        }
     }
 }
 

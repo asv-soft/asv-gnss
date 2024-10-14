@@ -98,7 +98,22 @@ namespace Asv.Gnss
 
         public override void Randomize(Random random)
         {
-            throw new NotImplementedException();
+            EpochTime = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc);
+            Prn = random.Next() % 24 + 1;
+            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GLO, Prn);
+            L1Code = AsvHelper.CODE_L1C;
+            SignalType = GnssSignalTypeEnum.L1CA;
+            RindexSignalCode = "1C";
+            RinexSatCode = $"R{Prn}";
+            Frequency = 1602000000 + (random.Next() % 16 - 7) * 562500;
+            NAVBitsU32 = new uint[15][];
+            GloWords = new GlonassWordBase[15];
+            for (var i = 0; i < 15; i++)
+            {
+                NAVBitsU32[i] = new uint[NavBitsU32Length];
+                NAVBitsU32[i][0] = (uint)(i + 1) << 27;
+                GloWords[i] = GlonassWordFactory.Create(NAVBitsU32[i]);
+            }
         }
         
         /// <summary>

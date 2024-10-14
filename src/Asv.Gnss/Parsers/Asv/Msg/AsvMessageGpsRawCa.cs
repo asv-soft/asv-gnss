@@ -21,6 +21,10 @@ namespace Asv.Gnss
             CrcPassed = AsvHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
             var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1); bitIndex += 4;
             
+            SignalType = GnssSignalTypeEnum.L1CA;
+            RindexSignalCode = "1C";
+            RinexSatCode = $"G{Prn}";
+            
             SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GPS, Prn);
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
@@ -65,7 +69,17 @@ namespace Asv.Gnss
 
         public override void Randomize(Random random)
         {
-            throw new NotImplementedException();
+            UtcTime = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc);
+            Prn = random.Next() % 32 + 1;
+            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GPS, Prn);
+            L1Code = AsvHelper.CODE_L1C;
+            SignalType = GnssSignalTypeEnum.L1CA;
+            RindexSignalCode = "1C";
+            RinexSatCode = $"G{Prn}";
+            NAVBitsU32 = new uint[NavBitsU32Length];
+            NAVBitsU32[0] = (uint)GpsRawHelper.GpsSubframePreamble << 22;
+            NAVBitsU32[1] = (uint)(random.Next() % 5 + 1) << 8;
+            GpsSubFrame = GpsSubFrameFactory.Create(NAVBitsU32);
         }
         
         /// <summary>
