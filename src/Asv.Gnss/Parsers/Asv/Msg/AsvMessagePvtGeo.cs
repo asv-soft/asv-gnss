@@ -50,6 +50,7 @@ namespace Asv.Gnss
             MeanCorrAge = AsvHelper.GetBitU(buffer, ref bitIndex, 16) * 0.01;
             HAccuracy = AsvHelper.GetBitU(buffer, ref bitIndex, 16) * 0.01;
             VAccuracy = AsvHelper.GetBitU(buffer, ref bitIndex, 16) * 0.01;
+            buffer = buffer[(bitIndex / 8)..];
         }
 
 
@@ -78,6 +79,7 @@ namespace Asv.Gnss
             AsvHelper.SetBitU(buffer, (uint)Math.Round(MeanCorrAge / 0.01), ref bitIndex, 16);
             AsvHelper.SetBitU(buffer, (uint)Math.Round(HAccuracy / 0.01), ref bitIndex, 16);
             AsvHelper.SetBitU(buffer, (uint)Math.Round(VAccuracy / 0.01), ref bitIndex, 16);
+            buffer = buffer[(bitIndex / 8)..];
         }
 
         protected override int InternalGetContentByteSize()
@@ -87,7 +89,13 @@ namespace Asv.Gnss
 
         public override void Randomize(Random random)
         {
-            throw new NotImplementedException();
+            Tow = GpsRawHelper.Utc2Gps(new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc));
+            PosType = AsvPosTypeEnum.DifferentialPvt;
+            TimeSystem = AsvTimeSystemEnum.Gps;
+            Datum = AsvDatumEnum.WGS84;
+            Latitude = random.NextDouble() * 180.0 - 90.0;
+            Longitude = random.NextDouble() * 360.0 - 180.0;
+            Height = random.NextDouble() * 2000.0;
         }
 
         /// <summary>
