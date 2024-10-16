@@ -57,7 +57,7 @@ jobs:
           
       - name: Tests
         run: |
-          dotnet test ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.Tests.csproj
+          dotnet test ./src/${{env.PROJECT_NAME}}.Tests/${{env.PROJECT_NAME}}.Tests.csproj
 
       - name: Pack package
         run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} /p:NuspecFile=Asv.Gnss.nuspec --no-build -o .
