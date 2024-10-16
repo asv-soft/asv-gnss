@@ -21,9 +21,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
 
       - name: Add NuGet source
         run: dotnet nuget add source ${{ env.GITHUB_PACKAGES_URL }} \--username '${{secrets.USER_NAME}}' \--password '${{secrets.GIHUB_NUGET_AUTH_TOKEN}}' \--store-password-in-clear-text
@@ -51,6 +54,10 @@ jobs:
             echo "Error: Tag does not match NuGet package version"
             exit 1
           fi
+          
+      - name: Tests
+        run: |
+          dotnet test ./src/${{env.PROJECT_NAME}}.Tests/${{env.PROJECT_NAME}}.Tests.csproj
 
       - name: Pack package
         run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} --no-build -o .
