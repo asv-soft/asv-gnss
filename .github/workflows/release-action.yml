@@ -54,10 +54,14 @@ jobs:
             echo "Error: Tag does not match NuGet package version"
             exit 1
           fi
+          
+      - name: Tests
+        run: |
+          dotnet test ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.Tests.csproj
 
       - name: Pack package
         run: dotnet pack ./src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj -c Release /p:Version=${VERSION} /p:NuspecFile=Asv.Gnss.nuspec --no-build -o .
 
       - name: List output files
         run: ls -la
-
+        
