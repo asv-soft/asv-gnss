@@ -6,7 +6,7 @@ namespace Asv.Gnss
     /// GST - GPS Pseudorange Noise Statistics
     ///               1    2 3 4 5 6 7 8   9
     ///               |    | | | | | | |   |
-    /// $ --GST,hhmmss.ss,x,x,x,x,x,x,x* hh<CR><LF>
+    /// $ --GST,hhmmss.ss,x,x,x,x,x,x,x* hh.<CR><LF>
     /// </summary>
     public class Nmea0183MessageGST : Nmea0183MessageBase
     {
@@ -41,38 +41,45 @@ namespace Asv.Gnss
             SdLongitude = Nmea0183Helper.ParseDouble(items[7]);
             SdAltitude = Nmea0183Helper.ParseDouble(items[8]);
         }
+
         /// <summary>
-        /// TC time of associated GGA fix
+        /// Gets or sets tC time of associated GGA fix.
         /// </summary>
         public DateTime? Time { get; set; }
+
         /// <summary>
-        /// Total RMS standard deviation of ranges inputs to the navigation solution
+        /// Gets or sets total RMS standard deviation of ranges inputs to the navigation solution.
         /// </summary>
         public double RmsSd { get; set; }
+
         /// <summary>
-        /// Standard deviation (meters) of semi-major axis of error ellipse
+        /// Gets or sets standard deviation (meters) of semi-major axis of error ellipse.
         /// </summary>
         public double SdSemiMajorAxis { get; set; }
+
         /// <summary>
-        /// Standard deviation (meters) of semi-minor axis of error ellipse
+        /// Gets or sets standard deviation (meters) of semi-minor axis of error ellipse.
         /// </summary>
         public double SdSemiMinorAxis { get; set; }
+
         /// <summary>
-        /// Orientation of semi-major axis of error ellipse (true north degrees)
+        /// Gets or sets orientation of semi-major axis of error ellipse (true north degrees).
         /// </summary>
         public double OrientationSemiMajorAxis { get; set; }
+
         /// <summary>
-        /// Standard deviation (meters) of latitude error
+        /// Gets or sets standard deviation (meters) of latitude error.
         /// </summary>
         public double SdLatitude { get; set; }
+
         /// <summary>
-        /// Standard deviation (meters) of longitude error
+        /// Gets or sets standard deviation (meters) of longitude error.
         /// </summary>
         public double SdLongitude { get; set; }
+
         /// <summary>
-        /// Standard deviation (meters) of altitude error
+        /// Gets or sets standard deviation (meters) of altitude error.
         /// </summary>
         public double SdAltitude { get; set; }
-
     }
 }

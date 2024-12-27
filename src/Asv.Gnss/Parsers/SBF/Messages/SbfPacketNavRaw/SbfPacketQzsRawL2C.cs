@@ -16,7 +16,5 @@
         public override string Name => "QzsRawL2C";
 
         protected override int NavBitsU32Length => 10;
-
-        
     }
 }

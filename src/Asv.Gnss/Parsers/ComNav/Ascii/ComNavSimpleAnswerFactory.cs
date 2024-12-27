@@ -15,7 +15,9 @@ namespace Asv.Gnss
             }
         }
 
-        public static ComNavSimpleAnswerParser RegisterDefaultMessages(this ComNavSimpleAnswerParser src)
+        public static ComNavSimpleAnswerParser RegisterDefaultMessages(
+            this ComNavSimpleAnswerParser src
+        )
         {
             foreach (var func in DefaultMessages)
             {

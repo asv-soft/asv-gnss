@@ -15,7 +15,5 @@
         public override string Name => "NavicRaw";
 
         protected override int NavBitsU32Length => 10;
-
     }
-
 }

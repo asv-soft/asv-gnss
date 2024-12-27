@@ -33,9 +33,10 @@ namespace Asv.Gnss
         /// <param name="buffer">The byte span containing the data to deserialize.</param>
         /// <param name="bitIndex">The current bit index in the buffer.</param>
         /// <param name="payloadLength">The length of the payload.</param>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
-        {
-
-        }
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        ) { }
     }
 }

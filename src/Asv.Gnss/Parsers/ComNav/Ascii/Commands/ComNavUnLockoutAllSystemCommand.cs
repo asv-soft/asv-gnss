@@ -1,5 +1,6 @@
 ﻿namespace Asv.Gnss
 {
+    /// <summary>
     /// Reinstates all previously locked out satellites
     /// This command allows all satellites or systems which have been previously locked out
     /// (LOCKOUT command on page 242 or LOCKOUTSYSTEM command on page 243) to be reinstated in the solution computation.
@@ -29,7 +30,7 @@
         protected override string SerializeToAsciiString() => MessageContent;
 
         /// <summary>
-        /// Gets or sets the identifier of the message.
+        /// Gets the identifier of the message.
         /// </summary>
         /// <value>
         /// The identifier of the message.

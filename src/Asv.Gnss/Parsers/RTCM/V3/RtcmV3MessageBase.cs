@@ -6,8 +6,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Base class for RTCMv3 messages.
     /// </summary>
-    /// <typeparam name="T">The type of the message ID.</typeparam>
-    public abstract class RtcmV3MessageBase: GnssMessageBase<ushort>
+    public abstract class RtcmV3MessageBase : GnssMessageBase<ushort>
     {
         /// <summary>
         /// Gets the protocol ID of the GNSS protocol used by the RTCM V3 parser.
@@ -40,25 +39,40 @@ namespace Asv.Gnss
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             var bitIndex = 0;
-            var preamble = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 8);
+            var preamble = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
             if (preamble != RtcmV3Helper.SyncByte)
             {
-                throw new Exception($"Deserialization RTCMv3 message failed: want {RtcmV3Helper.SyncByte:X}. Read {preamble:X}");
+                throw new Exception(
+                    $"Deserialization RTCMv3 message failed: want {RtcmV3Helper.SyncByte:X}. Read {preamble:X}"
+                );
             }
-            Reserved = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6); 
-            var messageLength = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 10);
-            if (messageLength > (buffer.Length - 3 /* crc 24 bit*/))
+
+            Reserved = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
+            var messageLength = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
+            if (
+                messageLength
+                > (
+                    buffer.Length - 3 /* crc 24 bit*/
+                )
+            )
             {
-                throw new Exception($"Deserialization RTCMv3 message failed: length too small. Want '{messageLength}'. Read = '{buffer.Length}'");
+                throw new Exception(
+                    $"Deserialization RTCMv3 message failed: length too small. Want '{messageLength}'. Read = '{buffer.Length}'"
+                );
             }
+
             var msgId = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             if (msgId != MessageId)
             {
-                throw new Exception($"Deserialization RTCMv3 message failed: want message number '{MessageId}'. Read = '{msgId}'");
+                throw new Exception(
+                    $"Deserialization RTCMv3 message failed: want message number '{MessageId}'. Read = '{msgId}'"
+                );
             }
-            DeserializeContent(buffer,ref bitIndex,messageLength);
+
+            DeserializeContent(buffer, ref bitIndex, messageLength);
             bitIndex += 3 * 8; // skip crc
-            buffer = bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
+            buffer =
+                bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
         }
 
         /// <summary>
@@ -67,7 +81,11 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer containing the serialized data.</param>
         /// <param name="bitIndex">The index representing the current position in the buffer.</param>
         /// <param name="messageLength">The length of the message in the buffer.</param>
-        protected abstract void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength);
+        protected abstract void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        );
 
         /// <summary>
         /// Serializes the object into a span of bytes.

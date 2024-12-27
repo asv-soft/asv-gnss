@@ -1,5 +1,5 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -8,8 +8,11 @@ namespace Asv.Gnss
         public const int RtcmMessageId = 1230;
         public override string Name => "GLONASS bias information";
 
-
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             CodePhaseBiasIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
@@ -20,14 +23,17 @@ namespace Asv.Gnss
             {
                 _l1CACodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
+
             if ((FdmaSignalMask & FdmaSignalBitmask.L1PMask) == FdmaSignalBitmask.L1PMask)
             {
                 _l1PCodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
+
             if ((FdmaSignalMask & FdmaSignalBitmask.L2CAMask) == FdmaSignalBitmask.L2CAMask)
             {
                 _l2CACodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
             }
+
             if ((FdmaSignalMask & FdmaSignalBitmask.L2PMask) == FdmaSignalBitmask.L2PMask)
             {
                 _l2PCodePhaseBiasDf = (short)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
@@ -43,29 +49,29 @@ namespace Asv.Gnss
         private short _l2PCodePhaseBiasDf;
 
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its 
-        /// primary purpose is to link all message data to their unique sourceName. It is 
-        /// useful in distinguishing between desired and undesired data in cases 
-        /// where more than one service may be using the same data link 
-        /// frequency. It is also useful in accommodating multiple reference 
-        /// stations within a single data link transmission. 
-        /// In reference network applications the Reference Station ID plays an 
-        /// important role, because it is the link between the observation messages 
-        /// of a specific reference station and its auxiliary information contained in 
-        /// other messages for proper operation. Thus the Service Provider should 
-        /// ensure that the Reference Station ID is unique within the whole 
-        /// network, and that ID’s should be reassigned only when absolutely 
-        /// necessary. 
+        /// Gets or sets the Reference Station ID is determined by the service provider. Its
+        /// primary purpose is to link all message data to their unique sourceName. It is
+        /// useful in distinguishing between desired and undesired data in cases
+        /// where more than one service may be using the same data link
+        /// frequency. It is also useful in accommodating multiple reference
+        /// stations within a single data link transmission.
+        /// In reference network applications the Reference Station ID plays an
+        /// important role, because it is the link between the observation messages
+        /// of a specific reference station and its auxiliary information contained in
+        /// other messages for proper operation. Thus the Service Provider should
+        /// ensure that the Reference Station ID is unique within the whole
+        /// network, and that ID’s should be reassigned only when absolutely
+        /// necessary.
         /// Service Providers may need to coordinate their Reference Station ID
-        /// assignments with other Service Providers in their region in order to 
-        /// avoid conflicts. This may be especially critical for equipment 
-        /// accessing multiple services, depending on their services and means of 
+        /// assignments with other Service Providers in their region in order to
+        /// avoid conflicts. This may be especially critical for equipment
+        /// accessing multiple services, depending on their services and means of
         /// information distribution.
         /// </summary>
         public uint ReferenceStationID { get; set; }
 
         /// <summary>
-        /// DF421 
+        /// Gets or sets dF421
         /// 0 = The GLONASS Pseudorange and PhaseRange observations in the
         /// data stream are not aligned to the same measurement epoch.
         /// 1 = The GLONASS Pseudorange and PhaseRange observations in the
@@ -74,22 +80,22 @@ namespace Asv.Gnss
         public byte CodePhaseBiasIndicator { get; set; }
 
         /// <summary>
-        /// Reserved
+        /// Gets or sets reserved.
         /// </summary>
         public byte ReservedBias { get; set; }
 
         /// <summary>
-        /// DF422
+        /// Gets or sets dF422
         /// Bitmask, where the MSB corresponds to the presence or absence of
         /// DF423, continuing to the LSB or last bit corresponding to the absence
         /// or presence of DF426.If the bit is set to zero then the corresponding
         /// field is absent from the message.If the bit is set to one then the
-        /// corresponding field is present in the message
+        /// corresponding field is present in the message.
         /// </summary>
         public FdmaSignalBitmask FdmaSignalMask { get; set; }
 
         /// <summary>
-        /// The GLONASS L1 C/A Code-Phase Bias represents the offset between
+        /// Gets the GLONASS L1 C/A Code-Phase Bias represents the offset between
         /// the L1 C/A Pseudorange and L1 PhaseRange measurement epochs in
         /// meters.
         /// If DF421 is set to 0, the measurement epoch of the GLONASS L1
@@ -101,12 +107,12 @@ namespace Asv.Gnss
         /// Unaligned GLONASS L1 PhaseRange = Full GLONASS L1
         /// PhaseRange(see DF042)  GLONASS L1 C/A Code-Phase Bias.
         /// A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
-        /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
+        /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02.
         /// </summary>
         public double L1CACodePhaseBias => _l1CACodePhaseBiasDf * DfResol;
 
         /// <summary>
-        /// The GLONASS L1 P Code-Phase Bias represents the offset between the
+        /// Gets the GLONASS L1 P Code-Phase Bias represents the offset between the
         /// L1 P Pseudorange and L1 PhaseRange measurement epochs in meters.
         /// If DF421 is set to 0, the measurement epoch of the GLONASS L1
         /// PhaseRange measurements may be aligned using:
@@ -117,30 +123,30 @@ namespace Asv.Gnss
         /// Unaligned GLONASS L1 PhaseRange = Full GLONASS L1
         /// PhaseRange(see DF042)  GLONASS L1 P Code-Phase Bias.
         /// A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
-        /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
+        /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02.
         /// </summary>
         public double L1PCodePhaseBias => _l1PCodePhaseBiasDf * DfResol;
 
         /// <summary>
-        //  The GLONASS L2 C/A Code-Phase Bias represents the offset between
-        //  the L2 C/A Pseudorange and L2 PhaseRange measurement epochs in
-        //  meters.
-        //  If DF421 is set to 0, the measurement epoch of the GLONASS L2
-        //  PhaseRange measurements may be aligned to the Pseudorange
-        //  measurements using:
-        //  Aligned GLONASS L2 PhaseRange = Full GLONASS L2 PhaseRange
-        //  (see DF048) + GLONASS L2 C/A Code-Phase Bias.
-        //  If DF421 is set to 1, the measurement epoch of the GLONASS L2
-        //  PhaseRange measurements may be unaligned using:
-        //  Unaligned GLONASS L2 PhaseRange = Full GLONASS L2
-        //  PhaseRange(see DF048)  GLONASS L2 C/A Code-Phase Bias.
-        //  A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
-        //  invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
+        ///  Gets the GLONASS L2 C/A Code-Phase Bias represents the offset between
+        ///  the L2 C/A Pseudorange and L2 PhaseRange measurement epochs in
+        ///  meters.
+        ///  If DF421 is set to 0, the measurement epoch of the GLONASS L2
+        ///  PhaseRange measurements may be aligned to the Pseudorange
+        ///  measurements using:
+        ///  Aligned GLONASS L2 PhaseRange = Full GLONASS L2 PhaseRange
+        ///  (see DF048) + GLONASS L2 C/A Code-Phase Bias.
+        ///  If DF421 is set to 1, the measurement epoch of the GLONASS L2
+        ///  PhaseRange measurements may be unaligned using:
+        ///  Unaligned GLONASS L2 PhaseRange = Full GLONASS L2
+        ///  PhaseRange(see DF048)  GLONASS L2 C/A Code-Phase Bias.
+        ///  A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
+        ///  invalid value (unknown or falling outside DF-range). DF Resolution = 0.02.
         /// </summary>
         public double L2CACodePhaseBias => _l2CACodePhaseBiasDf * DfResol;
 
         /// <summary>
-        /// The GLONASS L2 P Code-Phase Bias represents the offset between the
+        /// Gets the GLONASS L2 P Code-Phase Bias represents the offset between the
         /// L2 P Pseudorange and L2 PhaseRange measurement epochs in meters.
         /// If DF421 is set to 0, the measurement epoch of the GLONASS L2
         /// PhaseRange measurements may be aligned to the Pseudorange
@@ -152,7 +158,7 @@ namespace Asv.Gnss
         /// Unaligned GLONASS L2 PhaseRange = Full GLONASS L2
         /// PhaseRange(see DF048)  GLONASS L2 P Code-Phase Bias.
         /// A bit pattern equivalent to 8000h (-655.36 m) in this field indicates
-        /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02
+        /// invalid value (unknown or falling outside DF-range). DF Resolution = 0.02.
         /// </summary>
         public double L2PCodePhaseBias => _l2PCodePhaseBiasDf * DfResol;
 
@@ -165,5 +171,4 @@ namespace Asv.Gnss
             L2PMask = 0x8,
         }
     }
-
 }

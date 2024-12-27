@@ -71,7 +71,7 @@ namespace Asv.Gnss
         public float Af1 { get; set; }
 
         public float Af2 { get; set; }
-        
+
         public DateTime Toe { get; set; }
 
         public DateTime Toc { get; set; }
@@ -95,7 +95,7 @@ namespace Asv.Gnss
         public float Cic { get; set; }
         public float Cis { get; set; }
         #endregion
-        
+
         public float Tgd { get; set; }
     }
 }

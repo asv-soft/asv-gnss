@@ -3,22 +3,25 @@ using Geodesy;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Asv.Gnss.Test
+namespace Asv.Gnss.Test;
+
+public class GeodesyTest
 {
-    public class GeodesyTest
+    [Fact]
+    public void Global_position_json_serialization_test()
     {
-        [Fact]
-        public void Global_position_json_serialization_test()
+        for (int i = 0; i < 1000; i++)
         {
-            for (int i = 0; i < 1000; i++)
-            {
-                var a = new GlobalPosition(new GlobalCoordinates(-90, 180), 1000);
-                var src = JsonConvert.SerializeObject(a, GlobalPositionConverter.Default);
-                var obj = JsonConvert.DeserializeObject<GlobalPosition>(src,
-                    new JsonSerializerSettings
-                        { Converters = new List<JsonConverter> { GlobalPositionConverter.Default } });
-                Assert.Equal(a, obj);
-            }
+            var a = new GlobalPosition(new GlobalCoordinates(-90, 180), 1000);
+            var src = JsonConvert.SerializeObject(a, GlobalPositionConverter.Default);
+            var obj = JsonConvert.DeserializeObject<GlobalPosition>(
+                src,
+                new JsonSerializerSettings
+                {
+                    Converters = new List<JsonConverter> { GlobalPositionConverter.Default },
+                }
+            );
+            Assert.Equal(a, obj);
         }
     }
 }

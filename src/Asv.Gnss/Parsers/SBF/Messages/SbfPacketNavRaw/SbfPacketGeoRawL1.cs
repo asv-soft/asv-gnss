@@ -16,7 +16,5 @@
         public override string Name => "GeoRawL1";
 
         protected override int NavBitsU32Length => 8;
-
-        
     }
 }

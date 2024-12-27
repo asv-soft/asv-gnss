@@ -3,12 +3,14 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss
 {
+    /// <summary>
     /// The AsvMessageParserFactory class provides a factory for creating instances of AsvMessageParsers and registering default message types.
+    /// </summary>
     public static class AsvMessageParserFactory
     {
         /// <summary>
-        /// DefaultMessages is a property that provides a collection of default messages.
-        /// The property returns an IEnumerable of Func<AsvMessageBase>.
+        /// Gets defaultMessages is a property that provides a collection of default messages.
+        /// The property returns an IEnumerable of Func.<AsvMessageBase>
         /// Each Func<AsvMessageBase> object represents a function that creates and returns an instance of an AsvMessageBase derived class.
         /// </summary>
         public static IEnumerable<Func<AsvMessageBase>> DefaultMessages
@@ -38,6 +40,7 @@ namespace Asv.Gnss
             {
                 src.Register(func);
             }
+
             return src;
         }
     }

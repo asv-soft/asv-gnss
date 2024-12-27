@@ -9,7 +9,11 @@ namespace Asv.Gnss
         public override ushort MessageId => RtcmMessageId;
         public override string Name => "Stationary RTK Reference Station ARP with Antenna Height";
 
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
             Height = SpanBitHelper.GetBitU(buffer, ref bitIndex, 16) * 0.0001;

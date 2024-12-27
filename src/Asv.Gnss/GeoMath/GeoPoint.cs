@@ -2,7 +2,6 @@ using System;
 
 namespace Asv.Gnss
 {
-
     /// <summary>
     /// WGS 84 (EPSG:4326)
     /// https://en.wikipedia.org/wiki/World_Geodetic_System
@@ -81,7 +80,7 @@ namespace Asv.Gnss
     //     //     return (this > other) ? -1 : ((this < other) ? 1 : 0);
     //     // }
     //
-    //    
+    //
     //
     //     public override string ToString()
     //     {

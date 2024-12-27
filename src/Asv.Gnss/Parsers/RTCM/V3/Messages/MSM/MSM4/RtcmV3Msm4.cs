@@ -6,7 +6,11 @@ namespace Asv.Gnss
 {
     public abstract class RtcmV3Msm4 : RtcmV3MultipleSignalMessagesBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
             var nCell = CellMask.SelectMany(_ => _).Count(_ => _ > 0);
@@ -18,31 +22,47 @@ namespace Asv.Gnss
             // Signal data
             // Pseudoranges 15*Ncell
             var pseudorange = new double[nCell];
+
             // PhaseRange data 22*Ncell
             var phaseRange = new double[nCell];
+
             // signal CNRs 6*Ncell
             var cnr = new double[nCell];
 
-            //PhaseRange LockTime Indicator 4*Ncell
+            // PhaseRange LockTime Indicator 4*Ncell
             var @lock = new byte[nCell];
-            //Half-cycle ambiguityindicator 1*Ncell
+
+            // Half-cycle ambiguityindicator 1*Ncell
             var halfCycle = new byte[nCell];
 
-            for (var i = 0; i < SatelliteIds.Length; i++) roughRanges[i] = 0.0;
-            for (var i = 0; i < nCell; i++) pseudorange[i] = phaseRange[i] = -1E16;
+            for (var i = 0; i < SatelliteIds.Length; i++)
+            {
+                roughRanges[i] = 0.0;
+            }
+
+            for (var i = 0; i < nCell; i++)
+            {
+                pseudorange[i] = phaseRange[i] = -1E16;
+            }
 
             /* decode satellite data, rough ranges */
             for (var i = 0; i < SatelliteIds.Length; i++)
             {
                 /* Satellite  rough ranges */
                 var rng = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
-                if (rng != 255) roughRanges[i] = rng * RtcmV3Helper.RANGE_MS;
+                if (rng != 255)
+                {
+                    roughRanges[i] = rng * RtcmV3Helper.RANGE_MS;
+                }
             }
 
             for (var i = 0; i < SatelliteIds.Length; i++)
             {
                 var rngM = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
-                if (roughRanges[i] != 0.0) roughRanges[i] += rngM * RtcmV3Helper.P2_10 * RtcmV3Helper.RANGE_MS;
+                if (roughRanges[i] != 0.0)
+                {
+                    roughRanges[i] += rngM * RtcmV3Helper.P2_10 * RtcmV3Helper.RANGE_MS;
+                }
             }
 
             /* decode signal data */
@@ -50,14 +70,20 @@ namespace Asv.Gnss
             {
                 /* pseudorange */
                 var prv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 15);
-                if (prv != -16384) pseudorange[i] = prv * RtcmV3Helper.P2_24 * RtcmV3Helper.RANGE_MS;
+                if (prv != -16384)
+                {
+                    pseudorange[i] = prv * RtcmV3Helper.P2_24 * RtcmV3Helper.RANGE_MS;
+                }
             }
 
             for (var i = 0; i < nCell; i++)
             {
                 /* phase range */
                 var cpv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 22);
-                if (cpv != -2097152) phaseRange[i] = cpv * RtcmV3Helper.P2_29 * RtcmV3Helper.RANGE_MS;
+                if (cpv != -2097152)
+                {
+                    phaseRange[i] = cpv * RtcmV3Helper.P2_29 * RtcmV3Helper.RANGE_MS;
+                }
             }
 
             for (var i = 0; i < nCell; i++)
@@ -83,16 +109,24 @@ namespace Asv.Gnss
             CreateMsmObservable(roughRanges, pseudorange, phaseRange, @lock, halfCycle, cnr);
         }
 
-       
-
-        private void CreateMsmObservable(double[] roughRanges, double[] pseudorange, double[] phaseRange, byte[] @lock,
-            byte[] halfCycle, double[] cnr)
+        private void CreateMsmObservable(
+            double[] roughRanges,
+            double[] pseudorange,
+            double[] phaseRange,
+            byte[] @lock,
+            byte[] halfCycle,
+            double[] cnr
+        )
         {
             var sig = new SignalRaw[SignalIds.Length];
             var sys = RtcmV3Helper.GetNavigationSystem(MessageId);
 
             Satellites = Array.Empty<Satellite>();
-            if (SatelliteIds.Length == 0) return;
+            if (SatelliteIds.Length == 0)
+            {
+                return;
+            }
+
             Satellites = new Satellite[SatelliteIds.Length];
 
             /* id to signal */
@@ -106,26 +140,31 @@ namespace Asv.Gnss
                 sig[i].ObservationIndex = RtcmV3Helper.Code2Idx(sys, sig[i].ObservationCode);
             }
 
-
             var k = 0;
             for (var i = 0; i < SatelliteIds.Length; i++)
             {
                 var prn = SatelliteIds[i];
 
-                if (sys == NavigationSystemEnum.SYS_QZS) prn += RtcmV3Helper.MINPRNQZS - 1;
-                else if (sys == NavigationSystemEnum.SYS_SBS) prn += RtcmV3Helper.MINPRNSBS - 1;
+                if (sys == NavigationSystemEnum.SYS_QZS)
+                {
+                    prn += RtcmV3Helper.MINPRNQZS - 1;
+                }
+                else if (sys == NavigationSystemEnum.SYS_SBS)
+                {
+                    prn += RtcmV3Helper.MINPRNSBS - 1;
+                }
 
-                
                 var sat = RtcmV3Helper.satno(sys, prn);
 
-                Satellites[i] = new Satellite {SatellitePrn = prn, SatelliteCode = RtcmV3Helper.Sat2Code(sat, prn)};
-
+                Satellites[i] = new Satellite
+                {
+                    SatellitePrn = prn,
+                    SatelliteCode = RtcmV3Helper.Sat2Code(sat, prn),
+                };
 
                 var fcn = 0;
                 if (sys == NavigationSystemEnum.SYS_GLO)
                 {
-                    #region SYS_GLO
-
                     // ToDo Нужны дополнительные данные по GLONASS Ephemeris, либо использовать сообщение MSM5, там есть ex[]
                     // fcn = -8; /* no glonass fcn info */
                     // if (ex && ex[i] <= 13)
@@ -144,9 +183,6 @@ namespace Asv.Gnss
                     // {
                     //     fcn = rtcm->nav.glo_fcn[prn - 1] - 8;
                     // }
-
-                    #endregion
-
                 }
 
                 var index = 0;
@@ -154,29 +190,39 @@ namespace Asv.Gnss
 
                 for (var j = 0; j < SignalIds.Length; j++)
                 {
-                    if (CellMask[i][j] == 0) continue;
+                    if (CellMask[i][j] == 0)
+                    {
+                        continue;
+                    }
 
                     Satellites[i].Signals[index] = new Signal();
                     if (sat != 0 && sig[j].ObservationIndex >= 0)
                     {
-
-                        var freq = fcn < -7.0 ? 0.0 : RtcmV3Helper.Code2Freq(sys, sig[j].ObservationCode, fcn);
+                        var freq =
+                            fcn < -7.0
+                                ? 0.0
+                                : RtcmV3Helper.Code2Freq(sys, sig[j].ObservationCode, fcn);
 
                         /* pseudorange (m) */
                         if (roughRanges[i] != 0.0 && pseudorange[k] > -1E12)
                         {
-                            Satellites[i].Signals[index].PseudoRange = roughRanges[i] + pseudorange[k];
+                            Satellites[i].Signals[index].PseudoRange =
+                                roughRanges[i] + pseudorange[k];
                         }
 
                         /* carrier-phase (cycle) */
                         if (roughRanges[i] != 0.0 && phaseRange[k] > -1E12)
                         {
-                            Satellites[i].Signals[index].CarrierPhase = (roughRanges[i] + phaseRange[k]) * freq / RtcmV3Helper.CLIGHT;
+                            Satellites[i].Signals[index].CarrierPhase =
+                                (roughRanges[i] + phaseRange[k]) * freq / RtcmV3Helper.CLIGHT;
                         }
 
-                        Satellites[i].Signals[index].MinLockTime = RtcmV3Helper.GetMinLockTime(@lock[k]);
+                        Satellites[i].Signals[index].MinLockTime = RtcmV3Helper.GetMinLockTime(
+                            @lock[k]
+                        );
                         Satellites[i].Signals[index].LockTime = @lock[k];
                         Satellites[i].Signals[index].HalfCycle = halfCycle[k];
+
                         // rtcm->obs.data[index].LLI[idx[k]] =
                         //     LossOfLock(rtcm, sat, idx[k],lock[j]) +(halfCycle[j] ? 3 : 0);
                         // rtcm->obs.data[index].SNR[idx[k]] = (uint16_t)(cnr[j] / SNR_UNIT + 0.5);
@@ -192,60 +238,5 @@ namespace Asv.Gnss
         }
 
         public Satellite[] Satellites { get; set; }
-
-        
     }
-
-    public class Satellite
-    {
-        public byte SatellitePrn { get; set; }
-        public Signal[] Signals { get; set; }
-        public string SatelliteCode { get; set; }
-    }
-
-    public class Signal
-    {
-        public string RinexCode { get; set; }
-
-        /// <summary>
-        /// Observation data PseudoRange (m)
-        /// </summary>
-        public double PseudoRange { get; set; }
-
-        /// <summary>
-        /// Observation data carrier-phase (m)
-        /// </summary>
-        public double CarrierPhase { get; set; }
-
-        /// <summary>
-        /// Observation data PhaseRangeRate (hz)
-        /// </summary>
-        public double PhaseRangeRate { get; set; }
-
-        /// <summary>
-        /// Signal strength (0.001 dBHz)
-        /// </summary>
-        public double Cnr { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ushort LockTime { get; set; }
-
-        /// <summary>
-        /// Min lock time in min
-        /// </summary>
-        public double MinLockTime { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public byte HalfCycle { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public byte ObservationCode { get; set; }
-    }
-
 }

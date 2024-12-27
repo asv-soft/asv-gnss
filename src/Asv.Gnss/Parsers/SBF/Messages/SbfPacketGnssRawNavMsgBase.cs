@@ -71,9 +71,19 @@ namespace Asv.Gnss
             ViterbiCnt = BinSerialize.ReadByte(ref buffer);
             Source = BinSerialize.ReadByte(ref buffer);
             FreqNr = BinSerialize.ReadByte(ref buffer);
-            SignalType = SbfHelper.GetSignalType(Source, FreqNr, out var constellation, out var carrierFreq, out var signalRinexCode);
+            SignalType = SbfHelper.GetSignalType(
+                Source,
+                FreqNr,
+                out var constellation,
+                out var carrierFreq,
+                out var signalRinexCode
+            );
 
-            if (constellation != NavSystem) throw new Exception("Navigation system code not euqals");
+            if (constellation != NavSystem)
+            {
+                throw new Exception("Navigation system code not euqals");
+            }
+
             CarrierFreq = carrierFreq * 1000000.0;
             RindexSignalCode = signalRinexCode;
             RxChannel = BinSerialize.ReadByte(ref buffer);
@@ -82,8 +92,10 @@ namespace Asv.Gnss
             {
                 NAVBitsU32[i] = BinSerialize.ReadUInt(ref buffer);
             }
-            //Padding ignored
+
+            // Padding ignored
         }
+
         public int SatPrn { get; set; }
     }
 }

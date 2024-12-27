@@ -3,7 +3,7 @@
 namespace Asv.Gnss
 {
     /// <summary>
-    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm
+    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm.
     /// </summary>
     public static class ComNavCrc32
     {
@@ -24,10 +24,15 @@ namespace Asv.Gnss
             for (j = 8; j > 0; j--)
             {
                 if ((ulCrc & 1) != 0)
+                {
                     ulCrc = (ulCrc >> 1) ^ _crc32Polynomial;
+                }
                 else
+                {
                     ulCrc >>= 1;
+                }
             }
+
             return ulCrc;
         }
 
@@ -75,9 +80,5 @@ namespace Asv.Gnss
 
             return ulCrc;
         }
-
-
-
     }
-
 }

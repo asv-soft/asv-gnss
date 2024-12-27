@@ -39,7 +39,13 @@ namespace Asv.Gnss
         /// <returns>The geographical point obtained by moving the specified distance along the radial direction from the starting point.</returns>
         public static GeoPoint RadialPoint(this GeoPoint point, double distance, double radialDeg)
         {
-            return GeoMath.RadialPoint(point.Latitude, point.Longitude, point.Altitude, distance, radialDeg);
+            return GeoMath.RadialPoint(
+                point.Latitude,
+                point.Longitude,
+                point.Altitude,
+                distance,
+                radialDeg
+            );
         }
 
         /// <summary>
@@ -88,7 +94,7 @@ namespace Asv.Gnss
         /// <returns>A new <see cref="GeoPoint"/> with the added altitude.</returns>
         public static GeoPoint AddAltitude(this GeoPoint point, double alt)
         {
-            return new GeoPoint(point.Latitude, point.Longitude, (point.Altitude) + alt);
+            return new GeoPoint(point.Latitude, point.Longitude, point.Altitude + alt);
         }
 
         /// <summary>

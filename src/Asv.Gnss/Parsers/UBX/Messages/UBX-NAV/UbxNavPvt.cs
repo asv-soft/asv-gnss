@@ -4,32 +4,23 @@ using Geodesy;
 
 namespace Asv.Gnss
 {
-
     public class UbxNavPvtPool : UbxMessageBase
     {
         public override string Name => "UBX-NAV-PVT-POOL";
         public override byte Class => 0x01;
         public override byte SubClass => 0x07;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
-        
 
-        public override void Randomize(Random random)
-        {
-        }
+        public override void Randomize(Random random) { }
     }
 
     [SerializationNotSupported]
-    public class UbxNavPvt:UbxMessageBase
+    public class UbxNavPvt : UbxMessageBase
     {
         public override string Name => "UBX-NAV-PVT";
         public override byte Class => 0x01;
@@ -60,12 +51,10 @@ namespace Asv.Gnss
         /// </summary>
         public double PositionDOP { get; set; }
 
-
         /// <summary>
         /// Heading accuracy estimate (both motion and vehicle), deg
         /// </summary>
         public double HeadingAccuracyEstimate { get; set; }
-
 
         /// <summary>
         /// Speed accuracy estimate, m\s
@@ -76,7 +65,6 @@ namespace Asv.Gnss
         /// Heading of motion (2-D), deg
         /// </summary>
         public double HeadingOfMotion2D { get; set; }
-
 
         /// <summary>
         /// Ground Speed (2-D), m\s
@@ -133,7 +121,6 @@ namespace Asv.Gnss
         /// </summary>
         public byte NumberOfSatellites { get; set; }
 
-
         /// <summary>
         /// UTC Time of Day could be confirmed (see Time Validity section for details)
         /// </summary>
@@ -155,7 +142,6 @@ namespace Asv.Gnss
         /// </summary>
         public byte PsmState { get; set; }
 
-        
         public UbxCarrierSolutionStatus CarrierSolution { get; set; }
 
         /// <summary>
@@ -172,8 +158,6 @@ namespace Asv.Gnss
         /// Differential corrections were applied
         /// </summary>
         public bool IsValidVehicleHeading { get; set; }
-
-       
 
         /// <summary>
         /// GNSSfix Type
@@ -263,13 +247,12 @@ namespace Asv.Gnss
             Min = BinSerialize.ReadByte(ref buffer);
             Sec = BinSerialize.ReadByte(ref buffer);
             var valid = BinSerialize.ReadByte(ref buffer);
-            //UTC Date and Time Confirmation Status   Date: CONFIRMED, Time: CONFIRMED
 
+            // UTC Date and Time Confirmation Status   Date: CONFIRMED, Time: CONFIRMED
             UTCDateIsConfirmation = (valid & 0b0000_0001) != 0;
             UTCTimeIsConfirmation = (valid & 0b0000_0010) != 0;
             UTCTimeOfDayIsFullyResolved = (valid & 0b0000_0100) != 0;
             IsValidMagneticDeclination = (valid & 0b0000_1000) != 0;
-
 
             UTCTimeAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 1e-9;
             UTCFractionOfSecond = BinSerialize.ReadInt(ref buffer);
@@ -287,7 +270,6 @@ namespace Asv.Gnss
             UTCConfirmedAvailable = (flags & 0b0010_0000) != 0;
             UTCConfirmedDate = (flags & 0b0100_0000) != 0;
             UTCConfirmedTime = (flags & 0b1000_0000) != 0;
-            //
             NumberOfSatellites = BinSerialize.ReadByte(ref buffer);
             Longitude = BinSerialize.ReadInt(ref buffer) * 1e-7;
             Latitude = BinSerialize.ReadInt(ref buffer) * 1e-7;
@@ -302,29 +284,43 @@ namespace Asv.Gnss
             HeadingOfMotion2D = BinSerialize.ReadInt(ref buffer) * 1e-5;
             SpeedAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 0.001;
             HeadingAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 1e-5;
-            PositionDOP =  BinSerialize.ReadUShort(ref buffer) * 0.01;
+            PositionDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
             flags = BinSerialize.ReadByte(ref buffer);
             IsValidLLH = (flags & 0b0000_0001) == 0;
             buffer = buffer[5..];
             HeadingOfVehicle2D = BinSerialize.ReadInt(ref buffer) * 1e-5;
-            if (!IsValidVehicleHeading) HeadingOfVehicle2D = double.NaN;
-            MagneticDeclination = BinSerialize.ReadShort(ref buffer) * 1e-2;
-            MagneticDeclinationAccuracy = BinSerialize.ReadUShort(ref buffer) * 1e-2;
-            //
-            if (FixType >= UbxGnssFixType.Fix3D && GnssFixOK)
+            if (!IsValidVehicleHeading)
             {
-                MovingBaseLocation = new GlobalPosition(new GlobalCoordinates(Latitude, Longitude), AltElipsoid);
+                HeadingOfVehicle2D = double.NaN;
             }
 
-            UtcTime = new DateTime(Year, Month, Day, Hour, Min, Sec, DateTimeKind.Utc)
-                .AddSeconds(UTCFractionOfSecond * 1e-9);
-            
+            MagneticDeclination = BinSerialize.ReadShort(ref buffer) * 1e-2;
+            MagneticDeclinationAccuracy = BinSerialize.ReadUShort(ref buffer) * 1e-2;
+            if (FixType >= UbxGnssFixType.Fix3D && GnssFixOK)
+            {
+                MovingBaseLocation = new GlobalPosition(
+                    new GlobalCoordinates(Latitude, Longitude),
+                    AltElipsoid
+                );
+            }
+
+            UtcTime = new DateTime(Year, Month, Day, Hour, Min, Sec, DateTimeKind.Utc).AddSeconds(
+                UTCFractionOfSecond * 1e-9
+            );
+
             var week = 0;
             var towP = 0.0;
             var tow = iTOW * 1e-3;
             GpsRawHelper.Time2Gps(GpsRawHelper.Utc2Gps(UtcTime), ref week, ref towP);
-            if (tow < towP - 302400.0) week += 1;
-            else if (tow > towP + 302400.0) week -= 1;
+            if (tow < towP - 302400.0)
+            {
+                week += 1;
+            }
+            else if (tow > towP + 302400.0)
+            {
+                week -= 1;
+            }
+
             GpsTime = GpsRawHelper.Gps2Time(week, tow);
         }
 
@@ -333,12 +329,8 @@ namespace Asv.Gnss
         public DateTime UtcTime { get; set; }
 
         protected override int GetContentByteSize() => 92;
-        
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 
     public enum UbxCarrierSolutionStatus
@@ -347,10 +339,12 @@ namespace Asv.Gnss
         /// no carrier phase range solution
         /// </summary>
         NoCarrierSolution = 0,
+
         /// <summary>
         /// carrier phase range solution with floating ambiguities
         /// </summary>
         FloatingAmbiguities = 1,
+
         /// <summary>
         /// carrier phase range solution with fixed ambiguities
         /// </summary>

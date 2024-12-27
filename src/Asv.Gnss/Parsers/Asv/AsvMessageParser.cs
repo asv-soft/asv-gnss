@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Asv.Gnss
 {
     /// <summary>
     /// Represents a message parser for the Asv protocol.
     /// </summary>
-    /// <typeparam name="AsvMessageBase">The base type for Asv messages.</typeparam>
-    /// <typeparam name="ushort">The type used for message IDs.</typeparam>
     public class AsvMessageParser : GnssMessageParserBase<AsvMessageBase, ushort>
     {
         /// <summary>
@@ -39,7 +36,11 @@ namespace Asv.Gnss
         /// <summary>
         /// The maximum size of a message, including data, header, and CRC.
         /// </summary>
-        public const ushort MaxMessageSize = DataSize + HeaderSize + CrcSize/*CRC16*/;
+        public const ushort MaxMessageSize =
+            DataSize
+            + HeaderSize
+            + CrcSize /*CRC16*/
+        ;
 
         /// <summary>
         /// Constant variable representing the Sync1 value.
@@ -55,7 +56,7 @@ namespace Asv.Gnss
         public const byte Sync2 = 0x44;
 
         /// <summary>
-        /// Represents the identifier of the GNSS protocol used.
+        /// Gets represents the identifier of the GNSS protocol used.
         /// </summary>
         /// <value>
         /// The GNSS protocol identifier.
@@ -67,8 +68,9 @@ namespace Asv.Gnss
         /// </summary>
         private readonly byte[] _buffer = new byte[MaxMessageSize];
 
+        /// <summary>
         /// Represents the current state of an object.
-        /// /
+        /// </summary>
         private State _state;
 
         /// <summary>
@@ -94,7 +96,11 @@ namespace Asv.Gnss
             switch (_state)
             {
                 case State.Sync1:
-                    if (data != Sync1) return false;
+                    if (data != Sync1)
+                    {
+                        return false;
+                    }
+
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = Sync1;
                     _state = State.Sync2;
@@ -109,6 +115,7 @@ namespace Asv.Gnss
                         _state = State.MessageLength;
                         _buffer[_bufferIndex++] = Sync2;
                     }
+
                     break;
                 case State.MessageLength:
                     _buffer[_bufferIndex++] = data;
@@ -117,6 +124,7 @@ namespace Asv.Gnss
                         _stopIndex = BitConverter.ToUInt16(_buffer, 2) + 12; // 10 header + 2 crc = 12
                         _state = _stopIndex >= _buffer.Length ? State.Sync1 : State.Message;
                     }
+
                     break;
                 case State.Message:
                     _buffer[_bufferIndex++] = data;
@@ -138,6 +146,7 @@ namespace Asv.Gnss
                             return true;
                         }
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -182,7 +191,5 @@ namespace Asv.Gnss
             /// </summary>
             Message,
         }
-
-        
     }
 }

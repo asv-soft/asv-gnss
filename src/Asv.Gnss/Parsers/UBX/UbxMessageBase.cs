@@ -49,15 +49,18 @@ namespace Asv.Gnss
 
             BinSerialize.WriteByte(ref buffer, Class);
             BinSerialize.WriteByte(ref buffer, SubClass);
-            
+
             var size = (ushort)GetContentByteSize();
             BinSerialize.WriteUShort(ref buffer, size);
 
             var writeSpan = buffer.Slice(0, size);
             SerializeContent(ref writeSpan);
-            
+
             buffer = buffer.Slice(size);
-            crcSpan = crcSpan.Slice(0, size + 4 /*ID + Length*/);
+            crcSpan = crcSpan.Slice(
+                0,
+                size + 4 /*ID + Length*/
+            );
             var crc = UbxCrc16.Calc(crcSpan);
             BinSerialize.WriteByte(ref buffer, crc.Crc1);
             BinSerialize.WriteByte(ref buffer, crc.Crc2);
@@ -69,20 +72,28 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer containing the UBX message.</param>
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
-
-            if (BinSerialize.ReadByte(ref buffer) != UbxHelper.SyncByte1 || BinSerialize.ReadByte(ref buffer) != UbxHelper.SyncByte2)
+            if (
+                BinSerialize.ReadByte(ref buffer) != UbxHelper.SyncByte1
+                || BinSerialize.ReadByte(ref buffer) != UbxHelper.SyncByte2
+            )
             {
-                throw new Exception($"Deserialization UBX message failed: want {UbxHelper.SyncByte1:X} {UbxHelper.SyncByte2:X}. Read {buffer[0]:X} {buffer[1]:X}");
+                throw new Exception(
+                    $"Deserialization UBX message failed: want {UbxHelper.SyncByte1:X} {UbxHelper.SyncByte2:X}. Read {buffer[0]:X} {buffer[1]:X}"
+                );
             }
 
-            var msgId = (ushort)((BinSerialize.ReadByte(ref buffer) << 8) | BinSerialize.ReadByte(ref buffer));
+            var msgId = (ushort)(
+                (BinSerialize.ReadByte(ref buffer) << 8) | BinSerialize.ReadByte(ref buffer)
+            );
             if (msgId != MessageId)
             {
-                throw new Exception($"Deserialization UBX message failed: want message number '{UbxHelper.GetMessageName(MessageId)}'. Read = '{UbxHelper.GetMessageName(msgId)}'");
+                throw new Exception(
+                    $"Deserialization UBX message failed: want message number '{UbxHelper.GetMessageName(MessageId)}'. Read = '{UbxHelper.GetMessageName(msgId)}'"
+                );
             }
 
             var payloadLength = BinSerialize.ReadUShort(ref buffer);
-           
+
             var readSpan = buffer.Slice(0, payloadLength);
             DeserializeContent(ref readSpan);
             buffer = buffer.Slice(payloadLength);
@@ -116,15 +127,15 @@ namespace Asv.Gnss
         /// <returns>The total byte size of the content, including the header and CRC.</returns>
         public override int GetByteSize()
         {
-            return UbxHelper.HeaderOffset + 2/*CRC*/ + GetContentByteSize();
+            return UbxHelper.HeaderOffset
+                + 2 /*CRC*/
+                + GetContentByteSize();
         }
-
 
         /// <summary>
         /// Randomizes the object based on the given random number generator.
         /// </summary>
         /// <param name="random">The random number generator to use.</param>
         public abstract void Randomize(Random random);
-
     }
 }

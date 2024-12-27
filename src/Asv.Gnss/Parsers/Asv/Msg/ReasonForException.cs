@@ -11,20 +11,20 @@ namespace Asv.Gnss
         /// Not enough ephemeris available
         /// </summary>
         NotEphemeris,
-    
+
         /// <summary>
         /// Excluded by RAIM algorithm
         /// </summary>
         Raim,
-    
+
         /// <summary>
         /// Satellite health
         /// </summary>
         Health,
-    
+
         /// <summary>
         /// SQM
         /// </summary>
-        Sqm
+        Sqm,
     }
 }

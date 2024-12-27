@@ -16,7 +16,5 @@
         public override string Name => "GpsRawL2C";
 
         protected override int NavBitsU32Length => 10;
-
-        
     }
 }

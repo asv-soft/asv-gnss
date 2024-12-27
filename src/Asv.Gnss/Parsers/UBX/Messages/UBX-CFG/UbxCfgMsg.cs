@@ -10,7 +10,6 @@ namespace Asv.Gnss
         ManyRate,
     }
 
-    
     public class UbxCfgMsgPool : UbxMessageBase
     {
         public override byte Class => 0x06;
@@ -39,8 +38,6 @@ namespace Asv.Gnss
             MsgClass = (byte)random.Next(0, byte.MaxValue);
             MsgId = (byte)random.Next(0, byte.MaxValue);
         }
-
-        
     }
 
     /// <summary>
@@ -68,11 +65,16 @@ namespace Asv.Gnss
             BinSerialize.WriteByte(ref buffer, MsgId);
             if (CurrentPortRate != null && Ports != null)
             {
-                throw new Exception($"Must set only one field: {nameof(CurrentPortRate)} or {nameof(Ports)}");
+                throw new Exception(
+                    $"Must set only one field: {nameof(CurrentPortRate)} or {nameof(Ports)}"
+                );
             }
+
             if (CurrentPortRate == null && Ports == null)
             {
-                throw new Exception($"Must set one field: {nameof(CurrentPortRate)}==null or {nameof(Ports)}==null");
+                throw new Exception(
+                    $"Must set one field: {nameof(CurrentPortRate)}==null or {nameof(Ports)}==null"
+                );
             }
 
             if (Ports != null && Ports.Length != 6)
@@ -92,7 +94,6 @@ namespace Asv.Gnss
             {
                 BinSerialize.WriteByte(ref buffer, CurrentPortRate.Value);
             }
-            
         }
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
@@ -118,8 +119,5 @@ namespace Asv.Gnss
             MsgId = (byte)random.Next(0, byte.MaxValue);
             CurrentPortRate = (byte)random.Next(0, byte.MaxValue);
         }
-
-       
     }
-
 }

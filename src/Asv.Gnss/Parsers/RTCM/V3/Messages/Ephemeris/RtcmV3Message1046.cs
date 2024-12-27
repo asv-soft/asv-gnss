@@ -1,5 +1,5 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -10,18 +10,22 @@ namespace Asv.Gnss
     public class RtcmV3Message1046 : RtcmV3MessageBase
     {
         /// <summary>
-        /// Rtcm Message Id
+        /// Rtcm Message Id.
         /// </summary>
         public const int RtcmMessageId = 1046;
+
         /// <inheritdoc/>
         public override ushort MessageId => RtcmMessageId;
-        
+
         /// <inheritdoc/>
         public override string Name => "Galileo I/NAV ephemeris information";
 
-
         /// <inheritdoc/>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             var sys = NavigationSystemEnum.SYS_GAL;
 
@@ -66,211 +70,225 @@ namespace Asv.Gnss
             E1BDataValidity = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             Reserved = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
         }
+
         /// <summary>
-        /// Satellite number in all the constellations.
+        /// Gets or sets satellite number in all the constellations.
         /// </summary>
         public int SatelliteNumber { get; set; }
+
         /// <summary>
-        /// A Galileo SVID parameter is coded with 6 bits.
+        /// Gets or sets a Galileo SVID parameter is coded with 6 bits.
         /// However the ma constellation which can be accomodated within the I/NAV and F/NAV frames is 36 satellites
-        /// (3 planes of 12 satellites each)
+        /// (3 planes of 12 satellites each).
         /// </summary>
         public uint SatellitePrn { get; set; }
+
         /// <summary>
-        /// A BDS Satellite RINEX Code.
+        /// Gets a BDS Satellite RINEX Code.
         /// </summary>
         public string SatelliteCode => RtcmV3Helper.Sat2Code(SatelliteNumber, (int)SatellitePrn);
+
         /// <summary>
-        /// Galileo Week number. Range 0 - 4095 weeks. Resolution - 1 week.
+        /// Gets or sets galileo Week number. Range 0 - 4095 weeks. Resolution - 1 week.
         /// Roll-over every 4096 (about 78 years). Galileo System Time (GST).
         /// The GST start epoch is defined as 13 seconds before midnight between 21st August and 22nd August 1999.
         /// i.e. GST was equal 13 seconds at 22 nd August 1999 00:00:00 UTC.
         /// </summary>
         public uint WeekRaw { get; set; }
+
         /// <summary>
-        /// Issue of Data for navigation data (IODnav).
+        /// Gets or sets issue of Data for navigation data (IODnav).
         /// Each IoDNav has an associated reference time parameter disseminated within the batch.
         /// Note: the broadcast group delay validity status and signal health status are not identified by any Issue of Data value unitless.
         /// </summary>
         public uint IoDnav { get; set; }
+
         /// <summary>
-        /// SIS Accuracy
+        /// Gets or sets sIS Accuracy.
         /// </summary>
         public byte SvSisa { get; set; }
 
         /// <summary>
-        /// IDOT. Effective range attainable with the indicated bit allocation and scale factor. Resolution ^-43
-        /// Rate of inclination angle. Unit: semi-circles/s
+        /// Gets iDOT. Effective range attainable with the indicated bit allocation and scale factor. Resolution ^-43
+        /// Rate of inclination angle. Unit: semi-circles/s.
         /// </summary>
         public double IdotRaw { get; private set; }
+
         /// <summary>
-        /// The reference time of clock parameters. Unit: s.
+        /// Gets the reference time of clock parameters. Unit: s.
         /// Range 0 - 604.792. Resolution: 60.
         /// </summary>
         public uint TocRaw { get; private set; }
+
         /// <summary>
-        /// Clock correcton parameter Unit: s/s^2.
+        /// Gets clock correcton parameter Unit: s/s^2.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-59.
         /// </summary>
         public double Af2 { get; private set; }
+
         /// <summary>
-        /// Clock correcton parameter Unit:s/s.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-46
+        /// Gets clock correcton parameter Unit:s/s.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-46.
         /// </summary>
         public double Af1 { get; private set; }
+
         /// <summary>
-        /// Clock correcton parameter Unit:s.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-34
+        /// Gets clock correcton parameter Unit:s.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-34.
         /// </summary>
         public double Af0 { get; private set; }
+
         /// <summary>
-        /// Amplitude of sine harmonic correction term to the orbit radius. Unit: m.
+        /// Gets amplitude of sine harmonic correction term to the orbit radius. Unit: m.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-5 m.
         /// </summary>
         public double Crs { get; private set; }
 
         /// <summary>
-        /// Mean moution difference from computed value. Unit: pi/s.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-43 pi/s
+        /// Gets mean moution difference from computed value. Unit: pi/s.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-43 pi/s.
         /// </summary>
         public double DeltaN { get; private set; }
 
         /// <summary>
-        /// Mean anomaly at reference time. Unit: pi.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
+        /// Gets mean anomaly at reference time. Unit: pi.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi.
         /// </summary>
         public double M0 { get; private set; }
 
         /// <summary>
-        /// Amplitude of cusine harmonic correction term to the argument of latitude. Unit: rad.
+        /// Gets amplitude of cusine harmonic correction term to the argument of latitude. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
         public double Cuc { get; private set; }
 
         /// <summary>
-        /// Eccentricity.
+        /// Gets eccentricity.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-33.
         /// </summary>
         public double e { get; private set; }
 
         /// <summary>
-        /// Amplitude of sine harmonic correction term to the argument of latitude. Unit: rad.
+        /// Gets amplitude of sine harmonic correction term to the argument of latitude. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
         public double Cus { get; private set; }
 
         /// <summary>
-        /// Square root of semi-major axis. Unit: m^1/2.
+        /// Gets square root of semi-major axis. Unit: m^1/2.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-19 m^1/2.
         /// </summary>
         public double Apow1_2 { get; private set; }
 
         /// <summary>
-        /// Ephemeris reference time. Unit: s.
+        /// Gets ephemeris reference time. Unit: s.
         /// Range 0 - 604.792. Resolution: 60.
         /// </summary>
         public uint ToeRaw { get; private set; }
 
         /// <summary>
-        /// Amplitude of cusine harmonic correction term to the argument of angle of inclination. Unit: rad.
+        /// Gets amplitude of cusine harmonic correction term to the argument of angle of inclination. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
         public double Cic { get; private set; }
 
         /// <summary>
-        /// Longitude of ascending node of orbital plane at weekly epoch. Unit: pi.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
+        /// Gets longitude of ascending node of orbital plane at weekly epoch. Unit: pi.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi.
         /// </summary>
         public double OmegaBig0 { get; private set; }
 
         /// <summary>
-        /// Amplitude of sine harmonic correction term to the angle of inclination. Unit: rad.
+        /// Gets amplitude of sine harmonic correction term to the angle of inclination. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
         public double Cis { get; private set; }
 
         /// <summary>
-        /// Inclination angle at reference time. Unit: pi.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
+        /// Gets inclination angle at reference time. Unit: pi.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi.
         /// </summary>
         public double I0 { get; private set; }
 
         /// <summary>
-        /// Amplitude of cosine harmonic correction term to the orbit radius. Unit: m.
+        /// Gets amplitude of cosine harmonic correction term to the orbit radius. Unit: m.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-5 m.
         /// </summary>
         public double Crc { get; private set; }
 
         /// <summary>
-        /// Argument of Perigree. Unit: pi.
-        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
+        /// Gets argument of Perigree. Unit: pi.
+        /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi.
         /// </summary>
         public double Omega { get; private set; }
 
         /// <summary>
-        /// Rate of right ascension. Unit: pi/s.
+        /// Gets rate of right ascension. Unit: pi/s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-43 pi/s.
         /// </summary>
         public double OmegaDot { get; private set; }
 
         /// <summary>
-        /// E1/E5a Broadcast Group Delay.
+        /// Gets e1/E5a Broadcast Group Delay.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-32.
         /// </summary>
         public double BGdE1E5a { get; private set; }
 
         /// <summary>
-        /// E5b/E1 Broadcast Group Delay (reserved).
+        /// Gets e5b/E1 Broadcast Group Delay (reserved).
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-32.
         /// </summary>
         public double BGdE5bE1 { get; private set; }
 
         /// <summary>
-        /// E5a Signal Health Status. Bit Values are:
+        /// Gets e5a Signal Health Status. Bit Values are:
         /// 0 - Signal OK
         /// 1 - Signal out of service
         /// 2 - Signal will be out of service
-        /// 3 - Signal Component currently in Test
+        /// 3 - Signal Component currently in Test.
         /// </summary>
         public byte E5bSignalHealthFlag { get; private set; }
 
         /// <summary>
-        /// The navigation data validity status transmitted on E5a.
+        /// Gets the navigation data validity status transmitted on E5a.
         /// </summary>
         public byte E5bDataValidity { get; private set; }
 
         /// <summary>
-        /// The E5b Signal Health Status. Bit Values are:
+        /// Gets the E5b Signal Health Status. Bit Values are:
         /// 0 - Signal OK
         /// 1 - Signal out of service
         /// 2 - Signal will be out of service
-        /// 3 - Signal Component currently in Test
+        /// 3 - Signal Component currently in Test.
         /// </summary>
         public byte E1BSignalHealthFlag { get; private set; }
 
         /// <summary>
-        /// The navigation data validity status transmitted on E5b.
+        /// Gets the navigation data validity status transmitted on E5b.
         /// </summary>
         public byte E1BDataValidity { get; private set; }
 
         /// <summary>
         /// Galileo Week number.
         /// </summary>
+        /// <returns>Galileo Week.</returns>
         public int GetWeek(DateTime utc)
         {
             return RtcmV3EphemerisHelper.GetGalWeek(utc, (int)WeekRaw);
         }
 
-
         public DateTime GetToc()
         {
             return RtcmV3Helper.GetFromGalileo((int)WeekRaw, TocRaw);
         }
+
         public double Idot => Idot * RtcmV3Helper.SC2RAD;
+
         public DateTime GetToc(DateTime utc)
         {
             return RtcmV3Helper.GetFromGalileo(GetWeek(utc), TocRaw);
         }
+
         public DateTime GetToe()
         {
             return RtcmV3Helper.GetFromGalileo((int)WeekRaw, ToeRaw);
@@ -288,7 +306,8 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.OutOfService) == SignalHealthy.OutOfService;
+                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.OutOfService)
+                    == SignalHealthy.OutOfService;
             }
         }
 
@@ -296,14 +315,17 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.WillBeOutOfService) == SignalHealthy.WillBeOutOfService;
+                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.WillBeOutOfService)
+                    == SignalHealthy.WillBeOutOfService;
             }
         }
+
         public bool IsE5bSignalInTest
         {
             get
             {
-                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.InTest) == SignalHealthy.InTest;
+                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.InTest)
+                    == SignalHealthy.InTest;
             }
         }
 
@@ -319,7 +341,8 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.OutOfService) == SignalHealthy.OutOfService;
+                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.OutOfService)
+                    == SignalHealthy.OutOfService;
             }
         }
 
@@ -327,14 +350,17 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.WillBeOutOfService) == SignalHealthy.WillBeOutOfService;
+                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.WillBeOutOfService)
+                    == SignalHealthy.WillBeOutOfService;
             }
         }
+
         public bool E1BSignalInTest
         {
             get
             {
-                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.InTest) == SignalHealthy.InTest;
+                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.InTest)
+                    == SignalHealthy.InTest;
             }
         }
 
@@ -342,9 +368,9 @@ namespace Asv.Gnss
         public enum SignalHealthy
         {
             OK = 0x0,
-            OutOfService= 0x1,
+            OutOfService = 0x1,
             WillBeOutOfService = 0x2,
-            InTest = 0x3
+            InTest = 0x3,
         }
     }
 }

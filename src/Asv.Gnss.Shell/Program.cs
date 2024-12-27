@@ -1,12 +1,10 @@
-﻿using System;
-using Spectre.Console.Cli;
-
-
-namespace Asv.Gnss.Shell
+﻿namespace Asv.Gnss.Shell
 {
-    class Program
+    using Spectre.Console.Cli;
+
+    internal static class Program
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             var app = new CommandApp();
             app.Configure(config =>

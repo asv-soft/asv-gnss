@@ -11,6 +11,24 @@
     <PackageTags />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
+    <CodeAnalysisRuleSet>..\CodeStyle.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>
+      CS0169,
+      CS0618,
+      CS1502,
+      CS1503,
+      CS8524,
+      CS8600,
+      CS8601,
+      CS8602,
+      CS8603,
+      CS8604,
+      CS8625,
+      CS8629,
+      CS8762,
+      CA1510,
+      CA1851
+    </WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\Asv.Gnss.xml</DocumentationFile>
@@ -19,5 +37,13 @@
     <PackageReference Include="Asv.Common" Version="2.0.0" />
     <PackageReference Include="Asv.IO" Version="2.0.0" />
     <PackageReference Include="Geodesy" Version="4.1.0" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

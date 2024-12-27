@@ -2,19 +2,13 @@
 
 namespace Asv.Gnss
 {
-    public class ComNavPortCfg
-    {
-        public ComNavPortEnum Port { get; set; }
-        public uint BaudRate { get; set; }
-        public uint[] OtherParams { get; } = new uint[8];
-    }
-
     public class ComNavComConfigAMessage : ComNavAsciiMessageBase
     {
         public const string ComNavMessageId = "COMCONFIGA";
         public override string MessageId => ComNavMessageId;
         public override string Name => ComNavMessageId;
         public ComNavPortCfg[] Ports { get; set; }
+
         protected override void InternalContentDeserialize(string[] msg)
         {
             var portCnt = msg.Length / 10;
@@ -25,11 +19,18 @@ namespace Asv.Gnss
                 var port = new ComNavPortCfg();
 
 #if NETFRAMEWORK
-                port.Port = Enum.TryParse(msg[0 + i * 10], true, out ComNavPortEnum dir) ? dir : ComNavPortEnum.NO_PORTS;
+                port.Port = Enum.TryParse(msg[0 + i * 10], true, out ComNavPortEnum dir)
+                    ? dir
+                    : ComNavPortEnum.NO_PORTS;
 #else
-				if (Enum.TryParse(typeof(ComNavPortEnum), msg[0 + i * 10], true, out var dir))
-					 port.Port = (ComNavPortEnum)dir;
-				else port.Port = ComNavPortEnum.NO_PORTS;
+                if (Enum.TryParse(typeof(ComNavPortEnum), msg[0 + i * 10], true, out var dir))
+                {
+                    port.Port = (ComNavPortEnum)dir;
+                }
+                else
+                {
+                    port.Port = ComNavPortEnum.NO_PORTS;
+                }
 #endif
                 port.BaudRate = uint.TryParse(msg[1 + i * 10], out var baudRate) ? baudRate : 0;
                 port.OtherParams[0] = uint.TryParse(msg[2 + i * 10], out var param1) ? param1 : 0;
@@ -43,6 +44,5 @@ namespace Asv.Gnss
                 Ports[i] = port;
             }
         }
-
     }
 }

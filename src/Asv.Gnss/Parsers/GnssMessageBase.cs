@@ -19,8 +19,10 @@ namespace Asv.Gnss
 #if DEBUG
             // ReSharper disable once VirtualMemberCallInConstructor
             Debug.Assert(Name != null, nameof(Name) + " != null");
+
             // ReSharper disable once VirtualMemberCallInConstructor
             Debug.Assert(MessageId != null, nameof(MessageId) + " != null");
+
             // ReSharper disable once VirtualMemberCallInConstructor
             // ReSharper disable once VirtualMemberCallInConstructor
 #endif
@@ -101,7 +103,12 @@ namespace Asv.Gnss
         /// <returns>A JSON string representing the current object.</returns>
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, Formatting.None, GlobalPositionConverter.Default, GlobalPositionNullableConverter.Default);
+            return JsonConvert.SerializeObject(
+                this,
+                Formatting.None,
+                GlobalPositionConverter.Default,
+                GlobalPositionNullableConverter.Default
+            );
         }
     }
 }

@@ -8,12 +8,11 @@ namespace Asv.Gnss
     /// <summary>
     /// Receiver Mode
     /// </summary>
-    public enum TMode3Enum:ushort
+    public enum TMode3Enum : ushort
     {
         Disabled = 0,
         SurveyIn = 1,
-        FixedMode = 2
-        
+        FixedMode = 2,
     }
 
     public class UbxCfgTMode3Pool : UbxMessageBase
@@ -22,25 +21,16 @@ namespace Asv.Gnss
         public override byte Class => 0x06;
         public override byte SubClass => 0x71;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
-        
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 
-    public class UbxCfgTMode3:UbxMessageBase
+    public class UbxCfgTMode3 : UbxMessageBase
     {
         public override string Name => "UBX-CFG-TMODE3";
         public override byte Class => 0x06;
@@ -57,14 +47,17 @@ namespace Asv.Gnss
         /// Receiver Mode
         /// </summary>
         public TMode3Enum Mode { get; set; }
+
         /// <summary>
         /// Survey-in position accuracy limit
         /// </summary>
         public double SurveyInPositionAccuracyLimit { get; set; }
+
         /// <summary>
         /// Survey-in minimum duration
         /// </summary>
         public uint SurveyInMinDuration { get; set; }
+
         /// <summary>
         /// Fixed position 3D accuracy
         /// </summary>
@@ -77,14 +70,20 @@ namespace Asv.Gnss
             BinSerialize.WriteByte(ref buffer, Version);
             BinSerialize.WriteByte(ref buffer, 0); // reserved
 
-            BinSerialize.WriteUShort(ref buffer, (ushort)((ushort)Mode | ((IsGivenInLLA ? 1 : 0) << 8)));
+            BinSerialize.WriteUShort(
+                ref buffer,
+                (ushort)((ushort)Mode | ((IsGivenInLLA ? 1 : 0) << 8))
+            );
 
             if (Mode == TMode3Enum.FixedMode)
             {
                 if (Location.HasValue == false)
                 {
-                    throw new Exception($"{nameof(Location)} must be not null, when {nameof(Mode)} == {nameof(TMode3Enum.FixedMode)}");
+                    throw new Exception(
+                        $"{nameof(Location)} must be not null, when {nameof(Mode)} == {nameof(TMode3Enum.FixedMode)}"
+                    );
                 }
+
                 var lat = (int)Math.Round(Location.Value.Latitude * 1e7);
                 var lon = (int)Math.Round(Location.Value.Longitude * 1e7);
                 var alt = (int)Math.Round(Location.Value.Altitude * 100.0);
@@ -115,14 +114,16 @@ namespace Asv.Gnss
 
             BinSerialize.WriteUInt(ref buffer, (uint)Math.Round(FixedPosition3DAccuracy * 10000.0));
             BinSerialize.WriteUInt(ref buffer, SurveyInMinDuration);
-            BinSerialize.WriteUInt(ref buffer, (uint)Math.Round(SurveyInPositionAccuracyLimit * 10000.0));
+            BinSerialize.WriteUInt(
+                ref buffer,
+                (uint)Math.Round(SurveyInPositionAccuracyLimit * 10000.0)
+            );
 
             // reserved3
             for (int i = 0; i < 8; i++)
             {
                 BinSerialize.WriteByte(ref buffer, 0);
             }
-
         }
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
@@ -173,14 +174,17 @@ namespace Asv.Gnss
             SurveyInPositionAccuracyLimit = BinSerialize.ReadUInt(ref buffer) * 0.0001;
 
             buffer = buffer.Slice(8);
-
         }
 
         protected override int GetContentByteSize() => 40;
 
         public override void Randomize(Random random)
         {
-            Location = new GeoPoint(random.Next(-90, 90), random.Next(0, 180), random.Next(-1000, 1000));
+            Location = new GeoPoint(
+                random.Next(-90, 90),
+                random.Next(0, 180),
+                random.Next(-1000, 1000)
+            );
             FixedPosition3DAccuracy = Math.Round(random.NextDouble() * 10, 1);
             IsGivenInLLA = true;
             Mode = TMode3Enum.FixedMode;

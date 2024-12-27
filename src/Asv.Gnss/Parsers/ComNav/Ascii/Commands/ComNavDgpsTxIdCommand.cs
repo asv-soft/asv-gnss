@@ -38,7 +38,7 @@ namespace Asv.Gnss
         /// <remarks>
         /// This value is used as an identifier for the NOVATELX type of DgpsTxId.
         /// </remarks>
-        NOVATELX = 14
+        NOVATELX = 14,
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace Asv.Gnss
                 DgpsTxIdEnum.AUTO => $"DGPSTXID AUTO {Id:0000}",
                 DgpsTxIdEnum.RTCMV3 => $"DGPSTXID RTCMV3 {Id:0000}",
                 DgpsTxIdEnum.NOVATELX => $"DGPSTXID NOVATELX {Id:0000}",
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
 

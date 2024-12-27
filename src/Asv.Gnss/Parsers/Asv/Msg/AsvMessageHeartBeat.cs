@@ -100,7 +100,7 @@ namespace Asv.Gnss
         public AsvDeviceType DeviceType { get; set; }
 
         /// <summary>
-        /// Represents the state of a device.
+        /// Gets or sets represents the state of a device.
         /// </summary>
         /// <value>
         /// The device state.
@@ -168,7 +168,7 @@ namespace Asv.Gnss
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
             BinSerialize.WriteUShort(ref buffer, (ushort)DeviceType);
-            BinSerialize.WriteByte(ref buffer,(byte)DeviceState);
+            BinSerialize.WriteByte(ref buffer, (byte)DeviceState);
             BinSerialize.WriteByte(ref buffer, Reserved1);
             BinSerialize.WriteByte(ref buffer, Reserved2);
             BinSerialize.WriteByte(ref buffer, Reserved3);
@@ -183,17 +183,20 @@ namespace Asv.Gnss
         /// </returns>
         protected override int InternalGetContentByteSize() => 7;
 
+        /// <summary>
         /// Randomizes the properties of the object using the provided random number generator.
         /// @param random The random number generator to use for generating random values.
-        /// /
+        /// </summary>
         public override void Randomize(Random random)
         {
             Tag = null;
             Sequence = (ushort)random.Next(0, ushort.MaxValue);
             TargetId = (byte)random.Next(0, byte.MaxValue);
             SenderId = (byte)random.Next(0, byte.MaxValue);
-            DeviceType = (AsvDeviceType)random.Next(0,Enum.GetValues(typeof(AsvDeviceType)).Length -1);
-            DeviceState = (AsvDeviceState)random.Next(0, Enum.GetValues(typeof(AsvDeviceState)).Length - 1);
+            DeviceType = (AsvDeviceType)
+                random.Next(0, Enum.GetValues(typeof(AsvDeviceType)).Length - 1);
+            DeviceState = (AsvDeviceState)
+                random.Next(0, Enum.GetValues(typeof(AsvDeviceState)).Length - 1);
             Reserved1 = (byte)random.Next(0, byte.MaxValue);
             Reserved2 = (byte)random.Next(0, byte.MaxValue);
             Reserved3 = (byte)random.Next(0, byte.MaxValue);

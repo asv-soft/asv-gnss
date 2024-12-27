@@ -6,8 +6,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Base class for ASV (Autonomous Surface Vehicle) messages used in GNSS communication.
     /// </summary>
-    /// <typeparam name="T">The type of the message identifier.</typeparam>
-    public abstract class AsvMessageBase:GnssMessageBase<ushort>
+    public abstract class AsvMessageBase : GnssMessageBase<ushort>
     {
         /// <summary>
         /// Gets the protocol ID for the message parser.
@@ -49,11 +48,12 @@ namespace Asv.Gnss
             var bitIndex = 0;
             var sync1 = BinSerialize.ReadByte(ref buffer);
             var sync2 = BinSerialize.ReadByte(ref buffer);
-            
+
             if (sync1 != AsvMessageParser.Sync1 || sync2 != AsvMessageParser.Sync2)
             {
                 throw new Exception($"Error to deserialize {ProtocolId}.{Name}");
             }
+
             var length = BinSerialize.ReadUShort(ref buffer);
             var crc = AsvCrc16.Calc(crcSpan, length + 10);
             crcSpan = crcSpan.Slice(length + 10);
@@ -61,7 +61,9 @@ namespace Asv.Gnss
             var crcOrigin = BinSerialize.ReadUShort(ref crcSpan);
             if (crc != crcOrigin)
             {
-                throw new Exception($"Error to deserialize {ProtocolId}.{Name}: CRC error. Want {crc}. Got {crcOrigin}");
+                throw new Exception(
+                    $"Error to deserialize {ProtocolId}.{Name}: CRC error. Want {crc}. Got {crcOrigin}"
+                );
             }
 
             Sequence = BinSerialize.ReadUShort(ref buffer);
@@ -70,13 +72,18 @@ namespace Asv.Gnss
             var msgId = BinSerialize.ReadUShort(ref buffer);
             if (MessageId != msgId)
             {
-                throw new Exception($"Error to deserialize {ProtocolId}.{Name}: Message id not equals. Want '{MessageId}. Got '{msgId}''");
+                throw new Exception(
+                    $"Error to deserialize {ProtocolId}.{Name}: Message id not equals. Want '{MessageId}. Got '{msgId}''"
+                );
             }
-            
+
             var dataSpan = buffer.Slice(bitIndex / 8, length);
+
             // var dataSpan = buffer.Slice(0, length);
             InternalContentDeserialize(ref dataSpan);
-            buffer = buffer.Slice(length + 2 /*CRC16*/);
+            buffer = buffer.Slice(
+                length + 2 /*CRC16*/
+            );
         }
 
         /// <summary>
@@ -95,7 +102,10 @@ namespace Asv.Gnss
             BinSerialize.WriteByte(ref buffer, TargetId);
             BinSerialize.WriteUShort(ref buffer, MessageId);
             InternalContentSerialize(ref buffer);
-            var crc = AsvCrc16.Calc(originSpan, length + 10 /*from sync1 to end of data*/);
+            var crc = AsvCrc16.Calc(
+                originSpan,
+                length + 10 /*from sync1 to end of data*/
+            );
             BinSerialize.WriteUShort(ref buffer, crc);
         }
 
@@ -119,13 +129,16 @@ namespace Asv.Gnss
         /// Calculates the total byte size of an object, including the header and CRC. </summary> <returns>
         /// The byte size of the object. </returns>
         /// /
-        public override int GetByteSize() => 10 /*HEADER*/  + InternalGetContentByteSize() + 2 /*CRC*/;
+        public override int GetByteSize() =>
+            10 /*HEADER*/
+            + InternalGetContentByteSize()
+            + 2 /*CRC*/
+        ;
 
         /// <summary>
         /// Randomizes the objects or properties of the derived class using the provided Random object.
         /// </summary>
         /// <param name="random">The Random object used for generating random values.</param>
         public abstract void Randomize(Random random);
-
     }
 }

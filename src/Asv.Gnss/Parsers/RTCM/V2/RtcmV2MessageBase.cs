@@ -6,7 +6,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Base class for RTCMv2 messages.
     /// </summary>
-    /// <typeparam name="T">The type of the RTCMv2 message ID.</typeparam>
     public abstract class RtcmV2MessageBase : GnssMessageBase<ushort>
     {
         /// <summary>
@@ -69,33 +68,49 @@ namespace Asv.Gnss
             var preamble = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
             if (preamble != RtcmV2Parser.SyncByte)
             {
-                throw new Exception($"Deserialization RTCMv2 message failed: want {RtcmV2Parser.SyncByte:X}. Read {preamble:X}");
+                throw new Exception(
+                    $"Deserialization RTCMv2 message failed: want {RtcmV2Parser.SyncByte:X}. Read {preamble:X}"
+                );
             }
+
             var msgType = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
             if (msgType != MessageId)
             {
-                throw new Exception($"Deserialization RTCMv2 message failed: want message number '{MessageId}'. Read = '{msgType}'");
+                throw new Exception(
+                    $"Deserialization RTCMv2 message failed: want message number '{MessageId}'. Read = '{msgType}'"
+                );
             }
-            ReferenceStationId = (ushort)SpanBitHelper.GetBitU(buffer,ref bitIndex, 10);
-            var zCountRaw = SpanBitHelper.GetBitU(buffer,ref bitIndex, 13);
+
+            ReferenceStationId = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
+            var zCountRaw = SpanBitHelper.GetBitU(buffer, ref bitIndex, 13);
             ZCount = zCountRaw * 0.6;
 
             if (ZCount >= 3600.0)
             {
                 throw new Exception($"RTCMv2 Modified Z-count error: zcnt={ZCount}");
             }
+
             GpsTime = Adjhour(ZCount);
 
-            SequenceNumber = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 3);
+            SequenceNumber = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
 
-            var payloadLength = (byte)(SpanBitHelper.GetBitU(buffer,ref bitIndex, 5) * 3);
-            if (payloadLength > (buffer.Length - 6 /* header 48 bit*/))
+            var payloadLength = (byte)(SpanBitHelper.GetBitU(buffer, ref bitIndex, 5) * 3);
+            if (
+                payloadLength
+                > (
+                    buffer.Length - 6 /* header 48 bit*/
+                )
+            )
             {
-                throw new Exception($"Deserialization RTCMv2 message failed: length too small. Want '{payloadLength}'. Read = '{buffer.Length - 6}'");
+                throw new Exception(
+                    $"Deserialization RTCMv2 message failed: length too small. Want '{payloadLength}'. Read = '{buffer.Length - 6}'"
+                );
             }
-            Udre = GetUdre((byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 3));
+
+            Udre = GetUdre((byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3));
             DeserializeContent(buffer, ref bitIndex, payloadLength);
-            buffer = bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
+            buffer =
+                bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
         }
 
         /// <summary>
@@ -104,7 +119,11 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer containing the content to be deserialized.</param>
         /// <param name="bitIndex">The starting bit index from where to begin deserialization.</param>
         /// <param name="payloadLength">The length of the content payload.</param>
-        protected abstract void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength);
+        protected abstract void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        );
 
         /// <summary>
         /// Serializes the object and writes it to the specified buffer.
@@ -125,10 +144,11 @@ namespace Asv.Gnss
             throw new NotImplementedException();
         }
 
+        /// <summary>
         /// Adjusts the hour of the current UTC time based on the given zcnt value.
-        /// @param zcnt The value used to adjust the hour of the current UTC time.
-        /// @return The adjusted DateTime value.
-        /// /
+        /// <param name="zcnt">The value used to adjust the hour of the current UTC time.</param>
+        /// </summary>
+        /// <returns>The adjusted DateTime value.</returns>
         protected virtual DateTime Adjhour(double zcnt)
         {
             var utc = DateTime.UtcNow;
@@ -142,8 +162,14 @@ namespace Asv.Gnss
 
             var hour = Math.Floor(tow / 3600.0);
             var sec = tow - hour * 3600.0;
-            if (zcnt < sec - 1800.0) zcnt += 3600.0;
-            else if (zcnt > sec + 1800.0) zcnt -= 3600.0;
+            if (zcnt < sec - 1800.0)
+            {
+                zcnt += 3600.0;
+            }
+            else if (zcnt > sec + 1800.0)
+            {
+                zcnt -= 3600.0;
+            }
 
             return RtcmV3Helper.GetFromGps(week, hour * 3600 + zcnt);
         }
@@ -188,7 +214,5 @@ namespace Asv.Gnss
                     return double.NaN;
             }
         }
-
-
     }
 }

@@ -8,19 +8,19 @@ namespace Asv.Gnss
         NoPvt,
         StandAlonePvt,
         DifferentialPvt,
-        FixedLocation
+        FixedLocation,
     }
 
     public enum AsvTimeSystemEnum
     {
         Gps,
-        Glonass
+        Glonass,
     }
 
     public enum AsvDatumEnum
     {
         WGS84,
-        PZ90_02
+        PZ90_02,
     }
 
     public class AsvMessagePvtGeo : AsvMessageBase
@@ -53,7 +53,6 @@ namespace Asv.Gnss
             buffer = buffer[(bitIndex / 8)..];
         }
 
-
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
             var week = 0;
@@ -67,12 +66,32 @@ namespace Asv.Gnss
             AsvHelper.SetBitU(buffer, cycle, ref bitIndex, 4);
             AsvHelper.SetBitU(buffer, (uint)PosType, ref bitIndex, 4);
             AsvHelper.SetBitU(buffer, Error, ref bitIndex, 4);
-            AsvHelper.SetBitS(buffer, (int)Math.Round(Latitude * 3600.0 / 0.0005), ref bitIndex, 32);
-            AsvHelper.SetBitS(buffer, (int)Math.Round(Longitude * 3600.0 / 0.0005), ref bitIndex, 32);
+            AsvHelper.SetBitS(
+                buffer,
+                (int)Math.Round(Latitude * 3600.0 / 0.0005),
+                ref bitIndex,
+                32
+            );
+            AsvHelper.SetBitS(
+                buffer,
+                (int)Math.Round(Longitude * 3600.0 / 0.0005),
+                ref bitIndex,
+                32
+            );
             AsvHelper.SetBitS(buffer, (int)Math.Round(Height / 0.01), ref bitIndex, 24);
             AsvHelper.SetBitS(buffer, (int)Math.Round(Undulation / 0.01), ref bitIndex, 16);
-            AsvHelper.SetBitS(buffer, (int)Math.Round(RxClkBias / GpsRawHelper.P2_30), ref bitIndex, 22);
-            AsvHelper.SetBitS(buffer, (int)Math.Round(RxClkDrift / GpsRawHelper.P2_30), ref bitIndex, 12);
+            AsvHelper.SetBitS(
+                buffer,
+                (int)Math.Round(RxClkBias / GpsRawHelper.P2_30),
+                ref bitIndex,
+                22
+            );
+            AsvHelper.SetBitS(
+                buffer,
+                (int)Math.Round(RxClkDrift / GpsRawHelper.P2_30),
+                ref bitIndex,
+                12
+            );
             AsvHelper.SetBitU(buffer, (uint)TimeSystem, ref bitIndex, 2);
             AsvHelper.SetBitU(buffer, (uint)Datum, ref bitIndex, 2);
             AsvHelper.SetBitU(buffer, NrSv, ref bitIndex, 6);
@@ -99,7 +118,7 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// GPS Epoch Time
+        /// Gets or sets gPS Epoch Time.
         /// </summary>
         public DateTime Tow { get; set; }
 

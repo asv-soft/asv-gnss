@@ -17,7 +17,7 @@ namespace Asv.Gnss
         public override ushort MessageId => 0x0102;
 
         /// <summary>
-        /// The name of the property is "GbasVdbSendV2".
+        /// Gets the name of the property is "GbasVdbSendV2".
         /// </summary>
         /// <value>
         /// A <see cref="string"/> representing the name of the property.
@@ -55,7 +55,6 @@ namespace Asv.Gnss
         /// </value>
         public byte LifeTime { get; set; }
 
-
         /// <summary>
         /// Gets or sets the offset of the last byte in the message.
         /// </summary>
@@ -80,7 +79,7 @@ namespace Asv.Gnss
         public bool IsLastSlotInFrame { get; set; }
 
         /// <summary>
-        /// Data for sending over VDB.
+        /// Gets or sets data for sending over VDB.
         /// </summary>
         public byte[] Data { get; set; }
 
@@ -109,15 +108,21 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// Method to serialize internal content. </summary> <param name="buffer">The buffer to store serialized data.</param> <returns>None.</returns>
+        /// Method to serialize internal content. </summary> <param name="buffer">The buffer to store serialized data.</param>
         /// /
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
             BinSerialize.WriteByte(ref buffer, (byte)((byte)Slot | (GbasMessageId << 3)));
-            BinSerialize.WriteByte(ref buffer,(byte)ActiveSlots);
+            BinSerialize.WriteByte(ref buffer, (byte)ActiveSlots);
             BinSerialize.WriteByte(ref buffer, LifeTime);
-            BinSerialize.WriteByte(ref buffer,
-                (byte)((LastByteOffset & 0b0000_0111) | ((IsLastSlotInFrame ? 1 : 0) << 3) | (ReservedFlgas << 4)));
+            BinSerialize.WriteByte(
+                ref buffer,
+                (byte)(
+                    (LastByteOffset & 0b0000_0111)
+                    | ((IsLastSlotInFrame ? 1 : 0) << 3)
+                    | (ReservedFlgas << 4)
+                )
+            );
             Data.CopyTo(buffer);
             buffer = buffer.Slice(Data.Length);
         }
@@ -141,12 +146,13 @@ namespace Asv.Gnss
             random.NextBytes(Data);
             LastByteOffset = (byte)random.Next(0, 7);
             ReservedFlgas = (byte)random.Next(0, (int)Math.Pow(2, 4));
-            ActiveSlots = (AsvGbasSlot)random.Next(0, Enum.GetValues(typeof(AsvGbasSlot)).Length - 1);
-            Slot = (AsvGbasSlotMsg)random.Next(0, Enum.GetValues(typeof(AsvGbasSlotMsg)).Length - 1);
+            ActiveSlots = (AsvGbasSlot)
+                random.Next(0, Enum.GetValues(typeof(AsvGbasSlot)).Length - 1);
+            Slot = (AsvGbasSlotMsg)
+                random.Next(0, Enum.GetValues(typeof(AsvGbasSlotMsg)).Length - 1);
             IsLastSlotInFrame = random.Next() % 2 == 0;
         }
     }
-
 
     /// <summary>
     /// Represents the slot messages for AsvGbas.

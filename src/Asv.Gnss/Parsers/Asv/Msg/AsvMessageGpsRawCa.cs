@@ -6,9 +6,10 @@ namespace Asv.Gnss
     public class AsvMessageGpsRawCa : AsvMessageBase
     {
         private const int NavBitsU32Length = 10;
-        
+
         public override ushort MessageId => 0x112;
         public override string Name => "GpsRawCa";
+
         protected override void InternalContentDeserialize(ref ReadOnlySpan<byte> buffer)
         {
             var bitIndex = 0;
@@ -19,12 +20,13 @@ namespace Asv.Gnss
             UtcTime = AsvHelper.Gps2Utc(gpsTime);
             Prn = (int)AsvHelper.GetBitU(buffer, ref bitIndex, 6);
             CrcPassed = AsvHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
-            var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1); bitIndex += 4;
-            
+            var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1);
+            bitIndex += 4;
+
             SignalType = GnssSignalTypeEnum.L1CA;
             RindexSignalCode = "1C";
             RinexSatCode = $"G{Prn}";
-            
+
             SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GPS, Prn);
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
@@ -33,6 +35,7 @@ namespace Asv.Gnss
             {
                 NAVBitsU32[i] = BinSerialize.ReadUInt(ref buffer);
             }
+
             GpsSubFrame = GpsSubFrameFactory.Create(NAVBitsU32);
             L1Code = code1 != 0 ? AsvHelper.CODE_L1P : AsvHelper.CODE_L1C;
         }
@@ -50,16 +53,24 @@ namespace Asv.Gnss
             AsvHelper.SetBitU(buffer, cycle, ref bitIndex, 4);
             AsvHelper.SetBitU(buffer, (uint)Prn, ref bitIndex, 6);
             AsvHelper.SetBitU(buffer, (uint)(CrcPassed ? 1 : 0), ref bitIndex, 1);
-            AsvHelper.SetBitU(buffer, (uint)(L1Code == AsvHelper.CODE_L1C ? 0 : 1), ref bitIndex, 1);
+            AsvHelper.SetBitU(
+                buffer,
+                (uint)(L1Code == AsvHelper.CODE_L1C ? 0 : 1),
+                ref bitIndex,
+                1
+            );
             bitIndex += 4;
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
-            if (NAVBitsU32 == null) return;
+            if (NAVBitsU32 == null)
+            {
+                return;
+            }
+
             for (var i = 0; i < NavBitsU32Length; i++)
             {
                 BinSerialize.WriteUInt(ref buffer, NAVBitsU32[i]);
             }
-            
         }
 
         protected override int InternalGetContentByteSize()
@@ -81,18 +92,16 @@ namespace Asv.Gnss
             NAVBitsU32[1] = (uint)(random.Next() % 5 + 1) << 8;
             GpsSubFrame = GpsSubFrameFactory.Create(NAVBitsU32);
         }
-        
+
         /// <summary>
-        /// GPS Epoch Time
+        /// Gets or sets gPS Epoch Time.
         /// </summary>
         public DateTime UtcTime { get; set; }
         public int Prn { get; set; }
-        
+
         public int SatelliteId { get; set; }
         public bool CrcPassed { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
+
         public byte L1Code { get; set; }
         public ushort SvId { get; set; }
         public string RinexSatCode { get; set; }
@@ -116,7 +125,7 @@ namespace Asv.Gnss
                 SatPrn = Prn,
                 RinexSatCode = RinexSatCode,
                 RindexSignalCode = RindexSignalCode,
-                GpsSubFrame = GpsSubFrame
+                GpsSubFrame = GpsSubFrame,
             };
 
             Array.Copy(NAVBitsU32, msg.RawData, NAVBitsU32.Length);

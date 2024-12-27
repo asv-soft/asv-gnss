@@ -2,22 +2,24 @@
 
 namespace Asv.Gnss
 {
-
     public enum ComNavSatelliteSystemEnum
     {
         GPS = 0,
         BD2 = 4,
         GLONASS = 1,
         GALILEO = 3,
-        BD3 = 7
+        BD3 = 7,
     }
+
     /// <summary>
     /// Prevents the receiver from using a system
     /// This command is used to prevent the receiver from using all satellites in a system in the solution computations.
     /// </summary>
-    public class ComNavSetLockoutSystemCommand:ComNavAsciiCommandBase
+    public class ComNavSetLockoutSystemCommand : ComNavAsciiCommandBase
     {
+        /// <summary>
         /// Gets or sets the satellite system of the property.
+        /// </summary>
         public ComNavSatelliteSystemEnum SatelliteSystem { get; set; }
 
         /// <summary>
@@ -35,7 +37,7 @@ namespace Asv.Gnss
                 ComNavSatelliteSystemEnum.GLONASS => "LOCKOUTSYSTEM GLONASS",
                 ComNavSatelliteSystemEnum.GALILEO => "LOCKOUTSYSTEM GALILEO",
                 ComNavSatelliteSystemEnum.BD3 => "LOCKOUTSYSTEM BD3",
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
 
@@ -44,5 +46,4 @@ namespace Asv.Gnss
         /// </summary>
         public override string MessageId => "LOCKOUTSYSTEM";
     }
-
 }

@@ -13,7 +13,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a connection to a GNSS device.
     /// </summary>
-    public interface IGnssConnection:IDisposable
+    public interface IGnssConnection : IDisposable
     {
         /// <summary>
         /// Gets the data stream associated with the object.
@@ -92,9 +92,7 @@ namespace Asv.Gnss
         /// <param name="cancel">The cancellation token.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the message was sent successfully; otherwise, false.</returns>
         Task<bool> Send(IGnssMessageBase msg, CancellationToken cancel);
-        
     }
-
 
     /// <summary>
     /// Factory class for creating GNSS connections and filtering messages.
@@ -106,7 +104,8 @@ namespace Asv.Gnss
         /// /
         public static IGnssConnection CreateDefault(string connectionString)
         {
-            return new GnssConnection(connectionString,
+            return new GnssConnection(
+                connectionString,
                 new AsvMessageParser().RegisterDefaultMessages(),
                 new ComNavBinaryParser().RegisterDefaultMessages(),
                 new ComNavAsciiParser().RegisterDefaultMessages(),
@@ -114,7 +113,8 @@ namespace Asv.Gnss
                 new RtcmV2Parser().RegisterDefaultMessages(),
                 new RtcmV3Parser().RegisterDefaultMessages(),
                 new UbxBinaryParser().RegisterDefaultMessages(),
-                new SbfBinaryParser().RegisterDefaultMessages());
+                new SbfBinaryParser().RegisterDefaultMessages()
+            );
         }
 
         /// <summary>
@@ -124,8 +124,10 @@ namespace Asv.Gnss
         /// <typeparam name="TMsgId">The type of the MessageId.</typeparam>
         /// <param name="src">The source observable stream of GnssMessageBase<TMsgId>.</param>
         /// <returns>An observable stream of type TMsg.</returns>
-        public static IObservable<TMsg> Filter<TMsg,TMsgId>(this IObservable<GnssMessageBase<TMsgId>> src) 
-            where TMsg :GnssMessageBase<TMsgId>, new()
+        public static IObservable<TMsg> Filter<TMsg, TMsgId>(
+            this IObservable<GnssMessageBase<TMsgId>> src
+        )
+            where TMsg : GnssMessageBase<TMsgId>, new()
         {
             var msg = new TMsg();
             var id = msg.MessageId;
@@ -160,7 +162,10 @@ namespace Asv.Gnss
         /// <param name="src">The GNSS connection.</param>
         /// <param name="setTagCallback">The callback method to set the tag for the messages.</param>
         /// <returns>An observable sequence of messages of type TMsg.</returns>
-        public static IObservable<TMsg> FilterWithTag<TMsg>(this IGnssConnection src, Action<TMsg> setTagCallback)
+        public static IObservable<TMsg> FilterWithTag<TMsg>(
+            this IGnssConnection src,
+            Action<TMsg> setTagCallback
+        )
         {
             return src.OnMessage.Where(_ => _ is TMsg).Cast<TMsg>().Do(setTagCallback);
         }
@@ -185,7 +190,10 @@ namespace Asv.Gnss
         /// <param name="src">The GNSS connection.</param>
         /// <param name="filter">The filter function to apply on the messages.</param>
         /// <returns>An observable sequence of messages that satisfy the filter function.</returns>
-        public static IObservable<TMsg> Filter<TMsg>(this IGnssConnection src, Func<TMsg, bool> filter)
+        public static IObservable<TMsg> Filter<TMsg>(
+            this IGnssConnection src,
+            Func<TMsg, bool> filter
+        )
         {
             return src.OnMessage.Where(_ => _ is TMsg).Cast<TMsg>().Where(filter);
         }

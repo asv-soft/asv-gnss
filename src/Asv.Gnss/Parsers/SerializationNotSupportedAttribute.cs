@@ -14,9 +14,6 @@ namespace Asv.Gnss
         /// <summary>
         /// Initializes a new instance of the SerializationNotSupportedAttribute class.
         /// </summary>
-        public SerializationNotSupportedAttribute()
-        {
-
-        }
+        public SerializationNotSupportedAttribute() { }
     }
 }

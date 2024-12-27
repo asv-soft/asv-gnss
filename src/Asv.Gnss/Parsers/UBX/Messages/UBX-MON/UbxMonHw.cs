@@ -9,25 +9,13 @@ namespace Asv.Gnss
         public override byte SubClass => 0x09;
         public override string Name => "UBX-MON-HW-POOL";
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-            
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
-        
 
-        public override void Randomize(Random random)
-        {
-            
-        }
-
-        
+        public override void Randomize(Random random) { }
     }
 
     [SerializationNotSupported]
@@ -59,15 +47,12 @@ namespace Asv.Gnss
         public double CwJammingIndicator { get; set; }
         public double AgcMonitor { get; set; }
 
-       
-
         protected override void SerializeContent(ref Span<byte> buffer)
         {
             throw new NotImplementedException();
         }
 
         protected override int GetContentByteSize() => 28;
-        
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
@@ -92,6 +77,7 @@ namespace Asv.Gnss
             {
                 VP[i] = BinSerialize.ReadByte(ref buffer);
             }
+
             JamInd = BinSerialize.ReadByte(ref buffer);
             BinSerialize.ReadUShort(ref buffer); // reserved 2
             PinIrq = BinSerialize.ReadInt(ref buffer);
@@ -108,7 +94,7 @@ namespace Asv.Gnss
             PinBank = random.Next();
             PinDir = random.Next();
             PinVal = random.Next();
-            Noise = (ushort)random.Next(0,ushort.MaxValue);
+            Noise = (ushort)random.Next(0, ushort.MaxValue);
             AgcCnt = (ushort)random.Next(0, ushort.MaxValue);
         }
 
@@ -118,14 +104,14 @@ namespace Asv.Gnss
             DontKnow = 1,
             Ok = 2,
             Short = 3,
-            Open = 4
+            Open = 4,
         }
 
         public enum AntennaPowerStatus
         {
             Off = 0,
             On = 1,
-            DontKnow = 2
+            DontKnow = 2,
         }
 
         public enum JammingStateEnum
@@ -133,11 +119,7 @@ namespace Asv.Gnss
             Unknown = 0,
             Ok = 1,
             Warning = 2,
-            Critical = 3
+            Critical = 3,
         }
-
-       
-
-        
     }
 }

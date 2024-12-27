@@ -10,7 +10,7 @@ namespace Asv.Gnss
     /// the string with the exception of the time mark).
     /// Encoding: The first received bit is stored as the MSB of NAVBits[0]. The
     /// unused bits in NAVBits[2] must be ignored by the decoding software.
-    /// </summary> 
+    /// </summary>
     public class SbfPacketGloRawCa : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4026;
@@ -30,6 +30,5 @@ namespace Asv.Gnss
         }
 
         public GlonassWordBase GlonassWord { get; set; }
-        
     }
 }

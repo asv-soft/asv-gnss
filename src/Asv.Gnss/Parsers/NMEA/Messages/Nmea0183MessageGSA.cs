@@ -3,22 +3,22 @@
 namespace Asv.Gnss
 {
     /// <summary>
-    /// GSA GPS DOP and active satellites. 
-    /// 1) Selection mode 
-    /// 2) Mode 
-    /// 3) ID of 1st satellite used for fix 
-    /// 4) ID of 2nd satellite used for fix 
-    /// ... 
-    /// 14) ID of 12th satellite used for fix 
-    /// 15) PDOP in meters 
-    /// 16) HDOP in meters 
-    /// 17) VDOP in meters 
-    /// 18) Checksum
+    /// GSA GPS DOP and active satellites.
+    /// 1) Selection mode
+    /// 2) Mode
+    /// 3) ID of 1st satellite used for fix
+    /// 4) ID of 2nd satellite used for fix
+    /// ...
+    /// 14) ID of 12th satellite used for fix
+    /// 15) PDOP in meters
+    /// 16) HDOP in meters
+    /// 17) VDOP in meters
+    /// 18) Checksum.
     /// </summary>
     public class Nmea0183MessageGSA : Nmea0183MessageBase
     {
         /// <summary>
-        /// The message identifier for a specific message.
+        /// Gets the message identifier for a specific message.
         /// </summary>
         /// <value>
         /// The message identifier.
@@ -29,13 +29,17 @@ namespace Asv.Gnss
         /// Method for deserializing an array of string items and setting the corresponding properties.
         /// </summary>
         /// <param name="items">The array of string items to deserialize.</param>
-        /// <returns>Void</returns>
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             SelectionMode = items[1];
             Mode = items[2];
 
-            SatelliteId = items.Skip(3).Take(12).Where(_ => !string.IsNullOrEmpty(_)).Select(int.Parse).ToArray();
+            SatelliteId = items
+                .Skip(3)
+                .Take(12)
+                .Where(_ => !string.IsNullOrEmpty(_))
+                .Select(int.Parse)
+                .ToArray();
 
             PDop = Nmea0183Helper.ParseDouble(items[15]);
             HDop = Nmea0183Helper.ParseDouble(items[16]);

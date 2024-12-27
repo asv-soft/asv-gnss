@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -11,55 +12,12 @@ using ZLogger;
 
 namespace Asv.Gnss.Shell
 {
-    public class PvtInfo
-    {
-        public DateTime UtcTime { get; set; }
-        public DateTime GpsTime { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double AltitudeEllipse { get; set; }
-        public double AltitudeMsl { get; set; }
-        public double GroundSpeed2D { get; set; }
-        public double HeadingOfMotion2D { get; set; }
-    }
-
-    public interface ITrackLogger
-    {
-        IRxValue<PvtInfo> OnPvtInfo { get; }
-        IRxValue<Nmea0183MessageBase> OnNmea { get; }
-        public void Init();
-    }
-
-    public class UbxTrackLoggerConfig
-    {
-        /// <summary>
-        /// Connection string for UBX.
-        /// </summary>
-        public string ConnectionString { get; set; } = "tcp://10.10.5.16:30"; //"serial:COM10?br=115200";
-
-        public bool IsEnabled { get; set; } = true;
-
-        /// <summary>
-        /// Pvt logging rate for UBX (Hz)
-        /// </summary>
-        public byte PvtRate { get; set; } = 1;
-
-        /// <summary>
-        /// Gets or sets the timeout value in milliseconds for reconnecting.
-        /// </summary>
-        /// <value>
-        /// The timeout value in milliseconds for reconnecting. The default value is 10,000 milliseconds.
-        /// </value>
-        public int ReconnectTimeoutMs { get; set; } = 10_000;
-    }
-
-
     public class UbxTrackLogger : DisposableOnceWithCancel, ITrackLogger
     {
         private readonly ILogger<UbxTrackLogger> _logger;
         private readonly UbxTrackLoggerConfig _cfg;
-        private readonly RxValue<PvtInfo> _onPvtInfo;
-        private readonly RxValue<Nmea0183MessageBase> _onNmea;
+        private readonly RxValue<PvtInfo> _onPvtInfo = null!;
+        private readonly RxValue<Nmea0183MessageBase> _onNmea = null!;
 
         /// <summary>
         /// This private variable indicates whether the initialization process has been completed.
@@ -69,11 +27,10 @@ namespace Asv.Gnss.Shell
         private UbxDevice? _device;
         private int _busy;
 
-
         public IRxValue<PvtInfo> OnPvtInfo => _onPvtInfo;
 
         /// <summary>
-        /// GGA and RMC
+        /// Gets gGA and RMC.
         /// </summary>
         public IRxValue<Nmea0183MessageBase> OnNmea => _onNmea;
 
@@ -85,22 +42,25 @@ namespace Asv.Gnss.Shell
 
                 // Add ZLogger provider to ILoggingBuilder
                 // logging.AddZLoggerConsole();
-                logging.AddZLoggerFile("log.txt",
+                logging.AddZLoggerFile(
+                    "log.txt",
                     options =>
                     {
                         options.UseJsonFormatter(conf =>
                         {
-                            conf.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                            conf.JsonSerializerOptions.Converters.Add(
+                                new JsonStringEnumConverter()
+                            );
                             conf.UseUtcTimestamp = true;
                         });
                         options.TimeProvider = TimeProvider.System;
-                    });
+                    }
+                );
 
                 // Output Structured Logging, setup options
                 // logging.AddZLoggerConsole(options => options.UseJsonFormatter());
             });
             _logger = factory.CreateLogger<UbxTrackLogger>();
-
 
             _cfg = cfg ?? throw new ArgumentNullException(nameof(cfg));
             if (_cfg.IsEnabled == false)
@@ -111,7 +71,6 @@ namespace Asv.Gnss.Shell
 
             _onPvtInfo = new RxValue<PvtInfo>().DisposeItWith(Disposable);
             _onNmea = new RxValue<Nmea0183MessageBase>().DisposeItWith(Disposable);
-
         }
 
         /// <summary>
@@ -120,8 +79,14 @@ namespace Asv.Gnss.Shell
         public void Init()
         {
             // if disabled => do nothing
-            if (_cfg.IsEnabled == false) return;
-            Observable.Timer(TimeSpan.FromMilliseconds(1000)).Subscribe(_ => InitUbxDevice(), DisposeCancel);
+            if (!_cfg.IsEnabled)
+            {
+                return;
+            }
+
+            Observable
+                .Timer(TimeSpan.FromMilliseconds(1000))
+                .Subscribe(_ => InitUbxDevice(), DisposeCancel);
         }
 
         /// <summary>
@@ -131,8 +96,11 @@ namespace Asv.Gnss.Shell
         /// <returns>A default instance of <see cref="IGnssConnection"/>.</returns>
         private IGnssConnection GetDefaultUbxConnection(IPort? port)
         {
-            return new GnssConnection(port, new UbxBinaryParser().RegisterDefaultMessages(),
-                new Nmea0183Parser().RegisterDefaultMessages());
+            return new GnssConnection(
+                port,
+                new UbxBinaryParser().RegisterDefaultMessages(),
+                new Nmea0183Parser().RegisterDefaultMessages()
+            );
         }
 
         /// <summary>
@@ -140,9 +108,21 @@ namespace Asv.Gnss.Shell
         /// </summary>
         /// <param name="currentConfig">The current serial port configuration.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the UbxDevice.</returns>
-        private async Task<UbxDevice> ConfigureBaudRateAndCreateDevice(SerialPortConfig currentConfig)
+        private async Task<UbxDevice> ConfigureBaudRateAndCreateDevice(
+            SerialPortConfig currentConfig
+        )
         {
-            var availableBr = new[] { currentConfig.BoundRate, 9600, 38400, 57600, 115200, 230400, 460800 }.Distinct()
+            var availableBr = new[]
+            {
+                currentConfig.BoundRate,
+                9600,
+                38400,
+                57600,
+                115200,
+                230400,
+                460800,
+            }
+                .Distinct()
                 .ToArray();
             var requiredBoundRate = currentConfig.BoundRate;
             Exception? lastEx = null;
@@ -155,36 +135,59 @@ namespace Asv.Gnss.Shell
                     currentConfig.BoundRate = br;
                     port = new CustomSerialPort(currentConfig);
                     port.Enable();
-                    device =
-                        new UbxDevice(GetDefaultUbxConnection(port), UbxDeviceConfig.Default).DisposeItWith(Disposable);
-                    var cfgPort =
-                        (UbxCfgPrtConfigUart)(await device.GetCfgPort(1, DisposeCancel).ConfigureAwait(false)).Config;
+                    device = new UbxDevice(
+                        GetDefaultUbxConnection(port),
+                        UbxDeviceConfig.Default
+                    ).DisposeItWith(Disposable);
+                    var cfgPort = (UbxCfgPrtConfigUart)
+                        (await device.GetCfgPort(1, DisposeCancel).ConfigureAwait(false)).Config;
+
                     // _svc.Server.StatusText.Info($"GNSS device BoundRate: {cfgPort.BoundRate}");
                     _logger.LogInformation($"GNSS device BoundRate: {cfgPort.BoundRate}");
-                    if (cfgPort.BoundRate == requiredBoundRate) return device;
+                    if (cfgPort.BoundRate == requiredBoundRate)
+                    {
+                        return device;
+                    }
 
                     // _svc.Server.StatusText.Info($"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}");
-                    _logger.LogInformation($"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}");
+                    _logger.LogInformation(
+                        $"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}"
+                    );
                     await device
                         .SetCfgPort(
                             new UbxCfgPrt
                             {
-                                Config = new UbxCfgPrtConfigUart { PortId = 1, BoundRate = requiredBoundRate }
-                            }, DisposeCancel).ConfigureAwait(false);
+                                Config = new UbxCfgPrtConfigUart
+                                {
+                                    PortId = 1,
+                                    BoundRate = requiredBoundRate,
+                                },
+                            },
+                            DisposeCancel
+                        )
+                        .ConfigureAwait(false);
                     device.Dispose();
                     port.Disable();
                     port.Dispose();
                     currentConfig.BoundRate = requiredBoundRate;
                     port = new CustomSerialPort(currentConfig);
                     port.Enable();
-                    device = new UbxDevice(GetDefaultUbxConnection(port), UbxDeviceConfig.Default)
-                        .DisposeItWith(Disposable);
+                    device = new UbxDevice(
+                        GetDefaultUbxConnection(port),
+                        UbxDeviceConfig.Default
+                    ).DisposeItWith(Disposable);
 
-                    cfgPort = (UbxCfgPrtConfigUart)(await device.GetCfgPort(1, DisposeCancel).ConfigureAwait(false))
-                        .Config;
+                    cfgPort = (UbxCfgPrtConfigUart)
+                        (await device.GetCfgPort(1, DisposeCancel).ConfigureAwait(false)).Config;
+
                     // _svc.Server.StatusText.Info($"GNSS device BoundRate: {cfgPort.BoundRate}");
-                    _logger.LogInformation($"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}");
-                    if (cfgPort.BoundRate == requiredBoundRate) return device;
+                    _logger.LogInformation(
+                        $"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}"
+                    );
+                    if (cfgPort.BoundRate == requiredBoundRate)
+                    {
+                        return device;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -217,20 +220,25 @@ namespace Asv.Gnss.Shell
                         port.Dispose();
                         var uri = new Uri(_cfg.ConnectionString);
                         SerialPortConfig.TryParseFromUri(uri, out var portConf);
-                        _device = await ConfigureBaudRateAndCreateDevice(portConf).ConfigureAwait(false);
+                        _device = await ConfigureBaudRateAndCreateDevice(portConf)
+                            .ConfigureAwait(false);
                     }
                     else
                     {
-                        _device =
-                            new UbxDevice(GetDefaultUbxConnection(port), UbxDeviceConfig.Default)
-                                .DisposeItWith(Disposable);
+                        _device = new UbxDevice(
+                            GetDefaultUbxConnection(port),
+                            UbxDeviceConfig.Default
+                        ).DisposeItWith(Disposable);
                     }
 
-                    _device?.Connection.Filter<Nmea0183MessageBase>()
+                    _device
+                        ?.Connection.Filter<Nmea0183MessageBase>()
                         .Subscribe(_onNmea)
                         .DisposeItWith(Disposable);
 
-                    _device?.Connection.Filter<UbxNavPvt>().Select(_ => new PvtInfo
+                    _device
+                        ?.Connection.Filter<UbxNavPvt>()
+                        .Select(_ => new PvtInfo
                         {
                             UtcTime = _.UtcTime,
                             GpsTime = _.GpsTime,
@@ -239,12 +247,10 @@ namespace Asv.Gnss.Shell
                             AltitudeEllipse = _.AltElipsoid,
                             AltitudeMsl = _.AltMsl,
                             GroundSpeed2D = _.GroundSpeed2D,
-                            HeadingOfMotion2D = _.HeadingOfMotion2D
+                            HeadingOfMotion2D = _.HeadingOfMotion2D,
                         })
                         .Subscribe(_onPvtInfo)
                         .DisposeItWith(Disposable);
-
-
 
                     // _device?.Connection.Filter<UbxNavPvt>()
                     //     .Select(_ =>
@@ -281,58 +287,94 @@ namespace Asv.Gnss.Shell
                     //         _onNmea.OnNext(msgs[1]);
                     //     })
                     //     .DisposeItWith(Disposable);
-
                 }
 
                 var ver = await _device.GetMonVer(DisposeCancel);
+
                 // _svc.Server.StatusText.Debug($"Found GNSS HW:{ver.Hardware.Trim('\0')}");
                 _logger.LogInformation($"Found GNSS HW:{ver.Hardware.Trim('\0')}");
+
                 // _svc.Server.StatusText.Debug($"GNSS SW:{ver.Software.Trim('\0')}");
                 _logger.LogInformation($"GNSS SW:{ver.Software.Trim('\0')}");
                 var ext = ver.Extensions.Select(_ => _.Trim('\0')).Distinct().ToArray();
+
                 // _svc.Server.StatusText.Debug($"GNSS EXT:{string.Join(",", ext)}");
                 _logger.LogInformation($"GNSS EXT:{string.Join(",", ext)}");
                 await _device.SetCfgNav5(
                     new UbxCfgNav5
                     {
                         PlatformModel = UbxCfgNav5.ModelEnum.AirborneWithLess1gAcceleration,
-                        PositionMode = UbxCfgNav5.PositionModeEnum.Auto
-                    }, DisposeCancel);
+                        PositionMode = UbxCfgNav5.PositionModeEnum.Auto,
+                    },
+                    DisposeCancel
+                );
 
-                //Turn Off RtcmV3 and NMEA
-                await _device.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xFE, 0, DisposeCancel);
-                await _device.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0x05, 0, DisposeCancel);
+                // Turn Off RtcmV3 and NMEA
+                await _device.SetMessageRate(
+                    (byte)UbxHelper.ClassIDs.RTCM3,
+                    0xFE,
+                    0,
+                    DisposeCancel
+                );
+                await _device.SetMessageRate(
+                    (byte)UbxHelper.ClassIDs.RTCM3,
+                    0x05,
+                    0,
+                    DisposeCancel
+                );
                 await _device.SetupRtcmMSM4Rate(0, DisposeCancel);
-                await _device.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xE6, 0, DisposeCancel);
+                await _device.SetMessageRate(
+                    (byte)UbxHelper.ClassIDs.RTCM3,
+                    0xE6,
+                    0,
+                    DisposeCancel
+                );
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NAV, 0x12, 0, DisposeCancel);
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x15, 0, DisposeCancel);
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x13, 0, DisposeCancel);
                 await _device.TurnOffNmea(DisposeCancel);
 
                 await _device.SetCfgRate(
-                    new UbxCfgRate { NavRate = 1, RateHz = _cfg.PvtRate, TimeSystem = UbxCfgRate.TimeSystemEnum.Utc },
-                    DisposeCancel);
+                    new UbxCfgRate
+                    {
+                        NavRate = 1,
+                        RateHz = _cfg.PvtRate,
+                        TimeSystem = UbxCfgRate.TimeSystemEnum.Utc,
+                    },
+                    DisposeCancel
+                );
+
                 // surveyin msg - for feedback
                 await _device.SetMessageRate<UbxNavSvin>(2, DisposeCancel);
+
                 // pvt msg - for feedback
                 await _device.SetMessageRate<UbxNavPvt>(1, DisposeCancel);
+
                 // Turn On NMEA GGA
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, 0x00, 1, DisposeCancel);
+
                 // Turn On NMEA RMC
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, 0x04, 1, DisposeCancel);
+
                 // mon-hw - 2s
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.MON, 0x09, 2, DisposeCancel);
 
                 _isInit = true;
-                if (!await StartIdleMode(DisposeCancel)) throw new Exception();
+                if (!await StartIdleMode(DisposeCancel))
+                {
+                    throw new Exception();
+                }
+
                 _isInit = true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _logger.LogError("Error to init GNSS");
                 _logger.LogError(
-                    $"Reconnect after {TimeSpan.FromMilliseconds(_cfg.ReconnectTimeoutMs).TotalSeconds:F0} sec...");
-                Observable.Timer(TimeSpan.FromMilliseconds(_cfg.ReconnectTimeoutMs))
+                    $"Reconnect after {TimeSpan.FromMilliseconds(_cfg.ReconnectTimeoutMs).TotalSeconds:F0} sec..."
+                );
+                Observable
+                    .Timer(TimeSpan.FromMilliseconds(_cfg.ReconnectTimeoutMs))
                     .Subscribe(_ => InitUbxDevice(), DisposeCancel);
             }
         }
@@ -344,14 +386,32 @@ namespace Asv.Gnss.Shell
         /// <returns>The result of the operation.</returns>
         private async Task<bool> StartIdleMode(CancellationToken cancel)
         {
-            if (CheckInitAndBeginCall() == false) return false;
+            if (CheckInitAndBeginCall() == false)
+            {
+                return false;
+            }
+
             try
             {
                 var mode = await _device.GetCfgTMode3(cancel);
-                if (mode.Mode == TMode3Enum.Disabled) return true;
-                await _device.Push(new UbxCfgTMode3 { Mode = TMode3Enum.Disabled, IsGivenInLLA = false }, cancel)
+                if (mode.Mode == TMode3Enum.Disabled)
+                {
+                    return true;
+                }
+
+                if (_device == null)
+                {
+                    return true;
+                }
+
+                await _device
+                    .Push(
+                        new UbxCfgTMode3 { Mode = TMode3Enum.Disabled, IsGivenInLLA = false },
+                        cancel
+                    )
                     .ConfigureAwait(false);
                 await _device.RebootReceiver(cancel).ConfigureAwait(false);
+
                 return true;
             }
             catch (Exception e)
@@ -388,10 +448,13 @@ namespace Asv.Gnss.Shell
                 return false;
             }
 
-            if (_isInit) return true;
+            if (_isInit)
+            {
+                return true;
+            }
+
             _logger.LogWarning("Temporarily rejected: now is busy");
             return false;
-
         }
     }
 }

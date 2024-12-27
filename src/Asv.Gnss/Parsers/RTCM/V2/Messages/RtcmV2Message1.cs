@@ -44,7 +44,11 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer containing the serialized data.</param>
         /// <param name="bitIndex">The starting bit index in the buffer.</param>
         /// <param name="payloadLength">The length of the payload in bytes.</param>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        )
         {
             var itmCnt = payloadLength / 5;
             ObservationItems = new DObservationItem[itmCnt];
@@ -52,7 +56,7 @@ namespace Asv.Gnss
             for (var i = 0; i < itmCnt; i++)
             {
                 var item = new DObservationItem(NavigationSystemEnum.SYS_GPS);
-                item.Deserialize(buffer,ref bitIndex);
+                item.Deserialize(buffer, ref bitIndex);
                 ObservationItems[i] = item;
             }
         }
@@ -78,6 +82,6 @@ namespace Asv.Gnss
         /// <summary>
         /// One-sigma differential error more than 8 met
         /// </summary>
-        MoreEight = 3
+        MoreEight = 3,
     }
 }

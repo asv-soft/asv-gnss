@@ -5,7 +5,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a GNSS message parser interface.
     /// </summary>
-    public interface IGnssMessageParser:IDisposable
+    public interface IGnssMessageParser : IDisposable
     {
         /// <summary>
         /// Gets the number of input bytes for the statistic.
@@ -54,7 +54,5 @@ namespace Asv.Gnss
         /// An observable sequence that emits <see cref="IGnssMessageBase"/> objects whenever a GNSS message is received.
         /// </value>
         IObservable<IGnssMessageBase> OnMessage { get; }
-        
-        
     }
 }

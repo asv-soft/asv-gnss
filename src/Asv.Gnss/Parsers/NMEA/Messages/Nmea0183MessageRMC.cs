@@ -16,7 +16,7 @@ namespace Asv.Gnss
     /// 8) Track made good, degrees true
     /// 9) Date, ddmmyy
     /// 10) Magnetic Variation, degrees
-    /// 11) E or W
+    /// 11) E or W.
     /// </summary>
     public class Nmea0183MessageRMC : Nmea0183MessageBase
     {
@@ -25,34 +25,63 @@ namespace Asv.Gnss
         /// </summary>
         public const string GnssMessageId = "RMC";
 
+        /// <summary>
         /// Gets the message ID associated with this message.
-        /// @return The message ID as a string.
-        /// /
+        /// <returns>The message ID as a string.</returns>
+        /// </summary>
         public override string MessageId => GnssMessageId;
+
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             TimeUtc = Nmea0183Helper.ParseTime(items[1]);
-            Status = items[2].Length > 0 ? items[2][0].GetPositionFixStatus() : PositionFixStatus.Unknown;
+            Status =
+                items[2].Length > 0
+                    ? items[2][0].GetPositionFixStatus()
+                    : PositionFixStatus.Unknown;
             Latitude = Nmea0183Helper.ParseLatitude(items[3]);
-            if (string.Equals(items[4], "S", StringComparison.InvariantCultureIgnoreCase)) Latitude *= -1;
-            
+            if (string.Equals(items[4], "S", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Latitude *= -1;
+            }
+
             Longitude = Nmea0183Helper.ParseLongitude(items[5]);
-            if (string.Equals(items[6], "W", StringComparison.InvariantCultureIgnoreCase)) Longitude *= -1;
-            SpeedOverGroundKnots =
-                double.TryParse(items[7], NumberStyles.Any, CultureInfo.InvariantCulture, out var speedKnots)
-                    ? speedKnots
-                    : double.NaN;
-            TrackMadeGoodDegreesTrue =
-                double.TryParse(items[8], NumberStyles.Any, CultureInfo.InvariantCulture, out var trackMade)
-                    ? trackMade
-                    : double.NaN;
-            
+            if (string.Equals(items[6], "W", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Longitude *= -1;
+            }
+
+            SpeedOverGroundKnots = double.TryParse(
+                items[7],
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out var speedKnots
+            )
+                ? speedKnots
+                : double.NaN;
+            TrackMadeGoodDegreesTrue = double.TryParse(
+                items[8],
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out var trackMade
+            )
+                ? trackMade
+                : double.NaN;
+
             Date = Nmea0183Helper.ParseDate(items[9]);
-            if (double.TryParse(items[10], NumberStyles.Any, CultureInfo.InvariantCulture, out var magneticVariation))
+            if (
+                double.TryParse(
+                    items[10],
+                    NumberStyles.Any,
+                    CultureInfo.InvariantCulture,
+                    out var magneticVariation
+                )
+            )
             {
                 MagneticVariationDegrees = magneticVariation;
                 if (string.Equals(items[11], "W", StringComparison.InvariantCultureIgnoreCase))
+                {
                     MagneticVariationDegrees *= -1;
+                }
             }
             else
             {
@@ -90,12 +119,14 @@ namespace Asv.Gnss
             InsertSeparator(ref buffer);
             var speed = double.IsNaN(SpeedOverGroundKnots)
                 ? string.Empty
-                : Math.Round(SpeedOverGroundKnots, 1).ToString("000.0", CultureInfo.InvariantCulture);
+                : Math.Round(SpeedOverGroundKnots, 1)
+                    .ToString("000.0", CultureInfo.InvariantCulture);
             speed.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             var track = double.IsNaN(TrackMadeGoodDegreesTrue)
                 ? string.Empty
-                : Math.Round(TrackMadeGoodDegreesTrue, 1).ToString("000.0", CultureInfo.InvariantCulture);
+                : Math.Round(TrackMadeGoodDegreesTrue, 1)
+                    .ToString("000.0", CultureInfo.InvariantCulture);
             track.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             Nmea0183Helper.SerializeDate(Date).CopyTo(ref buffer, encoding);
@@ -106,14 +137,18 @@ namespace Asv.Gnss
             }
             else
             {
-                Math.Round(Math.Abs(MagneticVariationDegrees), 1).ToString("000.0", CultureInfo.InvariantCulture)
+                Math.Round(Math.Abs(MagneticVariationDegrees), 1)
+                    .ToString("000.0", CultureInfo.InvariantCulture)
                     .CopyTo(ref buffer, encoding);
                 InsertSeparator(ref buffer);
                 InsertByte(ref buffer, MagneticVariationDegrees < 0 ? West : East);
             }
 
-            if (string.IsNullOrWhiteSpace(PositioningSystemMode)) return;
-            
+            if (string.IsNullOrWhiteSpace(PositioningSystemMode))
+            {
+                return;
+            }
+
             InsertSeparator(ref buffer);
             PositioningSystemMode.CopyTo(ref buffer, encoding);
 
@@ -122,14 +157,13 @@ namespace Asv.Gnss
             // NavigationalStatus.Value.SetNavigationalStatus().CopyTo(ref buffer, encoding);
         }
 
-
         /// <summary>
-        /// UTC of position fix
+        /// Gets or sets uTC of position fix.
         /// </summary>
         public DateTime? TimeUtc { get; set; }
-        
+
         /// <summary>
-        /// Position fix status
+        /// Gets or sets position fix status.
         /// </summary>
         public PositionFixStatus Status { get; set; }
         public double Latitude { get; set; }
@@ -143,30 +177,7 @@ namespace Asv.Gnss
     public enum PositionFixStatus
     {
         Unknown,
-        Valid, 
-        Warning
-    }
-
-    public static class PositionFixStatusHelper
-    {
-        public static PositionFixStatus GetPositionFixStatus(this char src)
-        {
-            return src switch
-            {
-                'a' or 'A' => PositionFixStatus.Valid,
-                'v' or 'V' => PositionFixStatus.Warning,
-                _ => PositionFixStatus.Unknown
-            };
-        }
-
-        public static string Serialize(this PositionFixStatus src)
-        {
-            return src switch
-            {
-                PositionFixStatus.Valid => "A",
-                PositionFixStatus.Warning => "V",
-                _ => string.Empty
-            };
-        }
+        Valid,
+        Warning,
     }
 }

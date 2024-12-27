@@ -5,157 +5,191 @@ using System.Text;
 
 namespace Asv.Gnss
 {
-    public class ComNavSimpleAnswerParser : GnssMessageParserBase<ComNavSimpleAnswerMessageBase, string>
-	{
-		public const string GnssProtocolId = "ComNavSimpleAnswer";
-		public override string ProtocolId => GnssProtocolId;
+    public class ComNavSimpleAnswerParser
+        : GnssMessageParserBase<ComNavSimpleAnswerMessageBase, string>
+    {
+        public const string GnssProtocolId = "ComNavSimpleAnswer";
+        public override string ProtocolId => GnssProtocolId;
 
-		private readonly AnswerState[] _states = {
-			new(ComNavSimpleOkMessage.ComNavMessageId),
-			new(ComNavSimpleErrorMessage.ComNavMessageId),
-			new(ComNavSimpleTransmitMessage.ComNavMessageId)
-		};
-		public override bool Read(byte data)
-		{
-			foreach (var state in _states)
-			{
-				var s = state.Read(data);
-				if (s != State.Finished) continue;
-				
-				var span = state.GetMessage();
-				ParsePacket(state.MessageId, ref span);
-				Reset();
-				return true;
-			}
-			return false;
-		}
+        private readonly AnswerState[] _states =
+        {
+            new(ComNavSimpleOkMessage.ComNavMessageId),
+            new(ComNavSimpleErrorMessage.ComNavMessageId),
+            new(ComNavSimpleTransmitMessage.ComNavMessageId),
+        };
 
-		public override void Reset()
-		{
-			foreach (var state in _states)
-			{
-				state.Reset();
-			}
-		}
+        public override bool Read(byte data)
+        {
+            foreach (var state in _states)
+            {
+                var s = state.Read(data);
+                if (s != State.Finished)
+                {
+                    continue;
+                }
 
-		private enum State
-		{
-			WaitingNext,
-			Finished,
-			Error
-		}
+                var span = state.GetMessage();
+                ParsePacket(state.MessageId, ref span);
+                Reset();
+                return true;
+            }
 
-		private class AnswerState
-		{
-			private enum AnswerStateEnum
-			{
-				Header,
-				PossibleCarriageReturn,
-				PossibleLineFeed,
-				Body,
-				CarriageReturn
-			}
+            return false;
+        }
 
-			private readonly byte[][] _header = new byte[2][];
-			private readonly byte[] _buffer = new byte[MaxBufferSize];
-			private int _bufferIndex = 0;
-			private const int MaxBufferSize = 1024;
+        public override void Reset()
+        {
+            foreach (var state in _states)
+            {
+                state.Reset();
+            }
+        }
 
-			private AnswerStateEnum _state = AnswerStateEnum.Header;
-			private const byte CarriageReturn = 0xD;
-			private const byte LineFeed = 0xA;
-			private readonly int _headerLength = 0;
+        private enum State
+        {
+            WaitingNext,
+            Finished,
+            Error,
+        }
 
-			public AnswerState(string header)
-			{
-				MessageId = header;
-				_header[0] = Encoding.ASCII.GetBytes(header.Trim().ToLower(CultureInfo.InvariantCulture));
-				_header[1] = Encoding.ASCII.GetBytes(header.Trim().ToUpper(CultureInfo.InvariantCulture));
-				if (_header[0].Length == _header[1].Length) _headerLength = _header[0].Length;
-				else throw new Exception($"Protocol {GnssProtocolId}. Header upper case length and header lower case length not equal!");
-			}
+        private class AnswerState
+        {
+            private enum AnswerStateEnum
+            {
+                Header,
+                PossibleCarriageReturn,
+                PossibleLineFeed,
+                Body,
+                CarriageReturn,
+            }
 
-			public State Read(byte data)
-			{
-				switch (_state)
-				{
-					case AnswerStateEnum.Header:
-						if (data != _header[0][_bufferIndex] && data != _header[1][_bufferIndex])
-						{
-							_bufferIndex = 0;
-							return State.Error;
-						}
+            private readonly byte[][] _header = new byte[2][];
+            private readonly byte[] _buffer = new byte[MaxBufferSize];
+            private int _bufferIndex = 0;
+            private const int MaxBufferSize = 1024;
 
-						_buffer[_bufferIndex] = data;
-						_bufferIndex += 1;
-						
-						if (_bufferIndex == _headerLength)
-							_state = AnswerStateEnum.PossibleCarriageReturn;
-						
-						return State.WaitingNext;
-					case AnswerStateEnum.PossibleCarriageReturn:
-						switch (data)
-						{
-							case CarriageReturn:
-								_state = AnswerStateEnum.PossibleLineFeed;
-								_buffer[_bufferIndex++] = 0x20;
-								return State.WaitingNext;
-							case >= 0x20 and <= 0x7E:
-								_buffer[_bufferIndex++] = data;
-								_state = AnswerStateEnum.Body;
-								return State.WaitingNext;
-							default:
-								Reset();
-								return State.Error;
-						}
+            private AnswerStateEnum _state = AnswerStateEnum.Header;
+            private const byte CarriageReturn = 0xD;
+            private const byte LineFeed = 0xA;
+            private readonly int _headerLength = 0;
 
-					case AnswerStateEnum.PossibleLineFeed:
-						if (data == LineFeed)
-						{
-							_state = AnswerStateEnum.Body;
-							return State.WaitingNext;
-						}
-						Reset();
-						return State.Error;
-					case AnswerStateEnum.Body:
-						switch (data)
-						{
-							case >= 0x20 and <= 0x7E:
-							{
-								_buffer[_bufferIndex++] = data;
-								if (_bufferIndex < MaxBufferSize - 2) return State.WaitingNext;
-								Reset();
-								return State.Error;
-							}
-							case CarriageReturn:
-								_state = AnswerStateEnum.CarriageReturn;
-								return State.WaitingNext;
-							default:
-								Reset();
-								return State.Error;
-						}
-					case AnswerStateEnum.CarriageReturn:
+            public AnswerState(string header)
+            {
+                MessageId = header;
+                _header[0] = Encoding.ASCII.GetBytes(
+                    header.Trim().ToLower(CultureInfo.InvariantCulture)
+                );
+                _header[1] = Encoding.ASCII.GetBytes(
+                    header.Trim().ToUpper(CultureInfo.InvariantCulture)
+                );
+                if (_header[0].Length == _header[1].Length)
+                {
+                    _headerLength = _header[0].Length;
+                }
+                else
+                {
+                    throw new Exception(
+                        $"Protocol {GnssProtocolId}. Header upper case length and header lower case length not equal!"
+                    );
+                }
+            }
 
-						if (data == LineFeed)
-							return State.Finished;
-						Reset();
-						return State.Error;
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
-			}
-			public ReadOnlySpan<byte> GetMessage()
-			{
-				return new ReadOnlySpan<byte>(_buffer, 0, _bufferIndex);
-			}
+            public State Read(byte data)
+            {
+                switch (_state)
+                {
+                    case AnswerStateEnum.Header:
+                        if (data != _header[0][_bufferIndex] && data != _header[1][_bufferIndex])
+                        {
+                            _bufferIndex = 0;
+                            return State.Error;
+                        }
 
-			public string MessageId { get; }
+                        _buffer[_bufferIndex] = data;
+                        _bufferIndex += 1;
 
-			public void Reset()
-			{
-				_bufferIndex = 0;
-				_state = AnswerStateEnum.Header;
-			}
-		}
-	}
+                        if (_bufferIndex == _headerLength)
+                        {
+                            _state = AnswerStateEnum.PossibleCarriageReturn;
+                        }
+
+                        return State.WaitingNext;
+                    case AnswerStateEnum.PossibleCarriageReturn:
+                        switch (data)
+                        {
+                            case CarriageReturn:
+                                _state = AnswerStateEnum.PossibleLineFeed;
+                                _buffer[_bufferIndex++] = 0x20;
+                                return State.WaitingNext;
+                            case >= 0x20
+                            and <= 0x7E:
+                                _buffer[_bufferIndex++] = data;
+                                _state = AnswerStateEnum.Body;
+                                return State.WaitingNext;
+                            default:
+                                Reset();
+                                return State.Error;
+                        }
+
+                    case AnswerStateEnum.PossibleLineFeed:
+                        if (data == LineFeed)
+                        {
+                            _state = AnswerStateEnum.Body;
+                            return State.WaitingNext;
+                        }
+
+                        Reset();
+                        return State.Error;
+                    case AnswerStateEnum.Body:
+                        switch (data)
+                        {
+                            case >= 0x20
+                            and <= 0x7E:
+                            {
+                                _buffer[_bufferIndex++] = data;
+                                if (_bufferIndex < MaxBufferSize - 2)
+                                {
+                                    return State.WaitingNext;
+                                }
+
+                                Reset();
+                                return State.Error;
+                            }
+
+                            case CarriageReturn:
+                                _state = AnswerStateEnum.CarriageReturn;
+                                return State.WaitingNext;
+                            default:
+                                Reset();
+                                return State.Error;
+                        }
+
+                    case AnswerStateEnum.CarriageReturn:
+
+                        if (data == LineFeed)
+                        {
+                            return State.Finished;
+                        }
+
+                        Reset();
+                        return State.Error;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            public ReadOnlySpan<byte> GetMessage()
+            {
+                return new ReadOnlySpan<byte>(_buffer, 0, _bufferIndex);
+            }
+
+            public string MessageId { get; }
+
+            public void Reset()
+            {
+                _bufferIndex = 0;
+                _state = AnswerStateEnum.Header;
+            }
+        }
+    }
 }

@@ -12,12 +12,12 @@ namespace Asv.Gnss
         /// Represents the GNSS protocol ID.
         /// </summary>
         public const string GnssProtocolId = "ComNavBinary";
-        
+
         /// <summary>
         /// The maximum size of a packet.
         /// </summary>
         public const int MaxPacketSize = 1024 * 10;
-        
+
         /// <summary>
         /// The byte value representing the first synchronization byte.
         /// </summary>
@@ -36,7 +36,6 @@ namespace Asv.Gnss
         /// Represents the third synchronization byte.
         /// </summary>
         public const byte ThirdSyncByte = 0x12;
-
 
         /// <summary>
         /// Represents the current state.
@@ -58,6 +57,7 @@ namespace Asv.Gnss
         /// </summary>
         private byte _headerLength;
 
+        /// <summary>
         /// Represents the length of a message.
         /// This variable is a private member of a class.
         /// </summary>
@@ -67,7 +67,6 @@ namespace Asv.Gnss
         /// The index at which the stop message should be displayed.
         /// </summary>
         private int _stopMessageIndex;
-
 
         /// <summary>
         /// Represents the possible states for a synchronization process.
@@ -102,7 +101,7 @@ namespace Asv.Gnss
             /// <summary>
             /// Represents a state in the message processing workflow.
             /// </summary>
-            Message
+            Message,
         }
 
         /// <summary>
@@ -116,7 +115,6 @@ namespace Asv.Gnss
         /// </value>
         public override string ProtocolId => GnssProtocolId;
 
-
         /// <summary>
         /// Read method reads a byte of data and processes it according to the current state of the parser.
         /// </summary>
@@ -127,7 +125,11 @@ namespace Asv.Gnss
             switch (_state)
             {
                 case State.Sync1:
-                    if (data != FirstSyncByte) return false;
+                    if (data != FirstSyncByte)
+                    {
+                        return false;
+                    }
+
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = FirstSyncByte;
                     _state = State.Sync2;
@@ -142,6 +144,7 @@ namespace Asv.Gnss
                         _state = State.Sync3;
                         _buffer[_bufferIndex++] = SecondSyncByte;
                     }
+
                     break;
                 case State.Sync3:
                     if (data != ThirdSyncByte)
@@ -153,6 +156,7 @@ namespace Asv.Gnss
                         _state = State.HeaderLength;
                         _buffer[_bufferIndex++] = ThirdSyncByte;
                     }
+
                     break;
                 case State.HeaderLength:
                     _headerLength = data;
@@ -164,16 +168,24 @@ namespace Asv.Gnss
                     if (_bufferIndex == _headerLength)
                     {
                         _messageLength = BitConverter.ToUInt16(_buffer, 8);
-                        _stopMessageIndex = _headerLength + _messageLength + 4 /* CRC 32 bit*/;
+                        _stopMessageIndex =
+                            _headerLength
+                            + _messageLength
+                            + 4 /* CRC 32 bit*/
+                        ;
                         _state = State.Message;
                     }
+
                     break;
                 case State.Message:
                     _buffer[_bufferIndex++] = data;
                     if (_bufferIndex == _stopMessageIndex)
                     {
                         /* step back to last byte */
-                        var crc32Index = _bufferIndex - 4 /* CRC32 */;
+                        var crc32Index =
+                            _bufferIndex
+                            - 4 /* CRC32 */
+                        ;
                         var calculatedHash = ComNavCrc32.Calc(_buffer, 0, crc32Index);
                         var readedHash = BitConverter.ToUInt32(_buffer, crc32Index);
                         if (calculatedHash == readedHash)
@@ -184,14 +196,16 @@ namespace Asv.Gnss
                             Reset();
                             return true;
                         }
+
                         PublishWhenCrcError();
                         Reset();
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-
             }
+
             return false;
         }
 
