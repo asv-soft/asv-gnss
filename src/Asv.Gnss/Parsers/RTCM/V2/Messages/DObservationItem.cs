@@ -6,7 +6,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a single observation item.
     /// </summary>
-    public class DObservationItem 
+    public class DObservationItem
     {
         /// <summary>
         /// Determines the navigation system used by the software.
@@ -28,8 +28,10 @@ namespace Asv.Gnss
             var toh = tow % 3600.0;
             tow -= toh;
 
-            if (toe < toh - 1800.0) toe += 3600.0;
-            else if (toe > toh + 1800.0) toe -= 3600.0;
+            if (toe < toh - 1800.0)
+                toe += 3600.0;
+            else if (toe > toh + 1800.0)
+                toe -= 3600.0;
             return RtcmV3Helper.GetFromGps(week, tow + toe).AddHours(3.0);
         }
 
@@ -50,14 +52,15 @@ namespace Asv.Gnss
         /// /
         public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
-            var fact = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 1);
+            var fact = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             var udre = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
             var prn = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
-            var prc = SpanBitHelper.GetBitS(buffer,ref bitIndex, 16);
-            var rrc = SpanBitHelper.GetBitS(buffer,ref bitIndex, 8);
-            var iod = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 8);
+            var prc = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16);
+            var rrc = SpanBitHelper.GetBitS(buffer, ref bitIndex, 8);
+            var iod = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
 
-            if (prn == 0) prn = 32;
+            if (prn == 0)
+                prn = 32;
 
             Prn = prn;
 
@@ -78,7 +81,6 @@ namespace Asv.Gnss
             Udre = GetUdre(udre);
         }
 
-
         /// <summary>
         /// Converts a byte value representing UDRE (User Differential Range Error) to the corresponding SatUdreEnum value.
         /// </summary>
@@ -93,7 +95,7 @@ namespace Asv.Gnss
                 1 => SatUdreEnum.BetweenOneAndFour,
                 2 => SatUdreEnum.BetweenFourAndEight,
                 3 => SatUdreEnum.MoreEight,
-                _ => throw new ArgumentOutOfRangeException(nameof(udre))
+                _ => throw new ArgumentOutOfRangeException(nameof(udre)),
             };
         }
 

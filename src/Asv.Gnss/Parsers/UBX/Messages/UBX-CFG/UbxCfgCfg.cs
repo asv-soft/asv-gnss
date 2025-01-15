@@ -12,7 +12,7 @@ namespace Asv.Gnss
     }
 
     [Flags]
-    public enum UbxCfgSection:uint
+    public enum UbxCfgSection : uint
     {
         None = 0b0000_0000_0000_0000,
         All = 0b0001_1111_0001_1111,
@@ -22,45 +22,54 @@ namespace Asv.Gnss
         ///  this undefined data may be output for a short period of time after receiving the message.
         /// </summary>
         IoPort = 0b0000_0000_0000_0001,
+
         /// <summary>
         ///  Message configuration
         /// </summary>
         MsgConf = 0b0000_0000_0000_0010,
+
         /// <summary>
         ///  INF message configuration
         /// </summary>
         InfMsg = 0b0000_0000_0000_0100,
+
         /// <summary>
         ///  Navigation configuration
         /// </summary>
         NavConf = 0b0000_0000_0000_1000,
+
         /// <summary>
         ///  Receiver Manager configuration
         /// </summary>
         RxmConf = 0b0000_0000_0001_0000,
+
         /// <summary>
         ///  Sensor interface configuration (not supported in protocol versions less than 19)
         /// </summary>
         SenConf = 0b0000_0001_0000_0000,
+
         /// <summary>
         ///  Remote inventory configuration
         /// </summary>
         RinvConf = 0b0000_0010_0000_0000,
+
         /// <summary>
         ///  Antenna configuration
         /// </summary>
         AntConf = 0b0000_0100_0000_0000,
+
         /// <summary>
         ///  Logging configuration
         /// </summary>
         LogConf = 0b0000_1000_0000_0000,
+
         /// <summary>
         ///  FTS configuration. Only applicable to the FTS product variant
         /// </summary>
         FtsConf = 0b0001_0000_0000_0000,
     }
 
-    public class UbxCfgCfg:UbxMessageBase
+    public class UbxCfgCfg : UbxMessageBase
     {
         public override string Name => "UBX-CFG-CFG";
         public override byte Class => 0x06;
@@ -73,12 +82,12 @@ namespace Asv.Gnss
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
-            BinSerialize.WriteUInt(ref buffer,(uint)ClearMask);
+            BinSerialize.WriteUInt(ref buffer, (uint)ClearMask);
             BinSerialize.WriteUInt(ref buffer, (uint)SaveMask);
             BinSerialize.WriteUInt(ref buffer, (uint)LoadMask);
             if (DeviceMask.HasValue)
             {
-                BinSerialize.WriteByte(ref buffer,(byte)DeviceMask.Value);
+                BinSerialize.WriteByte(ref buffer, (byte)DeviceMask.Value);
             }
         }
 

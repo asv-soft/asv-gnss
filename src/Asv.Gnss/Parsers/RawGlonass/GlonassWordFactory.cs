@@ -54,7 +54,9 @@ namespace Asv.Gnss
                     subframe = new GlonassWordOdd();
                     break;
                 default:
-                    throw new Exception($"Unknown Glonass word ID:{Convert.ToString(wordId, 2).PadRight(8)}");
+                    throw new Exception(
+                        $"Unknown Glonass word ID:{Convert.ToString(wordId, 2).PadRight(8)}"
+                    );
             }
             subframe.Deserialize(data);
             return subframe;

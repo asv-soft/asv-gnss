@@ -21,7 +21,8 @@
         /// This exception is thrown when the UbxDevice receives a NAK response from the connected device,
         /// indicating that the requested command was not executed successfully.
         /// </remarks>
-        public UbxDeviceNakException(string source, UbxMessageBase request) : base(source,$"Command {request.Name} error: source {source} result code NAK")
+        public UbxDeviceNakException(string source, UbxMessageBase request)
+            : base(source, $"Command {request.Name} error: source {source} result code NAK")
         {
             Request = request;
         }

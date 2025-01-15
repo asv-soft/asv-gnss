@@ -34,7 +34,8 @@ namespace Asv.Gnss
         /// is processed in the background and this method returns a Task that can be used
         /// to track the progress or cancel the push operation if required.
         /// </remarks>
-        Task Push<T>(T pkt, CancellationToken cancel) where T : UbxMessageBase;
+        Task Push<T>(T pkt, CancellationToken cancel)
+            where T : UbxMessageBase;
 
         /// <summary>
         /// Pools a packet of type <typeparamref name="TPoolPacket"/> and converts it to a packet of type <typeparamref name="TPacket"/>.
@@ -48,10 +49,12 @@ namespace Asv.Gnss
         /// This method pools a packet of type <typeparamref name="TPoolPacket"/> and converts it to a packet of type <typeparamref name="TPacket"/>.
         /// The <paramref name="cancel"/> parameter is optional and can be used to cancel the pooling operation.
         /// </remarks>
-        Task<TPacket> Pool<TPacket, TPoolPacket>(TPoolPacket pkt, CancellationToken cancel = default)
+        Task<TPacket> Pool<TPacket, TPoolPacket>(
+            TPoolPacket pkt,
+            CancellationToken cancel = default
+        )
             where TPacket : UbxMessageBase
             where TPoolPacket : UbxMessageBase;
-        
     }
 
     /// <summary>
@@ -95,17 +98,14 @@ namespace Asv.Gnss
         /// Initializes a new instance of the UbxDevice class with the specified connection string and default configuration.
         /// </summary>
         /// <param name="connectionString">The connection string to the device.</param>
-        public UbxDevice(string connectionString):this(connectionString,UbxDeviceConfig.Default)
-        {
-        }
+        public UbxDevice(string connectionString)
+            : this(connectionString, UbxDeviceConfig.Default) { }
 
         /// <summary>
         /// Represents a UBX GNSS device.
         /// </summary>
-        public UbxDevice(string connectionString, UbxDeviceConfig config) : this(
-            GnssFactory.CreateDefault(connectionString), config)
-        {
-        }
+        public UbxDevice(string connectionString, UbxDeviceConfig config)
+            : this(GnssFactory.CreateDefault(connectionString), config) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UbxDevice"/> class.
@@ -113,11 +113,14 @@ namespace Asv.Gnss
         /// <param name="connection">The IGnssConnection object used for communication with the device.</param>
         /// <param name="config">The UbxDeviceConfig object containing the device configuration.</param>
         /// <param name="disposeConnection">A boolean value indicating whether the connection should be disposed along with the UbxDevice object.</param>
-        public UbxDevice(IGnssConnection connection, UbxDeviceConfig config, bool disposeConnection = true)
+        public UbxDevice(
+            IGnssConnection connection,
+            UbxDeviceConfig config,
+            bool disposeConnection = true
+        )
         {
             Connection = connection;
             _config = config;
-
 
             if (disposeConnection)
                 connection.DisposeItWith(Disposable);
@@ -147,7 +150,10 @@ namespace Asv.Gnss
                 ++currentAttempt;
                 try
                 {
-                    using var linkedCancel = CancellationTokenSource.CreateLinkedTokenSource(cancel, DisposeCancel);
+                    using var linkedCancel = CancellationTokenSource.CreateLinkedTokenSource(
+                        cancel,
+                        DisposeCancel
+                    );
                     linkedCancel.CancelAfter(_config.CommandTimeoutMs);
                     var tcs = new TaskCompletionSource<Unit>();
 #if NETFRAMEWORK
@@ -156,10 +162,18 @@ namespace Asv.Gnss
                     await using var c1 = linkedCancel.Token.Register(() => tcs.TrySetCanceled());
 #endif
 
-                    using var subscribeAck = Connection.Filter<UbxAckAck>().Where(_=>_.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
+                    using var subscribeAck = Connection
+                        .Filter<UbxAckAck>()
+                        .Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
                         .Subscribe(_ => tcs.TrySetResult(Unit.Default));
-                    using var subscribeNak = Connection.Filter<UbxAckNak>().Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
-                        .Subscribe(_ => tcs.TrySetException(new UbxDeviceNakException(Connection.Stream.Name,pkt)));
+                    using var subscribeNak = Connection
+                        .Filter<UbxAckNak>()
+                        .Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
+                        .Subscribe(_ =>
+                            tcs.TrySetException(
+                                new UbxDeviceNakException(Connection.Stream.Name, pkt)
+                            )
+                        );
 
                     await Connection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
                     await tcs.Task.ConfigureAwait(false);
@@ -167,7 +181,8 @@ namespace Asv.Gnss
                 }
                 catch (TaskCanceledException)
                 {
-                    if (IsDisposed) return;
+                    if (IsDisposed)
+                        return;
                     if (cancel.IsCancellationRequested)
                     {
                         throw;
@@ -175,7 +190,11 @@ namespace Asv.Gnss
                 }
             }
 
-            throw new UbxDeviceTimeoutException(Connection.Stream.Name, pkt, _config.CommandTimeoutMs);
+            throw new UbxDeviceTimeoutException(
+                Connection.Stream.Name,
+                pkt,
+                _config.CommandTimeoutMs
+            );
         }
 
         /// <summary>
@@ -188,9 +207,12 @@ namespace Asv.Gnss
         /// <returns>A <see cref="Task"/> representing the asynchronous operation. The task result is the received packet.</returns>
         /// <exception cref="UbxDeviceTimeoutException">Thrown if the device does not respond within the specified timeout.</exception>
         /// <exception cref="UbxDeviceNakException">Thrown if a negative acknowledgment (NAK) is received from the device.</exception>
-        public async Task<TPacket> Pool<TPacket, TPoolPacket>(TPoolPacket pkt, CancellationToken cancel = default)
+        public async Task<TPacket> Pool<TPacket, TPoolPacket>(
+            TPoolPacket pkt,
+            CancellationToken cancel = default
+        )
             where TPacket : UbxMessageBase
-            where TPoolPacket:UbxMessageBase
+            where TPoolPacket : UbxMessageBase
         {
             byte currentAttempt = 0;
             while (currentAttempt < _config.AttemptCount)
@@ -198,7 +220,10 @@ namespace Asv.Gnss
                 ++currentAttempt;
                 try
                 {
-                    using var linkedCancel = CancellationTokenSource.CreateLinkedTokenSource(cancel, DisposeCancel);
+                    using var linkedCancel = CancellationTokenSource.CreateLinkedTokenSource(
+                        cancel,
+                        DisposeCancel
+                    );
                     linkedCancel.CancelAfter(_config.CommandTimeoutMs);
                     var tcs = new TaskCompletionSource<TPacket>();
 #if NETFRAMEWORK
@@ -206,11 +231,19 @@ namespace Asv.Gnss
 #else
                     await using var c1 = linkedCancel.Token.Register(() => tcs.TrySetCanceled());
 #endif
-                    using var subscribeAck = Connection.Filter<TPacket>().Where(_ => _.Class == pkt.Class && _.SubClass == pkt.SubClass)
+                    using var subscribeAck = Connection
+                        .Filter<TPacket>()
+                        .Where(_ => _.Class == pkt.Class && _.SubClass == pkt.SubClass)
                         .Subscribe(_ => tcs.TrySetResult(_));
 
-                    using var subscribeNak = Connection.Filter<UbxAckNak>().Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
-                        .Subscribe(_ => tcs.TrySetException(new UbxDeviceNakException(Connection.Stream.Name, pkt)));
+                    using var subscribeNak = Connection
+                        .Filter<UbxAckNak>()
+                        .Where(_ => _.AckClassId == pkt.Class && _.AckSubclassId == pkt.SubClass)
+                        .Subscribe(_ =>
+                            tcs.TrySetException(
+                                new UbxDeviceNakException(Connection.Stream.Name, pkt)
+                            )
+                        );
 
                     await Connection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
                     return await tcs.Task.ConfigureAwait(false);
@@ -224,8 +257,11 @@ namespace Asv.Gnss
                 }
             }
 
-            throw new UbxDeviceTimeoutException(Connection.Stream.Name, pkt, _config.CommandTimeoutMs);
+            throw new UbxDeviceTimeoutException(
+                Connection.Stream.Name,
+                pkt,
+                _config.CommandTimeoutMs
+            );
         }
-
     }
 }

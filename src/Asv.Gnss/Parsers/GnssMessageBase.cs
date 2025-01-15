@@ -101,7 +101,12 @@ namespace Asv.Gnss
         /// <returns>A JSON string representing the current object.</returns>
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, Formatting.None, GlobalPositionConverter.Default, GlobalPositionNullableConverter.Default);
+            return JsonConvert.SerializeObject(
+                this,
+                Formatting.None,
+                GlobalPositionConverter.Default,
+                GlobalPositionNullableConverter.Default
+            );
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Asv.Gnss
         /// </summary>
         /// <param name="messageId">The ID of the message.</param>
         /// <param name="data">The raw data.</param>
-        protected GnssRawMessage(TMsgId messageId,ReadOnlySpan<byte> data)
+        protected GnssRawMessage(TMsgId messageId, ReadOnlySpan<byte> data)
         {
             MessageId = messageId;
             RawData = data.ToArray();

@@ -15,7 +15,5 @@
         public override string Name => "RawFnav";
 
         protected override int NavBitsU32Length => 8;
-
-        
     }
 }

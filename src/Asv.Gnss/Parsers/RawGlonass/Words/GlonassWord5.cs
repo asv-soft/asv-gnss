@@ -26,11 +26,15 @@ namespace Asv.Gnss
         {
             base.Deserialize(data);
             var bitIndex = 8U;
-            
-            Na = (ushort)GlonassRawHelper.GetBitU(data, bitIndex, 11); bitIndex += 11;
-            TauC = GlonassRawHelper.GetBitG(data, bitIndex, 32) * GlonassRawHelper.P2_31; bitIndex += 32 + 1;
-            N4 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5); bitIndex += 5;
-            TauGPS = GlonassRawHelper.GetBitG(data, bitIndex, 22) * GlonassRawHelper.P2_30; bitIndex += 22;
+
+            Na = (ushort)GlonassRawHelper.GetBitU(data, bitIndex, 11);
+            bitIndex += 11;
+            TauC = GlonassRawHelper.GetBitG(data, bitIndex, 32) * GlonassRawHelper.P2_31;
+            bitIndex += 32 + 1;
+            N4 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5);
+            bitIndex += 5;
+            TauGPS = GlonassRawHelper.GetBitG(data, bitIndex, 22) * GlonassRawHelper.P2_30;
+            bitIndex += 22;
             ln = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
         }
 

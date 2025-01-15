@@ -50,7 +50,7 @@ namespace Asv.Gnss
         IRNS,
         LEO,
         MSS,
-        NavIC
+        NavIC,
     }
 
     public enum GnssSignalTypeEnum
@@ -87,6 +87,6 @@ namespace Asv.Gnss
         L1S,
         B2b,
         B2_AltBoc,
-        S
+        S,
     }
 }

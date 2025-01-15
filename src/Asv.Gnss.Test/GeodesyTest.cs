@@ -14,9 +14,13 @@ namespace Asv.Gnss.Test
             {
                 var a = new GlobalPosition(new GlobalCoordinates(-90, 180), 1000);
                 var src = JsonConvert.SerializeObject(a, GlobalPositionConverter.Default);
-                var obj = JsonConvert.DeserializeObject<GlobalPosition>(src,
+                var obj = JsonConvert.DeserializeObject<GlobalPosition>(
+                    src,
                     new JsonSerializerSettings
-                        { Converters = new List<JsonConverter> { GlobalPositionConverter.Default } });
+                    {
+                        Converters = new List<JsonConverter> { GlobalPositionConverter.Default },
+                    }
+                );
                 Assert.Equal(a, obj);
             }
         }

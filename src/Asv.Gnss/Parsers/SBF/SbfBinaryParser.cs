@@ -13,8 +13,6 @@ namespace Asv.Gnss
         private ushort _msgId;
         private ushort _length;
 
-       
-
         public override string ProtocolId => GnssProtocolId;
 
         private enum State
@@ -22,7 +20,7 @@ namespace Asv.Gnss
             Sync1,
             Sync2,
             CrcAndIdAndLength,
-            Message
+            Message,
         }
 
         public override bool Read(byte data)
@@ -30,7 +28,8 @@ namespace Asv.Gnss
             switch (_state)
             {
                 case State.Sync1:
-                    if (data != 0x24) return false;
+                    if (data != 0x24)
+                        return false;
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = 0x24;
                     _state = State.Sync2;
@@ -73,8 +72,8 @@ namespace Asv.Gnss
                         var calculatedHash = SbfCrc16.checksum(_buffer, 4, _length - 4);
                         if (calculatedHash == _crc)
                         {
-                            var span = new ReadOnlySpan<byte>(_buffer,0, _length);
-                            ParsePacket(_msgId,ref span, true);
+                            var span = new ReadOnlySpan<byte>(_buffer, 0, _length);
+                            ParsePacket(_msgId, ref span, true);
                             Reset();
                             return true;
                         }
@@ -84,7 +83,6 @@ namespace Asv.Gnss
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-
             }
             return false;
         }

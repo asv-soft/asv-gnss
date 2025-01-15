@@ -1,5 +1,5 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -8,8 +8,11 @@ namespace Asv.Gnss
         public const int RtcmMessageId = 1230;
         public override string Name => "GLONASS bias information";
 
-
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             CodePhaseBiasIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
@@ -43,29 +46,29 @@ namespace Asv.Gnss
         private short _l2PCodePhaseBiasDf;
 
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its 
-        /// primary purpose is to link all message data to their unique sourceName. It is 
-        /// useful in distinguishing between desired and undesired data in cases 
-        /// where more than one service may be using the same data link 
-        /// frequency. It is also useful in accommodating multiple reference 
-        /// stations within a single data link transmission. 
-        /// In reference network applications the Reference Station ID plays an 
-        /// important role, because it is the link between the observation messages 
-        /// of a specific reference station and its auxiliary information contained in 
-        /// other messages for proper operation. Thus the Service Provider should 
-        /// ensure that the Reference Station ID is unique within the whole 
-        /// network, and that ID’s should be reassigned only when absolutely 
-        /// necessary. 
+        /// The Reference Station ID is determined by the service provider. Its
+        /// primary purpose is to link all message data to their unique sourceName. It is
+        /// useful in distinguishing between desired and undesired data in cases
+        /// where more than one service may be using the same data link
+        /// frequency. It is also useful in accommodating multiple reference
+        /// stations within a single data link transmission.
+        /// In reference network applications the Reference Station ID plays an
+        /// important role, because it is the link between the observation messages
+        /// of a specific reference station and its auxiliary information contained in
+        /// other messages for proper operation. Thus the Service Provider should
+        /// ensure that the Reference Station ID is unique within the whole
+        /// network, and that ID’s should be reassigned only when absolutely
+        /// necessary.
         /// Service Providers may need to coordinate their Reference Station ID
-        /// assignments with other Service Providers in their region in order to 
-        /// avoid conflicts. This may be especially critical for equipment 
-        /// accessing multiple services, depending on their services and means of 
+        /// assignments with other Service Providers in their region in order to
+        /// avoid conflicts. This may be especially critical for equipment
+        /// accessing multiple services, depending on their services and means of
         /// information distribution.
         /// </summary>
         public uint ReferenceStationID { get; set; }
 
         /// <summary>
-        /// DF421 
+        /// DF421
         /// 0 = The GLONASS Pseudorange and PhaseRange observations in the
         /// data stream are not aligned to the same measurement epoch.
         /// 1 = The GLONASS Pseudorange and PhaseRange observations in the
@@ -165,5 +168,4 @@ namespace Asv.Gnss
             L2PMask = 0x8,
         }
     }
-
 }

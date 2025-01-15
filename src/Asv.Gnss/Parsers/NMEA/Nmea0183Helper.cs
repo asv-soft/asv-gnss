@@ -11,53 +11,66 @@ namespace Asv.Gnss
         /// None
         /// </summary>
         SYS_NONE = 0x00,
+
         /// <summary>
         /// GPS
         /// </summary>
         SYS_GPS = 0x01,
+
         /// <summary>
         /// SBAS
         /// </summary>
         SYS_SBS = 0x02,
+
         /// <summary>
         /// GLONASS
         /// </summary>
         SYS_GLO = 0x04,
+
         /// <summary>
         /// Galileo
         /// </summary>
         SYS_GAL = 0x08,
+
         /// <summary>
         /// QZSS
         /// </summary>
         SYS_QZS = 0x10,
+
         /// <summary>
         /// BeiDou
         /// </summary>
         SYS_CMP = 0x20,
+
         /// <summary>
         /// IRNS
         /// </summary>
         SYS_IRN = 0x40,
+
         /// <summary>
         /// LEO
         /// </summary>
         SYS_LEO = 0x80,
+
         /// <summary>
         /// ALL
         /// </summary>
-        SYS_ALL = 0xFF
+        SYS_ALL = 0xFF,
     }
 
     public static class Nmea0183Helper
     {
-        
-        public static bool GetPrnFromNmeaSatId(int NMEASatId, out int PRN, out NmeaNavigationSystemEnum nav)
+        public static bool GetPrnFromNmeaSatId(
+            int NMEASatId,
+            out int PRN,
+            out NmeaNavigationSystemEnum nav
+        )
         {
             nav = NmeaNavigationSystemEnum.SYS_NONE;
             PRN = -1;
-            if (NMEASatId <= 0) return false;
-            
+            if (NMEASatId <= 0)
+                return false;
+
             switch (NMEASatId)
             {
                 case <= 32:
@@ -68,33 +81,38 @@ namespace Asv.Gnss
                     PRN = NMEASatId + 87;
                     nav = NmeaNavigationSystemEnum.SYS_SBS;
                     return true;
-                case >= 65 and <= 96:
+                case >= 65
+                and <= 96:
                     PRN = NMEASatId - 64;
                     nav = NmeaNavigationSystemEnum.SYS_GLO;
                     return true;
-                case >= 120 and <= 158:
+                case >= 120
+                and <= 158:
                     PRN = NMEASatId;
                     nav = NmeaNavigationSystemEnum.SYS_SBS;
                     return true;
-                case >= 193 and <= 199:
+                case >= 193
+                and <= 199:
                     PRN = NMEASatId - 192;
                     nav = NmeaNavigationSystemEnum.SYS_QZS;
                     return true;
-                case >= 201 and <= 235:
+                case >= 201
+                and <= 235:
                     PRN = NMEASatId - 200;
                     nav = NmeaNavigationSystemEnum.SYS_CMP;
                     return true;
-                case >= 301 and <= 336:
+                case >= 301
+                and <= 336:
                     PRN = NMEASatId - 300;
                     nav = NmeaNavigationSystemEnum.SYS_GAL;
                     return true;
-                case >= 401 and <= 414:
+                case >= 401
+                and <= 414:
                     PRN = NMEASatId - 400;
                     nav = NmeaNavigationSystemEnum.SYS_IRN;
                     return true;
             }
-            
-            
+
             // 1 - 32	GPS
             // 33 - 54	Various SBAS systems (EGNOS, WAAS, SDCM, GAGAN, MSAS)
             // 55 - 64	not used (might be assigned to further SBAS systems)
@@ -113,8 +131,12 @@ namespace Asv.Gnss
             return false;
         }
 
-        public static bool GetPrnFromNmeaSatId(string talkerId, int NMEASatId, out int PRN,
-            out NmeaNavigationSystemEnum nav)
+        public static bool GetPrnFromNmeaSatId(
+            string talkerId,
+            int NMEASatId,
+            out int PRN,
+            out NmeaNavigationSystemEnum nav
+        )
         {
             if (NMEASatId is >= 120 and <= 158)
             {
@@ -151,11 +173,13 @@ namespace Asv.Gnss
                 case "GQ":
                     switch (NMEASatId)
                     {
-                        case >= 1 and <= 7:
+                        case >= 1
+                        and <= 7:
                             PRN = NMEASatId;
                             nav = NmeaNavigationSystemEnum.SYS_QZS;
                             return true;
-                        case >= 193 and <= 199:
+                        case >= 193
+                        and <= 199:
                             PRN = NMEASatId - 192;
                             nav = NmeaNavigationSystemEnum.SYS_QZS;
                             return true;
@@ -165,11 +189,13 @@ namespace Asv.Gnss
                 case "BD":
                     switch (NMEASatId)
                     {
-                        case >= 1 and <= 35:
+                        case >= 1
+                        and <= 35:
                             PRN = NMEASatId;
                             nav = NmeaNavigationSystemEnum.SYS_CMP;
                             return true;
-                        case >= 201 and <= 235:
+                        case >= 201
+                        and <= 235:
                             PRN = NMEASatId - 200;
                             nav = NmeaNavigationSystemEnum.SYS_CMP;
                             return true;
@@ -178,11 +204,13 @@ namespace Asv.Gnss
                 case "GA":
                     switch (NMEASatId)
                     {
-                        case >= 1 and <= 36:
+                        case >= 1
+                        and <= 36:
                             PRN = NMEASatId;
                             nav = NmeaNavigationSystemEnum.SYS_GAL;
                             return true;
-                        case >= 301 and <= 336:
+                        case >= 301
+                        and <= 336:
                             PRN = NMEASatId - 300;
                             nav = NmeaNavigationSystemEnum.SYS_GAL;
                             return true;
@@ -191,11 +219,13 @@ namespace Asv.Gnss
                 case "GI":
                     switch (NMEASatId)
                     {
-                        case >= 1 and <= 14:
+                        case >= 1
+                        and <= 14:
                             PRN = NMEASatId;
                             nav = NmeaNavigationSystemEnum.SYS_IRN;
                             return true;
-                        case >= 401 and <= 414:
+                        case >= 401
+                        and <= 414:
                             PRN = NMEASatId - 400;
                             nav = NmeaNavigationSystemEnum.SYS_IRN;
                             return true;
@@ -214,13 +244,13 @@ namespace Asv.Gnss
             {
                 case "AG":
                     return "Autopilot - General";
-                
+
                 case "AP":
                     return "Autopilot - Magnetic";
 
                 case "BD":
                     return "BeiDou Navigation Satellite System";
-                
+
                 case "CD":
                     return "Communications – Digital Selective Calling (DSC)";
 
@@ -253,25 +283,25 @@ namespace Asv.Gnss
 
                 case "GA":
                     return "Galileo Navigation Satellite System";
-                
+
                 case "GB":
                     return "BeiDou Navigation Satellite System";
-                
+
                 case "GI":
                     return "Indian Regional Navigation Satellite System (IRNSS)";
-                
+
                 case "GL":
                     return "GLONASS Navigation Satellite System";
-                
+
                 case "GN":
                     return "Global Navigation";
-                
+
                 case "GP":
                     return "Global Positioning System (GPS)";
-                
+
                 case "GQ":
                     return "Quasi-Zenith Satellite System (QZSS)";
-                    
+
                 case "HC":
                     return "Heading – Magnetic Compass";
 
@@ -337,20 +367,27 @@ namespace Asv.Gnss
 
                 default:
                     return "Unknown";
-
             }
         }
 
         /// <summary>
-        /// hhmmss.ss | hhmmss | 
+        /// hhmmss.ss | hhmmss |
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public static DateTime? ParseTime(string token)
         {
             var now = DateTime.UtcNow;
-            if (!double.TryParse(token, NumberStyles.Any, CultureInfo.InvariantCulture, out var temp)) return null;
-            
+            if (
+                !double.TryParse(
+                    token,
+                    NumberStyles.Any,
+                    CultureInfo.InvariantCulture,
+                    out var temp
+                )
+            )
+                return null;
+
             var sss = (int)((temp - (int)temp) * 1000.0);
             var hh = (int)((int)temp / 10000.0);
             var mm = (int)(((int)temp - hh * 10000.0) / 100.0);
@@ -362,11 +399,12 @@ namespace Asv.Gnss
             // var mm = int.Parse(value.Substring(2, 2), CultureInfo.InvariantCulture);
             // var ss = double.Parse(value.Substring(2, 4), CultureInfo.InvariantCulture);
             // return new DateTime(0,0,0,hh,mm,00).AddSeconds(ss);
-
         }
+
         public static string SerializeTime(DateTime? time)
         {
-            if (!time.HasValue) return string.Empty;
+            if (!time.HasValue)
+                return string.Empty;
             var hh = time.Value.Hour;
             var mm = time.Value.Minute;
             var ss = time.Value.Second;
@@ -378,8 +416,11 @@ namespace Asv.Gnss
             mm %= 60;
             ss %= 60;
             sss %= 100;
-            return sss > 0 ? $"{hh * 10000 + mm * 100 + ss:000000}.{sss.ToString().TrimEnd('0')}" : $"{hh * 10000 + mm * 100 + ss:000000}";
+            return sss > 0
+                ? $"{hh * 10000 + mm * 100 + ss:000000}.{sss.ToString().TrimEnd('0')}"
+                : $"{hh * 10000 + mm * 100 + ss:000000}";
         }
+
         /// <summary>
         /// ddmmyy
         /// </summary>
@@ -392,7 +433,7 @@ namespace Asv.Gnss
                 // throw new ArgumentException(string.Format("Date format incorrect in \"{0}\" (must be ddMMyy)", token));
                 return null;
             }
-            
+
             var date = Convert.ToInt32(token.Substring(0, 2));
             var month = Convert.ToInt32(token.Substring(2, 2));
             var year = Convert.ToInt32(token.Substring(4, 2)) + 2000;
@@ -406,7 +447,7 @@ namespace Asv.Gnss
                 ? string.Empty
                 : $"{date.Value.Day * 10000 + date.Value.Month * 100 + date.Value.Year % 100:000000}";
         }
-        
+
         /// <summary>
         /// dd/mm/yy
         /// </summary>
@@ -418,17 +459,18 @@ namespace Asv.Gnss
 
             if (splits.Length != 3)
             {
-                throw new ArgumentException(string.Format("Date format incorrect in \"{0}\" (must be dd/mm/yy)",  token));
+                throw new ArgumentException(
+                    string.Format("Date format incorrect in \"{0}\" (must be dd/mm/yy)", token)
+                );
             }
-            
+
             var date = int.Parse(splits[0]);
             var month = int.Parse(splits[1]);
             var year = int.Parse(splits[2]) + 2000;
 
             return new DateTime(year, month, date);
-
         }
-        
+
         /// <summary>
         /// from ddmm.mm to ddmm.mmmmmmm
         /// </summary>
@@ -457,7 +499,7 @@ namespace Asv.Gnss
             degree += integerMin / 60;
             integerMin %= 60;
             fractionalMin %= 10000000;
-            
+
             var strFormat = "00";
             for (var i = 0; i < 6; i++)
             {
@@ -481,10 +523,10 @@ namespace Asv.Gnss
                 5 => "00000",
                 6 => "000000",
                 7 => "0000000",
-                _ => "000"
+                _ => "000",
             };
         }
-        
+
         /// <summary>
         /// yyyyy.yy
         /// </summary>
@@ -492,7 +534,7 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static double ParseLongitude(string token)
         {
-            var temp = double.Parse(token,NumberStyles.Any, CultureInfo.InvariantCulture);
+            var temp = double.Parse(token, NumberStyles.Any, CultureInfo.InvariantCulture);
 
             double degree = (int)((int)temp / 100.0);
             var minutes = ((int)temp - degree * 100.0);
@@ -503,7 +545,7 @@ namespace Asv.Gnss
             // var min = double.Parse(token.Substring(2, 5), CultureInfo.InvariantCulture);
             // return deg + min / 60.0;
         }
-        
+
         public static string SerializeLongitude(double longitude)
         {
             longitude = Math.Abs(longitude);
@@ -515,7 +557,7 @@ namespace Asv.Gnss
             degree += integerMin / 60;
             integerMin %= 60;
             fractionalMin %= 10000000;
-            
+
             var strFormat = "00";
             for (var i = 0; i < 6; i++)
             {
@@ -536,7 +578,8 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static double ParseCommonDegrees(string token)
         {
-            if (string.IsNullOrWhiteSpace(token)) return Double.NaN;
+            if (string.IsNullOrWhiteSpace(token))
+                return Double.NaN;
 
             var temp = double.Parse(token, NumberStyles.Any, CultureInfo.InvariantCulture);
 
@@ -559,8 +602,9 @@ namespace Asv.Gnss
 
         public static NmeaGpsQuality ParseGpsQuality(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) return NmeaGpsQuality.Unknown;
-            return (NmeaGpsQuality) int.Parse(value, CultureInfo.InvariantCulture);
+            if (string.IsNullOrWhiteSpace(value))
+                return NmeaGpsQuality.Unknown;
+            return (NmeaGpsQuality)int.Parse(value, CultureInfo.InvariantCulture);
         }
 
         public static string SerializeGpsQuality(NmeaGpsQuality quality)
@@ -570,8 +614,10 @@ namespace Asv.Gnss
 
         public static NmeaDataStatus ParseDataStatus(string value)
         {
-            if (string.Equals(value, "A", StringComparison.InvariantCultureIgnoreCase)) return NmeaDataStatus.Valid;
-            if (string.Equals(value, "V", StringComparison.InvariantCultureIgnoreCase)) return NmeaDataStatus.Invalid;
+            if (string.Equals(value, "A", StringComparison.InvariantCultureIgnoreCase))
+                return NmeaDataStatus.Valid;
+            if (string.Equals(value, "V", StringComparison.InvariantCultureIgnoreCase))
+                return NmeaDataStatus.Invalid;
             return NmeaDataStatus.Unknown;
         }
 
@@ -581,7 +627,7 @@ namespace Asv.Gnss
             {
                 NmeaDataStatus.Valid => "A",
                 NmeaDataStatus.Invalid => "V",
-                _ => string.Empty
+                _ => string.Empty,
             };
         }
 
@@ -592,9 +638,11 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static int? ParseInt(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
             return int.Parse(value, CultureInfo.InvariantCulture);
         }
+
         /// <summary>
         /// x.x
         /// </summary>
@@ -602,7 +650,8 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static double ParseDouble(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) return double.NaN;
+            if (string.IsNullOrWhiteSpace(value))
+                return double.NaN;
             return double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
@@ -631,7 +680,7 @@ namespace Asv.Gnss
                 "C" => NmeaNavigationalStatusEnum.Caution,
                 "U" => NmeaNavigationalStatusEnum.Unsafe,
                 "V" => NmeaNavigationalStatusEnum.NotValid,
-                _ => null
+                _ => null,
             };
         }
 
@@ -643,16 +692,16 @@ namespace Asv.Gnss
                 NmeaNavigationalStatusEnum.Caution => "C",
                 NmeaNavigationalStatusEnum.Unsafe => "U",
                 NmeaNavigationalStatusEnum.NotValid => "V",
-                _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(status), status, null),
             };
         }
 
         public static double KnotsToKph(double knots)
         {
-            if (double.IsNaN(knots)) return double.NaN;
+            if (double.IsNaN(knots))
+                return double.NaN;
             return knots * 1.852;
         }
-
     }
 
     public enum NmeaGpsQuality
@@ -661,30 +710,31 @@ namespace Asv.Gnss
         FixNotAvailable = 0,
         GPSFix = 1,
         DifferentialGPSFix = 2,
+
         /// <summary>
         /// Real-Time Kinematic, fixed integers
         /// </summary>
         RTKFixed = 4,
+
         /// <summary>
         /// Real-Time Kinematic, float integers, OmniSTAR XP/HP or Location RTK
         /// </summary>
         RTKFloat = 5,
-
     }
 
     public enum NmeaDataStatus
     {
         Unknown,
         Valid,
-        Invalid
+        Invalid,
     }
-    
+
     public enum NmeaNavigationalStatusEnum
     {
         Safe,
         Caution,
         Unsafe,
-        NotValid
+        NotValid,
     }
 
     public enum NmeaPositionModeEnum
@@ -694,8 +744,6 @@ namespace Asv.Gnss
         Autonomous, //A
         Differential, //D
         RtkFloat, //F
-        RtkFixed //R
+        RtkFixed, //R
     }
-    
-    
 }

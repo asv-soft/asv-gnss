@@ -5,7 +5,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a base interface for GNSS messages.
     /// </summary>
-    public interface IGnssMessageBase: ISizedSpanSerializable
+    public interface IGnssMessageBase : ISizedSpanSerializable
     {
         /// <summary>
         /// Gets or sets the custom use property (like routing, etc...)

@@ -39,7 +39,7 @@ namespace Asv.Gnss
         /// Represents the NMEA message ID.
         /// </summary>
         public const string NmeaMessageId = "GGA";
-        
+
         private const byte Unit = 0x4D;
 
         /// Gets the message ID associated with the NMEA message.
@@ -56,9 +56,11 @@ namespace Asv.Gnss
         {
             Time = Nmea0183Helper.ParseTime(items[1]);
             Latitude = Nmea0183Helper.ParseLatitude(items[2]);
-            if (string.Equals(items[3], "S", StringComparison.InvariantCultureIgnoreCase)) Latitude *= -1;
+            if (string.Equals(items[3], "S", StringComparison.InvariantCultureIgnoreCase))
+                Latitude *= -1;
             Longitude = Nmea0183Helper.ParseLongitude(items[4]);
-            if (string.Equals(items[5], "W", StringComparison.InvariantCultureIgnoreCase)) Longitude *= -1;
+            if (string.Equals(items[5], "W", StringComparison.InvariantCultureIgnoreCase))
+                Longitude *= -1;
             GpsQuality = Nmea0183Helper.ParseGpsQuality(items[6]);
             NumberOfSatellites = Nmea0183Helper.ParseInt(items[7]);
             HorizontalDilutionPrecision = Nmea0183Helper.ParseDouble(items[8]);
@@ -84,11 +86,15 @@ namespace Asv.Gnss
             InsertSeparator(ref buffer);
             Nmea0183Helper.SerializeGpsQuality(GpsQuality).CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
-            (NumberOfSatellites.HasValue ? NumberOfSatellites.Value.ToString("00") : "00").CopyTo(ref buffer, encoding);
+            (NumberOfSatellites.HasValue ? NumberOfSatellites.Value.ToString("00") : "00").CopyTo(
+                ref buffer,
+                encoding
+            );
             InsertSeparator(ref buffer);
             var hdop = double.IsNaN(HorizontalDilutionPrecision)
                 ? string.Empty
-                : Math.Round(HorizontalDilutionPrecision, 1).ToString("F1", CultureInfo.InvariantCulture);
+                : Math.Round(HorizontalDilutionPrecision, 1)
+                    .ToString("F1", CultureInfo.InvariantCulture);
             hdop.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
             var alt = double.IsNaN(AntennaAltitudeMsl)
@@ -107,10 +113,13 @@ namespace Asv.Gnss
             InsertSeparator(ref buffer);
             var ageDGps = double.IsNaN(AgeOfDifferentialGPSData)
                 ? string.Empty
-                : Math.Round(AgeOfDifferentialGPSData, 1).ToString("00.0", CultureInfo.InvariantCulture);
+                : Math.Round(AgeOfDifferentialGPSData, 1)
+                    .ToString("00.0", CultureInfo.InvariantCulture);
             ageDGps.CopyTo(ref buffer, encoding);
             InsertSeparator(ref buffer);
-            var refId = ReferenceStationID.HasValue ? ReferenceStationID.Value.ToString("0000") : string.Empty;
+            var refId = ReferenceStationID.HasValue
+                ? ReferenceStationID.Value.ToString("0000")
+                : string.Empty;
             refId.CopyTo(ref buffer, encoding);
         }
 
@@ -121,6 +130,7 @@ namespace Asv.Gnss
         /// The reference station ID.
         /// </value>
         public int? ReferenceStationID { get; set; }
+
         /// <summary>
         /// Age of differential GPS data, time in seconds since last SC104
         /// type 1 or 9 update, null field when DGPS is not used
@@ -128,16 +138,19 @@ namespace Asv.Gnss
         public double AgeOfDifferentialGPSData { get; set; }
 
         public string GeoidalSeparationUnits { get; set; }
+
         /// <summary>
         ///  Geoidal separation, the difference between the WGS-84 earth
         ///  ellipsoid and mean-sea-level(geoid), "-" means mean-sea-level below ellipsoid
         /// return MSL - Ellipsoid
         /// </summary>
         public double GeoidalSeparation { get; set; }
+
         /// <summary>
         ///  Units of antenna altitude, meters
         /// </summary>
         public string AntennaAltitudeUnits { get; set; }
+
         /// <summary>
         ///  Antenna Altitude above/below mean-sea-level (geoid)
         /// </summary>
@@ -184,6 +197,7 @@ namespace Asv.Gnss
         /// Gets or sets a value representing the latitude.
         /// /
         public double Latitude { get; set; }
+
         /// <summary>
         /// Time (UTC)
         /// </summary>

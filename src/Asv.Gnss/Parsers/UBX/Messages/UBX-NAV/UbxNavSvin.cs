@@ -9,29 +9,23 @@ namespace Asv.Gnss
         public override string Name => "UBX-NAV-SVIN-POOL";
         public override byte Class => 0x01;
         public override byte SubClass => 0x3B;
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
+
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
 
-        public override void Randomize(Random random)
-        {
-
-        }
+        public override void Randomize(Random random) { }
     }
+
     [SerializationNotSupported]
     public class UbxNavSvin : UbxMessageBase
     {
         public override string Name => "UBX-NAV-SVIN";
         public override byte Class => 0x01;
         public override byte SubClass => 0x3B;
-        
+
         protected override void SerializeContent(ref Span<byte> buffer)
         {
             throw new NotImplementedException();
@@ -43,7 +37,7 @@ namespace Asv.Gnss
             Reserved11 = BinSerialize.ReadByte(ref buffer);
             Reserved12 = BinSerialize.ReadByte(ref buffer);
             Reserved13 = BinSerialize.ReadByte(ref buffer);
-            
+
             ITow = BinSerialize.ReadUInt(ref buffer);
             Duration = BinSerialize.ReadUInt(ref buffer);
             MeanX = BinSerialize.ReadInt(ref buffer);
@@ -53,9 +47,12 @@ namespace Asv.Gnss
             MeanYhp = BinSerialize.ReadSByte(ref buffer);
             MeanZhp = BinSerialize.ReadSByte(ref buffer);
             Reserved2 = BinSerialize.ReadByte(ref buffer);
-            
-            Ecef = (X: MeanX * 0.01 + MeanXhp * 0.0001, Y: MeanY * 0.01 + MeanYhp * 0.0001,
-                Z: MeanZ * 0.01 + MeanZhp * 0.0001);
+
+            Ecef = (
+                X: MeanX * 0.01 + MeanXhp * 0.0001,
+                Y: MeanY * 0.01 + MeanYhp * 0.0001,
+                Z: MeanZ * 0.01 + MeanZhp * 0.0001
+            );
             Accuracy = BinSerialize.ReadUInt(ref buffer) / 10000.0;
             Observations = BinSerialize.ReadUInt(ref buffer);
             Valid = BinSerialize.ReadByte(ref buffer) != 0;

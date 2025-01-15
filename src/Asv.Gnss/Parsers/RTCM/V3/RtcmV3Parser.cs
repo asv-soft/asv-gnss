@@ -84,9 +84,8 @@ namespace Asv.Gnss
             /// <summary>
             /// Represents the possible state of a system.
             /// </summary>
-            Crc3
+            Crc3,
         }
-
 
         /// <summary>
         /// Gets the unique identifier of the GNSS protocol.
@@ -119,7 +118,13 @@ namespace Asv.Gnss
                 case State.Preamb2:
                     _buffer[2] = data;
                     _state = State.Payload;
-                    _payloadLength = (ushort)BitHelper.GetBitU(_buffer, 14 /* preamble-8bit + reserved-6bit */, 10 /* length-10bit */);
+                    _payloadLength = (ushort)
+                        BitHelper.GetBitU(
+                            _buffer,
+                            14 /* preamble-8bit + reserved-6bit */
+                            ,
+                            10 /* length-10bit */
+                        );
                     _payloadReadedBytes = 0;
                     if (_payloadLength > _buffer.Length)
                     {
@@ -152,16 +157,32 @@ namespace Asv.Gnss
                     _buffer[_payloadLength + 3 + 2] = data;
 
                     var originalCrc = RtcmV3Crc24.Calc(_buffer, _payloadLength + 3, 0);
-                    var sourceCrc = BitHelper.GetBitU(_buffer, (uint)((_payloadLength + 3) * 8), 24);
+                    var sourceCrc = BitHelper.GetBitU(
+                        _buffer,
+                        (uint)((_payloadLength + 3) * 8),
+                        24
+                    );
                     if (originalCrc == sourceCrc)
                     {
-                        var msgNumber = (ushort)BitHelper.GetBitU(_buffer, 24 /* preamble-8bit + reserved-6bit + length-10bit */, 12);
-                        var span = new ReadOnlySpan<byte>(_buffer,0,_payloadLength + 6 /* preamble-8bit + reserved-6bit + length-10bit */ + 3 /*CRC24*/);
+                        var msgNumber = (ushort)
+                            BitHelper.GetBitU(
+                                _buffer,
+                                24 /* preamble-8bit + reserved-6bit + length-10bit */
+                                ,
+                                12
+                            );
+                        var span = new ReadOnlySpan<byte>(
+                            _buffer,
+                            0,
+                            _payloadLength
+                                + 6 /* preamble-8bit + reserved-6bit + length-10bit */
+                                + 3 /*CRC24*/
+                        );
                         if (_onRawData.HasObservers)
                         {
-                            _onRawData.OnNext(new RtcmV3RawMessage(msgNumber,span));
+                            _onRawData.OnNext(new RtcmV3RawMessage(msgNumber, span));
                         }
-                        ParsePacket(msgNumber, ref span,true);
+                        ParsePacket(msgNumber, ref span, true);
                         Reset();
                         return true;
                     }

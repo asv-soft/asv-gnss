@@ -12,15 +12,18 @@ namespace Asv.Gnss
         /// Rtcm Message Id
         /// </summary>
         public const int RtcmMessageId = 4094;
+
         /// <inheritdoc/>
         public override ushort MessageId => RtcmMessageId;
-        
+
         /// <inheritdoc/>
         public override string Name => "Trimble Navigation Ltd.";
 
         /// <inheritdoc/>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
-        {
-        }
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        ) { }
     }
 }

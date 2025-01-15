@@ -8,9 +8,13 @@ namespace Asv.Gnss.Test
 {
     public static class ParserTestHelper
     {
-        
-        public static void TestParser<TMessage>(IGnssMessageParser parser,TMessage message, Random r, byte syncByteForParser)
-            where TMessage: IGnssMessageBase
+        public static void TestParser<TMessage>(
+            IGnssMessageParser parser,
+            TMessage message,
+            Random r,
+            byte syncByteForParser
+        )
+            where TMessage : IGnssMessageBase
         {
             var arr = new byte[message.GetByteSize()];
             var span = new Span<byte>(arr);
@@ -20,14 +24,17 @@ namespace Asv.Gnss.Test
             r.NextBytes(randomBegin);
 
             var parsedMessage = default(TMessage);
-            parser.OnMessage.Where(_ => _.ProtocolId == message.ProtocolId).Cast<TMessage>()
+            parser
+                .OnMessage.Where(_ => _.ProtocolId == message.ProtocolId)
+                .Cast<TMessage>()
                 .Subscribe(_ => parsedMessage = _);
 
             parser.Reset();
             foreach (var b in randomBegin)
             {
                 // it is necessary to check random bytes at the beginning, as it may cause parser synchronization and message skipping
-                if (b == syncByteForParser) continue;
+                if (b == syncByteForParser)
+                    continue;
                 parser.Read(b);
             }
 
@@ -37,7 +44,10 @@ namespace Asv.Gnss.Test
             }
 
             Assert.NotNull(parsedMessage);
-            message.WithDeepEqual(parsedMessage).WithCustomComparison(new FloatComparison(0.5,0.5f)).Assert();
+            message
+                .WithDeepEqual(parsedMessage)
+                .WithCustomComparison(new FloatComparison(0.5, 0.5f))
+                .Assert();
         }
     }
 }

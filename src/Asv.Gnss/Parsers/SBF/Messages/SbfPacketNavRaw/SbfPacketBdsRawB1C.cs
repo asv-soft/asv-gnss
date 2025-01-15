@@ -6,7 +6,7 @@
     /// LDPC parity bits, but unrecoverable errors are still possible at low C/N0. It is therefore
     /// always needed to check the CRC status before using the navigation bits. A separate CRC
     /// check is provided for subframe 2 and 3.
-    /// 
+    ///
     /// NAVBits contains the 1800 deinterleaved symbols of a BeiDou B1C
     /// (B-CNAV1) navigation frame.
     /// Encoding: NAVBits contains all the symbols of the frame. The first
@@ -21,7 +21,5 @@
         public override string Name => "BdsRawB1C";
 
         protected override int NavBitsU32Length => 57;
-
-        
     }
 }

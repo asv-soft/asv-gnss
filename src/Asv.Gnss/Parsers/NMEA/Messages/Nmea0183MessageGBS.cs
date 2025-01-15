@@ -23,6 +23,7 @@ namespace Asv.Gnss
         /// @return The message ID as a string.
         /// /
         public override string MessageId => GnssMessageId;
+
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             TimeUtc = Nmea0183Helper.ParseTime(items[1]);
@@ -43,7 +44,7 @@ namespace Asv.Gnss
                 BiasEstimateStandardDeviation = double.NaN;
             }
         }
-        
+
         /// <summary>
         /// UTC time of the GGA or GNS fix associated with this sentence
         /// </summary>

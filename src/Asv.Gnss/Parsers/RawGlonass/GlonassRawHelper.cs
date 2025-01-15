@@ -5,7 +5,6 @@ namespace Asv.Gnss
 {
     public static class GlonassRawHelper
     {
-
         /// <summary>
         /// 2^-5
         /// </summary>
@@ -55,7 +54,7 @@ namespace Asv.Gnss
         /// 2^-40
         /// </summary>
         public const double P2_40 = 9.094947017729280E-13;
-        
+
         /// <summary>
         /// Retrieves the week number and number of seconds from a given DateTime
         /// </summary>
@@ -85,7 +84,6 @@ namespace Asv.Gnss
         /// <returns>A DateTime object representing the specified week number and seconds in UTC.</returns>
         public static DateTime GpsToTime(int weeknumber, double seconds)
         {
-
             var datum = new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc);
             var week = datum.AddDays(weeknumber * 7);
             var time = week.AddSeconds(seconds);
@@ -107,8 +105,10 @@ namespace Asv.Gnss
             var tod = tow % 86400.0;
             tow -= tod;
 
-            if (tof < tod - 43200.0) tof += 86400.0;
-            else if (tof > tod + 43200.0) tof -= 86400.0;
+            if (tof < tod - 43200.0)
+                tof += 86400.0;
+            else if (tof > tod + 43200.0)
+                tof -= 86400.0;
 
             return GpsToTime(week, tow + tof).AddHours(-3);
         }
@@ -127,8 +127,10 @@ namespace Asv.Gnss
             var tod = tow % 86400.0;
             tow -= tod;
             var toe = tb * 900.0;
-            if (toe < tod - 43200.0) toe += 86400.0;
-            else if (toe > tod + 43200.0) toe -= 86400.0;
+            if (toe < tod - 43200.0)
+                toe += 86400.0;
+            else if (toe > tod + 43200.0)
+                toe -= 86400.0;
             return GpsToTime(week, tow + toe).AddHours(-3);
         }
 
@@ -148,7 +150,7 @@ namespace Asv.Gnss
                 1 => 30.0 * 60.0,
                 2 => 45.0 * 60.0,
                 3 => 60.0 * 60.0,
-                _ => 0.0 * 60.0
+                _ => 0.0 * 60.0,
             };
 
             var week = 0;
@@ -157,10 +159,13 @@ namespace Asv.Gnss
             var tod = tow % 86400.0;
             tow -= tod;
             var toe = (tb - 1) * 900 + interval;
-            if (p2 == 1 && p1 is 1 or 3) toe += interval / 2.0;
+            if (p2 == 1 && p1 is 1 or 3)
+                toe += interval / 2.0;
 
-            if (toe < tod - 43200.0) toe += 86400.0;
-            else if (toe > tod + 43200.0) toe -= 86400.0;
+            if (toe < tod - 43200.0)
+                toe += 86400.0;
+            else if (toe > tod + 43200.0)
+                toe -= 86400.0;
             return GpsToTime(week, tow + toe).AddHours(-3);
         }
 
@@ -175,7 +180,6 @@ namespace Asv.Gnss
             var datum = new DateTime(1996, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return datum.AddYears(4 * (n4 - 1)).AddDays(na - 1);
         }
-
 
         /// <summary>
         /// Transformation of GLONASS current data information into common form
@@ -207,7 +211,8 @@ namespace Asv.Gnss
         {
             if (navBits.Length != 3)
                 throw new Exception(
-                    $"Length of {nameof(navBits)} array must be 3 u32 word (as GLONASS ICD word length)");
+                    $"Length of {nameof(navBits)} array must be 3 u32 word (as GLONASS ICD word length)"
+                );
             if (((navBits[0] >> 31) & 0x1) != 0)
                 throw new Exception("Bits 85 must be 0 (as GLONASS ICD superframe structure)");
             return (byte)((navBits[0] >> 27) & 0xF); // 27 bits offset, 4 bit
@@ -249,7 +254,8 @@ namespace Asv.Gnss
         {
             var mask = 1u << (int)(len - 1);
 
-            if (len <= 0 || 32 < len) return;
+            if (len <= 0 || 32 < len)
+                return;
 
             for (var i = pos; i < pos + len; i++, mask >>= 1)
             {
@@ -279,9 +285,12 @@ namespace Asv.Gnss
         {
             uint bitIndex = 3;
             var result = new byte[11];
-            SetBitU(result, bitIndex, 32, navBits[0]); bitIndex += 32;
-            SetBitU(result, bitIndex, 32, navBits[1]); bitIndex += 32;
-            SetBitU(result, bitIndex, 21, navBits[2] >> 11); bitIndex += 21;
+            SetBitU(result, bitIndex, 32, navBits[0]);
+            bitIndex += 32;
+            SetBitU(result, bitIndex, 32, navBits[1]);
+            bitIndex += 32;
+            SetBitU(result, bitIndex, 21, navBits[2] >> 11);
+            bitIndex += 21;
             return result;
         }
 
@@ -289,7 +298,6 @@ namespace Asv.Gnss
         {
             return prn < MINPRNGLO || MAXPRNGLO < prn ? 0 : NSATGPS + prn - MINPRNGLO + 1;
         }
-
 
         // min satellite PRN number of GPS
         private const int MINPRNGPS = 1;
@@ -308,6 +316,5 @@ namespace Asv.Gnss
 
         // number of GLONASS satellites
         private const int NSATGLO = MAXPRNGLO - MINPRNGLO + 1;
-
     }
 }

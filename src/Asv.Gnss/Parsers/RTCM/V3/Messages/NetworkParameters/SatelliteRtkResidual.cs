@@ -10,6 +10,7 @@
         internal byte SOhDf { get; set; }
         internal ushort SIcDf { get; set; }
         internal ushort SIdDfl { get; set; }
+
         /// <summary>
         /// GPS:
         /// Satellite ID number from 1 to 32 refers to the PRN code of the
@@ -18,7 +19,7 @@
         /// the FAA’s Wide-Area Augmentation System(WAAS). SBAS PRN
         /// codes cover the range 120-138. The Satellite ID’s reserved for SBAS
         /// satellites are 40-58, so that the SBAS PRN codes are derived from the
-        /// Version 3 Satellite ID codes by adding 80. 
+        /// Version 3 Satellite ID codes by adding 80.
         /// GLONASS:
         /// Satellite ID number from 1 to 24 refers to the slot
         /// number of the GLONASS satellite.A Satellite ID of zero indicates
@@ -42,6 +43,7 @@
         /// for non-dispersive interpolation residuals, mm.
         /// </summary>
         public double SOc => SOcDf * mm05Res;
+
         /// <summary>
         /// Distance dependent term of standard deviation(1 sigma)
         /// for non- dispersive interpolation residuals, ppm.
@@ -58,7 +60,7 @@
 
         /// <summary>
         ///  Constant term of standard deviation (1 sigma)
-        ///  for dispersive interpolation residuals (as affecting GPS L1 frequency) 
+        ///  for dispersive interpolation residuals (as affecting GPS L1 frequency)
         /// </summary>
         public double SIc => SOhDf * mm05Res;
 

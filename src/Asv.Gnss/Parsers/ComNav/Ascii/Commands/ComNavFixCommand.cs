@@ -3,19 +3,20 @@ using System.Globalization;
 
 namespace Asv.Gnss
 {
-
     public enum ComNavFixType
     {
         /// <summary>
         /// Unfix. Clears any previous FIX commands
         /// </summary>
         None,
+
         /// <summary>
         /// Configures the receiver to fix the height at the last calculated value if the number of
         /// satellites available is insufficient for a 3-D solution. This provides a 2-D solution.
         /// Height calculation resumes when the number of satellites available allows a 3-D solution
         /// </summary>
         Auto,
+
         /// <summary>
         /// Configures the receiver in 2-D mode with its height constrained to a given value. This
         /// command is used mainly in marine applications where height in relation to mean sea
@@ -27,6 +28,7 @@ namespace Asv.Gnss
         /// Note: This command only affects pseudorange corrections and solutions.
         /// </summary>
         Height,
+
         /// <summary>
         /// Configures the receiver with its position fixed. This command is used when it is
         /// necessary to generate differential corrections.
@@ -38,7 +40,7 @@ namespace Asv.Gnss
         /// The values entered into the fix position command should reflect the precise position
         /// of the base station antenna phase center. Any errors in the fix position coordinates
         /// directly bias the corrections calculated by the base receiver
-        /// 
+        ///
         /// The receiver performs all internal computations based on WGS84 and the DATUM
         /// command (see page 131) is defaulted as such. The datum in which you choose to
         /// operate (by changing the DATUM command (see page 131)) is internally converted
@@ -49,13 +51,12 @@ namespace Asv.Gnss
         /// POSITION command settings.
         /// </summary>
         Position,
-
     }
 
     /// <summary>
     /// Represents a command to fix the navigation in ComNav ASCII protocol.
     /// </summary>
-    public class ComNavFixCommand: ComNavAsciiCommandBase
+    public class ComNavFixCommand : ComNavAsciiCommandBase
     {
         /// <summary>
         /// Gets or sets the fix type of the ComNav device.
@@ -86,7 +87,6 @@ namespace Asv.Gnss
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
         }
 
         /// <summary>

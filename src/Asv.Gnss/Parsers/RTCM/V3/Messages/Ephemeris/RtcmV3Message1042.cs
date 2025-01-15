@@ -1,5 +1,5 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -13,15 +13,19 @@ namespace Asv.Gnss
         /// Rtcm Message Id
         /// </summary>
         public const int RtcmMessageId = 1042;
+
         /// <inheritdoc/>
         public override ushort MessageId => RtcmMessageId;
-        
+
         /// <inheritdoc/>
         public override string Name => "BDS ephemeris information";
 
-
         /// <inheritdoc/>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             var sys = NavigationSystemEnum.SYS_CMP;
 
@@ -87,7 +91,7 @@ namespace Asv.Gnss
         public uint WeekRaw { get; set; }
 
         /// <summary>
-        /// BDS URAI Range 1 - 15. 
+        /// BDS URAI Range 1 - 15.
         /// User Range Accuracy Index.
         /// </summary>
         public byte Urai { get; set; }
@@ -242,7 +246,6 @@ namespace Asv.Gnss
         /// </summary>
         public byte SvHealth { get; private set; }
 
-
         /// <summary>
         /// BDS Week number.
         /// </summary>
@@ -250,20 +253,22 @@ namespace Asv.Gnss
         {
             return RtcmV3EphemerisHelper.GetBdsWeek(utc, (int)WeekRaw);
         }
+
         public DateTime GetToc()
         {
             return RtcmV3Helper.GetFromBeiDou((int)WeekRaw, TocRaw);
         }
+
         public double Idot => Idot * RtcmV3Helper.SC2RAD;
+
         public DateTime GetToc(DateTime utc)
         {
             return RtcmV3Helper.GetFromBeiDou(GetWeek(utc), TocRaw);
         }
+
         public DateTime GetToe()
         {
             return RtcmV3Helper.GetFromBeiDou((int)WeekRaw, ToeRaw);
         }
-
-
     }
 }

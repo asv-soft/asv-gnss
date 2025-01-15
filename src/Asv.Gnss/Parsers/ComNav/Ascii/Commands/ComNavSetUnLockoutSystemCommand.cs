@@ -15,7 +15,7 @@ namespace Asv.Gnss
                 ComNavSatelliteSystemEnum.GLONASS => "UNLOCKOUTSYSTEM GLONASS",
                 ComNavSatelliteSystemEnum.GALILEO => "UNLOCKOUTSYSTEM GALILEO",
                 ComNavSatelliteSystemEnum.BD3 => "UNLOCKOUTSYSTEM BD3",
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
 

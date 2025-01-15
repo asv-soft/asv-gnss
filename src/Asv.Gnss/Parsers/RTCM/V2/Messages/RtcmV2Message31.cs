@@ -22,8 +22,10 @@ namespace Asv.Gnss
 
             var hour = Math.Floor(tow / 3600.0);
             var sec = tow - hour * 3600.0;
-            if (zcnt < sec - 1800.0) zcnt += 3600.0;
-            else if (zcnt > sec + 1800.0) zcnt -= 3600.0;
+            if (zcnt < sec - 1800.0)
+                zcnt += 3600.0;
+            else if (zcnt > sec + 1800.0)
+                zcnt -= 3600.0;
 
             return RtcmV3Helper.Utc2Gps(RtcmV3Helper.GetFromGps(week, hour * 3600 + zcnt));
         }
@@ -60,7 +62,11 @@ namespace Asv.Gnss
         /// <summary>
         /// Deserializes the content of the buffer into the ObservationItems array. </summary> <param name="buffer">The buffer containing the serialized data.</param> <param name="bitIndex">The current bit index within the buffer.</param> <param name="payloadLength">The length of the payload within the buffer.</param> <returns>None</returns>
         /// /
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        )
         {
             var itmCnt = payloadLength / 5;
             ObservationItems = new DObservationItem[itmCnt];
@@ -68,7 +74,7 @@ namespace Asv.Gnss
             for (var i = 0; i < itmCnt; i++)
             {
                 var item = new DObservationItem(NavigationSystemEnum.SYS_GLO);
-                item.Deserialize(buffer,ref bitIndex);
+                item.Deserialize(buffer, ref bitIndex);
                 ObservationItems[i] = item;
             }
         }

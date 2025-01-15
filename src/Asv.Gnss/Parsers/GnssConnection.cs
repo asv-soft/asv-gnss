@@ -74,7 +74,8 @@ namespace Asv.Gnss
             {
                 parser.DisposeItWith(Disposable);
                 parser.OnError.Subscribe(_onErrorSubject).DisposeItWith(Disposable);
-                parser.OnMessage.Subscribe(_onRxMessageSubject).DisposeItWith(Disposable); ;
+                parser.OnMessage.Subscribe(_onRxMessageSubject).DisposeItWith(Disposable);
+                ;
             }
             Disposable.Add(_onErrorSubject);
             Disposable.Add(_onRxMessageSubject);
@@ -83,8 +84,6 @@ namespace Asv.Gnss
             Disposable.Add(_txBytesSubject);
 
             stream.Subscribe(OnByteRecv).DisposeItWith(Disposable);
-
-            
         }
 
         /// <summary>
@@ -92,10 +91,8 @@ namespace Asv.Gnss
         /// </summary>
         /// <param name="connectionString">The connection string to the GNSS device.</param>
         /// <param name="parsers">The array of GNSS message parsers.</param>
-        public GnssConnection(string connectionString, params IGnssMessageParser[] parsers):this(PortFactory.Create(connectionString,true),parsers)
-        {
-
-        }
+        public GnssConnection(string connectionString, params IGnssMessageParser[] parsers)
+            : this(PortFactory.Create(connectionString, true), parsers) { }
 
         /// <summary>
         /// Gets the data stream.
@@ -171,7 +168,8 @@ namespace Asv.Gnss
                         foreach (var parser in _parsers)
                         {
                             parser1 = parser;
-                            if (!parser.Read(data)) continue;
+                            if (!parser.Read(data))
+                                continue;
                             packetFound = true;
                             break;
                         }
@@ -186,7 +184,13 @@ namespace Asv.Gnss
                     }
                     catch (Exception e)
                     {
-                        _onErrorSubject.OnNext(new GnssParserException("COMMON",$"GnssConnection error: {e.Message}",e));
+                        _onErrorSubject.OnNext(
+                            new GnssParserException(
+                                "COMMON",
+                                $"GnssConnection error: {e.Message}",
+                                e
+                            )
+                        );
                         Debug.Assert(false);
                     }
                 }

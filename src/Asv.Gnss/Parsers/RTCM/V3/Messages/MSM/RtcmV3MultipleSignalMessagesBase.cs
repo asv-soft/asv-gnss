@@ -6,7 +6,11 @@ namespace Asv.Gnss
 {
     public abstract class RtcmV3MultipleSignalMessagesBase : RtcmV3MessageBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             var utc = DateTime.UtcNow;
             ReferenceStationId = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
@@ -39,7 +43,6 @@ namespace Asv.Gnss
                     break;
                 }
             }
-            
 
             MultipleMessageBit = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             ObservableDataIsComplete = MultipleMessageBit == 0 ? true : false;
@@ -54,20 +57,21 @@ namespace Asv.Gnss
             SmoothingIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             SmoothingInterval = SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
 
-
             var satellites = new List<byte>();
             var signals = new List<byte>();
 
             for (byte i = 1; i <= 64; i++)
             {
                 var mask = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
-                if (mask > 0) satellites.Add(i);
+                if (mask > 0)
+                    satellites.Add(i);
             }
 
             for (byte i = 1; i <= 32; i++)
             {
                 var mask = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
-                if (mask > 0) signals.Add(i);
+                if (mask > 0)
+                    signals.Add(i);
             }
 
             SatelliteIds = satellites.ToArray();
@@ -76,7 +80,9 @@ namespace Asv.Gnss
 
             if (cellMaskCount > 64)
             {
-                throw new Exception($"RtcmV3 {MessageId} number of Satellite and Signals error: Satellite={SatelliteIds.Length} Signals={SignalIds.Length}");
+                throw new Exception(
+                    $"RtcmV3 {MessageId} number of Satellite and Signals error: Satellite={SatelliteIds.Length} Signals={SignalIds.Length}"
+                );
             }
 
             // CellMask = new byte[cellMaskCount];
@@ -90,8 +96,6 @@ namespace Asv.Gnss
                 }
             }
         }
-
-       
 
         public NavigationSystemEnum NavigationSystem { get; set; }
 
@@ -109,25 +113,24 @@ namespace Asv.Gnss
 
         protected byte[] SignalIds { get; set; }
 
-        
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its 
-        /// primary purpose is to link all message data to their unique sourceName. It is 
-        /// useful in distinguishing between desired and undesired data in cases 
-        /// where more than one service may be using the same data link 
-        /// frequency. It is also useful in accommodating multiple reference 
-        /// stations within a single data link transmission. 
-        /// In reference network applications the Reference Station ID plays an 
-        /// important role, because it is the link between the observation messages 
-        /// of a specific reference station and its auxiliary information contained in 
-        /// other messages for proper operation. Thus the Service Provider should 
-        /// ensure that the Reference Station ID is unique within the whole 
-        /// network, and that ID’s should be reassigned only when absolutely 
-        /// necessary. 
+        /// The Reference Station ID is determined by the service provider. Its
+        /// primary purpose is to link all message data to their unique sourceName. It is
+        /// useful in distinguishing between desired and undesired data in cases
+        /// where more than one service may be using the same data link
+        /// frequency. It is also useful in accommodating multiple reference
+        /// stations within a single data link transmission.
+        /// In reference network applications the Reference Station ID plays an
+        /// important role, because it is the link between the observation messages
+        /// of a specific reference station and its auxiliary information contained in
+        /// other messages for proper operation. Thus the Service Provider should
+        /// ensure that the Reference Station ID is unique within the whole
+        /// network, and that ID’s should be reassigned only when absolutely
+        /// necessary.
         /// Service Providers may need to coordinate their Reference Station ID
-        /// assignments with other Service Providers in their region in order to 
-        /// avoid conflicts. This may be especially critical for equipment 
-        /// accessing multiple services, depending on their services and means of 
+        /// assignments with other Service Providers in their region in order to
+        /// avoid conflicts. This may be especially critical for equipment
+        /// accessing multiple services, depending on their services and means of
         /// information distribution.
         /// </summary>
         public uint ReferenceStationId { get; set; }
@@ -140,7 +143,7 @@ namespace Asv.Gnss
         public uint EpochTimeTow { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// 1 - indicates that more MSMs follow for given physical time and reference station ID.
         /// 0 - indicates that it is the last MSM for given physical time and reference station ID
         /// </summary>
@@ -160,7 +163,7 @@ namespace Asv.Gnss
         /// <summary>
         /// 0 – clock steering is not applied In this case receiver clock must be kept in the range of ± 1 ms (approximately ± 300 km).
         /// 1 – clock steering has been applied In this case receiver clock must be kept in the range of ± 1 microsecond (approximately ± 300 meters).
-        /// 2 – unknown clock steering status. 
+        /// 2 – unknown clock steering status.
         /// 3 – reserved
         /// </summary>
         public uint ClockSteeringIndicator { get; set; }
@@ -176,7 +179,7 @@ namespace Asv.Gnss
         /// <summary>
         /// GNSS Smoothing Type Indicator:
         /// 1 – Divergence-free smoothing is used.
-        /// 0 – Other type of smoothing is used 
+        /// 0 – Other type of smoothing is used
         /// </summary>
         public uint SmoothingIndicator { get; set; }
 
@@ -186,9 +189,8 @@ namespace Asv.Gnss
         /// information.
         /// Divergence-free smoothing may be continuous over the entire period
         /// for which the satellite is visible.
-        /// Notice: A value of zero indicates no smoothing is used. 
+        /// Notice: A value of zero indicates no smoothing is used.
         /// </summary>
         public uint SmoothingInterval { get; set; }
-
     }
 }

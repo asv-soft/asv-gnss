@@ -14,7 +14,10 @@ namespace Asv.Gnss
         /// <exception cref="Exception">Thrown when the word ID is less than or equal to 5 or not an even number.</exception>
         protected override void CheckWordId(byte wordId)
         {
-            if (wordId <= 5 || wordId % 2 != 0) throw new Exception($"Word ID not equals: Word want > 5 and even number. Got {wordId}");
+            if (wordId <= 5 || wordId % 2 != 0)
+                throw new Exception(
+                    $"Word ID not equals: Word want > 5 and even number. Got {wordId}"
+                );
         }
 
         /// <summary>
@@ -26,13 +29,25 @@ namespace Asv.Gnss
             base.Deserialize(data);
             var bitIndex = 8U;
 
-            С = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1); bitIndex += 1;
-            M = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2); bitIndex += 2;
-            Prn = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5); bitIndex += 5;
-            DelaT2 = GlonassRawHelper.GetBitG(data, bitIndex, 10) * GlonassRawHelper.P2_18; bitIndex += 10;
-            LOmega = GlonassRawHelper.GetBitG(data, bitIndex, 21) * GlonassRawHelper.P2_20 * Math.PI; bitIndex += 21;
-            i = (63.0 / 180.0 + GlonassRawHelper.GetBitG(data, bitIndex, 18) * GlonassRawHelper.P2_20) * Math.PI; bitIndex += 18;
-            e = GlonassRawHelper.GetBitU(data, bitIndex, 15) * GlonassRawHelper.P2_20; bitIndex += 15;
+            С = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
+            bitIndex += 1;
+            M = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2);
+            bitIndex += 2;
+            Prn = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5);
+            bitIndex += 5;
+            DelaT2 = GlonassRawHelper.GetBitG(data, bitIndex, 10) * GlonassRawHelper.P2_18;
+            bitIndex += 10;
+            LOmega =
+                GlonassRawHelper.GetBitG(data, bitIndex, 21) * GlonassRawHelper.P2_20 * Math.PI;
+            bitIndex += 21;
+            i =
+                (
+                    63.0 / 180.0
+                    + GlonassRawHelper.GetBitG(data, bitIndex, 18) * GlonassRawHelper.P2_20
+                ) * Math.PI;
+            bitIndex += 18;
+            e = GlonassRawHelper.GetBitU(data, bitIndex, 15) * GlonassRawHelper.P2_20;
+            bitIndex += 15;
         }
 
         /// <summary>
@@ -46,13 +61,12 @@ namespace Asv.Gnss
         /// 1 - GLONASS-M
         /// </summary>
         public byte M { get; set; }
-        
+
         /// <summary>
         /// Satellite number
         /// [1-24]
         /// </summary>
         public byte Prn { get; set; }
-
 
         /// <summary>
         /// Correction to onboard time scale

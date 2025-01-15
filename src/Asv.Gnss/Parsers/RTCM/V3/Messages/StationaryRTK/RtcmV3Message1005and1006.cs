@@ -5,7 +5,11 @@ namespace Asv.Gnss
 {
     public abstract class RtcmV3Message1005and1006 : RtcmV3MessageBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             var rr = new double[3];
             var re = new double[3];
@@ -15,12 +19,13 @@ namespace Asv.Gnss
 
             ITRF = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
             bitIndex += 4;
-            rr[0] = RtcmV3Helper.GetBits38(buffer, ref  bitIndex);
-            SingleReceiverOscillatorIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            rr[0] = RtcmV3Helper.GetBits38(buffer, ref bitIndex);
+            SingleReceiverOscillatorIndicator = (byte)
+                SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             bitIndex += 1; // Reserved
-            rr[1] = RtcmV3Helper.GetBits38(buffer, ref  bitIndex);
+            rr[1] = RtcmV3Helper.GetBits38(buffer, ref bitIndex);
             QuarterCycleIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
-            rr[2] = RtcmV3Helper.GetBits38(buffer, ref  bitIndex);
+            rr[2] = RtcmV3Helper.GetBits38(buffer, ref bitIndex);
 
             for (var i = 0; i < 3; i++)
                 re[i] = rr[i] * 0.0001;
@@ -49,21 +54,23 @@ namespace Asv.Gnss
         /// </summary>
         public byte SingleReceiverOscillatorIndicator { get; set; }
 
-
         /// <summary>
         /// Antenna Height
         /// </summary>
         public double Height { get; set; }
+
         /// <summary>
-        /// Antenna Reference Point ECEF-X 
+        /// Antenna Reference Point ECEF-X
         /// </summary>
         public double X { get; set; }
+
         /// <summary>
-        /// Antenna Reference Point ECEF-Y 
+        /// Antenna Reference Point ECEF-Y
         /// </summary>
         public double Y { get; set; }
+
         /// <summary>
-        /// Antenna Reference Point ECEF-Z 
+        /// Antenna Reference Point ECEF-Z
         /// </summary>
         public double Z { get; set; }
 
@@ -71,10 +78,12 @@ namespace Asv.Gnss
         /// Antenna Reference Point WGS84-Latitude
         /// </summary>
         public double Latitude { get; set; }
+
         /// <summary>
         /// Antenna Reference Point WGS84-Longitude
         /// </summary>
         public double Longitude { get; set; }
+
         /// <summary>
         /// Antenna Reference Point WGS84-Altitude
         /// </summary>
@@ -85,29 +94,28 @@ namespace Asv.Gnss
         /// However, since the value is subject to change in future versions,
         /// decoding should not rely on a zero value.
         /// The ITRF realization year identifies the datum definition used for
-        /// coordinates in the message. 
+        /// coordinates in the message.
         /// </summary>
         public byte ITRF { get; set; }
 
-        
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its 
-        /// primary purpose is to link all message data to their unique sourceName. It is 
-        /// useful in distinguishing between desired and undesired data in cases 
-        /// where more than one service may be using the same data link 
-        /// frequency. It is also useful in accommodating multiple reference 
-        /// stations within a single data link transmission. 
-        /// In reference network applications the Reference Station ID plays an 
-        /// important role, because it is the link between the observation messages 
-        /// of a specific reference station and its auxiliary information contained in 
-        /// other messages for proper operation. Thus the Service Provider should 
-        /// ensure that the Reference Station ID is unique within the whole 
-        /// network, and that ID’s should be reassigned only when absolutely 
-        /// necessary. 
+        /// The Reference Station ID is determined by the service provider. Its
+        /// primary purpose is to link all message data to their unique sourceName. It is
+        /// useful in distinguishing between desired and undesired data in cases
+        /// where more than one service may be using the same data link
+        /// frequency. It is also useful in accommodating multiple reference
+        /// stations within a single data link transmission.
+        /// In reference network applications the Reference Station ID plays an
+        /// important role, because it is the link between the observation messages
+        /// of a specific reference station and its auxiliary information contained in
+        /// other messages for proper operation. Thus the Service Provider should
+        /// ensure that the Reference Station ID is unique within the whole
+        /// network, and that ID’s should be reassigned only when absolutely
+        /// necessary.
         /// Service Providers may need to coordinate their Reference Station ID
-        /// assignments with other Service Providers in their region in order to 
-        /// avoid conflicts. This may be especially critical for equipment 
-        /// accessing multiple services, depending on their services and means of 
+        /// assignments with other Service Providers in their region in order to
+        /// avoid conflicts. This may be especially critical for equipment
+        /// accessing multiple services, depending on their services and means of
         /// information distribution.
         /// </summary>
         public uint ReferenceStationID { get; set; }

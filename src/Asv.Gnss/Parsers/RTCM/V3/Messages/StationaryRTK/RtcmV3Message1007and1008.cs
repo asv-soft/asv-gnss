@@ -1,40 +1,44 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
+
 namespace Asv.Gnss
 {
     public abstract class RtcmV3Message1007and1008 : RtcmV3MessageBase
     {
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its 
-        /// primary purpose is to link all message data to their unique sourceName. It is 
-        /// useful in distinguishing between desired and undesired data in cases 
-        /// where more than one service may be using the same data link 
-        /// frequency. It is also useful in accommodating multiple reference 
-        /// stations within a single data link transmission. 
-        /// In reference network applications the Reference Station ID plays an 
-        /// important role, because it is the link between the observation messages 
-        /// of a specific reference station and its auxiliary information contained in 
-        /// other messages for proper operation. Thus the Service Provider should 
-        /// ensure that the Reference Station ID is unique within the whole 
-        /// network, and that ID’s should be reassigned only when absolutely 
-        /// necessary. 
+        /// The Reference Station ID is determined by the service provider. Its
+        /// primary purpose is to link all message data to their unique sourceName. It is
+        /// useful in distinguishing between desired and undesired data in cases
+        /// where more than one service may be using the same data link
+        /// frequency. It is also useful in accommodating multiple reference
+        /// stations within a single data link transmission.
+        /// In reference network applications the Reference Station ID plays an
+        /// important role, because it is the link between the observation messages
+        /// of a specific reference station and its auxiliary information contained in
+        /// other messages for proper operation. Thus the Service Provider should
+        /// ensure that the Reference Station ID is unique within the whole
+        /// network, and that ID’s should be reassigned only when absolutely
+        /// necessary.
         /// Service Providers may need to coordinate their Reference Station ID
-        /// assignments with other Service Providers in their region in order to 
-        /// avoid conflicts. This may be especially critical for equipment 
-        /// accessing multiple services, depending on their services and means of 
+        /// assignments with other Service Providers in their region in order to
+        /// avoid conflicts. This may be especially critical for equipment
+        /// accessing multiple services, depending on their services and means of
         /// information distribution.
         /// </summary>
         public uint ReferenceStationID { get; set; }
+
         /// <summary>
         /// The Descriptor Counter defines the number of characters (bytes) to
         /// follow in DF030, Antenna Descriptor
         /// </summary>
         public uint DescriptorCounterN { get; set; }
+
         /// <summary>
         /// Alphanumeric characters. IGS limits the number of characters to 20
         /// at this time, but this DF allows more characters for future extension.
         /// </summary>
-        public string AntennaDescriptor  { get; set; }
+        public string AntennaDescriptor { get; set; }
+
         /// <summary>
         /// 0=Use standard IGS Model
         /// 1-255=Specific Antenna Setup ID#
@@ -55,13 +59,21 @@ namespace Asv.Gnss
         /// </summary>
         public uint AntennaSetupID { get; set; }
 
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             DescriptorCounterN = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
-            if(DescriptorCounterN > 0)
+            if (DescriptorCounterN > 0)
             {
-                AntennaDescriptor = BitToCharHelper.BitArrayToString(buffer, ref bitIndex, (int)DescriptorCounterN);
+                AntennaDescriptor = BitToCharHelper.BitArrayToString(
+                    buffer,
+                    ref bitIndex,
+                    (int)DescriptorCounterN
+                );
             }
             AntennaSetupID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
         }

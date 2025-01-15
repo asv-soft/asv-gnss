@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// This block contains the 234 bits of a Galileo I/NAV navigation page, after deinterleaving and Viterbi decoding.
-    /// 
+    ///
     /// NAVBits contains the 234 bits of an I/NAV navigation page (in nominal
     /// or alert mode). Note that the I/NAV page is transmitted as two sub-pages
     /// (the so-called even and odd pages) of duration 1 second each (120 bits
@@ -22,7 +22,5 @@
         public override string Name => "GalRawInav";
 
         protected override int NavBitsU32Length => 8;
-
-        
     }
 }

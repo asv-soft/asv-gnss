@@ -1,6 +1,6 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
 using System.Text;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -9,7 +9,11 @@ namespace Asv.Gnss
         /// <summary>
         /// string from bit array
         /// </summary>
-        public static string BitArrayToString(ReadOnlySpan<byte> buffer, ref int bitIndex, int count)
+        public static string BitArrayToString(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int count
+        )
         {
             var byteArr = new byte[count];
             for (int i = 0; i < count; i++)

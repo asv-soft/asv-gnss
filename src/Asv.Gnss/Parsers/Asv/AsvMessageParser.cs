@@ -39,7 +39,11 @@ namespace Asv.Gnss
         /// <summary>
         /// The maximum size of a message, including data, header, and CRC.
         /// </summary>
-        public const ushort MaxMessageSize = DataSize + HeaderSize + CrcSize/*CRC16*/;
+        public const ushort MaxMessageSize =
+            DataSize
+            + HeaderSize
+            + CrcSize /*CRC16*/
+        ;
 
         /// <summary>
         /// Constant variable representing the Sync1 value.
@@ -94,7 +98,8 @@ namespace Asv.Gnss
             switch (_state)
             {
                 case State.Sync1:
-                    if (data != Sync1) return false;
+                    if (data != Sync1)
+                        return false;
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = Sync1;
                     _state = State.Sync2;
@@ -182,7 +187,5 @@ namespace Asv.Gnss
             /// </summary>
             Message,
         }
-
-        
     }
 }

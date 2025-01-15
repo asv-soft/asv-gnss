@@ -10,15 +10,9 @@ namespace Asv.Gnss
         public override byte Class => 0x06;
         public override byte SubClass => 0x13;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        }
-
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
 
@@ -47,7 +41,6 @@ namespace Asv.Gnss
     /// </summary>
     public class UbxCfgAnt : UbxMessageBase
     {
-
         public override string Name => "UBX-CFG-ANT";
         public override byte Class => 0x06;
         public override byte SubClass => 0x13;
@@ -60,14 +53,14 @@ namespace Asv.Gnss
             bitfield.SetBitU(5, 5, PinSCD);
             bitfield.SetBitU(10, 5, PinOCD);
             bitfield[15] = Reconfig;
-            BinSerialize.WriteUShort(ref buffer,(ushort)bitfield.Value);
+            BinSerialize.WriteUShort(ref buffer, (ushort)bitfield.Value);
         }
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
             Flags = (UbxCfgAntFlags)BinSerialize.ReadUShort(ref buffer);
-            var bitfield = new UintBitArray(BinSerialize.ReadUShort(ref buffer),16);
-            PinSwitch = (byte)bitfield.GetBitU(0,5);
+            var bitfield = new UintBitArray(BinSerialize.ReadUShort(ref buffer), 16);
+            PinSwitch = (byte)bitfield.GetBitU(0, 5);
             PinSCD = (byte)bitfield.GetBitU(5, 5);
             PinOCD = (byte)bitfield.GetBitU(10, 5);
             Reconfig = bitfield[15];
@@ -91,7 +84,6 @@ namespace Asv.Gnss
         }
     }
 
-
     [Flags]
     public enum UbxCfgAntFlags : ushort
     {
@@ -99,22 +91,25 @@ namespace Asv.Gnss
         /// Enable antenna supply voltage control signal
         /// </summary>
         Svcs = 0b00000001,
+
         /// <summary>
         /// Enable short circuit detection
         /// </summary>
         Scd = 0b00000010,
+
         /// <summary>
         /// Enable open circuit detection
         /// </summary>
         Ocd = 0b00000100,
+
         /// <summary>
         /// Power down antenna supply if short circuit is detected. (only in combination with bit 1)
         /// </summary>
         PdwnOnScd = 0b00001000,
+
         /// <summary>
         /// Enable automatic recovery from short state
         /// </summary>
         Recovery = 0b00010000,
-
     }
 }

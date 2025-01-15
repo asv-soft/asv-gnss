@@ -40,4 +40,3 @@ namespace Asv.Gnss.Test
         }
     }
 }
-

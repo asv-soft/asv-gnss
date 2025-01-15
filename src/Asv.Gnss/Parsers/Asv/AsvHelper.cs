@@ -55,7 +55,6 @@ namespace Asv.Gnss
 
         public const byte NSYSGAL = 1;
 
-
         /// <summary>
         /// min satellite PRN number of QZSS
         /// </summary>
@@ -83,7 +82,6 @@ namespace Asv.Gnss
 
         public const byte NSYSQZS = 1;
 
-
         /// <summary>
         /// min satellite sat number of BeiDou
         /// </summary>
@@ -100,7 +98,6 @@ namespace Asv.Gnss
         public const byte NSATCMP = (MAXPRNCMP - MINPRNCMP + 1);
 
         public const byte NSYSCMP = 1;
-
 
         /// <summary>
         /// min satellite sat number of IRNSS
@@ -119,7 +116,6 @@ namespace Asv.Gnss
 
         public const byte NSYSIRN = 1;
 
-
         /// <summary>
         /// min satellite sat number of LEO
         /// </summary>
@@ -137,11 +133,12 @@ namespace Asv.Gnss
 
         public const byte NSYSLEO = 1;
 
-
         /// <summary>
         /// number of systems
         /// </summary>
-        public const int NSYS = (NSYSGPS + NSYSGLO + NSYSGAL + NSYSQZS + NSYSCMP + NSYSIRN + NSYSLEO);
+        public const int NSYS = (
+            NSYSGPS + NSYSGLO + NSYSGAL + NSYSQZS + NSYSCMP + NSYSIRN + NSYSLEO
+        );
 
         /// <summary>
         /// min satellite PRN number of SBAS
@@ -161,8 +158,9 @@ namespace Asv.Gnss
         /// <summary>
         /// max satellite number (1 to MAXSAT)
         /// </summary>
-        public const byte MAXSAT = (NSATGPS + NSATGLO + NSATGAL + NSATQZS + NSATCMP + NSATIRN + NSATSBS + NSATLEO);
-
+        public const byte MAXSAT = (
+            NSATGPS + NSATGLO + NSATGAL + NSATQZS + NSATCMP + NSATIRN + NSATSBS + NSATLEO
+        );
 
         /// <summary>
         /// Asv unit of gps pseudorange (m)
@@ -199,7 +197,6 @@ namespace Asv.Gnss
         /// </summary>
         public const byte CODE_L1P = 2;
 
-
         /// <summary>
         /// * convert satellite system+prn/slot number to satellite number
         /// * args   : int    sys       I   satellite system (SYS_GPS,SYS_GLO,...)
@@ -211,35 +208,59 @@ namespace Asv.Gnss
         /// <returns></returns>
         public static int satno(NavigationSystemEnum sys, int prn)
         {
-            if (prn <= 0) return 0;
+            if (prn <= 0)
+                return 0;
             switch (sys)
             {
                 case NavigationSystemEnum.SYS_GPS:
-                    if (prn < MINPRNGPS || MAXPRNGPS < prn) return 0;
+                    if (prn < MINPRNGPS || MAXPRNGPS < prn)
+                        return 0;
                     return prn - MINPRNGPS + 1;
                 case NavigationSystemEnum.SYS_GLO:
-                    if (prn < MINPRNGLO || MAXPRNGLO < prn) return 0;
+                    if (prn < MINPRNGLO || MAXPRNGLO < prn)
+                        return 0;
                     return NSATGPS + prn - MINPRNGLO + 1;
                 case NavigationSystemEnum.SYS_GAL:
-                    if (prn < MINPRNGAL || MAXPRNGAL < prn) return 0;
+                    if (prn < MINPRNGAL || MAXPRNGAL < prn)
+                        return 0;
                     return NSATGPS + NSATGLO + prn - MINPRNGAL + 1;
                 case NavigationSystemEnum.SYS_QZS:
-                    if (prn < MINPRNQZS || MAXPRNQZS < prn) return 0;
+                    if (prn < MINPRNQZS || MAXPRNQZS < prn)
+                        return 0;
                     return NSATGPS + NSATGLO + NSATGAL + prn - MINPRNQZS + 1;
                 case NavigationSystemEnum.SYS_CMP:
-                    if (prn < MINPRNCMP || MAXPRNCMP < prn) return 0;
+                    if (prn < MINPRNCMP || MAXPRNCMP < prn)
+                        return 0;
                     return NSATGPS + NSATGLO + NSATGAL + NSATQZS + prn - MINPRNCMP + 1;
                 case NavigationSystemEnum.SYS_IRN:
-                    if (prn < MINPRNIRN || MAXPRNIRN < prn) return 0;
+                    if (prn < MINPRNIRN || MAXPRNIRN < prn)
+                        return 0;
                     return NSATGPS + NSATGLO + NSATGAL + NSATQZS + NSATCMP + prn - MINPRNIRN + 1;
                 case NavigationSystemEnum.SYS_LEO:
-                    if (prn < MINPRNLEO || MAXPRNLEO < prn) return 0;
-                    return NSATGPS + NSATGLO + NSATGAL + NSATQZS + NSATCMP + NSATIRN +
-                        prn - MINPRNLEO + 1;
+                    if (prn < MINPRNLEO || MAXPRNLEO < prn)
+                        return 0;
+                    return NSATGPS
+                        + NSATGLO
+                        + NSATGAL
+                        + NSATQZS
+                        + NSATCMP
+                        + NSATIRN
+                        + prn
+                        - MINPRNLEO
+                        + 1;
                 case NavigationSystemEnum.SYS_SBS:
-                    if (prn < MINPRNSBS || MAXPRNSBS < prn) return 0;
-                    return NSATGPS + NSATGLO + NSATGAL + NSATQZS + NSATCMP + NSATIRN + NSATLEO +
-                        prn - MINPRNSBS + 1;
+                    if (prn < MINPRNSBS || MAXPRNSBS < prn)
+                        return 0;
+                    return NSATGPS
+                        + NSATGLO
+                        + NSATGAL
+                        + NSATQZS
+                        + NSATCMP
+                        + NSATIRN
+                        + NSATLEO
+                        + prn
+                        - MINPRNSBS
+                        + 1;
             }
 
             return 0;
@@ -251,14 +272,22 @@ namespace Asv.Gnss
             var sys = GetSatelliteSystem(sat, ref p);
             switch (sys)
             {
-                case NavigationSystemEnum.SYS_GPS: return $"G{prn - MINPRNGPS + 1}";
-                case NavigationSystemEnum.SYS_GLO: return $"R{prn - MINPRNGLO + 1}";
-                case NavigationSystemEnum.SYS_GAL: return $"E{prn - MINPRNGAL + 1}";
-                case NavigationSystemEnum.SYS_SBS: return $"S{prn - 100}";
-                case NavigationSystemEnum.SYS_QZS: return $"J{prn - MINPRNQZS + 1}";
-                case NavigationSystemEnum.SYS_CMP: return $"C{prn - MINPRNCMP + 1}";
-                case NavigationSystemEnum.SYS_IRN: return $"I{prn - MINPRNIRN + 1}";
-                default: return "";
+                case NavigationSystemEnum.SYS_GPS:
+                    return $"G{prn - MINPRNGPS + 1}";
+                case NavigationSystemEnum.SYS_GLO:
+                    return $"R{prn - MINPRNGLO + 1}";
+                case NavigationSystemEnum.SYS_GAL:
+                    return $"E{prn - MINPRNGAL + 1}";
+                case NavigationSystemEnum.SYS_SBS:
+                    return $"S{prn - 100}";
+                case NavigationSystemEnum.SYS_QZS:
+                    return $"J{prn - MINPRNQZS + 1}";
+                case NavigationSystemEnum.SYS_CMP:
+                    return $"C{prn - MINPRNCMP + 1}";
+                case NavigationSystemEnum.SYS_IRN:
+                    return $"I{prn - MINPRNIRN + 1}";
+                default:
+                    return "";
             }
         }
 
@@ -272,7 +301,8 @@ namespace Asv.Gnss
         public static NavigationSystemEnum GetSatelliteSystem(int sat, ref int prn)
         {
             var sys = NavigationSystemEnum.SYS_NONE;
-            if (sat <= 0 || MAXSAT < sat) sat = 0;
+            if (sat <= 0 || MAXSAT < sat)
+                sat = 0;
             else if (sat <= NSATGPS)
             {
                 sys = NavigationSystemEnum.SYS_GPS;
@@ -313,9 +343,11 @@ namespace Asv.Gnss
                 sys = NavigationSystemEnum.SYS_SBS;
                 sat += MINPRNSBS - 1;
             }
-            else sat = 0;
+            else
+                sat = 0;
 
-            if (prn != 0) prn = sat;
+            if (prn != 0)
+                prn = sat;
             return sys;
         }
 
@@ -341,11 +373,14 @@ namespace Asv.Gnss
         {
             var mask = 1u;
             int i;
-            if (len is <= 0 or > 32) return;
+            if (len is <= 0 or > 32)
+                return;
             for (i = pos; i < pos + len; i++, mask <<= 1)
             {
-                if ((data & mask) != 0) buff[i / 8] |= (byte)(1u << (i % 8));
-                else buff[i / 8] &= (byte)~(1u << (i % 8));
+                if ((data & mask) != 0)
+                    buff[i / 8] |= (byte)(1u << (i % 8));
+                else
+                    buff[i / 8] &= (byte)~(1u << (i % 8));
             }
 
             pos += len;
@@ -353,8 +388,10 @@ namespace Asv.Gnss
 
         public static void SetBitS(Span<byte> buff, int data, ref int pos, int len)
         {
-            if (data < 0) data |= 1 << (len - 1);
-            else data &= ~(1 << (len - 1));
+            if (data < 0)
+                data |= 1 << (len - 1);
+            else
+                data &= ~(1 << (len - 1));
             SetBitU(buff, (uint)data, ref pos, len);
         }
 
@@ -378,25 +415,44 @@ namespace Asv.Gnss
             //http://maia.usno.navy.mil/ser7/tai-utc.dat
 
             var yyyymm = year * 100 + month;
-            if (yyyymm >= 201701) return 37;
-            if (yyyymm >= 201507) return 36;
-            if (yyyymm >= 201207) return 35;
-            if (yyyymm >= 200901) return 34;
-            if (yyyymm >= 200601) return 33;
-            if (yyyymm >= 199901) return 32;
-            if (yyyymm >= 199707) return 31;
-            if (yyyymm >= 199601) return 30;
-            if (yyyymm >= 199407) return 29;
-            if (yyyymm >= 199307) return 28;
-            if (yyyymm >= 199207) return 27;
-            if (yyyymm >= 199101) return 26;
-            if (yyyymm >= 199001) return 25;
-            if (yyyymm >= 198801) return 24;
-            if (yyyymm >= 198507) return 23;
-            if (yyyymm >= 198307) return 22;
-            if (yyyymm >= 198207) return 21;
-            if (yyyymm >= 198107) return 20;
-            if (yyyymm >= 0) return 19;
+            if (yyyymm >= 201701)
+                return 37;
+            if (yyyymm >= 201507)
+                return 36;
+            if (yyyymm >= 201207)
+                return 35;
+            if (yyyymm >= 200901)
+                return 34;
+            if (yyyymm >= 200601)
+                return 33;
+            if (yyyymm >= 199901)
+                return 32;
+            if (yyyymm >= 199707)
+                return 31;
+            if (yyyymm >= 199601)
+                return 30;
+            if (yyyymm >= 199407)
+                return 29;
+            if (yyyymm >= 199307)
+                return 28;
+            if (yyyymm >= 199207)
+                return 27;
+            if (yyyymm >= 199101)
+                return 26;
+            if (yyyymm >= 199001)
+                return 25;
+            if (yyyymm >= 198801)
+                return 24;
+            if (yyyymm >= 198507)
+                return 23;
+            if (yyyymm >= 198307)
+                return 22;
+            if (yyyymm >= 198207)
+                return 21;
+            if (yyyymm >= 198107)
+                return 20;
+            if (yyyymm >= 0)
+                return 19;
 
             return 0;
         }
@@ -413,7 +469,8 @@ namespace Asv.Gnss
                 > 119 and <= 126 => (ushort)(lockTimeIndicator * 32 - 3096),
                 127 => 937,
                 _ => throw new ArgumentException(
-                    $"Lock time '{lockTimeIndicator}', must be greater than or equal to 0 and less than or equal to 127")
+                    $"Lock time '{lockTimeIndicator}', must be greater than or equal to 0 and less than or equal to 127"
+                ),
             };
         }
 
@@ -429,10 +486,9 @@ namespace Asv.Gnss
                 > 728 and <= 936 => (byte)((lockTime + 3096) / 32),
                 937 => 127,
                 _ => throw new ArgumentException(
-                    $"Lock time '{lockTime}', must be greater than or equal to 0 and less than or equal to 937")
+                    $"Lock time '{lockTime}', must be greater than or equal to 0 and less than or equal to 937"
+                ),
             };
         }
     }
 }
-
-

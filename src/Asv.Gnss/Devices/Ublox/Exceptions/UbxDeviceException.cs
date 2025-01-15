@@ -23,7 +23,8 @@ namespace Asv.Gnss
         /// </remarks>
         /// <param name="source">The source of the exception.</param>
         /// <param name="message">The error message that explains the reason for the exception.</param>
-        public UbxDeviceException(string source, string message) : base(message)
+        public UbxDeviceException(string source, string message)
+            : base(message)
         {
             SourceName = source;
         }
@@ -34,7 +35,8 @@ namespace Asv.Gnss
         /// <param name="source">The source of the exception.</param>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="inner">The exception that is the cause of the current exception.</param>
-        public UbxDeviceException(string source, string message, Exception inner) : base(message, inner)
+        public UbxDeviceException(string source, string message, Exception inner)
+            : base(message, inner)
         {
             SourceName = source;
         }

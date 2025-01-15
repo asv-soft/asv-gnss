@@ -1,5 +1,5 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -12,7 +12,11 @@ namespace Asv.Gnss
     /// </summary>
     public class RtcmV3Message1012 : RtcmV3RTKObservableMessagesBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
             Satellites = new GLONASSSatellite[SatelliteCount];
@@ -33,13 +37,18 @@ namespace Asv.Gnss
 
     public class GLONASSSatellite
     {
-       public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
+        public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
             var sys = NavigationSystemEnum.SYS_GLO;
 
             var prn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
             var code1 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
-            var fcn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5) /* fcn+7 */;
+            var fcn = SpanBitHelper.GetBitU(
+                buffer,
+                ref bitIndex,
+                5
+            ) /* fcn+7 */
+            ;
             double pr1 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 25);
             var ppr1 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 20);
             var lock1 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
@@ -60,7 +69,6 @@ namespace Asv.Gnss
 
             SatelliteNumber = sat;
             SatelliteCode = RtcmV3Helper.Sat2Code(SatelliteNumber, (int)prn);
-
 
             pr1 = pr1 * 0.02 + amb * RtcmV3Helper.PRUNIT_GLO;
             L1PseudoRange = pr1;
@@ -84,7 +92,6 @@ namespace Asv.Gnss
                 L2PseudoRange = pr1 + pr21 * 0.02;
             }
 
-
             L2Frequency = RtcmV3Helper.Code2Freq(sys, RtcmV3Helper.CODE_L2C, (int)fcn - 7);
 
             if (ppr2 != -524288) // 0xFFF80000
@@ -106,7 +113,7 @@ namespace Asv.Gnss
         public string SatelliteCode { get; set; }
 
         public byte L1Code { get; set; }
-        
+
         public double L1Frequency { get; set; }
         public double L1PseudoRange { get; set; }
 

@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class SbfPacketPvtGeodeticRev2:SbfMessageBase
+    public class SbfPacketPvtGeodeticRev2 : SbfMessageBase
     {
         public override ushort MessageRevision => 2;
         public override ushort MessageType => 4007;
@@ -54,8 +54,6 @@ namespace Asv.Gnss
             IsMarkerPositionReported = (SbfMarkerPositionEnum)(Misc >> 6);
         }
 
-        
-
         /// <summary>
         /// Flag indicating whether the marker position reported in this
         /// block is also the ARP position(i.e.whether the ARP-tomarker
@@ -77,7 +75,6 @@ namespace Asv.Gnss
         public bool DGPSorRTK { get; set; }
 
         public byte Misc { get; set; }
-
 
         /// <summary>
         /// 2-sigma vertical accuracy. The vertical distance between the true
@@ -132,7 +129,6 @@ namespace Asv.Gnss
         /// Set if integrity has failed as per Galileo HPCA (HMI Probability Computation Algorithm)
         /// </summary>
         public bool IsIntegrityPerGalileoHPCAFailed { get; set; }
-
 
         /// <summary>
         /// RAIM integrity flag
@@ -209,15 +205,16 @@ namespace Asv.Gnss
         /// Velocity in the ’Up’ direction
         /// </summary>
         public float Vu { get; set; }
+
         /// <summary>
         /// Velocity in the East direction
         /// </summary>
         public float Ve { get; set; }
+
         /// <summary>
         /// Velocity in the North direction
         /// </summary>
         public float Vn { get; set; }
-
 
         /// <summary>
         /// Geoid undulation. See the setGeoidUndulation command.
@@ -238,6 +235,7 @@ namespace Asv.Gnss
         /// Latitude, from −π/2 to +π/2, positive North of Equator
         /// </summary>
         public double Latitude { get; set; }
+
         /// <summary>
         /// if 0, no error
         /// </summary>
@@ -251,6 +249,7 @@ namespace Asv.Gnss
         {
             return toSingle == -2E10 ? Single.NaN : toSingle;
         }
+
         private static double CheckNan(double toSingle)
         {
             return toSingle == -2E10 ? Single.NaN : toSingle;
@@ -288,7 +287,6 @@ namespace Asv.Gnss
         }
     }
 
-
     public enum SbfPVTSolution
     {
         NoPVT = 0,
@@ -321,38 +319,47 @@ namespace Asv.Gnss
         /// WGS84/ITRS
         /// </summary>
         WGS84 = 0,
+
         /// <summary>
         /// Datum equal to that used by the DGNSS/RTK base station
         /// </summary>
         DGNSS = 19,
+
         /// <summary>
         /// ETRS89 (ETRF2000 realization)
         /// </summary>
         ETRS89 = 30,
+
         /// <summary>
         /// NAD83(2011), North American Datum (2011)
         /// </summary>
         NAD832011 = 31,
+
         /// <summary>
         /// NAD83(PA11), North American Datum, Pacific plate (2011)
         /// </summary>
         NAD83PA11 = 32,
+
         /// <summary>
         /// NAD83(MA11), North American Datum, Marianas plate (2011)
         /// </summary>
         NAD83MA11 = 33,
+
         /// <summary>
         /// GDA94(2010), Geocentric Datum of Australia (2010)
         /// </summary>
         GDA942010 = 34,
+
         /// <summary>
         /// GDA2020, Geocentric Datum of Australia 2020
         /// </summary>
         GDA2020 = 35,
+
         /// <summary>
         /// First user-defined datum
         /// </summary>
         User1 = 250,
+
         /// <summary>
         /// Second user-defined datum
         /// </summary>
@@ -370,7 +377,6 @@ namespace Asv.Gnss
         Reserved1,
         Reserved2,
         Reserved3,
-
     }
 
     public enum SbfRaimEnum
@@ -379,14 +385,17 @@ namespace Asv.Gnss
         /// RAIM not active (integrity not monitored)
         /// </summary>
         RaimNotActive = 0,
+
         /// <summary>
         /// RAIM integrity test successful
         /// </summary>
         RaimIntegrityTestSuccessful = 1,
+
         /// <summary>
         /// RAIM integrity test failed
         /// </summary>
         RaimIntegrityTestFailed = 2,
+
         /// <summary>
         /// Reserved
         /// </summary>
@@ -399,20 +408,21 @@ namespace Asv.Gnss
         /// Not seeded or not in PPP positioning mode
         /// </summary>
         NotSeeded = 0,
+
         /// <summary>
         ///  Manual seed
         /// </summary>
         ManualSeed = 1,
+
         /// <summary>
         /// Seeded from DGPS
         /// </summary>
         SeededFromDGPS = 2,
+
         /// <summary>
         /// Seeded from RTKFixed
         /// </summary>
         SeededFromRTKFixed = 3,
-
-
     }
 
     public enum SbfMarkerPositionEnum
@@ -421,10 +431,12 @@ namespace Asv.Gnss
         /// Unknown
         /// </summary>
         Unknown = 0,
+
         /// <summary>
         /// The ARP-to-marker offset is zero
         /// </summary>
         ARPtoMarkerOffsetIsZero = 1,
+
         /// <summary>
         /// The ARP-to-marker offset is not zero
         /// </summary>

@@ -51,7 +51,6 @@ namespace Asv.Gnss
         /// </summary>
         private int _payloadReadBytes = 0;
 
-
         /// <summary>
         /// Represents the states of a synchronization process.
         /// </summary>
@@ -94,7 +93,7 @@ namespace Asv.Gnss
             /// <summary>
             /// Represents the CRC2 state of the system.
             /// </summary>
-            Crc2
+            Crc2,
         }
 
         /// <summary>
@@ -107,7 +106,8 @@ namespace Asv.Gnss
             switch (_state)
             {
                 case State.Sync1:
-                    if (data != UbxHelper.SyncByte1) break;
+                    if (data != UbxHelper.SyncByte1)
+                        break;
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = UbxHelper.SyncByte1;
                     _state = State.Sync2;
@@ -155,14 +155,20 @@ namespace Asv.Gnss
                     break;
                 case State.Crc2:
                     _buffer[_payloadReadBytes + 6 + 1] = data;
-                    var originalCrc = UbxCrc16.Calc(new ReadOnlySpan<byte>(_buffer,2,_payloadLength + 4 /*ID + Length*/));
+                    var originalCrc = UbxCrc16.Calc(
+                        new ReadOnlySpan<byte>(
+                            _buffer,
+                            2,
+                            _payloadLength + 4 /*ID + Length*/
+                        )
+                    );
                     var sourceCrc = new[] { _buffer[_payloadReadBytes + 6], data };
 
                     if (originalCrc.Crc1 == sourceCrc[0] && originalCrc.Crc2 == sourceCrc[1])
                     {
                         var msgId = UbxHelper.ReadMessageId(_buffer);
-                        var span = new ReadOnlySpan<byte>(_buffer,0, _payloadReadBytes + 8);
-                        ParsePacket(msgId,ref span);
+                        var span = new ReadOnlySpan<byte>(_buffer, 0, _payloadReadBytes + 8);
+                        ParsePacket(msgId, ref span);
                         Reset();
                         return true;
                     }
@@ -183,8 +189,5 @@ namespace Asv.Gnss
         {
             _state = State.Sync1;
         }
-
-        
-
     }
 }

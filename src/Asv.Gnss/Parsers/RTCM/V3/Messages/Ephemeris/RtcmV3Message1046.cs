@@ -1,5 +1,5 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -13,15 +13,19 @@ namespace Asv.Gnss
         /// Rtcm Message Id
         /// </summary>
         public const int RtcmMessageId = 1046;
+
         /// <inheritdoc/>
         public override ushort MessageId => RtcmMessageId;
-        
+
         /// <inheritdoc/>
         public override string Name => "Galileo I/NAV ephemeris information";
 
-
         /// <inheritdoc/>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             var sys = NavigationSystemEnum.SYS_GAL;
 
@@ -66,20 +70,24 @@ namespace Asv.Gnss
             E1BDataValidity = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             Reserved = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
         }
+
         /// <summary>
         /// Satellite number in all the constellations.
         /// </summary>
         public int SatelliteNumber { get; set; }
+
         /// <summary>
         /// A Galileo SVID parameter is coded with 6 bits.
         /// However the ma constellation which can be accomodated within the I/NAV and F/NAV frames is 36 satellites
         /// (3 planes of 12 satellites each)
         /// </summary>
         public uint SatellitePrn { get; set; }
+
         /// <summary>
         /// A BDS Satellite RINEX Code.
         /// </summary>
         public string SatelliteCode => RtcmV3Helper.Sat2Code(SatelliteNumber, (int)SatellitePrn);
+
         /// <summary>
         /// Galileo Week number. Range 0 - 4095 weeks. Resolution - 1 week.
         /// Roll-over every 4096 (about 78 years). Galileo System Time (GST).
@@ -87,12 +95,14 @@ namespace Asv.Gnss
         /// i.e. GST was equal 13 seconds at 22 nd August 1999 00:00:00 UTC.
         /// </summary>
         public uint WeekRaw { get; set; }
+
         /// <summary>
         /// Issue of Data for navigation data (IODnav).
         /// Each IoDNav has an associated reference time parameter disseminated within the batch.
         /// Note: the broadcast group delay validity status and signal health status are not identified by any Issue of Data value unitless.
         /// </summary>
         public uint IoDnav { get; set; }
+
         /// <summary>
         /// SIS Accuracy
         /// </summary>
@@ -103,26 +113,31 @@ namespace Asv.Gnss
         /// Rate of inclination angle. Unit: semi-circles/s
         /// </summary>
         public double IdotRaw { get; private set; }
+
         /// <summary>
         /// The reference time of clock parameters. Unit: s.
         /// Range 0 - 604.792. Resolution: 60.
         /// </summary>
         public uint TocRaw { get; private set; }
+
         /// <summary>
         /// Clock correcton parameter Unit: s/s^2.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-59.
         /// </summary>
         public double Af2 { get; private set; }
+
         /// <summary>
         /// Clock correcton parameter Unit:s/s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-46
         /// </summary>
         public double Af1 { get; private set; }
+
         /// <summary>
         /// Clock correcton parameter Unit:s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-34
         /// </summary>
         public double Af0 { get; private set; }
+
         /// <summary>
         /// Amplitude of sine harmonic correction term to the orbit radius. Unit: m.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-5 m.
@@ -261,16 +276,18 @@ namespace Asv.Gnss
             return RtcmV3EphemerisHelper.GetGalWeek(utc, (int)WeekRaw);
         }
 
-
         public DateTime GetToc()
         {
             return RtcmV3Helper.GetFromGalileo((int)WeekRaw, TocRaw);
         }
+
         public double Idot => Idot * RtcmV3Helper.SC2RAD;
+
         public DateTime GetToc(DateTime utc)
         {
             return RtcmV3Helper.GetFromGalileo(GetWeek(utc), TocRaw);
         }
+
         public DateTime GetToe()
         {
             return RtcmV3Helper.GetFromGalileo((int)WeekRaw, ToeRaw);
@@ -288,7 +305,8 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.OutOfService) == SignalHealthy.OutOfService;
+                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.OutOfService)
+                    == SignalHealthy.OutOfService;
             }
         }
 
@@ -296,14 +314,16 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.WillBeOutOfService) == SignalHealthy.WillBeOutOfService;
+                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.WillBeOutOfService)
+                    == SignalHealthy.WillBeOutOfService;
             }
         }
         public bool IsE5bSignalInTest
         {
             get
             {
-                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.InTest) == SignalHealthy.InTest;
+                return ((SignalHealthy)E5bSignalHealthFlag & SignalHealthy.InTest)
+                    == SignalHealthy.InTest;
             }
         }
 
@@ -319,7 +339,8 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.OutOfService) == SignalHealthy.OutOfService;
+                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.OutOfService)
+                    == SignalHealthy.OutOfService;
             }
         }
 
@@ -327,14 +348,16 @@ namespace Asv.Gnss
         {
             get
             {
-                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.WillBeOutOfService) == SignalHealthy.WillBeOutOfService;
+                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.WillBeOutOfService)
+                    == SignalHealthy.WillBeOutOfService;
             }
         }
         public bool E1BSignalInTest
         {
             get
             {
-                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.InTest) == SignalHealthy.InTest;
+                return ((SignalHealthy)E1BSignalHealthFlag & SignalHealthy.InTest)
+                    == SignalHealthy.InTest;
             }
         }
 
@@ -342,9 +365,9 @@ namespace Asv.Gnss
         public enum SignalHealthy
         {
             OK = 0x0,
-            OutOfService= 0x1,
+            OutOfService = 0x1,
             WillBeOutOfService = 0x2,
-            InTest = 0x3
+            InTest = 0x3,
         }
     }
 }

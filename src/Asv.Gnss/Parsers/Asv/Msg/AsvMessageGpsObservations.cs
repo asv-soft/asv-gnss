@@ -55,13 +55,19 @@ namespace Asv.Gnss
             AsvHelper.SetBitU(buffer, (uint)Math.Round(tow * 1000.0), ref bitIndex, 30);
             AsvHelper.SetBitU(buffer, (uint)week, ref bitIndex, 10);
             AsvHelper.SetBitU(buffer, cycle, ref bitIndex, 4);
-            AsvHelper.SetBitS(buffer, (int)Math.Round(TimeOffset / GpsRawHelper.P2_30), ref bitIndex, 22);
+            AsvHelper.SetBitS(
+                buffer,
+                (int)Math.Round(TimeOffset / GpsRawHelper.P2_30),
+                ref bitIndex,
+                22
+            );
             AsvHelper.SetBitU(buffer, (uint)(Observations?.Length ?? 0), ref bitIndex, 5);
             bitIndex += 1;
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
 
-            if (Observations == null) return;
+            if (Observations == null)
+                return;
             foreach (var obs in Observations)
             {
                 obs.Serialize(ref buffer);
@@ -82,12 +88,13 @@ namespace Asv.Gnss
             while (index < length)
             {
                 var prn = random.Next() % 32 + 1;
-                if (randomPrn.Any(_ => _ == prn)) continue;
+                if (randomPrn.Any(_ => _ == prn))
+                    continue;
                 randomPrn[index] = prn;
                 index++;
             }
             Observations = new AsvGpsObservation[length];
-            
+
             for (var i = 0; i < length; i++)
             {
                 var obs = new AsvGpsObservation();
@@ -130,7 +137,6 @@ namespace Asv.Gnss
             pr1 = pr1 * 0.02 + amb * AsvHelper.PRUNIT_GPS;
             L1PseudoRange = pr1;
 
-
             if (ppr1 != -524288) // (0xFFF80000)
             {
                 L1CarrierPhase = ppr1 * 0.0005 * 1.57542E9 / AsvHelper.CLIGHT;
@@ -139,7 +145,6 @@ namespace Asv.Gnss
             {
                 L1CarrierPhase = double.NaN;
             }
-
 
             L1Code = code1 != 0 ? AsvHelper.CODE_L1P : AsvHelper.CODE_L1C;
         }
@@ -183,65 +188,63 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public int Prn { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public int SatelliteId { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string SatelliteCode { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public byte L1Code { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double L1PseudoRange { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double L1CarrierPhase { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ushort L1LockTime { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool ParticipationIndicator { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ReasonForException ReasonForException { get; set; }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double Elevation { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double Azimuth { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double L1CNR { get; set; }
-
     }
 }

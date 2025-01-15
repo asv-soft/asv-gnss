@@ -12,7 +12,7 @@ namespace Asv.Gnss
             Almanac,
             IonoAndUtcData,
             HealthAndConfigurations,
-            None
+            None,
         }
 
         public class Ionospheric
@@ -108,30 +108,47 @@ namespace Asv.Gnss
                 word4Start += 16;
                 ToaSec = GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8) * 4096.0;
                 word4Start += 8;
-                i0 = (0.3 + GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16) * GpsRawHelper.P2_19) *
-                     GpsRawHelper.SC2RAD;
+                i0 =
+                    (
+                        0.3
+                        + GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16)
+                            * GpsRawHelper.P2_19
+                    ) * GpsRawHelper.SC2RAD;
                 word4Start += 16;
-                OMGd = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16) * GpsRawHelper.P2_38 *
-                       GpsRawHelper.SC2RAD;
+                OMGd =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16)
+                    * GpsRawHelper.P2_38
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 16;
                 Health = new[] { (int)GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8) };
                 word4Start += 8;
-                A = Math.Pow(GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_11, 2);
+                A = Math.Pow(
+                    GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_11,
+                    2
+                );
                 word4Start += 24;
-                OMG0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_23 *
-                       GpsRawHelper.SC2RAD;
+                OMG0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24)
+                    * GpsRawHelper.P2_23
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 24;
-                omg = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_23 *
-                      GpsRawHelper.SC2RAD;
+                omg =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24)
+                    * GpsRawHelper.P2_23
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 24;
-                M0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_23 * GpsRawHelper.SC2RAD;
+                M0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24)
+                    * GpsRawHelper.P2_23
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 24;
                 var af0 = GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8);
                 word4Start += 8;
                 Af1 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 11) * GpsRawHelper.P2_38;
                 word4Start += 11;
-                Af0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 3) * GpsRawHelper.P2_17 +
-                      af0 * GpsRawHelper.P2_20;
+                Af0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 3) * GpsRawHelper.P2_17
+                    + af0 * GpsRawHelper.P2_20;
 
                 return;
             }
@@ -164,31 +181,42 @@ namespace Asv.Gnss
             {
                 Type = Subframe4Type.IonoAndUtcData;
                 Iono = new Ionospheric();
-                Iono.Alpha0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_30;
+                Iono.Alpha0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_30;
                 word4Start += 8;
-                Iono.Alpha1 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_27;
+                Iono.Alpha1 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_27;
                 word4Start += 8;
-                Iono.Alpha2 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_24;
+                Iono.Alpha2 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_24;
                 word4Start += 8;
-                Iono.Alpha3 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_24;
+                Iono.Alpha3 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * GpsRawHelper.P2_24;
                 word4Start += 8;
 
-                Iono.Betta0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 11);
+                Iono.Betta0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 11);
                 word4Start += 8;
-                Iono.Betta1 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 14);
+                Iono.Betta1 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 14);
                 word4Start += 8;
-                Iono.Betta2 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 16);
+                Iono.Betta2 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 16);
                 word4Start += 8;
-                Iono.Betta3 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 16);
+                Iono.Betta3 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 16);
                 word4Start += 8;
 
                 UtcGps = new UtcGpsRelationship();
 
-                UtcGps.A1 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_50;
+                UtcGps.A1 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_50;
                 word4Start += 24;
-                UtcGps.A0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 32) * GpsRawHelper.P2_30;
+                UtcGps.A0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 32) * GpsRawHelper.P2_30;
                 word4Start += 32;
-                UtcGps.Tot = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 12);
+                UtcGps.Tot =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 8) * Math.Pow(2, 12);
                 word4Start += 8;
                 UtcGps.WNt = (int)GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8);
                 word4Start += 8;
@@ -204,7 +232,6 @@ namespace Asv.Gnss
         public Subframe4Type Type { get; set; }
 
         public Ionospheric Iono { get; set; }
-
 
         /// <summary>
         /// UTC/GPS-time relationship

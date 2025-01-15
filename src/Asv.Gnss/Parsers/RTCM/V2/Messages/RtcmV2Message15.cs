@@ -43,7 +43,11 @@ namespace Asv.Gnss
         /// <param name="buffer">The buffer containing the serialized data.</param>
         /// <param name="bitIndex">The bit index in the buffer where the deserialization should start.</param>
         /// <param name="payloadLength">The length of the payload in bytes.</param>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        )
         {
             var itemCnt = (payloadLength * 8) / 36;
             Delays = new IonosphericDelayItem[itemCnt];
@@ -51,7 +55,7 @@ namespace Asv.Gnss
             for (var i = 0; i < itemCnt; i++)
             {
                 Delays[i] = new IonosphericDelayItem();
-                Delays[i].Deserialize(buffer,ref bitIndex);
+                Delays[i].Deserialize(buffer, ref bitIndex);
             }
         }
     }
@@ -66,10 +70,12 @@ namespace Asv.Gnss
         /// /
         public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
-            var sys = SpanBitHelper.GetBitU(buffer,ref bitIndex, 1);
-            NavigationSystem = sys == 0 ? NavigationSystemEnum.SYS_GPS : NavigationSystemEnum.SYS_GLO;
-            Prn = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 5);
-            if (Prn == 0) Prn = 32;
+            var sys = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            NavigationSystem =
+                sys == 0 ? NavigationSystemEnum.SYS_GPS : NavigationSystemEnum.SYS_GLO;
+            Prn = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
+            if (Prn == 0)
+                Prn = 32;
             IonosphericDelay = SpanBitHelper.GetBitU(buffer, ref bitIndex, 14) * 0.001;
             var rateOfChange = SpanBitHelper.GetBitS(buffer, ref bitIndex, 14);
 

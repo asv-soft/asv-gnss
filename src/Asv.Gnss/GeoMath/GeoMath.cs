@@ -33,11 +33,21 @@ namespace Asv.Gnss
         /// </code>
         /// The azimuth from 0,0 to 1,0 is 0 degrees. From 0,0 to 0,1 is 90 degrees (due east). The range of the result is [-180, 180].
         /// </example>
-        public static double Azimuth(double latitude1, double longitude1, double latitude2, double longitude2)
+        public static double Azimuth(
+            double latitude1,
+            double longitude1,
+            double latitude2,
+            double longitude2
+        )
         {
             var measurement = Calculator.CalculateGeodeticMeasurement(
-                new GlobalPosition(new GlobalCoordinates(new Angle(latitude1), new Angle(longitude1))),
-                new GlobalPosition(new GlobalCoordinates(new Angle(latitude2), new Angle(longitude2))));
+                new GlobalPosition(
+                    new GlobalCoordinates(new Angle(latitude1), new Angle(longitude1))
+                ),
+                new GlobalPosition(
+                    new GlobalCoordinates(new Angle(latitude2), new Angle(longitude2))
+                )
+            );
 
             return measurement.Azimuth.Degrees;
         }
@@ -52,8 +62,14 @@ namespace Asv.Gnss
         /// <exception cref="ArgumentNullException">Thrown when point1 or point2 is null.</exception>
         public static double Distance(GeoPoint point1, GeoPoint point2)
         {
-            return Distance(point1.Latitude, point1.Longitude, point1.Altitude, point2.Latitude, point2.Longitude,
-                point2.Altitude);
+            return Distance(
+                point1.Latitude,
+                point1.Longitude,
+                point1.Altitude,
+                point2.Latitude,
+                point2.Longitude,
+                point2.Altitude
+            );
         }
 
         /// <summary>
@@ -65,11 +81,21 @@ namespace Asv.Gnss
         /// <param name="longitude2">The longitude of the second point.</param>
         /// <returns>The great circle distance in meters.</returns>
         /// <remarks>The antemeridian is not considered.</remarks>
-        public static double Distance(double latitude1, double longitude1, double latitude2, double longitude2)
+        public static double Distance(
+            double latitude1,
+            double longitude1,
+            double latitude2,
+            double longitude2
+        )
         {
             var measurement = Calculator.CalculateGeodeticMeasurement(
-                new GlobalPosition(new GlobalCoordinates(new Angle(latitude1), new Angle(longitude1))),
-                new GlobalPosition(new GlobalCoordinates(new Angle(latitude2), new Angle(longitude2))));
+                new GlobalPosition(
+                    new GlobalCoordinates(new Angle(latitude1), new Angle(longitude1))
+                ),
+                new GlobalPosition(
+                    new GlobalCoordinates(new Angle(latitude2), new Angle(longitude2))
+                )
+            );
 
             return measurement.EllipsoidalDistance;
         }
@@ -85,12 +111,25 @@ namespace Asv.Gnss
         /// <param name="altitude2">The altitude of the second point.</param>
         /// <returns>The great circle distance in meters.</returns>
         /// <remarks>The antemeridian is not considered.</remarks>
-        public static double Distance(double latitude1, double longitude1, double altitude1, double latitude2,
-            double longitude2, double altitude2)
+        public static double Distance(
+            double latitude1,
+            double longitude1,
+            double altitude1,
+            double latitude2,
+            double longitude2,
+            double altitude2
+        )
         {
             var measurement = Calculator.CalculateGeodeticMeasurement(
-                new GlobalPosition(new GlobalCoordinates(new Angle(latitude1), new Angle(longitude1)), altitude1),
-                new GlobalPosition(new GlobalCoordinates(new Angle(latitude2), new Angle(longitude2)), altitude2));
+                new GlobalPosition(
+                    new GlobalCoordinates(new Angle(latitude1), new Angle(longitude1)),
+                    altitude1
+                ),
+                new GlobalPosition(
+                    new GlobalCoordinates(new Angle(latitude2), new Angle(longitude2)),
+                    altitude2
+                )
+            );
 
             return measurement.PointToPointDistance;
         }
@@ -103,7 +142,14 @@ namespace Asv.Gnss
         /// <returns>The elevation difference between the two geographic points.</returns>
         public static double Elevation(GeoPoint p1, GeoPoint p2)
         {
-            return Elevation(p1.Latitude, p1.Longitude, p1.Altitude, p2.Latitude, p2.Longitude, p2.Altitude);
+            return Elevation(
+                p1.Latitude,
+                p1.Longitude,
+                p1.Altitude,
+                p2.Latitude,
+                p2.Longitude,
+                p2.Altitude
+            );
         }
 
         /// <summary>
@@ -125,8 +171,14 @@ namespace Asv.Gnss
         /// The returned angle from (37.00, -121.98, 600) to a point about 1778
         /// meters west, 400 meters below at (37.00, -122.00, 200) is -12.7 degrees.
         /// </example>
-        public static double Elevation(double latitude1, double longitude1, double altitude1, double latitude2,
-            double longitude2, double altitude2)
+        public static double Elevation(
+            double latitude1,
+            double longitude1,
+            double altitude1,
+            double latitude2,
+            double longitude2,
+            double altitude2
+        )
         {
             double surfaceDistance = Distance(latitude1, longitude1, latitude2, longitude2);
             return RadiansToDegrees(Math.Atan2(altitude2 - altitude1, surfaceDistance));
@@ -185,9 +237,14 @@ namespace Asv.Gnss
         /// <param name="lineY">The second point on the line.</param>
         /// <param name="p">The point from which to drop the perpendicular.</param>
         /// <returns>The intersection point of the line and the perpendicular from the given point.</returns>
-        public static GeoPoint IntersectionLineAndPerpendicularFromPoint(GeoPoint lineX, GeoPoint lineY, GeoPoint p)
+        public static GeoPoint IntersectionLineAndPerpendicularFromPoint(
+            GeoPoint lineX,
+            GeoPoint lineY,
+            GeoPoint p
+        )
         {
-            if (lineX.Equals(lineY)) return p; // если прямая задана одинаковыми точками
+            if (lineX.Equals(lineY))
+                return p; // если прямая задана одинаковыми точками
 
             var azimuth = DegreesToRadians(lineX.Azimuth(lineY) - lineX.Azimuth(p));
             var d = Distance(lineX, p);
@@ -202,7 +259,11 @@ namespace Asv.Gnss
         /// <param name="lineY">The ending point of the line.</param>
         /// <param name="alpha">The angle at which the line is oriented.</param>
         /// <returns>The point that is the intersection of the perpendicular and the line.</returns>
-        public static GeoPoint IntersectionLineAndPerpendicularFromPoint(GeoPoint lineX, GeoPoint lineY, double alpha)
+        public static GeoPoint IntersectionLineAndPerpendicularFromPoint(
+            GeoPoint lineX,
+            GeoPoint lineY,
+            double alpha
+        )
         {
             var azimuth = lineX.Azimuth(lineY) + alpha;
             var b = Distance(lineX, lineY);
@@ -233,14 +294,26 @@ namespace Asv.Gnss
         /// <param name="radialDeg">The radial in degrees, measures clockwise from north.</param>
         /// <returns>A GeoPoint containing the Latitude and Longitude of the calculated point.</returns>
         /// <remarks>The antemeridian is not considered.</remarks>
-        public static GeoPoint RadialPoint(double latitude, double longitude, double altitude, double distance,
-            double radialDeg)
+        public static GeoPoint RadialPoint(
+            double latitude,
+            double longitude,
+            double altitude,
+            double distance,
+            double radialDeg
+        )
         {
             radialDeg = !double.IsNaN(radialDeg) ? radialDeg : 0;
             var coordinates = Calculator.CalculateEndingGlobalCoordinates(
-                new GlobalCoordinates(new Angle(latitude), new Angle(longitude)), new Angle(radialDeg), distance);
+                new GlobalCoordinates(new Angle(latitude), new Angle(longitude)),
+                new Angle(radialDeg),
+                distance
+            );
 
-            return new GeoPoint(coordinates.Latitude.Degrees, coordinates.Longitude.Degrees, altitude);
+            return new GeoPoint(
+                coordinates.Latitude.Degrees,
+                coordinates.Longitude.Degrees,
+                altitude
+            );
         }
 
         /// <summary>Converts the specified value in radians to degrees.</summary>
@@ -274,14 +347,22 @@ namespace Asv.Gnss
         /// <param name="deviationFromCenterLineInMeters">The maximum deviation from the center line of the wagging path in meters</param>
         /// <param name="minAltitudeInMeters">The minimum altitude value for the generated points</param>
         /// <returns>An enumerable collection of GeoPoint representing the wagging path points</returns>
-        public static IEnumerable<GeoPoint> GenerateWaggingLatLonPoints(GeoPoint start, GeoPoint stop,
-            GeoPoint convergencePoint, int waggingCountsValue, double deviationFromCenterLineInMeters,
-            double minAltitudeInMeters)
+        public static IEnumerable<GeoPoint> GenerateWaggingLatLonPoints(
+            GeoPoint start,
+            GeoPoint stop,
+            GeoPoint convergencePoint,
+            int waggingCountsValue,
+            double deviationFromCenterLineInMeters,
+            double minAltitudeInMeters
+        )
         {
             var distanceToStart = convergencePoint.DistanceTo(start);
             var distanceToStop = convergencePoint.DistanceTo(stop);
-            var factor = distanceToStart > distanceToStop ? deviationFromCenterLineInMeters / distanceToStart : deviationFromCenterLineInMeters / distanceToStop;
-            
+            var factor =
+                distanceToStart > distanceToStop
+                    ? deviationFromCenterLineInMeters / distanceToStart
+                    : deviationFromCenterLineInMeters / distanceToStop;
+
             if (waggingCountsValue <= 0 || deviationFromCenterLineInMeters <= 0)
             {
                 // this is simple path from start to stop without sub points
@@ -296,7 +377,7 @@ namespace Asv.Gnss
                 var incDistance = distance / (waggingCountsValue + 1);
                 var incAlt = altDiff / (waggingCountsValue + 1);
                 var m = distanceToStart > distanceToStop ? -1 : 1;
-                
+
                 yield return start;
                 var currentDist = 0.0;
                 var currentAlt = 0.0;
@@ -306,14 +387,17 @@ namespace Asv.Gnss
                     currentAlt += incAlt;
                     var alt = start.Altitude + currentAlt;
                     alt = alt < minAltitudeInMeters ? minAltitudeInMeters : alt;
-                    yield return start.RadialPoint(currentDist, azimuth)
-                        .RadialPoint((distanceToStart + m * currentDist) * factor, azimuth + (i % 2 == 0 ? -90 : 90))
+                    yield return start
+                        .RadialPoint(currentDist, azimuth)
+                        .RadialPoint(
+                            (distanceToStart + m * currentDist) * factor,
+                            azimuth + (i % 2 == 0 ? -90 : 90)
+                        )
                         .SetAltitude(alt);
                 }
                 yield return stop;
             }
         }
-
 
         /// <summary>
         /// Generate wagging path points.
@@ -327,9 +411,14 @@ namespace Asv.Gnss
         /// <returns>
         /// An enumerable collection of GeoPoint objects representing the generated wagging path points.
         /// </returns>
-        public static IEnumerable<GeoPoint> GenerateWaggingAltPoints(GeoPoint start, GeoPoint stop,
-            GeoPoint convergencePoint, int waggingCountsValue, double deviationFromCenterLineInMeters,
-            double minAltitudeInMeters)
+        public static IEnumerable<GeoPoint> GenerateWaggingAltPoints(
+            GeoPoint start,
+            GeoPoint stop,
+            GeoPoint convergencePoint,
+            int waggingCountsValue,
+            double deviationFromCenterLineInMeters,
+            double minAltitudeInMeters
+        )
         {
             if (waggingCountsValue <= 0 || deviationFromCenterLineInMeters <= 0)
             {
@@ -369,7 +458,6 @@ namespace Asv.Gnss
                 var incUpAlt = upAltDiff / (waggingCountsValue + 1);
                 var incDownAlt = downAltDiff / (waggingCountsValue + 1);
 
-
                 yield return start;
                 var currentDist = 0.0;
                 var currentUpAlt = 0.0;
@@ -384,10 +472,12 @@ namespace Asv.Gnss
                         currentDist += incDistance;
                         currentUpAlt += incUpAlt;
                         currentDownAlt += incDownAlt;
-                        var alt = i % 2 == 0
-                            ? startDownAltitude - currentDownAlt
-                            : startUpAltitude - currentUpAlt;
-                        if (alt < minAltitudeInMeters) alt = minAltitudeInMeters;
+                        var alt =
+                            i % 2 == 0
+                                ? startDownAltitude - currentDownAlt
+                                : startUpAltitude - currentUpAlt;
+                        if (alt < minAltitudeInMeters)
+                            alt = minAltitudeInMeters;
                         yield return start.RadialPoint(currentDist, azimuth).SetAltitude(alt);
                     }
                 }
@@ -400,14 +490,16 @@ namespace Asv.Gnss
                         currentDist += incDistance;
                         currentUpAlt += incUpAlt;
                         currentDownAlt += incDownAlt;
-                        var alt = i % 2 == 0
-                            ? startDownAltitude + currentDownAlt
-                            : startUpAltitude + currentUpAlt;
-                        if (alt < minAltitudeInMeters) alt = minAltitudeInMeters;
+                        var alt =
+                            i % 2 == 0
+                                ? startDownAltitude + currentDownAlt
+                                : startUpAltitude + currentUpAlt;
+                        if (alt < minAltitudeInMeters)
+                            alt = minAltitudeInMeters;
                         yield return start.RadialPoint(currentDist, azimuth).SetAltitude(alt);
                     }
                 }
-                
+
                 yield return stop;
             }
         }

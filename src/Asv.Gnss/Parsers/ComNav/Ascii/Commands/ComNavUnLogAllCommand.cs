@@ -6,6 +6,7 @@
 
         public const string MessageContent = "UNLOGALL";
         public override string MessageId => MessageContent;
+
         protected override string SerializeToAsciiString() => MessageContent;
     }
 }

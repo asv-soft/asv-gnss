@@ -22,14 +22,22 @@
             base.Deserialize(data);
             var bitIndex = 8U;
 
-            P3 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1); bitIndex += 1;
-            GamN = GlonassRawHelper.GetBitG(data, bitIndex, 11) * GlonassRawHelper.P2_40; bitIndex += 11 + 1;
-            P = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2); bitIndex += 2;
-            ln = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1); bitIndex += 1;
+            P3 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
+            bitIndex += 1;
+            GamN = GlonassRawHelper.GetBitG(data, bitIndex, 11) * GlonassRawHelper.P2_40;
+            bitIndex += 11 + 1;
+            P = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2);
+            bitIndex += 2;
+            ln = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
+            bitIndex += 1;
 
-            VelocityZ = GlonassRawHelper.GetBitG(data, bitIndex, 24) * GlonassRawHelper.P2_20 * 1E3; bitIndex += 24;
-            AccelerationZ = GlonassRawHelper.GetBitG(data, bitIndex, 5) * GlonassRawHelper.P2_30 * 1E3; bitIndex += 5;
-            PositionZ = GlonassRawHelper.GetBitG(data, bitIndex, 27) * GlonassRawHelper.P2_11 * 1E3; bitIndex += 27;
+            VelocityZ = GlonassRawHelper.GetBitG(data, bitIndex, 24) * GlonassRawHelper.P2_20 * 1E3;
+            bitIndex += 24;
+            AccelerationZ =
+                GlonassRawHelper.GetBitG(data, bitIndex, 5) * GlonassRawHelper.P2_30 * 1E3;
+            bitIndex += 5;
+            PositionZ = GlonassRawHelper.GetBitG(data, bitIndex, 27) * GlonassRawHelper.P2_11 * 1E3;
+            bitIndex += 27;
         }
 
         public byte P3 { get; set; }
@@ -41,7 +49,7 @@
         public double GamN { get; set; }
 
         /// <summary>
-        /// Признак режима работы НКА по ЧВИ 
+        /// Признак режима работы НКА по ЧВИ
         /// </summary>
         public byte P { get; set; }
 
@@ -66,7 +74,5 @@
         /// обусловленные действием луны и солнца
         /// </summary>
         public double AccelerationZ { get; set; }
-
-
     }
 }

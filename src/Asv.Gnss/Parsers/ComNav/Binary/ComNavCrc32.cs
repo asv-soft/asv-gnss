@@ -75,9 +75,5 @@ namespace Asv.Gnss
 
             return ulCrc;
         }
-
-
-
     }
-
 }

@@ -43,7 +43,12 @@ namespace Asv.Gnss
         /// <param name="time"></param>
         /// <param name="week"></param>
         /// <param name="seconds"></param>
-        public static void GetWeekFromTime(DateTime datum, DateTime time, ref int week, ref double seconds)
+        public static void GetWeekFromTime(
+            DateTime datum,
+            DateTime time,
+            ref int week,
+            ref double seconds
+        )
         {
             var dif = time - datum;
             var weeks = (int)(dif.TotalDays / 7);
@@ -79,4 +84,4 @@ namespace Asv.Gnss
             return week + (w - week + 1) / 4096 * 4096;
         }
     }
- }
+}

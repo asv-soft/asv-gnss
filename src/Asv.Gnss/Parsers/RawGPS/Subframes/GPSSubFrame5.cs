@@ -19,7 +19,7 @@ namespace Asv.Gnss
         {
             Almanac,
             ToaAndHealth,
-            None
+            None,
         }
 
         /// <summary>
@@ -53,30 +53,47 @@ namespace Asv.Gnss
                 word4Start += 16;
                 ToaSec = GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8) * 4096.0;
                 word4Start += 8;
-                i0 = (0.3 + GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16) * GpsRawHelper.P2_19) *
-                     GpsRawHelper.SC2RAD;
+                i0 =
+                    (
+                        0.3
+                        + GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16)
+                            * GpsRawHelper.P2_19
+                    ) * GpsRawHelper.SC2RAD;
                 word4Start += 16;
-                OMGd = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16) * GpsRawHelper.P2_38 *
-                       GpsRawHelper.SC2RAD;
+                OMGd =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 16)
+                    * GpsRawHelper.P2_38
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 16;
                 Health = new[] { (int)GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8) };
                 word4Start += 8;
-                A = Math.Pow(GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_11, 2);
+                A = Math.Pow(
+                    GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_11,
+                    2
+                );
                 word4Start += 24;
-                OMG0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_23 *
-                       GpsRawHelper.SC2RAD;
+                OMG0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24)
+                    * GpsRawHelper.P2_23
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 24;
-                omg = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_23 *
-                      GpsRawHelper.SC2RAD;
+                omg =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24)
+                    * GpsRawHelper.P2_23
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 24;
-                M0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24) * GpsRawHelper.P2_23 * GpsRawHelper.SC2RAD;
+                M0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 24)
+                    * GpsRawHelper.P2_23
+                    * GpsRawHelper.SC2RAD;
                 word4Start += 24;
                 var af0 = GpsRawHelper.GetBitU(dataWithoutParity, word4Start, 8);
                 word4Start += 8;
                 Af1 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 11) * GpsRawHelper.P2_38;
                 word4Start += 11;
-                Af0 = GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 3) * GpsRawHelper.P2_17 +
-                      af0 * GpsRawHelper.P2_20;
+                Af0 =
+                    GpsRawHelper.GetBitS(dataWithoutParity, word4Start, 3) * GpsRawHelper.P2_17
+                    + af0 * GpsRawHelper.P2_20;
                 return;
             }
 

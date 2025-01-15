@@ -110,7 +110,8 @@ namespace Asv.Gnss
             Sequence = (ushort)random.Next(0, ushort.MaxValue);
             TargetId = (byte)random.Next(0, byte.MaxValue);
             SenderId = (byte)random.Next(0, byte.MaxValue);
-            Slot = (AsvGbasSlotMsg)random.Next(0, Enum.GetValues(typeof(AsvGbasSlotMsg)).Length - 1);
+            Slot = (AsvGbasSlotMsg)
+                random.Next(0, Enum.GetValues(typeof(AsvGbasSlotMsg)).Length - 1);
             IsLastSlotInFrame = random.Next() % 2 == 0;
             LifeTime = (byte)((random.Next() % 2 == 0) ? 1 : byte.MaxValue);
             MsgLength = (ushort)random.Next(0, ushort.MaxValue);

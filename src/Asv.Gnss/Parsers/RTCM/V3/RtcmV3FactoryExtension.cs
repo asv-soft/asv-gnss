@@ -42,9 +42,9 @@ namespace Asv.Gnss
                 yield return () => new RtcmV3Message1042();
                 yield return () => new RtcmV3Message1046();
                 //yield return () => new RtcmV3MsmMsg1023();
-
             }
         }
+
         /// <summary>
         /// Registers extended messages.
         /// </summary>

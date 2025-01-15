@@ -59,7 +59,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Represents the message type Msg1 in the AsvGbasMessage enum.
         /// </summary>
-        Msg1 =   0b00000001,
+        Msg1 = 0b00000001,
 
         /// <summary>
         /// Represents the Msg101 member of the AsvGbasMessage enum.
@@ -72,12 +72,12 @@ namespace Asv.Gnss
         /// <summary>
         /// Represents the Msg2 member of the AsvGbasMessage enum.
         /// </summary>
-        Msg2 =   0b00000100,
+        Msg2 = 0b00000100,
 
         /// <summary>
         /// Represents the message type Msg3 in the AsvGbasMessage enum.
         /// </summary>
-        Msg3 =   0b00001000,
+        Msg3 = 0b00001000,
 
         /// <summary>
         /// Represents the Msg4 member of the AsvGbasMessage enum.
@@ -91,18 +91,18 @@ namespace Asv.Gnss
         /// <seealso cref="AsvGbasMessage.Msg2"/>
         /// <seealso cref="AsvGbasMessage.Msg3"/>
         /// <seealso cref="AsvGbasMessage.Msg5"/>
-        Msg4 =   0b00010000,
+        Msg4 = 0b00010000,
 
         /// <summary>
         /// Represents the Msg5 member of the AsvGbasMessage enumeration.
         /// </summary>
-        Msg5 =   0b00100000,
+        Msg5 = 0b00100000,
     }
 
     /// <summary>
     /// Represents the GBAS VDB Send message.
     /// </summary>
-    public class AsvMessageGbasVdbSend:AsvMessageBase
+    public class AsvMessageGbasVdbSend : AsvMessageBase
     {
         /// <summary>
         /// Gets the unique identifier of the message.
@@ -143,7 +143,7 @@ namespace Asv.Gnss
         /// <param name="buffer">The byte buffer to serialize the internal content to.</param>
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
-            BinSerialize.WriteByte(ref buffer,(byte)Slot);
+            BinSerialize.WriteByte(ref buffer, (byte)Slot);
             BinSerialize.WriteULong(ref buffer, (ulong)Msgs);
             BinSerialize.WriteByte(ref buffer, LastByteLength);
             Data.CopyTo(buffer);
@@ -165,12 +165,18 @@ namespace Asv.Gnss
         public override void Randomize(Random random)
         {
             Sequence = (ushort)random.Next(0, ushort.MaxValue);
-            TargetId = (byte)random.Next(0,byte.MaxValue);
+            TargetId = (byte)random.Next(0, byte.MaxValue);
             SenderId = (byte)random.Next(0, byte.MaxValue);
-            Data = new byte[random.Next(0, AsvMessageParser.DataSize - 10/*  */)];
+            Data = new byte[
+                random.Next(
+                    0,
+                    AsvMessageParser.DataSize - 10 /*  */
+                )
+            ];
             random.NextBytes(Data);
             LastByteLength = (byte)random.Next(0, 7);
-            Msgs = (AsvGbasMessage)random.Next(0, Enum.GetValues(typeof(AsvGbasMessage)).Length - 1);
+            Msgs = (AsvGbasMessage)
+                random.Next(0, Enum.GetValues(typeof(AsvGbasMessage)).Length - 1);
             Slot = (AsvGbasSlot)random.Next(0, Enum.GetValues(typeof(AsvGbasSlot)).Length - 1);
         }
 

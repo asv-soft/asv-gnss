@@ -26,8 +26,9 @@ namespace Asv.Gnss
             double second = 0;
 
             RtcmV3Helper.GetFromTime(nowGps, ref w, ref second);
-            if (w < 1560) w = 1560; /* use 2009/12/1 if time is earlier than 2009/12/1 */
-            return (uint) (week + (w - week + 1) / 1024 * 1024);
+            if (w < 1560)
+                w = 1560; /* use 2009/12/1 if time is earlier than 2009/12/1 */
+            return (uint)(week + (w - week + 1) / 1024 * 1024);
         }
 
         /// <summary>
@@ -49,11 +50,13 @@ namespace Asv.Gnss
         /// </value>
         public override string Name => "GPS Time of Week (Fixed)";
 
-        
-
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        )
         {
-            var week = SpanBitHelper.GetBitU(buffer,ref bitIndex, 10);
+            var week = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
             var hour = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
             var leap = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
 

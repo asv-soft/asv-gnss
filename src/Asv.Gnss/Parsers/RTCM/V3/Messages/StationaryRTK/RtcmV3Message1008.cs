@@ -8,11 +8,13 @@ namespace Asv.Gnss
         public const int RtcmMessageId = 1008;
         public override ushort MessageId => RtcmMessageId;
         public override string Name => "Antenna Descriptor & Serial Number";
+
         /// <summary>
         /// The Serial Number Counter defines the number of characters (bytes)
         /// to follow in Antenna Serial Number
         /// </summary>
         public uint SerialNumberCounterM { get; set; }
+
         /// <summary>
         /// Alphanumeric characters. The Antenna Serial Number is the
         /// individual antenna serial number as issued by the manufacturer of the
@@ -25,13 +27,22 @@ namespace Asv.Gnss
         /// antenna.
         /// </summary>
         public string AntennaSerialNumber { get; set; }
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
             SerialNumberCounterM = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
             if (SerialNumberCounterM > 0)
             {
-                AntennaSerialNumber = BitToCharHelper.BitArrayToString(buffer, ref bitIndex, (int)SerialNumberCounterM);
+                AntennaSerialNumber = BitToCharHelper.BitArrayToString(
+                    buffer,
+                    ref bitIndex,
+                    (int)SerialNumberCounterM
+                );
             }
         }
     }

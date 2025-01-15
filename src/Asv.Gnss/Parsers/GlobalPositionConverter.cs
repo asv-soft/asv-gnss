@@ -21,7 +21,11 @@ namespace Asv.Gnss
         /// <param name="writer">The JsonWriter to write the JSON.</param>
         /// <param name="value">The GlobalPosition object to serialize.</param>
         /// <param name="serializer">The JsonSerializer object used for serialization.</param>
-        public override void WriteJson(JsonWriter writer, GlobalPosition value, JsonSerializer serializer)
+        public override void WriteJson(
+            JsonWriter writer,
+            GlobalPosition value,
+            JsonSerializer serializer
+        )
         {
             writer.WriteStartObject();
             writer.WritePropertyName("Lat");
@@ -42,29 +46,50 @@ namespace Asv.Gnss
         /// <param name="hasExistingValue">A flag indicating whether an existing value is present.</param>
         /// <param name="serializer">The <see cref="JsonSerializer"/> object being used for deserialization.</param>
         /// <returns>A new <see cref="GlobalPosition"/> object populated with the deserialized data.</returns>
-        public override GlobalPosition ReadJson(JsonReader reader, Type objectType, GlobalPosition existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override GlobalPosition ReadJson(
+            JsonReader reader,
+            Type objectType,
+            GlobalPosition existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
-            if (reader.TokenType != JsonToken.StartObject) ThrowError();
-            if (reader.Read() == false) ThrowError();
-            if (reader.TokenType != JsonToken.PropertyName) ThrowError();
-            if (reader.Value == null || reader.Value.Equals("Lat") == false) ThrowError();
+            if (reader.TokenType != JsonToken.StartObject)
+                ThrowError();
+            if (reader.Read() == false)
+                ThrowError();
+            if (reader.TokenType != JsonToken.PropertyName)
+                ThrowError();
+            if (reader.Value == null || reader.Value.Equals("Lat") == false)
+                ThrowError();
             var lat = reader.ReadAsDouble();
-            if (lat == null) ThrowError();
+            if (lat == null)
+                ThrowError();
 
-            if (reader.Read() == false) ThrowError();
-            if (reader.TokenType != JsonToken.PropertyName) ThrowError();
-            if (reader.Value == null || reader.Value.Equals("Lon") == false) ThrowError();
+            if (reader.Read() == false)
+                ThrowError();
+            if (reader.TokenType != JsonToken.PropertyName)
+                ThrowError();
+            if (reader.Value == null || reader.Value.Equals("Lon") == false)
+                ThrowError();
             var lon = reader.ReadAsDouble();
-            if (lon == null) ThrowError();
+            if (lon == null)
+                ThrowError();
 
-            if (reader.Read() == false) ThrowError();
-            if (reader.TokenType != JsonToken.PropertyName) ThrowError();
-            if (reader.Value == null || reader.Value.Equals("Alt") == false) ThrowError();
+            if (reader.Read() == false)
+                ThrowError();
+            if (reader.TokenType != JsonToken.PropertyName)
+                ThrowError();
+            if (reader.Value == null || reader.Value.Equals("Alt") == false)
+                ThrowError();
             var alt = reader.ReadAsDouble();
-            if (alt == null) ThrowError();
+            if (alt == null)
+                ThrowError();
 
-            if (reader.Read() == false) ThrowError();
-            if (reader.TokenType != JsonToken.EndObject) ThrowError();
+            if (reader.Read() == false)
+                ThrowError();
+            if (reader.TokenType != JsonToken.EndObject)
+                ThrowError();
 
             return new GlobalPosition(new GlobalCoordinates(lat.Value, lon.Value), alt.Value);
         }
@@ -94,7 +119,11 @@ namespace Asv.Gnss
         /// <param name="writer">The <see cref="JsonWriter"/> to write the JSON string representation to.</param>
         /// <param name="value">The <see cref="GlobalPosition"/> value to write.</param>
         /// <param name="serializer">The <see cref="JsonSerializer"/> to use for serialization.</param>
-        public override void WriteJson(JsonWriter writer, GlobalPosition? value, JsonSerializer serializer)
+        public override void WriteJson(
+            JsonWriter writer,
+            GlobalPosition? value,
+            JsonSerializer serializer
+        )
         {
             if (value.HasValue)
             {
@@ -111,11 +140,23 @@ namespace Asv.Gnss
         /// The deserialized GlobalPosition? object. If the reader.TokenType is JsonToken.Null, it returns null. Otherwise,
         /// it returns the deserialized GlobalPosition object converted to a GlobalPosition? object. </returns>
         /// /
-        public override GlobalPosition? ReadJson(JsonReader reader, Type objectType, GlobalPosition? existingValue, bool hasExistingValue,
-            JsonSerializer serializer)
+        public override GlobalPosition? ReadJson(
+            JsonReader reader,
+            Type objectType,
+            GlobalPosition? existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
-            if (reader.TokenType == JsonToken.Null) return null;
-            return GlobalPositionConverter.Default.ReadJson(reader, objectType, existingValue ?? new GlobalPosition(), hasExistingValue, serializer);
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+            return GlobalPositionConverter.Default.ReadJson(
+                reader,
+                objectType,
+                existingValue ?? new GlobalPosition(),
+                hasExistingValue,
+                serializer
+            );
         }
 
         /// <summary>

@@ -3,30 +3,21 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class UbxCfgNav5Pool:UbxMessageBase
+    public class UbxCfgNav5Pool : UbxMessageBase
     {
         public override string Name => "UBX-CFG-NAV5-POOL";
         public override byte Class => 0x06;
         public override byte SubClass => 0x24;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-            
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
-        
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
+
     /// <summary>
     /// Navigation engine settings
     /// Supported on:
@@ -69,12 +60,14 @@ namespace Asv.Gnss
         public byte CnoThreshold { get; set; } = 35;
         public ushort StaticHoldMaxDistance { get; set; }
         public byte UtcStandard { get; set; }
+
         public enum PositionModeEnum
         {
             Only2D = 1,
             Only3D = 2,
-            Auto = 3
+            Auto = 3,
         }
+
         public enum ModelEnum
         {
             Portable = 0,
@@ -86,25 +79,35 @@ namespace Asv.Gnss
             AirborneWithLess2gAcceleration = 7,
             AirborneWithLess4gAcceleration = 8,
             WristWornWatch = 9,
-            Bike = 10
+            Bike = 10,
         }
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
             ushort appliedBitMask = 0;
-            if (ApplyDynamicModel) appliedBitMask |= 0x01;
-            if (ApplyMinimumElevation) appliedBitMask |= 0x02;
-            if (ApplyFixMode) appliedBitMask |= 0x04;
-            if (ApplyDrLimit) appliedBitMask |= 0x08;
-            if (ApplyPositionMask) appliedBitMask |= 0x10;
-            if (ApplyTimeMask) appliedBitMask |= 0x20;
-            if (ApplyStaticHold) appliedBitMask |= 0x40;
-            if (ApplyDGPS) appliedBitMask |= 0x80;
-            if (ApplyCnoThreshold) appliedBitMask |= 0x100;
-            if (ApplyUTC) appliedBitMask |= 0x400;
-            BinSerialize.WriteUShort(ref buffer,appliedBitMask);
+            if (ApplyDynamicModel)
+                appliedBitMask |= 0x01;
+            if (ApplyMinimumElevation)
+                appliedBitMask |= 0x02;
+            if (ApplyFixMode)
+                appliedBitMask |= 0x04;
+            if (ApplyDrLimit)
+                appliedBitMask |= 0x08;
+            if (ApplyPositionMask)
+                appliedBitMask |= 0x10;
+            if (ApplyTimeMask)
+                appliedBitMask |= 0x20;
+            if (ApplyStaticHold)
+                appliedBitMask |= 0x40;
+            if (ApplyDGPS)
+                appliedBitMask |= 0x80;
+            if (ApplyCnoThreshold)
+                appliedBitMask |= 0x100;
+            if (ApplyUTC)
+                appliedBitMask |= 0x400;
+            BinSerialize.WriteUShort(ref buffer, appliedBitMask);
 
-            BinSerialize.WriteByte(ref buffer,(byte)PlatformModel);
+            BinSerialize.WriteByte(ref buffer, (byte)PlatformModel);
             BinSerialize.WriteByte(ref buffer, (byte)PositionMode);
 
             BinSerialize.WriteInt(ref buffer, (int)Math.Round(FixedAltitude * 100));
@@ -176,25 +179,33 @@ namespace Asv.Gnss
         }
 
         protected override int GetContentByteSize() => 36;
-        
 
         public override void Randomize(Random random)
         {
             ApplyDynamicModel = random.NextDouble() > 0.5;
-            ApplyMinimumElevation = random.NextDouble() > 0.5; ;
-            ApplyFixMode = random.NextDouble() > 0.5; ;
-            ApplyDrLimit = random.NextDouble() > 0.5; ;
-            ApplyPositionMask = random.NextDouble() > 0.5; ;
-            ApplyTimeMask = random.NextDouble() > 0.5; ;
-            ApplyStaticHold = random.NextDouble() > 0.5; ;
-            ApplyDGPS = random.NextDouble() > 0.5; ;
-            ApplyCnoThreshold = random.NextDouble() > 0.5; ;
-            ApplyUTC = random.NextDouble() > 0.5; ;
+            ApplyMinimumElevation = random.NextDouble() > 0.5;
+            ;
+            ApplyFixMode = random.NextDouble() > 0.5;
+            ;
+            ApplyDrLimit = random.NextDouble() > 0.5;
+            ;
+            ApplyPositionMask = random.NextDouble() > 0.5;
+            ;
+            ApplyTimeMask = random.NextDouble() > 0.5;
+            ;
+            ApplyStaticHold = random.NextDouble() > 0.5;
+            ;
+            ApplyDGPS = random.NextDouble() > 0.5;
+            ;
+            ApplyCnoThreshold = random.NextDouble() > 0.5;
+            ;
+            ApplyUTC = random.NextDouble() > 0.5;
+            ;
             PlatformModel = (ModelEnum)random.Next(0, 10);
             PositionMode = (PositionModeEnum)random.Next(1, 3);
-            FixedAltitude = random.NextDouble()*60;
+            FixedAltitude = random.NextDouble() * 60;
             FixedAltitudeVariance = random.NextDouble() * 6;
-            DrLimit = (byte)random.Next(0,byte.MaxValue);
+            DrLimit = (byte)random.Next(0, byte.MaxValue);
             MinimumElevation = (sbyte)(random.Next(0, byte.MaxValue) - 127);
             PositionDOP = random.NextDouble() * 60;
             TimeDOP = random.NextDouble() * 60;

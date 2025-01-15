@@ -3,18 +3,21 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public abstract class SbfMessageBase:GnssMessageBase<ushort>
+    public abstract class SbfMessageBase : GnssMessageBase<ushort>
     {
         public override string ProtocolId => SbfBinaryParser.GnssProtocolId;
-        public override ushort MessageId => (ushort)((MessageType & 0x1fff) + (MessageRevision << 13));
+        public override ushort MessageId =>
+            (ushort)((MessageType & 0x1fff) + (MessageRevision << 13));
         public abstract ushort MessageRevision { get; }
         public abstract ushort MessageType { get; }
 
         public DateTime UtcTime { get; set; }
+
         /// <summary>
         /// Time-Of-Week : Time-tag, expressed in whole milliseconds from the beginning of the current GPS week.
         /// </summary>
         public uint TOW { get; set; }
+
         /// <summary>
         /// The GPS week number associated with the TOW. WNc is a continuous week count(hence the "c").
         /// It is not affected by GPS week rollovers, which occur every 1024 weeks.
@@ -49,20 +52,36 @@ namespace Asv.Gnss
             var messageType = (ushort)(msgId & 0x1fff << 0);
             var messageRevision = (ushort)((msgId >> 13) & 0x7);
 
-            if (messageType != MessageType) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])");
-            if (messageRevision != MessageRevision) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. Id not equal (want [{MessageRevision}] read [{messageRevision}])");
-            if (msgId != MessageId) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF packet message. Id not equal (want [{MessageId}] read [{msgId}])");
+            if (messageType != MessageType)
+                throw new GnssParserException(
+                    SbfBinaryParser.GnssProtocolId,
+                    $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])"
+                );
+            if (messageRevision != MessageRevision)
+                throw new GnssParserException(
+                    SbfBinaryParser.GnssProtocolId,
+                    $"Error to deserialize SBF packet message. Id not equal (want [{MessageRevision}] read [{messageRevision}])"
+                );
+            if (msgId != MessageId)
+                throw new GnssParserException(
+                    SbfBinaryParser.GnssProtocolId,
+                    $"Error to deserialize SBF packet message. Id not equal (want [{MessageId}] read [{msgId}])"
+                );
 
             // The Length field is a 2-byte unsigned integer containing the size of the SBF block. It is
             // the total number of bytes in the SBF block including the header. It is always a multiple of 4
             var msgLength = BinSerialize.ReadUShort(ref buffer);
 
-            
-
             TOW = BinSerialize.ReadUInt(ref buffer);
             WNc = BinSerialize.ReadUShort(ref buffer);
 
-            UtcTime = GpsRawHelper.Gps2Utc(new DateTime(1980, 1, 06, 0, 0, 0, DateTimeKind.Utc).AddDays(7 * WNc).AddMilliseconds(TOW/* ms in 1 week */));
+            UtcTime = GpsRawHelper.Gps2Utc(
+                new DateTime(1980, 1, 06, 0, 0, 0, DateTimeKind.Utc)
+                    .AddDays(7 * WNc)
+                    .AddMilliseconds(
+                        TOW /* ms in 1 week */
+                    )
+            );
             DeserializeContent(ref buffer);
         }
 
@@ -77,7 +96,5 @@ namespace Asv.Gnss
         {
             throw new NotImplementedException();
         }
-
-        
     }
 }

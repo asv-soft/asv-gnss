@@ -3,13 +3,12 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    
-
     public class SbfPacketMeasEpochRev1 : SbfMessageBase
     {
         public override ushort MessageType => 4027;
-        
+
         public override ushort MessageRevision => 1;
+
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
             var n1 = BinSerialize.ReadByte(ref buffer);
@@ -26,13 +25,13 @@ namespace Asv.Gnss
             {
                 SubBlocks[index] = new MeasEpochChannelType1();
                 SubBlocks[index].Deserialize(ref buffer, SB1Length, out var n2);
-                if (n2 != 0) buffer = buffer.Slice(n2 * SB2Length);
+                if (n2 != 0)
+                    buffer = buffer.Slice(n2 * SB2Length);
             }
         }
 
         public override string Name => "MeasEpochV2";
 
-        
         /// <summary>
         /// Cumulative millisecond clock jumps since start-up, with an ambiguity of
         /// k*256 ms.For example, if two clock jumps of -1 ms have occurred since
@@ -47,12 +46,13 @@ namespace Asv.Gnss
         /// </summary>
         public byte Reserved { get; set; }
 
-
         public MeasEpochCommonFlags CommonFlags { get; set; }
+
         /// <summary>
         /// Length of a MeasEpochChannelType2 sub-block
         /// </summary>
         public byte SB2Length { get; set; }
+
         /// <summary>
         /// Length of a MeasEpochChannelType1 sub-block, excluding the nested MeasEpochChannelType2 sub-blocks
         /// </summary>
@@ -63,7 +63,7 @@ namespace Asv.Gnss
     {
         Main = 0,
         Aux1 = 1,
-        Aux2 = 2
+        Aux2 = 2,
     }
 
     /// <summary>
@@ -76,10 +76,12 @@ namespace Asv.Gnss
         /// Bit 0: Multipath mitigation: if this bit is set, multipath mitigation is enabled. (see the setMultipathMitigation command).
         /// </summary>
         MultipathMitigationEnabled,
+
         /// <summary>
         /// Bit 1: Smoothing of code: if this bit is set, at least one of the code measurements are smoothed values (see setSmoothingInterval command).
         /// </summary>
         MeasurementsAreSmoothed,
+
         /// <summary>
         /// Bit 2: Carrier phase align: if this bit is set, the fractional part of the carrier phase measurements from different modulations on the same
         /// carrier frequency (e.g. GPS L2C and L2P) are aligned, i.e. multiplexing biases (0.25 or 0.5 cycles) are corrected. Aligned carrier phase
@@ -88,22 +90,27 @@ namespace Asv.Gnss
         /// is always set in the current firmware version.
         /// </summary>
         CarrierPhaseAlign,
+
         /// <summary>
         /// Bit 3: Clock steering: this bit is set if clock steering is active (seesetClockSyncThreshold command).
         /// </summary>
         ClockSteering,
+
         /// <summary>
         /// Bit 4: Not applicable.
         /// </summary>
         NotApplicable,
+
         /// <summary>
         /// Bit 5: High dynamics: this bit is set when the receiver is in high-dynamics mode (see the setReceiverDynamics command).
         /// </summary>
         HighDynamics,
+
         /// <summary>
         /// Bit 6: Reserved
         /// </summary>
         Reserved,
+
         /// <summary>
         /// Bit 7: Scrambling: bit set when the measurements are scrambled. Scrambling is applied when the "Measurement Availability" permission is
         /// not granted (see the lif, Permissions command)
@@ -114,9 +121,14 @@ namespace Asv.Gnss
     public class MeasEpochChannelType1
     {
         private const byte SB1Length = 20;
+
         public void Deserialize(ref ReadOnlySpan<byte> buffer, byte length, out byte n2)
         {
-            if (length != SB1Length) throw new GnssParserException(SbfBinaryParser.GnssProtocolId, $"Error to deserialize SBF type-1 sub-block. Length type-1 sub-block should be [{SB1Length}], but it is [{length}]");
+            if (length != SB1Length)
+                throw new GnssParserException(
+                    SbfBinaryParser.GnssProtocolId,
+                    $"Error to deserialize SBF type-1 sub-block. Length type-1 sub-block should be [{SB1Length}], but it is [{length}]"
+                );
             RxChannel = BinSerialize.ReadByte(ref buffer);
             var typeBitfield1 = BinSerialize.ReadByte(ref buffer);
             var signalNumber = (typeBitfield1 & 0b00011111);
@@ -135,11 +147,17 @@ namespace Asv.Gnss
             IsSmoothed = (typeBitfield2 & 0x1) == 1;
             IsHalfCycleAmbiguity = ((typeBitfield2 >> 2) & 0x1) == 1;
             var freqNum = typeBitfield2 >> 3;
-            SbfHelper.GetSignalType((byte)signalNumber, (byte)freqNum, out var sys, out var freq, out var rinexCode);
+            SbfHelper.GetSignalType(
+                (byte)signalNumber,
+                (byte)freqNum,
+                out var sys,
+                out var freq,
+                out var rinexCode
+            );
             Frequency = freq * 1000000;
             RinexCode = rinexCode;
             SatSys = sys;
-            // var lambda = 299792458 / Frequency; 
+            // var lambda = 299792458 / Frequency;
             CarrierPhase = (carrierMSB * 65536.0 + carrierLSB) * 0.001;
         }
 
@@ -148,7 +166,6 @@ namespace Asv.Gnss
         public SbfNavSysEnum SatSys { get; set; }
         public string RinexCode { get; set; }
         public double Frequency { get; set; }
-
 
         /// <summary>
         /// Duration of continuous carrier phase. The lock-time is reset at the initial
@@ -160,7 +177,6 @@ namespace Asv.Gnss
         /// The C/N0 in dB-Hz
         /// </summary>
         public double CN0 { get; set; }
-
 
         public AntennaId Antenna { get; set; }
 
@@ -175,6 +191,7 @@ namespace Asv.Gnss
         public double CarrierPhase { get; set; }
 
         public double DopplerHz { get; set; }
+
         /// <summary>
         /// SB of the pseudorange. The pseudorange expressed in meters
         /// is computed as follows: PRtype1[m] = (CodeMSB*4294967296+CodeLSB)*0.001

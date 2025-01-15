@@ -32,7 +32,7 @@ namespace Asv.Gnss
             throw new NotImplementedException();
         }
     }
-    
+
     public class Observation : ISpanSerializable
     {
         public int Prn { get; set; }

@@ -25,13 +25,20 @@
             base.Deserialize(data);
             var bitIndex = 8U;
 
-            TauN = GlonassRawHelper.GetBitG(data, bitIndex, 22) * GlonassRawHelper.P2_30; bitIndex += 22;
-            DelayTauN = GlonassRawHelper.GetBitG(data, bitIndex, 5) * GlonassRawHelper.P2_30; bitIndex += 5;
-            Age = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5); bitIndex += 5 + 14;
-            P4 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1); bitIndex += 1;
-            Accuracy = GetFt((byte)GlonassRawHelper.GetBitU(data, bitIndex, 4)); bitIndex += 4 + 3;
-            Nt = (ushort)GlonassRawHelper.GetBitU(data, bitIndex, 11); bitIndex += 11;
-            Slot = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5); bitIndex += 5;
+            TauN = GlonassRawHelper.GetBitG(data, bitIndex, 22) * GlonassRawHelper.P2_30;
+            bitIndex += 22;
+            DelayTauN = GlonassRawHelper.GetBitG(data, bitIndex, 5) * GlonassRawHelper.P2_30;
+            bitIndex += 5;
+            Age = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5);
+            bitIndex += 5 + 14;
+            P4 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
+            bitIndex += 1;
+            Accuracy = GetFt((byte)GlonassRawHelper.GetBitU(data, bitIndex, 4));
+            bitIndex += 4 + 3;
+            Nt = (ushort)GlonassRawHelper.GetBitU(data, bitIndex, 11);
+            bitIndex += 11;
+            Slot = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5);
+            bitIndex += 5;
             M = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2);
         }
 
@@ -56,10 +63,9 @@
 
         /// <summary>
         /// Признак того, что на текущем интервале времени tb средствами ПКУ на НКА заложена (1)
-        /// или не заложена (0) обновленная эфемеридная или частотно-временная информация. 
+        /// или не заложена (0) обновленная эфемеридная или частотно-временная информация.
         /// </summary>
         public byte P4 { get; set; }
-
 
         /// <summary>
         /// Фактор точности измерений, характеризующий в виде эквивалентной ошибки прогнозируемую ошибку измерения
@@ -127,6 +133,4 @@
             }
         }
     }
-
-
 }

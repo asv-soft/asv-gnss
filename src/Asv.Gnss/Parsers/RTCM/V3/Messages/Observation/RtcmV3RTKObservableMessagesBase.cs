@@ -9,50 +9,54 @@ namespace Asv.Gnss
     /// </summary>
     public abstract class RtcmV3RTKObservableMessagesBase : RtcmV3MessageBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             var utc = DateTime.UtcNow;
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
 
             if (MessageId is >= 1001 and <= 1004)
             {
-                var tow = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 30) * 0.001;
+                var tow = SpanBitHelper.GetBitU(buffer, ref bitIndex, 30) * 0.001;
                 EpochTime = RtcmV3Helper.AdjustWeekly(utc, tow);
             }
 
             if (MessageId is >= 1009 and <= 1012)
             {
-                var tod = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 27) * 0.001;
+                var tod = SpanBitHelper.GetBitU(buffer, ref bitIndex, 27) * 0.001;
                 EpochTime = RtcmV3Helper.AdjustDailyRoverGlonassTime(utc, tod);
             }
 
-            SynchronousGNSSFlag = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 1); 
+            SynchronousGNSSFlag = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
 
-            SatelliteCount = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 5);
+            SatelliteCount = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
 
-            SmoothingIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 1);
+            SmoothingIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
 
-            SmoothingInterval = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 3);
+            SmoothingInterval = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
         }
 
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its 
-        /// primary purpose is to link all message data to their unique sourceName. It is 
-        /// useful in distinguishing between desired and undesired data in cases 
-        /// where more than one service may be using the same data link 
-        /// frequency. It is also useful in accommodating multiple reference 
-        /// stations within a single data link transmission. 
-        /// In reference network applications the Reference Station ID plays an 
-        /// important role, because it is the link between the observation messages 
-        /// of a specific reference station and its auxiliary information contained in 
-        /// other messages for proper operation. Thus the Service Provider should 
-        /// ensure that the Reference Station ID is unique within the whole 
-        /// network, and that ID’s should be reassigned only when absolutely 
-        /// necessary. 
+        /// The Reference Station ID is determined by the service provider. Its
+        /// primary purpose is to link all message data to their unique sourceName. It is
+        /// useful in distinguishing between desired and undesired data in cases
+        /// where more than one service may be using the same data link
+        /// frequency. It is also useful in accommodating multiple reference
+        /// stations within a single data link transmission.
+        /// In reference network applications the Reference Station ID plays an
+        /// important role, because it is the link between the observation messages
+        /// of a specific reference station and its auxiliary information contained in
+        /// other messages for proper operation. Thus the Service Provider should
+        /// ensure that the Reference Station ID is unique within the whole
+        /// network, and that ID’s should be reassigned only when absolutely
+        /// necessary.
         /// Service Providers may need to coordinate their Reference Station ID
-        /// assignments with other Service Providers in their region in order to 
-        /// avoid conflicts. This may be especially critical for equipment 
-        /// accessing multiple services, depending on their services and means of 
+        /// assignments with other Service Providers in their region in order to
+        /// avoid conflicts. This may be especially critical for equipment
+        /// accessing multiple services, depending on their services and means of
         /// information distribution.
         /// </summary>
         public uint ReferenceStationID { get; set; }
@@ -61,7 +65,7 @@ namespace Asv.Gnss
         /// GPS Epoch Time is provided in milliseconds from the beginning of the GPS week, which begins at midnight GMT on Saturday night/Sunday morning, measured in GPS time (as opposed to UTC).
         /// GLONASS Epoch Time of measurement is defined by the GLONASS
         /// ICD as UTC(SU) + 3.0 hours. It rolls over at 86,400 seconds for
-        /// GLONASS, except for the leap second, where it rolls over at 86,401. 
+        /// GLONASS, except for the leap second, where it rolls over at 86,401.
         /// </summary>
         public DateTime EpochTime { get; set; }
 
@@ -85,7 +89,7 @@ namespace Asv.Gnss
 
         /// <summary>
         /// 0 - Divergence-free smoothing not used
-        /// 1 - Divergence-free smoothing used 
+        /// 1 - Divergence-free smoothing used
         /// </summary>
         public byte SmoothingIndicator { get; set; }
 

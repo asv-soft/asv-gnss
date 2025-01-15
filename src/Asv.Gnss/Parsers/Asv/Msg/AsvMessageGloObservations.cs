@@ -55,19 +55,25 @@ namespace Asv.Gnss
             var cycle = (int)((time - datum).TotalDays / 1461) + 1;
             var day = (uint)((time - datum.AddYears((cycle - 1) * 4)).TotalDays) + 1;
             var tod = (time - datum.AddYears((cycle - 1) * 4).AddDays(day - 1)).TotalSeconds;
-            
+
             var bitIndex = 0;
             AsvHelper.SetBitU(buffer, (uint)Math.Round(tod * 1000.0), ref bitIndex, 27);
             AsvHelper.SetBitU(buffer, day, ref bitIndex, 11);
             AsvHelper.SetBitU(buffer, (uint)cycle, ref bitIndex, 5);
 
-            AsvHelper.SetBitS(buffer, (int)Math.Round(TimeOffset / GpsRawHelper.P2_30), ref bitIndex, 22);
+            AsvHelper.SetBitS(
+                buffer,
+                (int)Math.Round(TimeOffset / GpsRawHelper.P2_30),
+                ref bitIndex,
+                22
+            );
             AsvHelper.SetBitU(buffer, (uint)(Observations?.Length ?? 0), ref bitIndex, 5);
             bitIndex += 2;
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
 
-            if (Observations == null) return;
+            if (Observations == null)
+                return;
             foreach (var obs in Observations)
             {
                 obs.Serialize(ref buffer);
@@ -88,12 +94,13 @@ namespace Asv.Gnss
             while (index < length)
             {
                 var prn = random.Next() % 24 + 1;
-                if (randomPrn.Any(_ => _ == prn)) continue;
+                if (randomPrn.Any(_ => _ == prn))
+                    continue;
                 randomPrn[index] = prn;
                 index++;
             }
             Observations = new AsvGloObservation[length];
-            
+
             for (var i = 0; i < length; i++)
             {
                 var obs = new AsvGloObservation();
@@ -147,20 +154,28 @@ namespace Asv.Gnss
                 L1CarrierPhase = double.NaN;
             }
 
-
             L1Code = code1 != 0 ? AsvHelper.CODE_L1P : AsvHelper.CODE_L1C;
         }
-
 
         public void Serialize(ref Span<byte> buffer)
         {
             var bitIndex = 0;
             var sys = NavigationSystemEnum.SYS_GLO;
-            
+
             AsvHelper.SetBitU(buffer, (uint)(Prn >= 40 ? Prn - 80 : Prn), ref bitIndex, 6);
-            AsvHelper.SetBitU(buffer, (uint)(L1Code == AsvHelper.CODE_L1C ? 0 : 1), ref bitIndex, 1);
-            AsvHelper.SetBitU(buffer, (uint)((Frequency - 1602000000) / 562500 + 7), ref bitIndex, 5);
-            
+            AsvHelper.SetBitU(
+                buffer,
+                (uint)(L1Code == AsvHelper.CODE_L1C ? 0 : 1),
+                ref bitIndex,
+                1
+            );
+            AsvHelper.SetBitU(
+                buffer,
+                (uint)((Frequency - 1602000000) / 562500 + 7),
+                ref bitIndex,
+                5
+            );
+
             var amb = (uint)(L1PseudoRange / AsvHelper.PRUNIT_GLO);
             var pr1 = (uint)Math.Round((L1PseudoRange % AsvHelper.PRUNIT_GLO) * 50.0);
             AsvHelper.SetBitU(buffer, pr1, ref bitIndex, 25);
@@ -186,68 +201,67 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public int Prn { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public int SatelliteId { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string SatelliteCode { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public byte L1Code { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public long Frequency { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double L1PseudoRange { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double L1CarrierPhase { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ushort L1LockTime { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool ParticipationIndicator { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ReasonForException ReasonForException { get; set; }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double Elevation { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double Azimuth { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public double L1CNR { get; set; }
 
@@ -262,4 +276,3 @@ namespace Asv.Gnss
         }
     }
 }
-

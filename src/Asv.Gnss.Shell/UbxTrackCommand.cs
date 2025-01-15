@@ -48,27 +48,33 @@ namespace Asv.Gnss.Shell
                 waitForProcessShutdownStart.Set();
             };
 
-            using var device = new UbxTrackLogger(new UbxTrackLoggerConfig
-                { ConnectionString = settings.Cs, IsEnabled = settings.IsEnabled, PvtRate = settings.RateRate });
+            using var device = new UbxTrackLogger(
+                new UbxTrackLoggerConfig
+                {
+                    ConnectionString = settings.Cs,
+                    IsEnabled = settings.IsEnabled,
+                    PvtRate = settings.RateRate,
+                }
+            );
             device.Init();
             Test(device).Wait();
 
             // Wait for shutdown to start
             waitForProcessShutdownStart.Wait();
-            
+
             return 0;
         }
 
         public async Task Test(ITrackLogger logger)
         {
-
             var s = JsonSerializer.Create(new JsonSerializerSettings());
             logger.OnPvtInfo.Subscribe(_ =>
             {
                 s.Serialize(Console.Out, _);
                 Console.WriteLine();
             });
-            logger.OnNmea.Select(_ => _.GetNmeaMessage())
+            logger
+                .OnNmea.Select(_ => _.GetNmeaMessage())
                 .Buffer(TimeSpan.FromSeconds(5))
                 .Subscribe(_ =>
                 {

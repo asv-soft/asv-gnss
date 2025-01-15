@@ -3,7 +3,6 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-
     /// <summary>
     /// Reset receiver / Clear backup data structures
     /// Supported on:
@@ -30,8 +29,8 @@ namespace Asv.Gnss
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
-            BinSerialize.WriteUShort(ref buffer,(ushort)Bbr);
-            BinSerialize.WriteByte(ref buffer,(byte)Mode);
+            BinSerialize.WriteUShort(ref buffer, (ushort)Bbr);
+            BinSerialize.WriteByte(ref buffer, (byte)Mode);
             BinSerialize.WriteByte(ref buffer, 0);
         }
 
@@ -55,7 +54,7 @@ namespace Asv.Gnss
     {
         HotStart = 0x00,
         WarmStart = 0x01,
-        ColdStart = 0xFF14
+        ColdStart = 0xFF14,
     }
 
     public enum ResetMode : byte
@@ -65,6 +64,6 @@ namespace Asv.Gnss
         ControlledSoftwareResetGnssOnly = 0x02,
         HardwareResetAfterShutdown = 0x04,
         ControlledGnssStop = 0x08,
-        ControlledGnssStart = 0x09
+        ControlledGnssStart = 0x09,
     }
 }

@@ -55,7 +55,6 @@ namespace Asv.Gnss
         /// </value>
         public byte LifeTime { get; set; }
 
-
         /// <summary>
         /// Gets or sets the offset of the last byte in the message.
         /// </summary>
@@ -114,10 +113,16 @@ namespace Asv.Gnss
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
             BinSerialize.WriteByte(ref buffer, (byte)((byte)Slot | (GbasMessageId << 3)));
-            BinSerialize.WriteByte(ref buffer,(byte)ActiveSlots);
+            BinSerialize.WriteByte(ref buffer, (byte)ActiveSlots);
             BinSerialize.WriteByte(ref buffer, LifeTime);
-            BinSerialize.WriteByte(ref buffer,
-                (byte)((LastByteOffset & 0b0000_0111) | ((IsLastSlotInFrame ? 1 : 0) << 3) | (ReservedFlgas << 4)));
+            BinSerialize.WriteByte(
+                ref buffer,
+                (byte)(
+                    (LastByteOffset & 0b0000_0111)
+                    | ((IsLastSlotInFrame ? 1 : 0) << 3)
+                    | (ReservedFlgas << 4)
+                )
+            );
             Data.CopyTo(buffer);
             buffer = buffer.Slice(Data.Length);
         }
@@ -141,12 +146,13 @@ namespace Asv.Gnss
             random.NextBytes(Data);
             LastByteOffset = (byte)random.Next(0, 7);
             ReservedFlgas = (byte)random.Next(0, (int)Math.Pow(2, 4));
-            ActiveSlots = (AsvGbasSlot)random.Next(0, Enum.GetValues(typeof(AsvGbasSlot)).Length - 1);
-            Slot = (AsvGbasSlotMsg)random.Next(0, Enum.GetValues(typeof(AsvGbasSlotMsg)).Length - 1);
+            ActiveSlots = (AsvGbasSlot)
+                random.Next(0, Enum.GetValues(typeof(AsvGbasSlot)).Length - 1);
+            Slot = (AsvGbasSlotMsg)
+                random.Next(0, Enum.GetValues(typeof(AsvGbasSlotMsg)).Length - 1);
             IsLastSlotInFrame = random.Next() % 2 == 0;
         }
     }
-
 
     /// <summary>
     /// Represents the slot messages for AsvGbas.

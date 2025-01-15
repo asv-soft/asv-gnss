@@ -8,7 +8,7 @@ namespace Asv.Gnss
         public const ushort ComNavMessageId = 174;
         public override ushort MessageId => ComNavMessageId;
         public override string Name => "PSRDOP";
-        
+
         /// <summary>
         /// Geometric dilution of precision
         /// </summary>
@@ -55,7 +55,7 @@ namespace Asv.Gnss
 
             var prnNum = BinSerialize.ReadInt(ref buffer);
             Satellites = new uint[prnNum];
-            
+
             for (var i = 0; i < prnNum; i++)
             {
                 Satellites[i] = BinSerialize.ReadUInt(ref buffer);

@@ -11,7 +11,7 @@ namespace Asv.Gnss.Shell
     /// Represents a command that prints bytes received from a connection.
     /// </summary>
     /// <typeparam name="Settings">The settings for the command.</typeparam>
-    internal class PrintBytesCommand:Command<PrintBytesCommand.Settings>
+    internal class PrintBytesCommand : Command<PrintBytesCommand.Settings>
     {
         /// <summary>
         /// Represents the settings for a command.
@@ -33,7 +33,6 @@ namespace Asv.Gnss.Shell
         /// <returns>Integer value indicating the execution status</returns>**/
         public override int Execute(CommandContext context, Settings settings)
         {
-            
             // create connection with default parsers: Nmea,RTCMv2,RTCMv3,ComNav,Ubx,Sbf
             var connection = GnssFactory.CreateDefault(settings.Cs);
             connection.Stream.Subscribe(_ =>
@@ -47,12 +46,15 @@ namespace Asv.Gnss.Shell
                 }
                 Console.WriteLine("};");
                 Console.WriteLine("===========END=============");
-
             });
             connection.OnMessage.Subscribe(_ =>
             {
-                Console.WriteLine($"=========== BEGIN {_.ProtocolId}.{_.Name}[{_.MessageStringId}]=============");
-                Console.WriteLine(JsonConvert.SerializeObject(_, Formatting.Indented, new StringEnumConverter()));
+                Console.WriteLine(
+                    $"=========== BEGIN {_.ProtocolId}.{_.Name}[{_.MessageStringId}]============="
+                );
+                Console.WriteLine(
+                    JsonConvert.SerializeObject(_, Formatting.Indented, new StringEnumConverter())
+                );
             });
             Console.ReadLine();
             return 0;

@@ -2,7 +2,6 @@
 
 namespace Asv.Gnss
 {
-
     public enum SbfNavSysEnum
     {
         Unknown,
@@ -15,7 +14,7 @@ namespace Asv.Gnss
         IRNS,
         LEO,
         MSS,
-        NavIC
+        NavIC,
     }
 
     public static class SbfHelper
@@ -33,7 +32,7 @@ namespace Asv.Gnss
             if (61 >= svidOrPrn && svidOrPrn >= 38)
             {
                 nav = SbfNavSysEnum.GLONASS;
-                return $"R{(svidOrPrn-37):00}";
+                return $"R{(svidOrPrn - 37):00}";
             }
 
             // 62: GLONASS satellite of which the slot number is not known
@@ -59,7 +58,7 @@ namespace Asv.Gnss
                 nav = SbfNavSysEnum.Unknown;
                 return $"NA?";
             }
-            
+
             if (140 >= svidOrPrn && svidOrPrn >= 120)
             {
                 nav = SbfNavSysEnum.SBAS;
@@ -173,7 +172,13 @@ namespace Asv.Gnss
         /// <param name="carrierFreq"></param>
         /// <param name="rinexCode"></param>
         /// <returns></returns>
-        public static SbfSignalTypeEnum GetSignalType(byte signalNumber, byte freqNr, out SbfNavSysEnum constellation, out double carrierFreq, out string rinexCode)
+        public static SbfSignalTypeEnum GetSignalType(
+            byte signalNumber,
+            byte freqNr,
+            out SbfNavSysEnum constellation,
+            out double carrierFreq,
+            out string rinexCode
+        )
         {
             var signalType = SbfSignalTypeEnum.Unknown;
             constellation = SbfNavSysEnum.Unknown;
@@ -405,11 +410,8 @@ namespace Asv.Gnss
                     break;
             }
 
-           
             return signalType;
         }
-
-        
     }
 
     public enum SbfSignalTypeEnum
@@ -438,8 +440,6 @@ namespace Asv.Gnss
         B3I,
         L1S,
         B2b,
-        S
+        S,
     }
-    
-
 }

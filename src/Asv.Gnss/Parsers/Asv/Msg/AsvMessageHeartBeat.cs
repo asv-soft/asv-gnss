@@ -168,7 +168,7 @@ namespace Asv.Gnss
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {
             BinSerialize.WriteUShort(ref buffer, (ushort)DeviceType);
-            BinSerialize.WriteByte(ref buffer,(byte)DeviceState);
+            BinSerialize.WriteByte(ref buffer, (byte)DeviceState);
             BinSerialize.WriteByte(ref buffer, Reserved1);
             BinSerialize.WriteByte(ref buffer, Reserved2);
             BinSerialize.WriteByte(ref buffer, Reserved3);
@@ -192,8 +192,10 @@ namespace Asv.Gnss
             Sequence = (ushort)random.Next(0, ushort.MaxValue);
             TargetId = (byte)random.Next(0, byte.MaxValue);
             SenderId = (byte)random.Next(0, byte.MaxValue);
-            DeviceType = (AsvDeviceType)random.Next(0,Enum.GetValues(typeof(AsvDeviceType)).Length -1);
-            DeviceState = (AsvDeviceState)random.Next(0, Enum.GetValues(typeof(AsvDeviceState)).Length - 1);
+            DeviceType = (AsvDeviceType)
+                random.Next(0, Enum.GetValues(typeof(AsvDeviceType)).Length - 1);
+            DeviceState = (AsvDeviceState)
+                random.Next(0, Enum.GetValues(typeof(AsvDeviceState)).Length - 1);
             Reserved1 = (byte)random.Next(0, byte.MaxValue);
             Reserved2 = (byte)random.Next(0, byte.MaxValue);
             Reserved3 = (byte)random.Next(0, byte.MaxValue);

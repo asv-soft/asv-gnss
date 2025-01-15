@@ -29,22 +29,22 @@ namespace Asv.Gnss
         /// <summary>
         /// Private variable to hold the word buffer for rtcm 2.
         /// </summary>
-        private uint _word;                /* word buffer for rtcm 2            */
+        private uint _word; /* word buffer for rtcm 2            */
 
         /// <summary>
         /// Number of bytes in the message buffer.
         /// </summary>
-        private int _readedBytes;          /* number of bytes in message buffer */
+        private int _readedBytes; /* number of bytes in message buffer */
 
         /// <summary>
         /// The number of bits in the word buffer.
         /// </summary>
-        private int _readedBits;           /* number of bits in word buffer     */
+        private int _readedBits; /* number of bits in word buffer     */
 
         /// <summary>
         /// Represents the length of a message in bytes.
         /// </summary>
-        private int _len;                  /* message length (bytes)            */
+        private int _len; /* message length (bytes)            */
 
         /// <summary>
         /// Gets the identifier of the protocol.
@@ -75,12 +75,16 @@ namespace Asv.Gnss
                 if (_readedBytes == 0)
                 {
                     var preamb = (byte)(_word >> 22);
-                    if ((_word & 0x40000000) != 0) preamb ^= 0xFF; /* decode preamble */
-                    if (preamb != SyncByte) continue;
+                    if ((_word & 0x40000000) != 0)
+                        preamb ^= 0xFF; /* decode preamble */
+                    if (preamb != SyncByte)
+                        continue;
 
                     /* check parity */
-                    if (!DecodeWord(_word, _buffer, 0)) continue;
-                    _readedBytes = 3; _readedBits = 0;
+                    if (!DecodeWord(_word, _buffer, 0))
+                        continue;
+                    _readedBytes = 3;
+                    _readedBits = 0;
                     continue;
                 }
 
@@ -95,21 +99,23 @@ namespace Asv.Gnss
                 if (!DecodeWord(_word, _buffer, _readedBytes))
                 {
                     PublishWhenCrcError();
-                    _readedBytes = 0; _word &= 0x3;
+                    _readedBytes = 0;
+                    _word &= 0x3;
                     continue;
                 }
                 _readedBytes += 3;
-                if (_readedBytes == 6) _len = (_buffer[5] >> 3) * 3 + 6;
-                if (_readedBytes < _len) continue;
+                if (_readedBytes == 6)
+                    _len = (_buffer[5] >> 3) * 3 + 6;
+                if (_readedBytes < _len)
+                    continue;
                 _readedBytes = 0;
                 _word &= 0x3;
 
-
                 /* decode rtcm2 message */
                 var pos = 8;
-                var msgType = (ushort)SpanBitHelper.GetBitU(_buffer,ref pos, 6);
+                var msgType = (ushort)SpanBitHelper.GetBitU(_buffer, ref pos, 6);
                 var span = new ReadOnlySpan<byte>(_buffer);
-                ParsePacket(msgType, ref span,true);
+                ParsePacket(msgType, ref span, true);
                 Reset();
                 return true;
             }
@@ -128,10 +134,19 @@ namespace Asv.Gnss
         /// </returns>
         private static bool DecodeWord(uint word, byte[] data, int offset)
         {
-            var hamming = new uint[] { 0xBB1F3480, 0x5D8F9A40, 0xAEC7CD00, 0x5763E680, 0x6BB1F340, 0x8B7A89C0 };
+            var hamming = new uint[]
+            {
+                0xBB1F3480,
+                0x5D8F9A40,
+                0xAEC7CD00,
+                0x5763E680,
+                0x6BB1F340,
+                0x8B7A89C0,
+            };
             uint parity = 0;
 
-            if ((word & 0x40000000) != 0) word ^= 0x3FFFFFC0;
+            if ((word & 0x40000000) != 0)
+                word ^= 0x3FFFFFC0;
 
             for (var i = 0; i < 6; i++)
             {
@@ -139,9 +154,11 @@ namespace Asv.Gnss
                 for (var w = (word & hamming[i]) >> 6; w != 0; w >>= 1)
                     parity ^= w & 0x1;
             }
-            if (parity != (word & 0x3F)) return false;
+            if (parity != (word & 0x3F))
+                return false;
 
-            for (var i = 0; i < 3; i++) data[i + offset] = (byte)(word >> (22 - i * 8));
+            for (var i = 0; i < 3; i++)
+                data[i + offset] = (byte)(word >> (22 - i * 8));
             return true;
         }
 

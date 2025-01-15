@@ -8,34 +8,27 @@ namespace Asv.Gnss
         public override string Name => "UBX-NAV-SBAS-POOL";
         public override byte Class => 0x01;
         public override byte SubClass => 0x32;
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-             
-        }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-             
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
+
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
 
-        public override void Randomize(Random random)
-        {
-             
-        }
+        public override void Randomize(Random random) { }
     }
+
     public class UbxNavSbas : UbxMessageBase
     {
         public override string Name => "UBX-NAV-SBAS";
         public override byte Class => 0x01;
         public override byte SubClass => 0x32;
-        
+
         /// <summary>
         /// GPS time of week of the navigation epoch.
         /// </summary>
         public uint iTOW { get; set; }
-        
+
         /// <summary>
         /// PRN Number of the GEO where correction and integrity data is used from
         /// </summary>
@@ -66,12 +59,12 @@ namespace Asv.Gnss
         public byte Service { get; set; }
 
         #region Service bits
-        
+
         /// <summary>
         /// GEO may be used as ranging source
         /// </summary>
         public bool IsRanging { get; set; }
-        
+
         /// <summary>
         /// GEO is providing correction data
         /// </summary>
@@ -91,7 +84,7 @@ namespace Asv.Gnss
         /// Problem with signal or broadcast data indicated
         /// </summary>
         public bool IsBad { get; set; }
-        
+
         #endregion
 
         /// <summary>
@@ -109,22 +102,18 @@ namespace Asv.Gnss
 
         #region StatusFlags bits
 
-        public UbxStatusFlags IntegrityUsed { get; set; } = 
-            UbxStatusFlags.Unknown;
+        public UbxStatusFlags IntegrityUsed { get; set; } = UbxStatusFlags.Unknown;
 
         #endregion
 
         /// <summary>
         /// Reserved 1
         /// </summary>
-        public ushort Reserved1 { get; set; } 
-        
+        public ushort Reserved1 { get; set; }
+
         public SvData[] SvDatas { get; set; }
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-             
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
@@ -139,10 +128,10 @@ namespace Asv.Gnss
             IsIntegrity = (Service & 0b0000_0100) != 0;
             IsCorrections = (Service & 0b0000_0010) != 0;
             IsRanging = (Service & 0b0000_0001) != 0;
-            
+
             Cnt = BinSerialize.ReadByte(ref buffer);
             StatusFlags = BinSerialize.ReadByte(ref buffer);
-            
+
             if ((StatusFlags & 0b0000_0001) != 0)
             {
                 IntegrityUsed = UbxStatusFlags.IntegrityUsed;
@@ -151,11 +140,11 @@ namespace Asv.Gnss
             {
                 IntegrityUsed = UbxStatusFlags.GpsOnly;
             }
-            
+
             Reserved1 = BinSerialize.ReadUShort(ref buffer);
 
             SvDatas = new SvData[Cnt];
-            
+
             for (int i = 0; i < Cnt; i++)
             {
                 SvDatas[i].SvId = BinSerialize.ReadByte(ref buffer);
@@ -163,13 +152,13 @@ namespace Asv.Gnss
                 SvDatas[i].Udre = BinSerialize.ReadByte(ref buffer);
                 SvDatas[i].SvSys = BinSerialize.ReadByte(ref buffer);
                 SvDatas[i].SvService = BinSerialize.ReadByte(ref buffer);
-                
+
                 SvDatas[i].IsBad = (SvDatas[i].SvService & 0b0001_0000) != 0;
                 SvDatas[i].IsTestmode = (SvDatas[i].SvService & 0b0000_1000) != 0;
                 SvDatas[i].IsIntegrity = (SvDatas[i].SvService & 0b0000_0100) != 0;
                 SvDatas[i].IsCorrections = (SvDatas[i].SvService & 0b0000_0010) != 0;
                 SvDatas[i].IsRanging = (SvDatas[i].SvService & 0b0000_0001) != 0;
-                
+
                 SvDatas[i].Reserved2 = BinSerialize.ReadByte(ref buffer);
                 SvDatas[i].Prc = BinSerialize.ReadShort(ref buffer);
                 SvDatas[i].SvId = BinSerialize.ReadByte(ref buffer);
@@ -180,19 +169,16 @@ namespace Asv.Gnss
 
         protected override int GetContentByteSize() => 12 + (12 * Cnt);
 
-        public override void Randomize(Random random)
-        {
-             
-        }
+        public override void Randomize(Random random) { }
     }
 
     public enum UbxSbasMode
     {
         Disabled = 0,
         EnabledIntegrity = 1,
-        EnabledTestMode = 3
+        EnabledTestMode = 3,
     }
-    
+
     public enum UbxSbasSystem
     {
         Unknown = -1,
@@ -200,61 +186,63 @@ namespace Asv.Gnss
         EGNOS = 1,
         MSAS = 2,
         GAGAN = 3,
-        GPS = 16
+        GPS = 16,
     }
-    
+
     public enum UbxStatusFlags
     {
         /// <summary>
         /// Unknown
         /// </summary>
         Unknown = 0,
+
         /// <summary>
         /// Integrity information is not available or SBAS integrity is not enabled
         /// </summary>
         IntegrityUsed = 1,
+
         /// <summary>
         /// Receiver uses only GPS satellites for which integrity information is available
         /// </summary>
-        GpsOnly = 2
+        GpsOnly = 2,
     }
-    
+
     public class SvData
     {
         /// <summary>
         /// SV ID
         /// </summary>
         public byte SvId { get; set; }
-        
+
         /// <summary>
         /// Flags for this SV
         /// </summary>
         public byte Flags { get; set; }
-        
+
         /// <summary>
         /// Monitoring status
         /// </summary>
         public byte Udre { get; set; }
-        
+
         /// <summary>
         /// System (WAAS/EGNOS/...)
         /// same as SYS
         /// </summary>
         public byte SvSys { get; set; }
-        
+
         /// <summary>
         /// Services available
         /// same as SERVICE
         /// </summary>
         public byte SvService { get; set; }
-        
+
         #region SvService bits
-        
+
         /// <summary>
         /// GEO may be used as ranging source
         /// </summary>
         public bool IsRanging { get; set; }
-        
+
         /// <summary>
         /// GEO is providing correction data
         /// </summary>
@@ -274,24 +262,24 @@ namespace Asv.Gnss
         /// Problem with signal or broadcast data indicated
         /// </summary>
         public bool IsBad { get; set; }
-        
+
         #endregion
-        
+
         /// <summary>
         /// Reserved 2
         /// </summary>
         public byte Reserved2 { get; set; }
-        
+
         /// <summary>
         /// Pseudo Range correction in [cm]
         /// </summary>
         public short Prc { get; set; }
-        
+
         /// <summary>
         /// Reserved 3
         /// </summary>
         public ushort Reserved3 { get; set; }
-        
+
         /// <summary>
         /// Ionosphere correction in [cm]
         /// </summary>

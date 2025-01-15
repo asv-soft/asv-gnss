@@ -3,8 +3,9 @@
     public enum ComNavPpsPolarityEnum
     {
         Negative,
-        Positive
+        Positive,
     }
+
     public class ComNavSetPpsControlCommand : ComNavAsciiCommandBase
     {
         public ComNavPpsPolarityEnum Polarity { get; set; } = ComNavPpsPolarityEnum.Negative;
@@ -14,6 +15,7 @@
         public int PulseWidth { get; set; } = 1000;
 
         public override string MessageId => "PPSCONTROL";
+
         protected override string SerializeToAsciiString()
         {
             var pol = Polarity == ComNavPpsPolarityEnum.Negative ? "NEGATIVE" : "POSITIVE";

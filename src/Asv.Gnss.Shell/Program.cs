@@ -1,7 +1,6 @@
 ﻿using System;
 using Spectre.Console.Cli;
 
-
 namespace Asv.Gnss.Shell
 {
     class Program
