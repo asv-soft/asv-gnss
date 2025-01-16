@@ -9,7 +9,7 @@ namespace Asv.Gnss
     /// 4) E or W (East or West)
     /// 5) Time (UTC)
     /// 6) Status A - Data Valid, V - Data Invalid
-    /// 7) Checksum
+    /// 7) Checksum.
     /// </summary>
     public class Nmea0183MessageGLL : Nmea0183MessageBase
     {
@@ -36,7 +36,7 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// Time (UTC)
+        /// Gets or sets time (UTC).
         /// </summary>
         public DateTime? Time { get; set; }
 

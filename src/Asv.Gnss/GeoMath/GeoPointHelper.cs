@@ -94,7 +94,7 @@ namespace Asv.Gnss
         /// <returns>A new <see cref="GeoPoint"/> with the added altitude.</returns>
         public static GeoPoint AddAltitude(this GeoPoint point, double alt)
         {
-            return new GeoPoint(point.Latitude, point.Longitude, (point.Altitude) + alt);
+            return new GeoPoint(point.Latitude, point.Longitude, point.Altitude + alt);
         }
 
         /// <summary>

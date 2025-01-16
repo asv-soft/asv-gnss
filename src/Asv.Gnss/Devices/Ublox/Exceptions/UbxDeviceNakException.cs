@@ -15,6 +15,7 @@
         public UbxMessageBase Request { get; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="UbxDeviceNakException"/> class.
         /// Represents an exception that occurs when a UbxDevice returns a NAK (Negative Acknowledge) response for a command.
         /// </summary>
         /// <remarks>
@@ -26,5 +27,20 @@
         {
             Request = request;
         }
+
+        public UbxDeviceNakException(string source, string message)
+            : base(source, message) { }
+
+        public UbxDeviceNakException(string source, string message, System.Exception inner)
+            : base(source, message, inner) { }
+
+        public UbxDeviceNakException()
+            : base() { }
+
+        public UbxDeviceNakException(string message)
+            : base(message) { }
+
+        public UbxDeviceNakException(string message, System.Exception innerException)
+            : base(message, innerException) { }
     }
 }

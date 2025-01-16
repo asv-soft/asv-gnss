@@ -24,13 +24,16 @@ namespace Asv.Gnss
             {
                 var s = state.Read(data);
                 if (s != State.Finished)
+                {
                     continue;
+                }
 
                 var span = state.GetMessage();
                 ParsePacket(state.MessageId, ref span);
                 Reset();
                 return true;
             }
+
             return false;
         }
 
@@ -80,11 +83,15 @@ namespace Asv.Gnss
                     header.Trim().ToUpper(CultureInfo.InvariantCulture)
                 );
                 if (_header[0].Length == _header[1].Length)
+                {
                     _headerLength = _header[0].Length;
+                }
                 else
+                {
                     throw new Exception(
                         $"Protocol {GnssProtocolId}. Header upper case length and header lower case length not equal!"
                     );
+                }
             }
 
             public State Read(byte data)
@@ -99,10 +106,12 @@ namespace Asv.Gnss
                         }
 
                         _buffer[_bufferIndex] = data;
-                        _bufferIndex += 1;
+                        _bufferIndex++;
 
                         if (_bufferIndex == _headerLength)
+                        {
                             _state = AnswerStateEnum.PossibleCarriageReturn;
+                        }
 
                         return State.WaitingNext;
                     case AnswerStateEnum.PossibleCarriageReturn:
@@ -128,6 +137,7 @@ namespace Asv.Gnss
                             _state = AnswerStateEnum.Body;
                             return State.WaitingNext;
                         }
+
                         Reset();
                         return State.Error;
                     case AnswerStateEnum.Body:
@@ -138,10 +148,14 @@ namespace Asv.Gnss
                             {
                                 _buffer[_bufferIndex++] = data;
                                 if (_bufferIndex < MaxBufferSize - 2)
+                                {
                                     return State.WaitingNext;
+                                }
+
                                 Reset();
                                 return State.Error;
                             }
+
                             case CarriageReturn:
                                 _state = AnswerStateEnum.CarriageReturn;
                                 return State.WaitingNext;
@@ -149,10 +163,14 @@ namespace Asv.Gnss
                                 Reset();
                                 return State.Error;
                         }
+
                     case AnswerStateEnum.CarriageReturn:
 
                         if (data == LineFeed)
+                        {
                             return State.Finished;
+                        }
+
                         Reset();
                         return State.Error;
                     default:

@@ -8,7 +8,7 @@ namespace Asv.Gnss
     }
 
     /// <summary>
-    /// Garmin proprietary sentence
+    /// Garmin proprietary sentence.
     /// </summary>
     public class Nmea0183ProprietaryMessageGRMZ : Nmea0183MessageBase
     {
@@ -30,17 +30,35 @@ namespace Asv.Gnss
         {
             messageid = null;
             if (raw.Length < 5)
+            {
                 return false;
+            }
+
             if (raw[0] != 'P')
+            {
                 return false;
+            }
+
             if (raw[1] != 'G')
+            {
                 return false;
+            }
+
             if (raw[2] != 'R')
+            {
                 return false;
+            }
+
             if (raw[3] != 'M')
+            {
                 return false;
+            }
+
             if (raw[4] != 'Z')
+            {
                 return false;
+            }
+
             messageid = NmeaMessageId;
             return true;
         }

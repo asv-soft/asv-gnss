@@ -16,7 +16,7 @@ namespace Asv.Gnss
             var tow = AsvHelper.GetBitU(buffer, ref bitIndex, 30) * 0.001;
             var week = AsvHelper.GetBitU(buffer, ref bitIndex, 10);
             var cycle = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
-            var gpsTime = GpsRawHelper.Gps2Time((int)(cycle * 1024 + week), tow);
+            var gpsTime = GpsRawHelper.Gps2Time((int)((cycle * 1024) + week), tow);
             UtcTime = AsvHelper.Gps2Utc(gpsTime);
             Prn = (int)AsvHelper.GetBitU(buffer, ref bitIndex, 6);
             CrcPassed = AsvHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
@@ -27,7 +27,7 @@ namespace Asv.Gnss
             RindexSignalCode = "1C";
             RinexSatCode = $"G{Prn}";
 
-            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GPS, Prn);
+            SatelliteId = AsvHelper.Satno(NavigationSystemEnum.SYS_GPS, Prn);
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
             NAVBitsU32 = new uint[NavBitsU32Length];
@@ -35,6 +35,7 @@ namespace Asv.Gnss
             {
                 NAVBitsU32[i] = BinSerialize.ReadUInt(ref buffer);
             }
+
             GpsSubFrame = GpsSubFrameFactory.Create(NAVBitsU32);
             L1Code = code1 != 0 ? AsvHelper.CODE_L1P : AsvHelper.CODE_L1C;
         }
@@ -62,7 +63,10 @@ namespace Asv.Gnss
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
             if (NAVBitsU32 == null)
+            {
                 return;
+            }
+
             for (var i = 0; i < NavBitsU32Length; i++)
             {
                 BinSerialize.WriteUInt(ref buffer, NAVBitsU32[i]);
@@ -71,26 +75,26 @@ namespace Asv.Gnss
 
         protected override int InternalGetContentByteSize()
         {
-            return 7 + (NAVBitsU32?.Length ?? 0) * sizeof(uint);
+            return 7 + ((NAVBitsU32?.Length ?? 0) * sizeof(uint));
         }
 
         public override void Randomize(Random random)
         {
             UtcTime = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc);
-            Prn = random.Next() % 32 + 1;
-            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GPS, Prn);
+            Prn = (random.Next() % 32) + 1;
+            SatelliteId = AsvHelper.Satno(NavigationSystemEnum.SYS_GPS, Prn);
             L1Code = AsvHelper.CODE_L1C;
             SignalType = GnssSignalTypeEnum.L1CA;
             RindexSignalCode = "1C";
             RinexSatCode = $"G{Prn}";
             NAVBitsU32 = new uint[NavBitsU32Length];
             NAVBitsU32[0] = (uint)GpsRawHelper.GpsSubframePreamble << 22;
-            NAVBitsU32[1] = (uint)(random.Next() % 5 + 1) << 8;
+            NAVBitsU32[1] = (uint)((random.Next() % 5) + 1) << 8;
             GpsSubFrame = GpsSubFrameFactory.Create(NAVBitsU32);
         }
 
         /// <summary>
-        /// GPS Epoch Time
+        /// Gets or sets gPS Epoch Time.
         /// </summary>
         public DateTime UtcTime { get; set; }
         public int Prn { get; set; }

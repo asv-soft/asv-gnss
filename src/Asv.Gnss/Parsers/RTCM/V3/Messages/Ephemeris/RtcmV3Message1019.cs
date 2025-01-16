@@ -74,7 +74,7 @@ namespace Asv.Gnss
                 prn += 80;
             }
 
-            var sat = RtcmV3Helper.satno(sys, (int)prn);
+            var sat = RtcmV3Helper.Satno(sys, (int)prn);
 
             if (sat == 0)
             {
@@ -82,16 +82,20 @@ namespace Asv.Gnss
             }
 
             SatelliteNumber = sat;
-            Week = RtcmV3Helper.adjgpsweek(utc, (int)week);
+            Week = RtcmV3Helper.Adjgpsweek(utc, (int)week);
 
             var time = RtcmV3Helper.Utc2Gps(utc);
 
             var tt = RtcmV3Helper.GetFromGps(Week, Toes) - time;
 
             if (tt.TotalSeconds < -302400.0)
+            {
                 Week++;
+            }
             else if (tt.TotalSeconds >= 302400.0)
+            {
                 Week--;
+            }
 
             Toe = RtcmV3Helper.GetFromGps(Week, Toes);
             Toc = RtcmV3Helper.GetFromGps(Week, toc);
@@ -108,7 +112,7 @@ namespace Asv.Gnss
         public override string Name => "GPS Satellite Ephemeris Data";
 
         /// <summary>
-        /// /* satellite number */
+        /// Gets or sets /* satellite number */.
         /// </summary>
         public int SatelliteNumber { get; set; }
 
@@ -117,92 +121,93 @@ namespace Asv.Gnss
         public string SatelliteCode { get; set; }
 
         /// <summary>
-        /// IODE
+        /// Gets or sets iODE.
         /// </summary>
         public int Iode { get; set; }
 
         /// <summary>
-        /// IODC
+        /// Gets or sets iODC.
         /// </summary>
         public int Iodc { get; set; }
 
         /// <summary>
-        /// /* SV accuracy (URA index) */
+        /// Gets or sets /* SV accuracy (URA index) */.
         /// </summary>
         public int SvAccuracy { get; set; }
 
         /// <summary>
-        /// /* SV health (0:ok) */
+        /// Gets or sets /* SV health (0:ok) */.
         /// </summary>
         public int SvHealth { get; set; }
 
         /// <summary>
-        /// /* GPS/QZS: gps week, GAL: galileo week */
+        /// Gets or sets /* GPS/QZS: gps week, GAL: galileo week */.
         /// </summary>
         public int Week { get; set; }
 
         /// <summary>
-        /// GPS/QZS: code on L2.
+        /// Gets or sets gPS/QZS: code on L2.
         /// GAL: data sourceName defined as rinex 3.03.
-        /// BDS: data sourceName (0:unknown,1:B1I,2:B1Q,3:B2I,4:B2Q,5:B3I,6:B3Q)
+        /// BDS: data sourceName (0:unknown,1:B1I,2:B1Q,3:B2I,4:B2Q,5:B3I,6:B3Q).
         /// </summary>
         public int CodeL2 { get; set; }
 
         /// <summary>
-        /// GPS/QZS: L2 P data flag
-        /// BDS: nav type (0:unknown,1:IGSO/MEO,2:GEO)
+        /// Gets or sets gPS/QZS: L2 P data flag
+        /// BDS: nav type (0:unknown,1:IGSO/MEO,2:GEO).
         /// </summary>
         public int FlagL2PData { get; set; }
 
         /// <summary>
-        /// Toe
+        /// Gets or sets toe.
         /// </summary>
         public DateTime Toe { get; set; }
 
         /// <summary>
-        /// Toc
+        /// Gets or sets toc.
         /// </summary>
         public DateTime Toc { get; set; }
 
         /// <summary>
-        /// T_trans
+        /// Gets or sets t_trans.
         /// </summary>
         public DateTime TTrans { get; set; }
 
         /* SV orbit parameters */
+
         /// <summary>
-        /// Root of the Semi-Major Axis (km)
+        /// Gets or sets root of the Semi-Major Axis (km).
         /// </summary>
         public double A { get; set; }
 
         /// <summary>
-        /// Eccentricity (e)
+        /// Gets or sets eccentricity (e).
         /// </summary>
         public double E { get; set; }
 
         /// <summary>
-        /// Inclination Angle at Reference Time (i)
+        /// Gets or sets inclination Angle at Reference Time (i).
         /// </summary>
         public double I0 { get; set; }
 
         /// <summary>
-        /// Longitude of Ascending Node of Orbit Plane at Weekly Epoc (LΩ)
+        /// Gets or sets longitude of Ascending Node of Orbit Plane at Weekly Epoc (LΩ).
         /// </summary>
         public double Omg0 { get; set; }
 
         /// <summary>
-        /// Argument of Perigee (ω)
+        /// Gets or sets argument of Perigee (ω).
         /// </summary>
         public double Omg { get; set; }
 
         /// <summary>
-        /// Mean Anomaly at Reference Time (m)
+        /// Gets or sets mean Anomaly at Reference Time (m).
         /// </summary>
         public double M0 { get; set; }
         public double Deln { get; set; }
 
         /// <summary>
-        /// Rate of Right Ascension (dΩ/dt)
+        /// Gets or sets rate of Right Ascension (dΩ/dt).
         /// </summary>
         public double OmgD { get; set; }
         public double Idot { get; set; }
@@ -214,47 +219,47 @@ namespace Asv.Gnss
         public double Cis { get; set; }
 
         /// <summary>
-        /// /* Toe (s) in week */
+        /// Gets or sets /* Toe (s) in week */.
         /// </summary>
         public double Toes { get; set; }
 
         /// <summary>
-        /// /* fit interval (h) */
+        /// Gets or sets /* fit interval (h) */.
         /// </summary>
         public double Fit { get; set; }
 
         /// <summary>
-        /// SV clock parameters af0
+        /// Gets or sets sV clock parameters af0.
         /// </summary>
         public double Af0 { get; set; }
 
         /// <summary>
-        /// SV clock parameters af1
+        /// Gets or sets sV clock parameters af1.
         /// </summary>
         public double Af1 { get; set; }
 
         /// <summary>
-        /// SV clock parameters af2
+        /// Gets or sets sV clock parameters af2.
         /// </summary>
         public double Af2 { get; set; }
 
         /// <summary>
-        /// group delay parameters.
+        /// Gets or sets group delay parameters.
         /// GPS/QZS:tgd[0]=TGD.
         /// GAL:tgd[0]=BGD_E1E5a,tgd[1]=BGD_E1E5b.
         /// CMP:tgd[0]=TGD_B1I ,tgd[1]=TGD_B2I/B2b,tgd[2]=TGD_B1Cp.
         /// tgd[3]=TGD_B2ap,tgd[4]=ISC_B1Cd.
-        /// tgd[5]=ISC_B2ad
+        /// tgd[5]=ISC_B2ad.
         /// </summary>
         public double[] Tgd { get; set; } = new double[6];
 
         /// <summary>
-        /// Adot for CNAV
+        /// Gets or sets adot for CNAV.
         /// </summary>
         public double Adot { get; set; }
 
         /// <summary>
-        /// ndot for CNAV
+        /// Gets or sets ndot for CNAV.
         /// </summary>
         public double Ndot { get; set; }
     }

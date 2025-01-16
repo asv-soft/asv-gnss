@@ -15,9 +15,11 @@ namespace Asv.Gnss
         protected override void CheckWordId(byte wordId)
         {
             if (wordId <= 5 || wordId % 2 != 0)
+            {
                 throw new Exception(
                     $"Word ID not equals: Word want > 5 and even number. Got {wordId}"
                 );
+            }
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace Asv.Gnss
             var bitIndex = 8U;
 
             С = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
-            bitIndex += 1;
+            bitIndex++;
             M = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2);
             bitIndex += 2;
             Prn = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5);
@@ -40,55 +42,55 @@ namespace Asv.Gnss
             LOmega =
                 GlonassRawHelper.GetBitG(data, bitIndex, 21) * GlonassRawHelper.P2_20 * Math.PI;
             bitIndex += 21;
-            i =
+            I =
                 (
-                    63.0 / 180.0
-                    + GlonassRawHelper.GetBitG(data, bitIndex, 18) * GlonassRawHelper.P2_20
+                    (63.0 / 180.0)
+                    + (GlonassRawHelper.GetBitG(data, bitIndex, 18) * GlonassRawHelper.P2_20)
                 ) * Math.PI;
             bitIndex += 18;
-            e = GlonassRawHelper.GetBitU(data, bitIndex, 15) * GlonassRawHelper.P2_20;
+            E = GlonassRawHelper.GetBitU(data, bitIndex, 15) * GlonassRawHelper.P2_20;
             bitIndex += 15;
         }
 
         /// <summary>
-        /// 0 - non-operability
-        /// 1 - operability
+        /// Gets or sets 0 - non-operability
+        /// 1 - operability.
         /// </summary>
         public byte С { get; set; }
 
         /// <summary>
-        /// 0 - GLONASS
-        /// 1 - GLONASS-M
+        /// Gets or sets 0 - GLONASS
+        /// 1 - GLONASS-M.
         /// </summary>
         public byte M { get; set; }
 
         /// <summary>
-        /// Satellite number
-        /// [1-24]
+        /// Gets or sets satellite number
+        /// [1-24].
         /// </summary>
         public byte Prn { get; set; }
 
         /// <summary>
-        /// Correction to onboard time scale
-        /// [s]
+        /// Gets or sets correction to onboard time scale
+        /// [s].
         /// </summary>
         public double DelaT2 { get; set; }
 
         /// <summary>
-        /// Longitude of the first (within the NA -day) ascending node of orbit in PZ-90.02 coordinate system
-        /// [Rad]
+        /// Gets or sets longitude of the first (within the NA -day) ascending node of orbit in PZ-90.02 coordinate system
+        /// [Rad].
         /// </summary>
         public double LOmega { get; set; }
 
         /// <summary>
-        /// Orbital inclination
-        /// [Rad]
+        /// Gets or sets orbital inclination
+        /// [Rad].
         /// </summary>
-        public double i { get; set; }
+        public double I { get; set; }
 
         /// <summary>
-        /// Eccentricity
+        /// Gets or sets eccentricity.
         /// </summary>
-        public double e { get; set; }
+        public double E { get; set; }
     }
 }

@@ -25,43 +25,43 @@ namespace Asv.Gnss
         public override byte SubClass => 0x06;
 
         /// <summary>
-        /// Number of successfully parsed messages
-        /// for each protocol on port0
+        /// Gets number of successfully parsed messages
+        /// for each protocol on port0.
         /// </summary>
         public ushort[] Msg1 { get; } = new ushort[8];
 
         /// <summary>
-        /// Number of successfully parsed messages
-        /// for each protocol on port1
+        /// Gets number of successfully parsed messages
+        /// for each protocol on port1.
         /// </summary>
         public ushort[] Msg2 { get; } = new ushort[8];
 
         /// <summary>
-        /// Number of successfully parsed messages
-        /// for each protocol on port2
+        /// Gets number of successfully parsed messages
+        /// for each protocol on port2.
         /// </summary>
         public ushort[] Msg3 { get; } = new ushort[8];
 
         /// <summary>
-        /// Number of successfully parsed messages
-        /// for each protocol on port3
+        /// Gets number of successfully parsed messages
+        /// for each protocol on port3.
         /// </summary>
         public ushort[] Msg4 { get; } = new ushort[8];
 
         /// <summary>
-        /// Number of successfully parsed messages
-        /// for each protocol on port4
+        /// Gets number of successfully parsed messages
+        /// for each protocol on port4.
         /// </summary>
         public ushort[] Msg5 { get; } = new ushort[8];
 
         /// <summary>
-        /// Number of successfully parsed messages
-        /// for each protocol on port5
+        /// Gets number of successfully parsed messages
+        /// for each protocol on port5.
         /// </summary>
         public ushort[] Msg6 { get; } = new ushort[8];
 
         /// <summary>
-        /// Number skipped bytes for each port
+        /// Gets number skipped bytes for each port.
         /// </summary>
         public uint[] Skipped { get; } = new uint[6];
 

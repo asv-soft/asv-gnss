@@ -9,7 +9,7 @@ namespace Asv.Gnss.Test
     {
         public static string GetRandomAlphaNumeric()
         {
-            return Path.GetRandomFileName().Replace(".", "");
+            return Path.GetRandomFileName().Replace(".", string.Empty);
         }
 
         [Fact]

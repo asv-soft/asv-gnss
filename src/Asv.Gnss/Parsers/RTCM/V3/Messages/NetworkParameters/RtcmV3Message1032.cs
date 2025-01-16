@@ -28,7 +28,9 @@ namespace Asv.Gnss
             rr[2] = RtcmV3Helper.GetBits38(buffer, ref bitIndex);
 
             for (var i = 0; i < 3; i++)
+            {
                 re[i] = rr[i] * 0.0001;
+            }
 
             RtcmV3Helper.EcefToPos(re, pos);
 
@@ -42,37 +44,37 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// Antenna Reference Point ECEF-X
+        /// Gets or sets antenna Reference Point ECEF-X.
         /// </summary>
         public double X { get; set; }
 
         /// <summary>
-        /// Antenna Reference Point ECEF-Y
+        /// Gets or sets antenna Reference Point ECEF-Y.
         /// </summary>
         public double Y { get; set; }
 
         /// <summary>
-        /// Antenna Reference Point ECEF-Z
+        /// Gets or sets antenna Reference Point ECEF-Z.
         /// </summary>
         public double Z { get; set; }
 
         /// <summary>
-        /// Antenna Reference Point WGS84-Latitude
+        /// Gets or sets antenna Reference Point WGS84-Latitude.
         /// </summary>
         public double Latitude { get; set; }
 
         /// <summary>
-        /// Antenna Reference Point WGS84-Longitude
+        /// Gets or sets antenna Reference Point WGS84-Longitude.
         /// </summary>
         public double Longitude { get; set; }
 
         /// <summary>
-        /// Antenna Reference Point WGS84-Altitude
+        /// Gets or sets antenna Reference Point WGS84-Altitude.
         /// </summary>
         public double Altitude { get; set; }
 
         /// <summary>
-        /// Since this field is reserved, all bits should be set to zero for now.
+        /// Gets or sets since this field is reserved, all bits should be set to zero for now.
         /// However, since the value is subject to change in future versions,
         /// decoding should not rely on a zero value.
         /// The ITRF realization year identifies the datum definition used for
@@ -81,7 +83,7 @@ namespace Asv.Gnss
         public byte ITRFEpochYear { get; set; }
 
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its
+        /// Gets or sets the Reference Station ID is determined by the service provider. Its
         /// primary purpose is to link all message data to their unique sourceName. It is
         /// useful in distinguishing between desired and undesired data in cases
         /// where more than one service may be using the same data link
@@ -103,7 +105,7 @@ namespace Asv.Gnss
         public uint NonPhysicalReferenceStationID { get; set; }
 
         /// <summary>
-        /// The Physical Reference Station ID specifies the station ID of a real
+        /// Gets or sets the Physical Reference Station ID specifies the station ID of a real
         /// reference station, when the data stream itself is based on a nonphysical reference station.
         /// Consequently, for the Physical Reference Station ID the same notes
         /// apply as for DF003.

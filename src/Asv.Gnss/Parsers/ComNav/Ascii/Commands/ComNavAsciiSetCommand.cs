@@ -7,17 +7,17 @@ namespace Asv.Gnss
     public enum ComNavSetTypeEnum
     {
         /// <summary>
-        /// Param1: SYNCH or ASYNCH Set RTK in synchronous mode or asynchronous mode
+        /// Param1: SYNCH or ASYNCH Set RTK in synchronous mode or asynchronous mode.
         /// </summary>
         DIFFMATCHMODE,
 
         /// <summary>
-        /// Param1: ON = Enable atom clock; OFF = Disable atom clock
+        /// Param1: ON = Enable atom clock; OFF = Disable atom clock.
         /// </summary>
         ATOM,
 
         /// <summary>
-        /// Param1 is known antenna height of a receiver
+        /// Param1 is known antenna height of a receiver.
         /// </summary>
         ANTHIGH,
 
@@ -25,7 +25,7 @@ namespace Asv.Gnss
         /// Param1:
         /// ON = start a static file collection;
         /// OFF = end a static file collection.
-        /// Start or end static data collection
+        /// Start or end static data collection.
         /// </summary>
         STATIC,
 
@@ -36,7 +36,7 @@ namespace Asv.Gnss
         /// B0: reference latitude(in degree);
         /// L0: reference longitude(in degree);
         /// N0: reference north coordinate;
-        /// E0: reference east coordinate
+        /// E0: reference east coordinate.
         /// </summary>
         PJKPARA,
 
@@ -47,12 +47,12 @@ namespace Asv.Gnss
         TIMINGREFXYZ,
 
         /// <summary>
-        /// Param1: PVT or TIMING; (SET WORKMODE TIMING + SET TIMINGREFXYZ X Y Z or SET WORKMODE PVT)
+        /// Param1: PVT or TIMING; (SET WORKMODE TIMING + SET TIMINGREFXYZ X Y Z or SET WORKMODE PVT).
         /// </summary>
         WORKMODE,
 
         /// <summary>
-        /// Param1 Param1: B1I, B2I or B3I, AUTO
+        /// Param1 Param1: B1I, B2I or B3I, AUTO.
         /// </summary>
         BD2PVTOBS,
 
@@ -73,14 +73,14 @@ namespace Asv.Gnss
         RTKFREQ,
 
         /// <summary>
-        /// Param1 is a fixed baseline length of a rover (>0)
+        /// Param1 is a fixed baseline length of a rover (>0).
         /// </summary>
         BASELINELENGTH,
 
         /// <summary>
         /// Param1:
         /// ON = to carry out the modulation;
-        /// OFF = no modulation (default)
+        /// OFF = no modulation (default).
         /// </summary>
         MODIFYCPTOPR,
 
@@ -88,33 +88,33 @@ namespace Asv.Gnss
         /// Param1 [Param2] [Param3]
         /// Param1: smooth enable switch, ON/OFF;
         /// Param2: smoothing time contant (10 ~ 200 seconds. Its default value is 50s.);
-        /// Param3: Tracking time threshhold (0 ~ 60 seconds. Its default value is 15s)
+        /// Param3: Tracking time threshhold (0 ~ 60 seconds. Its default value is 15s).
         /// </summary>
         CPSMOOTHPR,
 
         /// <summary>
-        /// Param1 is RTK Obs mode: AUTO, MANUAL [Default]
+        /// Param1 is RTK Obs mode: AUTO, MANUAL [Default].
         /// </summary>
         RTKOBSMODE,
 
         /// <summary>
-        /// Param1 is a vector length of a rover (>0)
+        /// Param1 is a vector length of a rover (>0).
         /// </summary>
         VECTORLENGTH,
 
         /// <summary>
         /// Param1 (codetype) is: pcode: P code; ccode: C code; auto: Track the L2C automatically (AUTO, MANUAL[Default]).
-        /// The setting status can be checked by the command: logcodetype
+        /// The setting status can be checked by the command: logcodetype.
         /// </summary>
         GPSL2CODETYPE,
 
         /// <summary>
-        /// Param1 (codetype) is: pcode: P code; ccode: C code; Auto: N/A (Default mode: pcode)
+        /// Param1 (codetype) is: pcode: P code; ccode: C code; Auto: N/A (Default mode: pcode).
         /// </summary>
         GLONASSCODETYPE,
 
         /// <summary>
-        /// ON
+        /// ON.
         /// </summary>
         EXTERNALCOORD,
 
@@ -123,7 +123,7 @@ namespace Asv.Gnss
         /// switcher: ENABLE/DISABLE,
         /// fileperiod: file saving period (hour);
         /// sampleint: file saving sampling interval (sec);
-        /// eraseint: file erasing time interval (sec)
+        /// eraseint: file erasing time interval (sec).
         /// </summary>
         CYCLESAVE,
 
@@ -131,22 +131,22 @@ namespace Asv.Gnss
         /// mode portA portB Mode: “master” - base station, “slave” - rover;
         /// PortA: port for receiving the differential data from the base station (com1, com2, com3);
         /// PortB: port for sending differential messages from base station;
-        /// Interval interval for sending the differential messages. The parameter is float pointing
+        /// Interval interval for sending the differential messages. The parameter is float pointing.
         /// </summary>
         STATIONMODE,
 
         /// <summary>
-        /// ON/OFF ON: active the EMMC chip; OFF: close the EMMC chip
+        /// ON/OFF ON: active the EMMC chip; OFF: close the EMMC chip.
         /// </summary>
         EMMC,
 
         /// <summary>
-        /// XX XX: is the AODC value
+        /// XX XX: is the AODC value.
         /// </summary>
         BD2PVTMAXAODC,
 
         /// <summary>
-        /// XX XX: is the AODE value
+        /// XX XX: is the AODE value.
         /// </summary>
         BD2PVTMAXAODE,
 
@@ -160,7 +160,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Keyword: COMNAV, STANDARD, NORMAL, LONG. COMNAV: default setting.
         /// </summary>
-        nmeamsgformat,
+        Nmeamsgformat,
 
         /// <summary>
         /// gx p1 p2 …… p14 gx: GLONASS frequency index. gx = 1 means G1, gx = 2 means G2; pn from -700 ~ 600
@@ -169,38 +169,38 @@ namespace Asv.Gnss
         GLOPRBIAS,
 
         /// <summary>
-        /// gx chan p. gx = 1 means G1, gx = 2 means G2; chan from -7 ~ 6; pn from -700 ~ 600
+        /// gx chan p. gx = 1 means G1, gx = 2 means G2; chan from -7 ~ 6; pn from -700 ~ 600.
         /// </summary>
         GLOCHANPRBIAS,
 
         /// <summary>
         /// switch port. Forwarding RTCMV3 differential data.
         /// switch: on/off;
-        /// port: com1/com2/com3/com4
+        /// port: com1/com2/com3/com4.
         /// </summary>
-        relayrtcmv3,
+        Relayrtcmv3,
 
         /// <summary>
-        /// param1: lband/rtcm3/bqrtcm3 (Bqrtcm3 is a new mode: the SSR correction number of RTCM3 of markweapon group)
+        /// param1: lband/rtcm3/bqrtcm3 (Bqrtcm3 is a new mode: the SSR correction number of RTCM3 of markweapon group).
         /// </summary>
-        pppsource,
+        Pppsource,
 
         /// <summary>
-        /// enable/disable
+        /// enable/disable.
         /// </summary>
-        ledlowon,
+        Ledlowon,
 
         /// <summary>
-        /// enable
+        /// enable.
         /// </summary>
-        headingledshow,
+        Headingledshow,
 
         /// <summary>
         /// param1:
         /// 1 - Mobile base station, variable base line length;
         /// 2 - Mobile base station mode with fixed baseline length.
         /// </summary>
-        vectorlenmode,
+        Vectorlenmode,
     }
 
     public static class ComNavSetTypeHelper
@@ -234,14 +234,14 @@ namespace Asv.Gnss
                 ComNavSetTypeEnum.BD2PVTMAXAODC => "BD2PVTMAXAODC",
                 ComNavSetTypeEnum.BD2PVTMAXAODE => "BD2PVTMAXAODE",
                 ComNavSetTypeEnum.PROJECTIONTYPE => "PROJECTIONTYPE",
-                ComNavSetTypeEnum.nmeamsgformat => "nmeamsgformat",
+                ComNavSetTypeEnum.Nmeamsgformat => "nmeamsgformat",
                 ComNavSetTypeEnum.GLOPRBIAS => "GLOPRBIAS",
                 ComNavSetTypeEnum.GLOCHANPRBIAS => "GLOCHANPRBIAS",
-                ComNavSetTypeEnum.relayrtcmv3 => "relayrtcmv3",
-                ComNavSetTypeEnum.pppsource => "pppsource",
-                ComNavSetTypeEnum.ledlowon => "ledlowon",
-                ComNavSetTypeEnum.headingledshow => "headingledshow",
-                ComNavSetTypeEnum.vectorlenmode => "vectorlenmode",
+                ComNavSetTypeEnum.Relayrtcmv3 => "relayrtcmv3",
+                ComNavSetTypeEnum.Pppsource => "pppsource",
+                ComNavSetTypeEnum.Ledlowon => "ledlowon",
+                ComNavSetTypeEnum.Headingledshow => "headingledshow",
+                ComNavSetTypeEnum.Vectorlenmode => "vectorlenmode",
                 _ => string.Empty,
             };
         }

@@ -65,22 +65,22 @@ namespace Asv.Gnss
     public enum SatUdreEnum
     {
         /// <summary>
-        /// One-sigma differential error less or equal than 1 met
+        /// One-sigma differential error less or equal than 1 met.
         /// </summary>
         LessOne = 0,
 
         /// <summary>
-        /// One-sigma differential error from 1 to 4 met
+        /// One-sigma differential error from 1 to 4 met.
         /// </summary>
         BetweenOneAndFour = 1,
 
         /// <summary>
-        /// One-sigma differential error from 4 to 8 met
+        /// One-sigma differential error from 4 to 8 met.
         /// </summary>
         BetweenFourAndEight = 2,
 
         /// <summary>
-        /// One-sigma differential error more than 8 met
+        /// One-sigma differential error more than 8 met.
         /// </summary>
         MoreEight = 3,
     }

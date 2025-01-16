@@ -1,23 +1,24 @@
 using System;
 using Asv.Common;
-
+#pragma warning disable SA1407, SA1300, SA1313
 namespace Asv.Gnss
 {
-    /// The GeoConverter class provides methods for converting coordinates between different coordinate systems.
-    /// /
+    // The GeoConverter class provides methods for converting coordinates between different coordinate systems.
+    // /
     public static class GeoConverter
     {
         /// <summary>
         /// Represents the mathematical constant Pi. </summary>
         /// /
-        private static double Pi = 3.14159265358979; // Число Пи
-        private static double ro = 206264.8062; // Число угловых секунд в радиане
+        private const double Pi = 3.14159265358979; // Число Пи
+        private const double Ro = 206264.8062; // Число угловых секунд в радиане
 
         // Эллипсоид Красовского
+
         /// <summary>
         /// Represents the major axis of an ellipse used in geodetic calculations.
         /// </summary>
-        private static double aP = 6378136; // Большая полуось
+        private const double AP = 6378136; // Большая полуось
 
         /// <summary>
         /// The flattening value of the ellipsoid used for geodetic calculations. </summary>
@@ -26,33 +27,34 @@ namespace Asv.Gnss
         /// It is used in geodetic calculations to account for the shape of the Earth.
         /// This value is defined as the inverse of the ellipticity. </remarks>
         /// /
-        private static double alP = 1 / 298.257839303; // Сжатие
+        private const double AlP = 1 / 298.257839303; // Сжатие
 
         /// <summary>
         /// The square of the eccentricity.
         /// </summary>
-        private static double e2P = 2 * alP - Math.Pow(alP, 2); // Квадрат эксцентриситета
+        private static readonly double E2P = (2 * AlP) - Math.Pow(AlP, 2); // Квадрат эксцентриситета
 
         // Элипсоид WGS84 (GRS80, эти два эллипсоида сходны по большинству параметров)
-        /// Represents the length of the semi-major axis of the Earth's ellipsoid in meters.
-        /// </summary>
-        private static double aW = 6378137; // Большая полуось
+        // Represents the length of the semi-major axis of the Earth's ellipsoid in meters.
+        // </summary>
+        private const double AW = 6378137; // Большая полуось
 
         /// <summary>
         /// Constant variable representing the compression of the Earth ellipsoid.
         /// </summary>
-        private static double alW = 1 / 298.257223563; // Сжатие
+        private const double AlW = 1 / 298.257223563; // Сжатие
 
         /// <summary>
         /// Represents the square eccentricity (Квадрат эксцентриситета).
         /// </summary>
-        private static double e2W = 2 * alW - Math.Pow(alW, 2); // Квадрат эксцентриситета
+        private static readonly double E2W = (2 * AlW) - Math.Pow(AlW, 2); // Квадрат эксцентриситета
 
         // Вспомогательные значения для преобразования эллипсоидов
+
         /// <summary>
         /// Represents the average value of two variables: aP and aW.
         /// </summary>
-        private static double a = (aP + aW) / 2;
+        private const double A = (AP + AW) / 2;
 
         /// <summary>
         /// The e2 variable represents the average value of e2P and e2W.
@@ -60,85 +62,73 @@ namespace Asv.Gnss
         /// <remarks>
         /// e2P and e2W are two separate variables and their values are used to compute the average value stored in e2.
         /// </remarks>
-        private static double e2 = (e2P + e2W) / 2;
+        private static readonly double E2 = (E2P + E2W) / 2;
 
         /// <summary>
         /// This variable represents the difference between the value of 'aW' and 'aP'.
         /// </summary>
-        private static double da = aW - aP;
+        private const double Da = AW - AP;
 
         /// <summary>
         /// Represents the subtraction of two double variables.
         /// </summary>
-        private static double de2 = e2W - e2P;
+        private static readonly double De2 = E2W - E2P;
 
         // Линейные элементы трансформирования, в метрах
+
         /// <summary>
         /// The value of the variable dx_42_84 is 28.
         /// </summary>
-        private static double dx_42_84 = 28;
+        private const double Dx_42_84 = 28;
 
         /// <summary>
         /// Represents the value of dy_42_84.
         /// </summary>
-        private static double dy_42_84 = -130;
+        private const double Dy_42_84 = -130;
 
         /// <summary>
         /// Represents the value of dz_42_84.
         /// </summary>
-        private static double dz_42_84 = -95;
-
-        /// <summary>
-        /// The value of dx_42_90.
-        /// </summary>
-        private static double dx_42_90 = 23.92;
-
-        /// <summary>
-        /// Represents the value of dy_42_90.
-        /// </summary>
-        private static double dy_42_90 = -141.27;
-
-        /// <summary>
-        /// The value of dz_42_90 variable.
-        /// </summary>
-        private static double dz_42_90 = -80.9;
+        private const double Dz_42_84 = -95;
 
         /// <summary>
         /// Represents the value of dx_90_84.
         /// </summary>
-        private static double dx_90_84 = -1.08;
+        private const double Dx_90_84 = -1.08;
 
         /// <summary>
         /// Represents the value of the variable dy_90_84.
         /// </summary>
-        private static double dy_90_84 = -0.27;
+        private const double Dy_90_84 = -0.27;
 
         /// <summary>
         /// This variable represents the value of dz_90_84.
         /// </summary>
-        private static double dz_90_84 = -0.9;
+        private const double Dz_90_84 = -0.9;
 
         // Угловые элементы трансформирования, в секундах
+
         /// <summary>
         /// Represents the value of wx.
         /// </summary>
-        private static double wx = 0;
+        private const double Wx = 0;
 
         /// <summary>
         /// Represents the value of variable wy.
         /// </summary>
-        private static double wy = 0;
+        private const double Wy = 0;
 
         /// <summary>
         /// Represents the value of wz, which is a private static double variable.
         /// </summary>
-        private static double wz = 0;
+        private const double Wz = 0;
 
         // Дифференциальное различие масштабов
+
         /// <summary>
         /// Stores the value of milliseconds.
         /// </summary>
-        private static double ms = 0;
+        private const double Ms = 0;
 
         /// <summary>
         /// Converts a point from the PZ-90 coordinate system to the WGS84 coordinate system.
@@ -153,9 +143,9 @@ namespace Asv.Gnss
                 point.Latitude,
                 point.Longitude,
                 point.Altitude,
-                dx_90_84,
-                dy_90_84,
-                dz_90_84
+                Dx_90_84,
+                Dy_90_84,
+                Dz_90_84
             );
             return new GeoPoint(lat, lon, alt);
         }
@@ -173,44 +163,48 @@ namespace Asv.Gnss
                 point.Latitude,
                 point.Longitude,
                 point.Altitude,
-                dx_90_84,
-                dy_90_84,
-                dz_90_84
+                Dx_90_84,
+                Dy_90_84,
+                Dz_90_84
             );
             return new GeoPoint(lat, lon, alt);
         }
 
         /// <summary>
-        /// Calculates the dB value based on the given inputs. </summary> <param name="Bd">The value of Bd</param> <param name="Ld">The value of Ld</param> <param name="H">The value of H</param> <param name="dx">The value of dx</param> <param name="dy">The value of dy</param> <param name="dz">The value of dz</param> <returns>
+        /// Calculates the dB value based on the given inputs. </summary> <param name="Bd">The value of Bd.</param> <param name="Ld">The value of Ld.</param> <param name="H">The value of H.</param> <param name="dx">The value of dx.</param> <param name="dy">The value of dy.</param> <param name="dz">The value of dz.</param> <returns>
         /// The calculated dB value. </returns>
         /// /
         private static double dB(double Bd, double Ld, double H, double dx, double dy, double dz)
         {
-            double B,
-                L,
-                M,
-                N;
-            B = Bd * Pi / 180;
-            L = Ld * Pi / 180;
-            M = a * (1 - e2) / Math.Pow(1 - e2 * Math.Pow(Math.Sin(B), 2), 1.5);
-            N = a * Math.Pow(1 - e2 * Math.Pow(Math.Sin(B), 2), -0.5);
+            double b,
+                l,
+                m,
+                n;
+            b = Bd * Pi / 180;
+            l = Ld * Pi / 180;
+            m = A * (1 - E2) / Math.Pow(1 - (E2 * Math.Pow(Math.Sin(b), 2)), 1.5);
+            n = A * Math.Pow(1 - (E2 * Math.Pow(Math.Sin(b), 2)), -0.5);
 
-            return ro
-                    / (M + H)
+            return (
+                    Ro
+                    / (m + H)
                     * (
-                        N / a * e2 * Math.Sin(B) * Math.Cos(B) * da
-                        + (Math.Pow(N, 2) / Math.Pow(a, 2) + 1)
-                            * N
-                            * Math.Sin(B)
-                            * Math.Cos(B)
-                            * de2
+                        (n / A * E2 * Math.Sin(b) * Math.Cos(b) * Da)
+                        + (
+                            ((Math.Pow(n, 2) / Math.Pow(A, 2)) + 1)
+                            * n
+                            * Math.Sin(b)
+                            * Math.Cos(b)
+                            * De2
                             / 2
-                        - (dx * Math.Cos(L) + dy * Math.Sin(L)) * Math.Sin(B)
-                        + dz * Math.Cos(B)
+                        )
+                        - (((dx * Math.Cos(l)) + (dy * Math.Sin(l))) * Math.Sin(b))
+                        + (dz * Math.Cos(b))
                     )
-                - wx * Math.Sin(L) * (1 + e2 * Math.Cos(2 * B))
-                + wy * Math.Cos(L) * (1 + e2 * Math.Cos(2 * B))
-                - ro * ms * e2 * Math.Sin(B) * Math.Cos(B);
+                )
+                - (Wx * Math.Sin(l) * (1 + (E2 * Math.Cos(2 * b))))
+                + (Wy * Math.Cos(l) * (1 + (E2 * Math.Cos(2 * b))))
+                - (Ro * Ms * E2 * Math.Sin(b) * Math.Cos(b));
         }
 
         /// <summary>
@@ -225,15 +219,15 @@ namespace Asv.Gnss
         /// <returns>The calculated dL value.</returns>
         private static double dL(double Bd, double Ld, double H, double dx, double dy, double dz)
         {
-            double B,
-                L,
-                N;
-            B = Bd * Pi / 180;
-            L = Ld * Pi / 180;
-            N = a * Math.Pow(1 - e2 * Math.Pow(Math.Sin(B), 2), -0.5);
-            return ro / ((N + H) * Math.Cos(B)) * (-dx * Math.Sin(L) + dy * Math.Cos(L))
-                + Math.Tan(B) * (1 - e2) * (wx * Math.Cos(L) + wy * Math.Sin(L))
-                - wz;
+            double b,
+                l,
+                n;
+            b = Bd * Pi / 180;
+            l = Ld * Pi / 180;
+            n = A * Math.Pow(1 - (E2 * Math.Pow(Math.Sin(b), 2)), -0.5);
+            return (Ro / ((n + H) * Math.Cos(b)) * ((-dx * Math.Sin(l)) + (dy * Math.Cos(l))))
+                + (Math.Tan(b) * (1 - E2) * ((Wx * Math.Cos(l)) + (Wy * Math.Sin(l))))
+                - Wz;
         }
 
         /// <summary>
@@ -257,24 +251,26 @@ namespace Asv.Gnss
             double dz
         )
         {
-            double B,
-                L,
-                N,
+            double b,
+                l,
+                n,
                 dH;
-            B = Bd * Pi / 180;
-            L = Ld * Pi / 180;
-            N = a * Math.Pow(1 - e2 * Math.Pow(Math.Sin(B), 2), -0.5);
+            b = Bd * Pi / 180;
+            l = Ld * Pi / 180;
+            n = A * Math.Pow(1 - (E2 * Math.Pow(Math.Sin(b), 2)), -0.5);
             dH =
-                -a / N * da
-                + N * Math.Pow(Math.Sin(B), 2) * de2 / 2
-                + (dx * Math.Cos(L) + dy * Math.Sin(L)) * Math.Cos(B)
-                + dz * Math.Sin(B)
-                - N
-                    * e2
-                    * Math.Sin(B)
-                    * Math.Cos(B)
-                    * (wx / ro * Math.Sin(L) - wy / ro * Math.Cos(L))
-                + (Math.Pow(a, 2) / N + H) * ms;
+                (-A / n * Da)
+                + (n * Math.Pow(Math.Sin(b), 2) * De2 / 2)
+                + (((dx * Math.Cos(l)) + (dy * Math.Sin(l))) * Math.Cos(b))
+                + (dz * Math.Sin(b))
+                - (
+                    n
+                    * E2
+                    * Math.Sin(b)
+                    * Math.Cos(b)
+                    * ((Wx / Ro * Math.Sin(l)) - (Wy / Ro * Math.Cos(l)))
+                )
+                + (((Math.Pow(A, 2) / n) + H) * Ms);
             return H + dH;
         }
 
@@ -289,7 +285,7 @@ namespace Asv.Gnss
         /// </returns>
         private static double PZ90_WGS84_Lat(double Bd, double Ld, double H)
         {
-            return Bd + dB(Bd, Ld, H, dx_90_84, dy_90_84, dz_90_84) / 3600;
+            return Bd + (dB(Bd, Ld, H, Dx_90_84, Dy_90_84, Dz_90_84) / 3600);
         }
 
         /// <summary>
@@ -301,7 +297,7 @@ namespace Asv.Gnss
         /// <returns>The longitude coordinate in WGS84 system.</returns>
         private static double PZ90_WGS84_Long(double Bd, double Ld, double H)
         {
-            return Ld + dL(Bd, Ld, H, dx_90_84, dy_90_84, dz_90_84) / 3600;
+            return Ld + (dL(Bd, Ld, H, Dx_90_84, Dy_90_84, Dz_90_84) / 3600);
         }
 
         /// <summary>
@@ -315,7 +311,7 @@ namespace Asv.Gnss
         /// </returns>
         private static double WGS84_PZ90_Lat(double Bd, double Ld, double H)
         {
-            return Bd - dB(Bd, Ld, H, dx_90_84, dy_90_84, dz_90_84) / 3600;
+            return Bd - (dB(Bd, Ld, H, Dx_90_84, Dy_90_84, Dz_90_84) / 3600);
         }
 
         /// <summary>
@@ -327,91 +323,7 @@ namespace Asv.Gnss
         /// <returns>The converted longitude value in PZ90 coordinate system.</returns>
         private static double WGS84_PZ90_Long(double Bd, double Ld, double H)
         {
-            return Ld - dL(Bd, Ld, H, dx_90_84, dy_90_84, dz_90_84) / 3600;
-        }
-
-        //
-        /// <summary>
-        /// Converts geographic latitude in the CK42 coordinate system to PZ-90 coordinate system.
-        /// </summary>
-        /// <param name="Bd">Geographic latitude in the CK42 coordinate system, in degrees.</param>
-        /// <param name="Ld">Geographic longitude in the CK42 coordinate system, in degrees.</param>
-        /// <param name="H">Geographic altitude in meters.</param>
-        /// <returns>
-        /// Geographic latitude in the PZ-90 coordinate system, in degrees.
-        /// </returns>
-        private static double CK42_PZ90_Lat(double Bd, double Ld, double H)
-        {
-            return Bd + dB(Bd, Ld, H, dx_42_90, dy_42_90, dz_42_90) / 3600;
-        }
-
-        /// <summary>
-        /// Calculates the longitude in the PZ-90 coordinate system using the CK-42 geodetic data.
-        /// </summary>
-        /// <param name="Bd">The latitude in decimal degrees.</param>
-        /// <param name="Ld">The longitude in decimal degrees.</param>
-        /// <param name="H">The height in meters.</param>
-        /// <returns>
-        /// The calculated longitude in the PZ-90 coordinate system.
-        /// </returns>
-        private static double CK42_PZ90_Long(double Bd, double Ld, double H)
-        {
-            return Ld + dL(Bd, Ld, H, dx_42_90, dy_42_90, dz_42_90) / 3600;
-        }
-
-        /// <summary>
-        /// Calculate the latitude in the CK-42 coordinate system based on the PZ-90 geodetic system.
-        /// </summary>
-        /// <param name="Bd">The geodetic latitude in degrees.</param>
-        /// <param name="Ld">The geodetic longitude in degrees.</param>
-        /// <param name="H">The geodetic height in meters.</param>
-        /// <returns>
-        /// The latitude in the CK-42 coordinate system calculated based on the PZ-90 geodetic system.
-        /// </returns>
-        private static double PZ90_CK42_Lat(double Bd, double Ld, double H)
-        {
-            return Bd - dB(Bd, Ld, H, dx_42_90, dy_42_90, dz_42_90) / 3600;
-        }
-
-        private static double PZ90_CK42_Long(double Bd, double Ld, double H)
-        {
-            return Ld - dL(Bd, Ld, H, dx_42_90, dy_42_90, dz_42_90) / 3600;
-        }
-
-        //
-        /// <summary>
-        /// Converts coordinates from CK42 datum to WGS84 datum latitude.
-        /// </summary>
-        /// <param name="Bd">CK42 latitude in decimal degrees.</param>
-        /// <param name="Ld">CK42 longitude in decimal degrees.</param>
-        /// <param name="H">Height in meters.</param>
-        /// <returns>WGS84 latitude in decimal degrees.</returns>
-        private static double CK42_WGS84_Lat(double Bd, double Ld, double H)
-        {
-            return Bd + dB(Bd, Ld, H, dx_42_84, dy_42_84, dz_42_84) / 3600;
-        }
-
-        /// <summary>
-        /// Calculates the WGS84 longitude based on CK42 coordinates. </summary> <param name="Bd">The latitude in CK42 coordinates.</param> <param name="Ld">The longitude in CK42 coordinates.</param> <param name="H">The height in CK42 coordinates.</param> <returns>
-        /// The WGS84 longitude corresponding to the given CK42 coordinates.
-        /// This value is calculated by adding the result of the dL function (based on the given CK42 coordinates and the dx_42_84, dy_42_84, dz_42_84 parameters) to the Ld parameter and dividing
-        /// the result by 3600. </returns>
-        /// /
-        private static double CK42_WGS84_Long(double Bd, double Ld, double H)
-        {
-            return Ld + dL(Bd, Ld, H, dx_42_84, dy_42_84, dz_42_84) / 3600;
-        }
-
-        /// <summary>
-        /// Calculates the WGS84 CK42 latitude based on the provided parameters.
-        /// </summary>
-        /// <param name="Bd">The latitude in degrees.</param>
-        /// <param name="Ld">The longitude in degrees.</param>
-        /// <param name="H">The height above the sea level in meters.</param>
-        /// <returns>The WGS84 CK42 latitude calculated based on the provided parameters.</returns>
-        private static double WGS84_CK42_Lat(double Bd, double Ld, double H)
-        {
-            return Bd - dB(Bd, Ld, H, dx_42_84, dy_42_84, dz_42_84) / 3600;
+            return Ld - (dL(Bd, Ld, H, Dx_90_84, Dy_90_84, Dz_90_84) / 3600);
         }
 
         /// <summary>
@@ -423,7 +335,9 @@ namespace Asv.Gnss
         /// <returns>The longitude in CK42 coordinates.</returns>
         public static double WGS84_CK42_Long(double Bd, double Ld, double H)
         {
-            return Ld - dL(Bd, Ld, H, dx_42_84, dy_42_84, dz_42_84) / 3600;
+            return Ld - (dL(Bd, Ld, H, Dx_42_84, Dy_42_84, Dz_42_84) / 3600);
         }
     }
 }
+#pragma warning disable SA1300
+#pragma warning restore SA1407

@@ -9,7 +9,7 @@ namespace Asv.Gnss
     public class RtcmV3Msg4094 : RtcmV3MessageBase
     {
         /// <summary>
-        /// Rtcm Message Id
+        /// Rtcm Message Id.
         /// </summary>
         public const int RtcmMessageId = 4094;
 

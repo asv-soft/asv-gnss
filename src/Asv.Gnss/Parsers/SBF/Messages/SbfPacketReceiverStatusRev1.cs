@@ -17,16 +17,16 @@ namespace Asv.Gnss
             UpTime = TimeSpan.FromSeconds(BinSerialize.ReadUInt(ref buffer));
             RxState = (SbfRxStateEnum)BinSerialize.ReadUInt(ref buffer);
             RxError = (SbfRxErrorEnum)BinSerialize.ReadUInt(ref buffer);
-            var N = BinSerialize.ReadByte(ref buffer);
-            ;
+            var n = BinSerialize.ReadByte(ref buffer);
+
             var sbLength = BinSerialize.ReadByte(ref buffer);
-            ;
+
             CmdCount = BinSerialize.ReadByte(ref buffer);
-            ;
+
             Temperature = BinSerialize.ReadByte(ref buffer);
-            ;
-            AGCState = new SbfReceiverStatusAGCState[N];
-            for (var i = 0; i < N; i++)
+
+            AGCState = new SbfReceiverStatusAGCState[n];
+            for (var i = 0; i < n; i++)
             {
                 AGCState[i] = new SbfReceiverStatusAGCState();
                 AGCState[i].Deserialize(ref buffer, sbLength);
@@ -36,42 +36,42 @@ namespace Asv.Gnss
         public SbfReceiverStatusAGCState[] AGCState { get; set; }
 
         /// <summary>
-        /// Receiver temperature with an offset of 100. Remove 100 to get the temperature in degree Celsius.
+        /// Gets or sets receiver temperature with an offset of 100. Remove 100 to get the temperature in degree Celsius.
         /// </summary>
         public int Temperature { get; set; }
 
         /// <summary>
-        /// Command cyclic counter, incremented each time a command is entered
+        /// Gets or sets command cyclic counter, incremented each time a command is entered
         /// that changes the receiver configuration.After the counter has reached
         /// 255, it resets to 1.
         /// </summary>
         public byte CmdCount { get; set; }
 
         /// <summary>
-        /// Bit field indicating whether an error occurred previously. If this field is not
+        /// Gets or sets bit field indicating whether an error occurred previously. If this field is not
         /// equal to zero, at least one error has been detected.
         /// </summary>
         public SbfRxErrorEnum RxError { get; set; }
 
         /// <summary>
-        /// Bit field indicating the status of key components of the receiver
+        /// Gets or sets bit field indicating the status of key components of the receiver.
         /// </summary>
         public SbfRxStateEnum RxState { get; set; }
 
         /// <summary>
-        /// Number of seconds elapsed since the start-up of the receiver, or since the last reset.
+        /// Gets or sets number of seconds elapsed since the start-up of the receiver, or since the last reset.
         /// </summary>
         public TimeSpan UpTime { get; set; }
 
         /// <summary>
-        /// Bit field reporting external errors, i.e. errors detected in external data.
+        /// Gets or sets bit field reporting external errors, i.e. errors detected in external data.
         /// Upon detection of an error, the corresponding bit is set for a duration of
         /// one second, and then resets.
         /// </summary>
         public SbfExtErrorEnum ExtError { get; set; }
 
         /// <summary>
-        /// Load on the receiver’s CPU. The load should stay below 80% in normal
+        /// Gets or sets load on the receiver’s CPU. The load should stay below 80% in normal
         /// operation.Higher loads might result in data loss.
         /// </summary>
         public byte CPULoad { get; set; }
@@ -81,27 +81,27 @@ namespace Asv.Gnss
     {
         public void Deserialize(ref ReadOnlySpan<byte> buffer, byte sbLength)
         {
-            var FrontEndID = BinSerialize.ReadByte(ref buffer);
-            FrontEndCode = (SbfFrontEndCodeEnum)(FrontEndID & 0b0001_1111);
-            Antenna = (AntennaId)(FrontEndID >> 5);
+            var frontEndID = BinSerialize.ReadByte(ref buffer);
+            FrontEndCode = (SbfFrontEndCodeEnum)(frontEndID & 0b0001_1111);
+            Antenna = (AntennaId)(frontEndID >> 5);
             Gain = (sbyte)BinSerialize.ReadByte(ref buffer);
             SampleVar = BinSerialize.ReadByte(ref buffer);
             BlankingStat = BinSerialize.ReadByte(ref buffer);
         }
 
         /// <summary>
-        /// Current percentage of samples being blanked by the pulse blanking unit.
+        /// Gets or sets current percentage of samples being blanked by the pulse blanking unit.
         /// This field is always 0 for receiver without pulse blanking unit.
         /// </summary>
         public byte BlankingStat { get; set; }
 
         /// <summary>
-        /// Normalized variance of the IF samples. The nominal value for this variance is 100.
+        /// Gets or sets normalized variance of the IF samples. The nominal value for this variance is 100.
         /// </summary>
         public byte SampleVar { get; set; }
 
         /// <summary>
-        /// AGC gain, in dB.
+        /// Gets or sets aGC gain, in dB.
         /// The Do-Not-Use value is used to indicate that the frontend PLL is
         /// not locked.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Asv.Gnss
     }
 
     [Flags]
-    public enum SbfRxErrorEnum : UInt32
+    public enum SbfRxErrorEnum : uint
     {
         Reserved1,
         Reserved2,
@@ -181,7 +181,7 @@ namespace Asv.Gnss
     }
 
     [Flags]
-    public enum SbfRxStateEnum : UInt32
+    public enum SbfRxStateEnum : uint
     {
         Reserved,
 
@@ -282,14 +282,14 @@ namespace Asv.Gnss
         /// <summary>
         /// SISERROR: set if a violation of the signal-in-space ICD has been
         /// detected for at least one satellite while that satellite is reported
-        /// as healthy. Use the command "lif,SisError" for details
+        /// as healthy. Use the command "lif,SisError" for details.
         /// </summary>
         SISERROR,
 
         /// <summary>
         /// DIFFCORRERROR: set when an anomaly has been detected
         /// in an incoming differential correction stream, causing the receiver to fail to decode the corrections. Use the command
-        /// "lif,DiffCorrError" for details
+        /// "lif,DiffCorrError" for details.
         /// </summary>
         DIFFCORRERROR,
 

@@ -50,10 +50,11 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1007", msg.MessageStringId);
             var msg1007 = msg as RtcmV3Message1007;
-            Assert.Equal((uint)1022, msg1007.ReferenceStationID);
+            Assert.Equal(1022U, msg1007.ReferenceStationID);
             Assert.Equal("ADVNULLANTENNA  NONE", msg1007.AntennaDescriptor);
         }
 
@@ -107,6 +108,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1008", msg.MessageStringId);
         }
@@ -164,6 +166,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1033", msg.MessageStringId);
         }
@@ -199,6 +202,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1230", msg.MessageStringId);
 
@@ -248,11 +252,12 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1032", msg.MessageStringId);
             var msg1032 = msg as RtcmV3Message1032;
-            Assert.Equal((uint)1025, msg1032.PhysicalReferenceStationID);
-            Assert.Equal((uint)1022, msg1032.NonPhysicalReferenceStationID);
+            Assert.Equal(1025U, msg1032.PhysicalReferenceStationID);
+            Assert.Equal(1022U, msg1032.NonPhysicalReferenceStationID);
         }
 
         [Fact]
@@ -337,10 +342,11 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1030", msg.MessageStringId);
             var msg1030 = msg as RtcmV3Message1030;
-            Assert.Equal((uint)1022, msg1030.ReferenceStationID);
+            Assert.Equal(1022U, msg1030.ReferenceStationID);
             Assert.InRange(msg1030.SOc, 0.0, 127 * 0.5);
             Assert.InRange(msg1030.SOd, 0.0, 5.11 * 0.01);
             Assert.InRange(msg1030.SOh, 0.0, 5.11 * 0.1);
@@ -417,10 +423,11 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1031", msg.MessageStringId);
             var msg1031 = msg as RtcmV3Message1031;
-            Assert.Equal((uint)1022, msg1031.ReferenceStationID);
+            Assert.Equal(1022U, msg1031.ReferenceStationID);
             Assert.InRange(msg1031.SOc, 0.0, 127 * 0.5);
             Assert.InRange(msg1031.SOd, 0.0, 5.11 * 0.01);
             Assert.InRange(msg1031.SOh, 0.0, 5.11 * 0.1);
@@ -504,38 +511,37 @@ namespace Asv.Gnss.Test
                 0x66,
                 0xfd,
             };
-            //   File.WriteAllBytes("rtcm1125.log", array);
+
+            // File.WriteAllBytes("rtcm1125.log", array);
             var parser = new RtcmV3Parser().RegisterDefaultMessages().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                Console.WriteLine("ERR:" + _.Message);
-            });
+            parser.OnError.Subscribe(_ => Console.WriteLine("ERR:" + _.Message));
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1042", msg.MessageStringId);
             var msg1042 = msg as RtcmV3Message1042;
-            Assert.Equal((uint)35, msg1042.SatellitePrn);
-            Assert.Equal((uint)910, msg1042.WeekRaw);
+            Assert.Equal(35U, msg1042.SatellitePrn);
+            Assert.Equal(910U, msg1042.WeekRaw);
             var week = msg1042.GetWeek(new DateTime(2023, 6, 14));
             Assert.Equal(910, week);
             Assert.Equal(0, msg1042.Urai);
             Assert.True((-7.16227077646181e-11 - msg1042.IdotRaw) < double.Epsilon);
-            Assert.Equal((uint)1, msg1042.Aode);
+            Assert.Equal(1U, msg1042.Aode);
             Assert.Equal(309600D, msg1042.TocRaw);
             Assert.Equal(0.0, msg1042.A2);
             Assert.True((-7.640110766260477e-12 - msg1042.A1) < double.Epsilon);
             Assert.True(msg1042.A0 - 0.0006080692401155829 < double.Epsilon);
-            Assert.Equal((uint)1, msg1042.Adoc);
+            Assert.Equal(1U, msg1042.Adoc);
             Assert.Equal(-72.203125, msg1042.Crs);
             Assert.True(msg1042.DeltaN - 1.3645831131725572e-09 < double.Epsilon);
             Assert.True(0.43121358612552285 - msg1042.M0 < double.Epsilon);
             Assert.True(-3.428664058446884e-06 - msg1042.Cuc < double.Epsilon);
-            Assert.True(msg1042.e - 0.0008363371016457677 < double.Epsilon);
+            Assert.True(msg1042.E - 0.0008363371016457677 < double.Epsilon);
             Assert.True(1.653563231229782e-06 - msg1042.Cus < double.Epsilon);
             Assert.True(5282.6676597595215 - msg1042.Apow1_2 < double.Epsilon);
             Assert.Equal(309600D, msg1042.ToeRaw);
@@ -626,29 +632,28 @@ namespace Asv.Gnss.Test
                 0x78,
                 0x82,
             };
-            //   File.WriteAllBytes("rtcm1125.log", array);
+
+            // File.WriteAllBytes("rtcm1125.log", array);
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                Console.WriteLine("ERR:" + _.Message);
-            });
+            parser.OnError.Subscribe(_ => Console.WriteLine("ERR:" + _.Message));
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1046", msg.MessageStringId);
             var msg1046 = msg as RtcmV3Message1046;
-            Assert.Equal((uint)5, msg1046.SatellitePrn);
-            Assert.Equal((uint)1242, msg1046.WeekRaw);
+            Assert.Equal(5U, msg1046.SatellitePrn);
+            Assert.Equal(1242U, msg1046.WeekRaw);
             var week = msg1046.GetWeek(new DateTime(2023, 6, 14));
             Assert.Equal(1242, week);
-            Assert.Equal((uint)7, msg1046.IoDnav);
+            Assert.Equal(7U, msg1046.IoDnav);
             Assert.Equal((byte)107, msg1046.SvSisa);
             Assert.True((msg1046.IdotRaw - 3.89945853385143e-11) < double.Epsilon);
-            Assert.Equal((uint)311400, msg1046.TocRaw);
+            Assert.Equal(311400U, msg1046.TocRaw);
             Assert.Equal(0.0, msg1046.Af2);
             Assert.True((msg1046.Af1 - 3.524291969370097e-12) < double.Epsilon);
             Assert.Equal(-5.805457476526499e-05, msg1046.Af0);
@@ -656,10 +661,10 @@ namespace Asv.Gnss.Test
             Assert.True((msg1046.DeltaN - 1.1166321201017126e-09) < double.Epsilon);
             Assert.True((0.9122577565722167 - msg1046.M0) < double.Epsilon);
             Assert.True((1.5273690223693848e-07 - msg1046.Cuc) < double.Epsilon);
-            Assert.True((msg1046.e - 0.0002629421651363373) < double.Epsilon);
+            Assert.True((msg1046.E - 0.0002629421651363373) < double.Epsilon);
             Assert.True((4.753470420837402e-06 - msg1046.Cus) < double.Epsilon);
             Assert.True((5440.615968704224 - msg1046.Apow1_2) < double.Epsilon);
-            Assert.Equal((uint)311400, msg1046.ToeRaw);
+            Assert.Equal(311400U, msg1046.ToeRaw);
             Assert.True((2.421438694000244e-08 - msg1046.Cic) < double.Epsilon);
             Assert.Equal(-0.7082697916775942, msg1046.OmegaBig0);
             Assert.True((-4.6566128730773926e-08 - msg1046.Cis) < double.Epsilon);

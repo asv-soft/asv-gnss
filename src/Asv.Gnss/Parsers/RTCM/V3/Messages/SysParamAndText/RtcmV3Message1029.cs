@@ -34,14 +34,14 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// This represents the number of fully formed Unicode
+        /// Gets or sets this represents the number of fully formed Unicode
         /// characters in the message text. It is not necessarily
         /// the number of bytes that are needed to represent the
         /// characters as UTF-8. Note that for some messages it
         /// may not be possible to utilize the full range of this
         /// field, e.g. where many characters require 3 or 4 byte
         /// representations and together will exceed 255 code
-        /// units
+        /// units.
         /// </summary>
         public uint NumberOfCharactersFollow { get; set; }
 

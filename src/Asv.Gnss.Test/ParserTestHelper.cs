@@ -34,7 +34,10 @@ namespace Asv.Gnss.Test
             {
                 // it is necessary to check random bytes at the beginning, as it may cause parser synchronization and message skipping
                 if (b == syncByteForParser)
+                {
                     continue;
+                }
+
                 parser.Read(b);
             }
 

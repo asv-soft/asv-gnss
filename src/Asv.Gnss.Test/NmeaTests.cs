@@ -9,7 +9,7 @@ namespace Asv.Gnss.Test
 {
     public class NmeaTests
     {
-        private string GetNmeaMessages(Nmea0183MessageBase msg)
+        private static string GetNmeaMessages(Nmea0183MessageBase msg)
         {
             var byteBuff = new byte[1024];
             var byteSpan = new Span<byte>(byteBuff);
@@ -22,7 +22,7 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Parsing_GGA_message_from_string()
         {
-            var source =
+            const string source =
                 "$GPGGA,125319.00,5508.7020098,N,06124.3378698,E,7,08,2.4,259.0000,M,-12.794,M,,*76\r\n";
             var array = Encoding.ASCII.GetBytes(source);
             Nmea0183MessageGGA msg = null;
@@ -137,7 +137,7 @@ namespace Asv.Gnss.Test
                 parser.Read(p);
             }
 
-            var targetMsg = GetNmeaMessages(msg);
+            var targetMsg = NmeaTests.GetNmeaMessages(msg);
             Assert.Equal(
                 "$GPGGA,125319,5508.7020098,N,06124.3378698,E,7,08,2.4,259.000,M,-12.794,M,,*68\r\n",
                 targetMsg
@@ -147,7 +147,7 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Parsing_GLL_message_from_string()
         {
-            var source = "$GPGLL,5508.7020098,N,06124.3378698,E,130521.00,A,M*64\r\n";
+            const string source = "$GPGLL,5508.7020098,N,06124.3378698,E,130521.00,A,M*64\r\n";
             var array = Encoding.ASCII.GetBytes(source);
             Nmea0183MessageGLL msg = null;
             var parser = new Nmea0183Parser().RegisterDefaultMessages();
@@ -156,6 +156,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("GP", msg.SourceId);
             Assert.Equal(55.14503349666667, msg.Latitude, 7);
@@ -165,7 +166,8 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Parsing_GSV_message_from_string()
         {
-            var source = "$GPGSV,4,1,15,10,61,242,,08,28,312,,32,13,190,,24,12,105,*72\r\n";
+            const string source =
+                "$GPGSV,4,1,15,10,61,242,,08,28,312,,32,13,190,,24,12,105,*72\r\n";
             var array = Encoding.ASCII.GetBytes(source);
             Nmea0183MessageGSV msg = null;
             var parser = new Nmea0183Parser().RegisterDefaultMessages();
@@ -174,6 +176,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("GP", msg.SourceId);
             Assert.Equal(15, msg.SatellitesInView);
@@ -223,7 +226,10 @@ namespace Asv.Gnss.Test
                 .Subscribe(_ =>
                 {
                     if (index >= 17)
+                    {
                         return;
+                    }
+
                     msgs[index++] = _;
                 });
             foreach (var p in array)
@@ -309,7 +315,9 @@ namespace Asv.Gnss.Test
                 {
                     Assert.Equal(targetConstellation[i].SatPrn[j], msgs[i].Satellites[j].ExtPRN);
                     if (msgs[i].Satellites[j].ExtPRN != null)
+                    {
                         Assert.Equal(targetConstellation[i].Sys, msgs[i].Satellites[j].ExtNavSys);
+                    }
                 }
             }
         }
@@ -317,7 +325,8 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Parsing_GST_message_from_string()
         {
-            var source = "$GPGST,060417.00,6.167,11.396,3.866,295.633,6.038,10.409,12.671*68\r\n";
+            const string source =
+                "$GPGST,060417.00,6.167,11.396,3.866,295.633,6.038,10.409,12.671*68\r\n";
             var array = Encoding.ASCII.GetBytes(source);
             Nmea0183MessageGST msg = null;
             var parser = new Nmea0183Parser().RegisterDefaultMessages();
@@ -326,6 +335,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("GP", msg.SourceId);
             Assert.Equal(295.633, msg.OrientationSemiMajorAxis);
@@ -375,7 +385,10 @@ namespace Asv.Gnss.Test
                 .Subscribe(_ =>
                 {
                     if (index >= 17)
+                    {
                         return;
+                    }
+
                     msgs[index++] = _;
                 });
             foreach (var p in array)
@@ -461,7 +474,9 @@ namespace Asv.Gnss.Test
                 {
                     Assert.Equal(targetConstellation[i].SatPrn[j], msgs[i].Satellites[j].ExtPRN);
                     if (msgs[i].Satellites[j].ExtPRN != null)
+                    {
                         Assert.Equal(targetConstellation[i].Sys, msgs[i].Satellites[j].ExtNavSys);
+                    }
                 }
             }
         }
@@ -551,7 +566,7 @@ namespace Asv.Gnss.Test
                 parser.Read(p);
             }
 
-            var targetMsg = GetNmeaMessages(msg);
+            var targetMsg = NmeaTests.GetNmeaMessages(msg);
             Assert.Equal(
                 "$GPRMC,123519,A,4807.038,N,01131.00,E,022.4,084.4,230394,003.1,W,A*37\r\n",
                 targetMsg

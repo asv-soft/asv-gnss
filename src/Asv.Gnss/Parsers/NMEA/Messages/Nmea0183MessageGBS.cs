@@ -10,7 +10,7 @@ namespace Asv.Gnss
     /// 5. ID of most likely failed satellite (1 to 138)
     /// 6. Probability of missed detection for most likely failed satellite
     /// 7. Estimate of bias in meters on most likely failed satellite
-    /// 8. Standard deviation of bias estimate
+    /// 8. Standard deviation of bias estimate.
     /// </summary>
     public class Nmea0183MessageGBS : Nmea0183MessageBase
     {
@@ -19,9 +19,9 @@ namespace Asv.Gnss
         /// </summary>
         public const string GnssMessageId = "GBS";
 
-        /// Gets the message ID associated with this message.
-        /// @return The message ID as a string.
-        /// /
+        // Gets the message ID associated with this message.
+        // @return The message ID as a string.
+        // /
         public override string MessageId => GnssMessageId;
 
         protected override void InternalDeserializeFromStringArray(string[] items)
@@ -46,42 +46,42 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// UTC time of the GGA or GNS fix associated with this sentence
+        /// Gets or sets uTC time of the GGA or GNS fix associated with this sentence.
         /// </summary>
         public DateTime? TimeUtc { get; set; }
 
         /// <summary>
-        /// Expected 1-sigma error in latitude (meters)
+        /// Gets or sets expected 1-sigma error in latitude (meters).
         /// </summary>
         public double LatitudeError { get; set; }
 
         /// <summary>
-        /// Expected 1-sigma error in longitude (meters)
+        /// Gets or sets expected 1-sigma error in longitude (meters).
         /// </summary>
         public double LongitudeError { get; set; }
 
         /// <summary>
-        /// Expected 1-sigma error in altitude (meters)
+        /// Gets or sets expected 1-sigma error in altitude (meters).
         /// </summary>
         public double AltitudeError { get; set; }
 
         /// <summary>
-        /// ID of most likely failed satellite (1 to 138)
+        /// Gets or sets iD of most likely failed satellite (1 to 138).
         /// </summary>
         public int? FailedSatelliteId { get; set; }
 
         /// <summary>
-        /// Probability of missed detection for most likely failed satellite
+        /// Gets or sets probability of missed detection for most likely failed satellite.
         /// </summary>
         public double ProbabilityOfMissedDetection { get; set; }
 
         /// <summary>
-        /// Estimate of bias in meters on most likely failed satellite
+        /// Gets or sets estimate of bias in meters on most likely failed satellite.
         /// </summary>
         public double BiasEstimate { get; set; }
 
         /// <summary>
-        /// Standard deviation of bias estimate
+        /// Gets or sets standard deviation of bias estimate.
         /// </summary>
         public double BiasEstimateStandardDeviation { get; set; }
     }

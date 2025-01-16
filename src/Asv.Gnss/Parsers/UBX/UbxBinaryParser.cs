@@ -32,8 +32,8 @@ namespace Asv.Gnss
         /// </summary>
         private readonly byte[] _buffer = new byte[MaxPacketSize];
 
-        /// The current index position in the buffer.
-        /// /
+        // The current index position in the buffer.
+        // /
         private int _bufferIndex = 0;
 
         /// <summary>
@@ -107,7 +107,10 @@ namespace Asv.Gnss
             {
                 case State.Sync1:
                     if (data != UbxHelper.SyncByte1)
+                    {
                         break;
+                    }
+
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = UbxHelper.SyncByte1;
                     _state = State.Sync2;
@@ -122,6 +125,7 @@ namespace Asv.Gnss
                         _state = State.IdAndLength;
                         _buffer[_bufferIndex++] = UbxHelper.SyncByte2;
                     }
+
                     break;
                 case State.IdAndLength:
                     _buffer[_bufferIndex++] = data;
@@ -130,6 +134,7 @@ namespace Asv.Gnss
                         _payloadLength = _buffer[4] | (_buffer[5] << 8);
                         _state = State.Payload;
                         _payloadReadBytes = 0;
+
                         // reset on oversize packet
                         if (_payloadLength > _buffer.Length)
                         {
@@ -137,6 +142,7 @@ namespace Asv.Gnss
                             Reset();
                         }
                     }
+
                     break;
                 case State.Payload:
                     // read payload
@@ -146,8 +152,11 @@ namespace Asv.Gnss
                         _payloadReadBytes++;
 
                         if (_payloadReadBytes == _payloadLength)
+                        {
                             _state = State.Crc1;
+                        }
                     }
+
                     break;
                 case State.Crc1:
                     _buffer[_payloadReadBytes + 6] = data;
@@ -172,6 +181,7 @@ namespace Asv.Gnss
                         Reset();
                         return true;
                     }
+
                     PublishWhenCrcError();
                     Reset();
                     break;

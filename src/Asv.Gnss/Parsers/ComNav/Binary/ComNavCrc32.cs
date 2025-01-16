@@ -3,14 +3,14 @@
 namespace Asv.Gnss
 {
     /// <summary>
-    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm
+    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm.
     /// </summary>
     public static class ComNavCrc32
     {
         /// <summary>
         /// The polynomial used for calculating CRC32 checksums.
         /// </summary>
-        private static uint _crc32Polynomial = 0xEDB88320;
+        private const uint _crc32Polynomial = 0xEDB88320;
 
         /// <summary>
         /// Computes the CRC32 value for a given input.
@@ -24,10 +24,15 @@ namespace Asv.Gnss
             for (j = 8; j > 0; j--)
             {
                 if ((ulCrc & 1) != 0)
+                {
                     ulCrc = (ulCrc >> 1) ^ _crc32Polynomial;
+                }
                 else
+                {
                     ulCrc >>= 1;
+                }
             }
+
             return ulCrc;
         }
 

@@ -18,7 +18,7 @@ namespace Asv.Gnss.Shell
         public sealed class Settings : CommandSettings
         {
             /// <summary>
-            /// Connection string for UBX.
+            /// Gets or sets connection string for UBX.
             /// </summary>
             [Description("Connection string for UBX")]
             [CommandArgument(0, "[connectionString]")]
@@ -34,7 +34,7 @@ namespace Asv.Gnss.Shell
         public override int Execute(CommandContext context, Settings settings)
         {
             using var device = new UbxDevice(settings.Cs);
-            Test(device).Wait();
+            UbxCommand.Test(device).Wait();
             device.SetupByDefault().Wait();
             device.SetSurveyInMode().Wait();
 
@@ -46,7 +46,7 @@ namespace Asv.Gnss.Shell
         /// </summary>
         /// <param name="device">The IUbxDevice to test.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        public async Task Test(IUbxDevice device)
+        public static async Task Test(IUbxDevice device)
         {
             var root = new Tree(device.Connection.Stream.Name);
 
@@ -61,8 +61,8 @@ namespace Asv.Gnss.Shell
         }
     }
 
-    /// This class, `AnsiConsoleHelper`, contains helper methods for formatting and printing console output in ANSI colors and styles.
-    /// /
+    // This class, `AnsiConsoleHelper`, contains helper methods for formatting and printing console output in ANSI colors and styles.
+    // /
     public static class AnsiConsoleHelper
     {
         /// <summary>

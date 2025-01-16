@@ -278,12 +278,15 @@ namespace Asv.Gnss
         /// x^7    + x^6    + x^5    + x^4    + x^3    + x+1
         /// Mask: 0x1864CFB
         /// Reversed: No
-        /// XOR'd: No </remarks> <param name="buf">Array of data to calculate CRC for</param> <param name="len">Length of data array</param> <param name="crc">Initial CRC value</param> <returns>CRC-24Q value</returns>
+        /// XOR'd: No. </remarks> <param name="buf">Array of data to calculate CRC for.</param> <param name="len">Length of data array.</param> <param name="crc">Initial CRC value.</param> <returns>CRC-24Q value.</returns>
         /// /
         public static uint Calc(byte[] buf, uint len, uint crc)
         {
             for (uint i = 0; i < len; i++)
+            {
                 crc = ((crc << 8) & 0xFFFFFF) ^ Crc24Qtab[(crc >> 16) ^ buf[i]];
+            }
+
             return crc;
         }
 
@@ -297,7 +300,10 @@ namespace Asv.Gnss
         public static uint Calc(ReadOnlySpan<byte> buf, int len, uint crc)
         {
             for (int i = 0; i < len; i++)
+            {
                 crc = ((crc << 8) & 0xFFFFFF) ^ Crc24Qtab[(crc >> 16) ^ buf[i]];
+            }
+
             return crc;
         }
     }

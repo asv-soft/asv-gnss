@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive;
 using System.Threading;
@@ -63,11 +64,12 @@ namespace Asv.Gnss
             var log = logList.Messages.FirstOrDefault(_ => _.Message == msg);
 
             if (log == null)
+            {
                 throw new ComNavDeviceResponseException(device.Connection.Stream.Name, pkt);
+            }
         }
 
         #endregion
-
 
         #region ActiveSatellitesConfigure
         public static Task SetLockoutSystem(
@@ -121,8 +123,7 @@ namespace Asv.Gnss
                 .SetUnLockoutSystem(ComNavSatelliteSystemEnum.GLONASS, cancel)
                 .ConfigureAwait(false);
 
-            var att = 1;
-            while (att <= 3)
+            for (var att = 1; att <= 3; att++)
             {
                 Console.WriteLine($"Att: {att}");
                 var sys = (
@@ -141,9 +142,11 @@ namespace Asv.Gnss
                     && sys.Contains(ComNavSatelliteSystemEnum.GPS)
                     && sys.Contains(ComNavSatelliteSystemEnum.GLONASS)
                 )
+                {
                     return;
-                att++;
+                }
             }
+
             throw new Exception("Erorr to set only GPS and Glonass system!");
         }
 
@@ -171,6 +174,7 @@ namespace Asv.Gnss
                         {
                             Console.Write($"{i}, ");
                         }
+
                         Console.WriteLine();
                         gsa.AddRange(_.SatelliteId.Select(GetSatelliteSystemFromNmeaGsa));
                     });
@@ -185,13 +189,8 @@ namespace Asv.Gnss
 #endif
                 await tcs.Task.ConfigureAwait(false);
             }
-            catch (TaskCanceledException)
-            {
-                if (!timeOutToken.Token.IsCancellationRequested)
-                {
-                    throw;
-                }
-            }
+            catch (TaskCanceledException) when (timeOutToken.Token.IsCancellationRequested) { }
+
             return gsa.Distinct();
         }
 
@@ -280,12 +279,13 @@ namespace Asv.Gnss
             await device
                 .SetLogMessage(ComNavMessageEnum.RTCM1005, ComNavTriggerEnum.ONTIME, 5, cancel)
                 .ConfigureAwait(false);
+
             // await device.SetLogMessage(ComNavMessageEnum.PSRDOP, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
             await device
                 .SetLogMessage(ComNavMessageEnum.PSRPOS, ComNavTriggerEnum.ONTIME, 5, cancel)
                 .ConfigureAwait(false);
-            // await device.SetLogMessage(ComNavMessageEnum.GPGSV, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
 
+            // await device.SetLogMessage(ComNavMessageEnum.GPGSV, ComNavTriggerEnum.ONTIME, 5, cancel).ConfigureAwait(false);
             await device
                 .Push(new ComNavFixCommand { FixType = ComNavFixType.Auto }, cancel)
                 .ConfigureAwait(false);
@@ -316,38 +316,41 @@ namespace Asv.Gnss
         public static bool GetPrnFromNmeaGsvSatId(
             this IComNavDevice device,
             int satId,
-            out int PRN,
+            out int pRN,
             out NmeaNavigationSystemEnum nav
         )
         {
             nav = NmeaNavigationSystemEnum.SYS_NONE;
-            PRN = -1;
+            pRN = -1;
             if (satId <= 0)
+            {
                 return false;
+            }
 
             switch (satId)
             {
                 case >= 1
                 and <= 32:
                     nav = NmeaNavigationSystemEnum.SYS_GPS;
-                    PRN = satId;
+                    pRN = satId;
                     return true;
                 case >= 38
                 and <= 61:
                     nav = NmeaNavigationSystemEnum.SYS_GLO;
-                    PRN = satId - 37;
+                    pRN = satId - 37;
                     return true;
                 case >= 71
                 and <= 106:
                     nav = NmeaNavigationSystemEnum.SYS_GAL;
-                    PRN = satId - 70;
+                    pRN = satId - 70;
                     return true;
                 case >= 141
                 and <= 177:
                     nav = NmeaNavigationSystemEnum.SYS_CMP;
-                    PRN = satId - 140;
+                    pRN = satId - 140;
                     return true;
             }
+
             return false;
         }
     }

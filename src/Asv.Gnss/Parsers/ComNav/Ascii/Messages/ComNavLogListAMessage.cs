@@ -34,29 +34,59 @@ namespace Asv.Gnss
                     ? trigger
                     : ComNavTriggerEnum.NONE;
 #else
-                if (Enum.TryParse(typeof(ComNavPortEnum), msg[0 + i * 6], true, out var dir))
+                if (Enum.TryParse(typeof(ComNavPortEnum), msg[0 + (i * 6)], true, out var dir))
+                {
                     logMsg.Direction = (ComNavPortEnum)dir;
+                }
                 else
+                {
                     logMsg.Direction = ComNavPortEnum.NO_PORTS;
+                }
 
-                if (Enum.TryParse(typeof(ComNavMessageEnum), msg[1 + i * 6], true, out var msgType))
+                if (
+                    Enum.TryParse(
+                        typeof(ComNavMessageEnum),
+                        msg[1 + (i * 6)],
+                        true,
+                        out var msgType
+                    )
+                )
+                {
                     logMsg.Message = (ComNavMessageEnum)msgType;
+                }
                 else
+                {
                     logMsg.Message = ComNavMessageEnum.UNKNOWN;
+                }
 
-                if (Enum.TryParse(typeof(ComNavFormat), msg[2 + i * 6], true, out var format))
+                if (Enum.TryParse(typeof(ComNavFormat), msg[2 + (i * 6)], true, out var format))
+                {
                     logMsg.Format = (ComNavFormat)format;
+                }
                 else
+                {
                     logMsg.Format = ComNavFormat.None;
+                }
 
-                if (Enum.TryParse(typeof(ComNavTriggerEnum), msg[3 + i * 6], true, out var trigger))
+                if (
+                    Enum.TryParse(
+                        typeof(ComNavTriggerEnum),
+                        msg[3 + (i * 6)],
+                        true,
+                        out var trigger
+                    )
+                )
+                {
                     logMsg.Trigger = (ComNavTriggerEnum)trigger;
+                }
                 else
+                {
                     logMsg.Trigger = ComNavTriggerEnum.NONE;
+                }
 #endif
 
                 logMsg.Period = !double.TryParse(
-                    msg[4 + i * 6],
+                    msg[4 + (i * 6)],
                     NumberStyles.Any,
                     NumberFormatInfo.InvariantInfo,
                     out var period
@@ -65,7 +95,7 @@ namespace Asv.Gnss
                     : period;
 
                 logMsg.Offset = !double.TryParse(
-                    msg[5 + i * 6],
+                    msg[5 + (i * 6)],
                     NumberStyles.Any,
                     NumberFormatInfo.InvariantInfo,
                     out var offset

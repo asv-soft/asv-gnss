@@ -10,7 +10,6 @@ namespace Asv.Gnss.Shell
     /// <summary>
     /// Represents a command that prints bytes received from a connection.
     /// </summary>
-    /// <typeparam name="Settings">The settings for the command.</typeparam>
     internal class PrintBytesCommand : Command<PrintBytesCommand.Settings>
     {
         /// <summary>
@@ -29,8 +28,8 @@ namespace Asv.Gnss.Shell
             public string Cs { get; set; } = "tcp://10.10.6.137:64536";
         }
 
-        /// Executes the command. </summary> <param name="context">Command context</param> <param name="settings">Execution settings</param>
-        /// <returns>Integer value indicating the execution status</returns>**/
+        // Executes the command. </summary> <param name="context">Command context</param> <param name="settings">Execution settings</param>
+        // <returns>Integer value indicating the execution status</returns>**/
         public override int Execute(CommandContext context, Settings settings)
         {
             // create connection with default parsers: Nmea,RTCMv2,RTCMv3,ComNav,Ubx,Sbf
@@ -44,6 +43,7 @@ namespace Asv.Gnss.Shell
                     Console.Write(b.ToString("X2"));
                     Console.Write(", ");
                 }
+
                 Console.WriteLine("};");
                 Console.WriteLine("===========END=============");
             });

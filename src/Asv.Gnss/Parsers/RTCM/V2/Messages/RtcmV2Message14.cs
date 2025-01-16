@@ -4,7 +4,7 @@ using Asv.IO;
 namespace Asv.Gnss
 {
     /// <summary>
-    /// Represents a RTCM Version 2 Message Type 14: GPS Time of Week (Fixed)
+    /// Represents a RTCM Version 2 Message Type 14: GPS Time of Week (Fixed).
     /// </summary>
     public class RtcmV2Message14 : RtcmV2MessageBase
     {
@@ -27,12 +27,15 @@ namespace Asv.Gnss
 
             RtcmV3Helper.GetFromTime(nowGps, ref w, ref second);
             if (w < 1560)
+            {
                 w = 1560; /* use 2009/12/1 if time is earlier than 2009/12/1 */
-            return (uint)(week + (w - week + 1) / 1024 * 1024);
+            }
+
+            return (uint)(week + ((w - week + 1) / 1024 * 1024));
         }
 
         /// <summary>
-        /// The identifier of the message.
+        /// Gets the identifier of the message.
         /// </summary>
         /// <remarks>
         /// This property returns the unique identifier of the message.
@@ -61,7 +64,7 @@ namespace Asv.Gnss
             var leap = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
 
             week = AdjustGpsWeek(week, leap);
-            GpsTime = RtcmV3Helper.GetFromGps((int)week, hour * 3600.0 + ZCount);
+            GpsTime = RtcmV3Helper.GetFromGps((int)week, (hour * 3600.0) + ZCount);
         }
     }
 }

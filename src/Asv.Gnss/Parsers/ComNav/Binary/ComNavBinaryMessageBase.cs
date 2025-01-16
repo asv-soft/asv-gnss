@@ -17,30 +17,41 @@ namespace Asv.Gnss
 
             var sync = BinSerialize.ReadByte(ref buffer);
             if (sync != ComNavBinaryParser.FirstSyncByte)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"First sync byte error: want {ComNavBinaryParser.FirstSyncByte}, got {sync}"
                 );
+            }
+
             sync = BinSerialize.ReadByte(ref buffer);
             if (sync != ComNavBinaryParser.SecondSyncByte)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Second sync byte error: want {ComNavBinaryParser.SecondSyncByte}, got {sync}"
                 );
+            }
+
             sync = BinSerialize.ReadByte(ref buffer);
             if (sync != ComNavBinaryParser.ThirdSyncByte)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Third sync byte error: want {ComNavBinaryParser.ThirdSyncByte}, got {sync}"
                 );
+            }
+
             var headerLength = BinSerialize.ReadByte(ref buffer);
 
             var msgId = BinSerialize.ReadUShort(ref buffer);
             if (msgId != MessageId)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{msgId}])"
                 );
+            }
 
             var messageType =
                 (BinSerialize.ReadByte(ref buffer) >> 7) == 1
@@ -94,22 +105,22 @@ namespace Asv.Gnss
         public DateTime UtcTime { get; set; }
 
         /// <summary>
-        /// GPS Time
+        /// Gets or sets gPS Time.
         /// </summary>
         public DateTime GpsTime { get; set; }
 
         /// <summary>
-        /// This is a value (0 - 65535) that represents the receiver software build number
+        /// Gets or sets this is a value (0 - 65535) that represents the receiver software build number.
         /// </summary>
         public ushort ReceiverSwVersion { get; set; }
 
         /// <summary>
-        /// Milliseconds from the beginning of the GPS week.
+        /// Gets or sets milliseconds from the beginning of the GPS week.
         /// </summary>
         public uint GpsMSecs { get; set; }
 
         /// <summary>
-        /// GPS week number.
+        /// Gets or sets gPS week number.
         /// </summary>
         public ushort GpsWeek { get; set; }
 
@@ -154,7 +165,6 @@ namespace Asv.Gnss
             // In current version, the length of header is always 28 bytes.
             // But fields may be appended in the future. =>
             // buffer = originBuffer.Slice(HeaderLength);
-
             InternalContentSerialize(ref buffer);
 
             var calculatedHash = ComNavCrc32.Calc(originBuffer, HeaderLength + MessageLength); // 32-bit CRC performed on all data including the header
@@ -210,47 +220,102 @@ namespace Asv.Gnss
 
         private static int LeapSecondsTAI(int year, int month)
         {
-            //http://maia.usno.navy.mil/ser7/tai-utc.dat
-
-            var yyyymm = year * 100 + month;
+            // http://maia.usno.navy.mil/ser7/tai-utc.dat
+            var yyyymm = (year * 100) + month;
             if (yyyymm >= 201701)
+            {
                 return 37;
+            }
+
             if (yyyymm >= 201507)
+            {
                 return 36;
+            }
+
             if (yyyymm >= 201207)
+            {
                 return 35;
+            }
+
             if (yyyymm >= 200901)
+            {
                 return 34;
+            }
+
             if (yyyymm >= 200601)
+            {
                 return 33;
+            }
+
             if (yyyymm >= 199901)
+            {
                 return 32;
+            }
+
             if (yyyymm >= 199707)
+            {
                 return 31;
+            }
+
             if (yyyymm >= 199601)
+            {
                 return 30;
+            }
+
             if (yyyymm >= 199407)
+            {
                 return 29;
+            }
+
             if (yyyymm >= 199307)
+            {
                 return 28;
+            }
+
             if (yyyymm >= 199207)
+            {
                 return 27;
+            }
+
             if (yyyymm >= 199101)
+            {
                 return 26;
+            }
+
             if (yyyymm >= 199001)
+            {
                 return 25;
+            }
+
             if (yyyymm >= 198801)
+            {
                 return 24;
+            }
+
             if (yyyymm >= 198507)
+            {
                 return 23;
+            }
+
             if (yyyymm >= 198307)
+            {
                 return 22;
+            }
+
             if (yyyymm >= 198207)
+            {
                 return 21;
+            }
+
             if (yyyymm >= 198107)
+            {
                 return 20;
+            }
+
             if (yyyymm >= 0)
+            {
                 return 19;
+            }
 
             return 0;
         }

@@ -24,6 +24,15 @@ namespace Asv.Gnss
         {
             ProtocolId = protocolId;
         }
+
+        public GnssParserException()
+            : base() { }
+
+        public GnssParserException(string message)
+            : base(message) { }
+
+        public GnssParserException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 
     /// <summary>
@@ -34,6 +43,18 @@ namespace Asv.Gnss
     {
         public GnssCrcErrorException(string protocolId)
             : base(protocolId, $"Crc error occurred when recv '{protocolId}' message") { }
+
+        public GnssCrcErrorException(string protocolId, string message)
+            : base(protocolId, message) { }
+
+        public GnssCrcErrorException(string protocolId, string message, Exception inner)
+            : base(protocolId, message, inner) { }
+
+        public GnssCrcErrorException()
+            : base() { }
+
+        public GnssCrcErrorException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 
     /// <summary>
@@ -58,6 +79,25 @@ namespace Asv.Gnss
         {
             MessageId = messageId;
         }
+
+        public GnssReadNotAllDataWhenDeserializePacketErrorException(
+            string protocolId,
+            string message,
+            Exception inner
+        )
+            : base(protocolId, message, inner) { }
+
+        public GnssReadNotAllDataWhenDeserializePacketErrorException()
+            : base() { }
+
+        public GnssReadNotAllDataWhenDeserializePacketErrorException(string message)
+            : base(message) { }
+
+        public GnssReadNotAllDataWhenDeserializePacketErrorException(
+            string message,
+            Exception innerException
+        )
+            : base(message, innerException) { }
     }
 
     /// <summary>
@@ -76,6 +116,18 @@ namespace Asv.Gnss
         {
             MessageId = messageId;
         }
+
+        public GnssUnknownMessageException(string protocolId, string message, Exception inner)
+            : base(protocolId, message, inner) { }
+
+        public GnssUnknownMessageException()
+            : base() { }
+
+        public GnssUnknownMessageException(string message)
+            : base(message) { }
+
+        public GnssUnknownMessageException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 
     /// <summary>
@@ -109,6 +161,21 @@ namespace Asv.Gnss
             MessageId = messageId;
             MessageName = messageName;
         }
+
+        public GnssDeserializeMessageException(string protocolId, string message)
+            : base(protocolId, message) { }
+
+        public GnssDeserializeMessageException(string protocolId, string message, Exception inner)
+            : base(protocolId, message, inner) { }
+
+        public GnssDeserializeMessageException()
+            : base() { }
+
+        public GnssDeserializeMessageException(string message)
+            : base(message) { }
+
+        public GnssDeserializeMessageException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 
     /// <summary>
@@ -142,5 +209,20 @@ namespace Asv.Gnss
             MessageId = messageId;
             MessageName = messageName;
         }
+
+        public GnssPublishMessageException(string protocolId, string message)
+            : base(protocolId, message) { }
+
+        public GnssPublishMessageException(string protocolId, string message, Exception inner)
+            : base(protocolId, message, inner) { }
+
+        public GnssPublishMessageException()
+            : base() { }
+
+        public GnssPublishMessageException(string message)
+            : base(message) { }
+
+        public GnssPublishMessageException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 }

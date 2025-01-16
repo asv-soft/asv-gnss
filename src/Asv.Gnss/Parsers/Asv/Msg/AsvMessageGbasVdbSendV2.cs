@@ -17,7 +17,7 @@ namespace Asv.Gnss
         public override ushort MessageId => 0x0102;
 
         /// <summary>
-        /// The name of the property is "GbasVdbSendV2".
+        /// Gets the name of the property is "GbasVdbSendV2".
         /// </summary>
         /// <value>
         /// A <see cref="string"/> representing the name of the property.
@@ -79,7 +79,7 @@ namespace Asv.Gnss
         public bool IsLastSlotInFrame { get; set; }
 
         /// <summary>
-        /// Data for sending over VDB.
+        /// Gets or sets data for sending over VDB.
         /// </summary>
         public byte[] Data { get; set; }
 
@@ -108,7 +108,7 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// Method to serialize internal content. </summary> <param name="buffer">The buffer to store serialized data.</param> <returns>None.</returns>
+        /// Method to serialize internal content. </summary> <param name="buffer">The buffer to store serialized data.</param>
         /// /
         protected override void InternalContentSerialize(ref Span<byte> buffer)
         {

@@ -23,10 +23,11 @@ namespace Asv.Gnss
                 {
                     var dow = SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
                     var tod = SpanBitHelper.GetBitU(buffer, ref bitIndex, 27);
-                    EpochTimeTow = dow * 86400000 + tod;
+                    EpochTimeTow = (dow * 86400000) + tod;
                     EpochTime = RtcmV3Helper.AdjustDailyRoverGlonassTime(utc, tod * 0.001);
                     break;
                 }
+
                 case NavigationSystemEnum.SYS_CMP:
                 {
                     EpochTimeTow = SpanBitHelper.GetBitU(buffer, ref bitIndex, 30);
@@ -35,6 +36,7 @@ namespace Asv.Gnss
                     EpochTime = RtcmV3Helper.AdjustWeekly(utc, tow);
                     break;
                 }
+
                 default:
                 {
                     EpochTimeTow = SpanBitHelper.GetBitU(buffer, ref bitIndex, 30);
@@ -45,7 +47,7 @@ namespace Asv.Gnss
             }
 
             MultipleMessageBit = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
-            ObservableDataIsComplete = MultipleMessageBit == 0 ? true : false;
+            ObservableDataIsComplete = MultipleMessageBit == 0;
 
             Iods = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
 
@@ -64,14 +66,18 @@ namespace Asv.Gnss
             {
                 var mask = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
                 if (mask > 0)
+                {
                     satellites.Add(i);
+                }
             }
 
             for (byte i = 1; i <= 32; i++)
             {
                 var mask = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
                 if (mask > 0)
+                {
                     signals.Add(i);
+                }
             }
 
             SatelliteIds = satellites.ToArray();
@@ -100,7 +106,7 @@ namespace Asv.Gnss
         public NavigationSystemEnum NavigationSystem { get; set; }
 
         /// <summary>
-        /// Observable data complete flag (1:ok, 0:not complete)
+        /// Gets or sets a value indicating whether observable data complete flag (1:ok, 0:not complete).
         /// </summary>
         public bool ObservableDataIsComplete { get; set; }
 
@@ -114,7 +120,7 @@ namespace Asv.Gnss
         protected byte[] SignalIds { get; set; }
 
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its
+        /// Gets or sets the Reference Station ID is determined by the service provider. Its
         /// primary purpose is to link all message data to their unique sourceName. It is
         /// useful in distinguishing between desired and undesired data in cases
         /// where more than one service may be using the same data link
@@ -136,55 +142,55 @@ namespace Asv.Gnss
         public uint ReferenceStationId { get; set; }
 
         /// <summary>
-        /// GNSS Epoch Time, specific for each GNSS
+        /// Gets or sets gNSS Epoch Time, specific for each GNSS
         /// GPS: Full seconds since the beginning of the GPS week
-        /// GLONASS: Full seconds since the beginning of GLONASS day
+        /// GLONASS: Full seconds since the beginning of GLONASS day.
         /// </summary>
         public uint EpochTimeTow { get; set; }
 
         /// <summary>
         ///
-        /// 1 - indicates that more MSMs follow for given physical time and reference station ID.
-        /// 0 - indicates that it is the last MSM for given physical time and reference station ID
+        /// Gets or sets 1 - indicates that more MSMs follow for given physical time and reference station ID.
+        /// 0 - indicates that it is the last MSM for given physical time and reference station ID.
         /// </summary>
         public byte MultipleMessageBit { get; set; }
 
         /// <summary>
-        /// Issue of Data Station.
+        /// Gets or sets issue of Data Station.
         /// This field is reserved to be used to link MSM with future site- description (receiver, antenna description, etc.) messages. A value of “0” indicates that this field is not utilized.
         /// </summary>
         public byte Iods { get; set; }
 
         /// <summary>
-        /// Cumulative session transmitting time
+        /// Gets or sets cumulative session transmitting time.
         /// </summary>
         public byte SessionTime { get; set; }
 
         /// <summary>
-        /// 0 – clock steering is not applied In this case receiver clock must be kept in the range of ± 1 ms (approximately ± 300 km).
+        /// Gets or sets 0 – clock steering is not applied In this case receiver clock must be kept in the range of ± 1 ms (approximately ± 300 km).
         /// 1 – clock steering has been applied In this case receiver clock must be kept in the range of ± 1 microsecond (approximately ± 300 meters).
         /// 2 – unknown clock steering status.
-        /// 3 – reserved
+        /// 3 – reserved.
         /// </summary>
         public uint ClockSteeringIndicator { get; set; }
 
         /// <summary>
-        /// 0 – internal clock is used.
+        /// Gets or sets 0 – internal clock is used.
         /// 1 – external clock is used, clock status is “locked”.
         /// 2 – external clock is used, clock status is “not locked”, which may indicate external clock failure and that the transmitted data may not be reliable.
-        /// 3 – unknown clock is used
+        /// 3 – unknown clock is used.
         /// </summary>
         public uint ExternalClockIndicator { get; set; }
 
         /// <summary>
-        /// GNSS Smoothing Type Indicator:
+        /// Gets or sets gNSS Smoothing Type Indicator:
         /// 1 – Divergence-free smoothing is used.
-        /// 0 – Other type of smoothing is used
+        /// 0 – Other type of smoothing is used.
         /// </summary>
         public uint SmoothingIndicator { get; set; }
 
         /// <summary>
-        /// The GNSS Smoothing Interval is the integration period over which the
+        /// Gets or sets the GNSS Smoothing Interval is the integration period over which the
         /// pseudorange code phase measurements are averaged using carrier phase
         /// information.
         /// Divergence-free smoothing may be continuous over the entire period

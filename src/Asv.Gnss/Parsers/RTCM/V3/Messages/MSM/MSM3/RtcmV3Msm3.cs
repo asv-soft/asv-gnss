@@ -30,20 +30,28 @@ namespace Asv.Gnss
             // Signal data
             // Pseudoranges 15*Ncell
             var pseudorange = new double[nCell];
+
             // PhaseRange data 22*Ncell
             var phaseRange = new double[nCell];
+
             // signal CNRs 6*Ncell
             //    var cnr = new double[nCell];
 
-            //PhaseRange LockTime Indicator 4*Ncell
+            // PhaseRange LockTime Indicator 4*Ncell
             var @lock = new byte[nCell];
-            //Half-cycle ambiguityindicator 1*Ncell
+
+            // Half-cycle ambiguityindicator 1*Ncell
             var halfCycle = new byte[nCell];
 
             for (var i = 0; i < SatelliteIds.Length; i++)
+            {
                 roughRanges[i] = 0.0;
+            }
+
             for (var i = 0; i < nCell; i++)
+            {
                 pseudorange[i] = phaseRange[i] = -1E16;
+            }
 
             for (var i = 0; i < SatelliteIds.Length; i++)
             {
@@ -57,7 +65,9 @@ namespace Asv.Gnss
                 /* pseudorange */
                 var prv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 15);
                 if (prv != -16384)
+                {
                     pseudorange[i] = prv * RtcmV3Helper.P2_24 * RtcmV3Helper.RANGE_MS;
+                }
             }
 
             for (var i = 0; i < nCell; i++)
@@ -65,7 +75,9 @@ namespace Asv.Gnss
                 /* phase range */
                 var cpv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 22);
                 if (cpv != -2097152)
+                {
                     phaseRange[i] = cpv * RtcmV3Helper.P2_29 * RtcmV3Helper.RANGE_MS;
+                }
             }
 
             for (var i = 0; i < nCell; i++)
@@ -96,7 +108,10 @@ namespace Asv.Gnss
 
             Satellites = Array.Empty<Satellite>();
             if (SatelliteIds.Length == 0)
+            {
                 return;
+            }
+
             Satellites = new Satellite[SatelliteIds.Length];
 
             /* id to signal */
@@ -116,11 +131,15 @@ namespace Asv.Gnss
                 var prn = SatelliteIds[i];
 
                 if (sys == NavigationSystemEnum.SYS_QZS)
+                {
                     prn += RtcmV3Helper.MINPRNQZS - 1;
+                }
                 else if (sys == NavigationSystemEnum.SYS_SBS)
+                {
                     prn += RtcmV3Helper.MINPRNSBS - 1;
+                }
 
-                var sat = RtcmV3Helper.satno(sys, prn);
+                var sat = RtcmV3Helper.Satno(sys, prn);
 
                 Satellites[i] = new Satellite
                 {
@@ -128,7 +147,7 @@ namespace Asv.Gnss
                     SatelliteCode = RtcmV3Helper.Sat2Code(sat, prn),
                 };
 
-                var fcn = 0;
+                const int fcn = 0;
                 if (sys == NavigationSystemEnum.SYS_GLO)
                 {
                     #region SYS_GLO
@@ -151,7 +170,6 @@ namespace Asv.Gnss
                     // {
                     //     fcn = rtcm->nav.glo_fcn[prn - 1] - 8;
                     // }
-
                     #endregion
                 }
 
@@ -161,7 +179,9 @@ namespace Asv.Gnss
                 for (var j = 0; j < SignalIds.Length; j++)
                 {
                     if (CellMask[i][j] == 0)
+                    {
                         continue;
+                    }
 
                     Satellites[i].Signals[index] = new Signal();
                     if (sat != 0 && sig[j].ObservationIndex >= 0)
@@ -190,6 +210,7 @@ namespace Asv.Gnss
                         );
                         Satellites[i].Signals[index].LockTime = @lock[k];
                         Satellites[i].Signals[index].HalfCycle = halfCycle[k];
+
                         // rtcm->obs.data[index].LLI[idx[k]] =
                         //     LossOfLock(rtcm, sat, idx[k],lock[j]) +(halfCycle[j] ? 3 : 0);
                         // rtcm->obs.data[index].SNR[idx[k]] = (uint16_t)(cnr[j] / SNR_UNIT + 0.5);

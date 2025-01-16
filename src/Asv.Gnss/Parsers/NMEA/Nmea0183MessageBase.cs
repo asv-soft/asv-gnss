@@ -7,7 +7,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents the base class for NMEA0183 messages.
     /// </summary>
-    /// <typeparam name="TData">The type of data contained in the message.</typeparam>
     public abstract class Nmea0183MessageBase : GnssMessageBase<string>
     {
         /// <summary>
@@ -35,7 +34,7 @@ namespace Asv.Gnss
         private string _sourceId;
 
         /// <summary>
-        /// Gets or sets the title of the source.
+        /// Gets the title of the source.
         /// </summary>
         /// <value>
         /// The title of the source.
@@ -72,11 +71,14 @@ namespace Asv.Gnss
         /// <summary>
         /// Deserializes a byte buffer into the current instance.
         /// </summary>
-        /// <param name="buffer">The byte buffer to deserialize</param>
+        /// <param name="buffer">The byte buffer to deserialize.</param>
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             if (buffer.Length < 5)
+            {
                 throw new Exception("Too small string for NMEA");
+            }
+
             var message = buffer.GetString(Encoding.ASCII).Trim();
             SourceId = message.StartsWith('P') ? "P" : message[..2];
             var items = message.Split(',');
@@ -109,6 +111,7 @@ namespace Asv.Gnss
             {
                 SourceId.CopyTo(ref buffer, Encoding.ASCII);
             }
+
             MessageId.CopyTo(ref buffer, Encoding.ASCII);
             buffer[0] = Separator;
             buffer = buffer[1..];
@@ -122,7 +125,7 @@ namespace Asv.Gnss
             buffer = buffer[_endOfLine.Length..];
         }
 
-        protected void InsertSeparator(ref Span<byte> buffer)
+        protected static void InsertSeparator(ref Span<byte> buffer)
         {
             buffer[0] = Separator;
             buffer = buffer[1..];

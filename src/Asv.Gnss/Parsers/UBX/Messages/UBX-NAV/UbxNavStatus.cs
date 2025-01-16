@@ -25,12 +25,12 @@ namespace Asv.Gnss
         public override byte SubClass => 0x03;
 
         /// <summary>
-        /// GPS time of week of the navigation epoch.
+        /// Gets or sets gPS time of week of the navigation epoch.
         /// </summary>
-        public uint iTOW { get; set; }
+        public uint ITOW { get; set; }
 
         /// <summary>
-        /// GPSfix Type, this value does not qualify a
+        /// Gets or sets gPSfix Type, this value does not qualify a
         /// fix as valid and within the limits. See note
         /// on flag gpsFixOk below.
         /// 0x00 = no fix
@@ -39,65 +39,65 @@ namespace Asv.Gnss
         /// 0x03 = 3D-fix
         /// 0x04 = GPS + dead reckoning combined
         /// 0x05 = Time only fix
-        /// 0x06..0xff = reserved
+        /// 0x06..0xff = reserved.
         /// </summary>
         public byte GpsFix { get; set; }
 
         /// <summary>
-        /// Navigation Status Flags (see graphic below)
+        /// Gets or sets navigation Status Flags (see graphic below).
         /// </summary>
         public byte Flags { get; set; }
 
         #region Flags bits
 
         /// <summary>
-        /// Position and velocity valid and within DOP and ACC Masks.
+        /// Gets or sets a value indicating whether position and velocity valid and within DOP and ACC Masks.
         /// </summary>
         public bool IsGpsFixOk { get; set; }
 
         /// <summary>
-        /// Differential corrections were applied.
+        /// Gets or sets a value indicating whether differential corrections were applied.
         /// </summary>
         public bool IsDiffSoln { get; set; }
 
         /// <summary>
-        /// Week Number valid.
+        /// Gets or sets a value indicating whether week Number valid.
         /// </summary>
         public bool IsWknSet { get; set; }
 
         /// <summary>
-        /// Time of Week valid.
+        /// Gets or sets a value indicating whether time of Week valid.
         /// </summary>
         public bool IsTowSet { get; set; }
 
         #endregion
 
         /// <summary>
-        /// Fix Status Information (see graphic below)
+        /// Gets or sets fix Status Information (see graphic below).
         /// </summary>
         public byte FixStat { get; set; }
 
         #region FixStat bits
 
         /// <summary>
-        /// Differential corrections available.
+        /// Gets or sets a value indicating whether differential corrections available.
         /// </summary>
         public bool IsDiffCorr { get; set; }
 
         /// <summary>
-        /// Valid carrSoln.
+        /// Gets or sets a value indicating whether valid carrSoln.
         /// </summary>
         public bool IsCarrSolnValid { get; set; }
 
         /// <summary>
-        /// Map matching status.
+        /// Gets or sets map matching status.
         /// </summary>
         public MapMatchingStatus MapMatching { get; set; } = MapMatchingStatus.None;
 
         #endregion
 
         /// <summary>
-        /// further information about navigation output (see graphic below)
+        /// Gets or sets further information about navigation output (see graphic below).
         /// </summary>
         public byte Flags2 { get; set; }
 
@@ -113,12 +113,12 @@ namespace Asv.Gnss
         #endregion
 
         /// <summary>
-        /// Time to first fix (millisecond time tag)
+        /// Gets or sets time to first fix (millisecond time tag).
         /// </summary>
         public uint TTFF { get; set; }
 
         /// <summary>
-        /// Milliseconds since Startup / Reset
+        /// Gets or sets milliseconds since Startup / Reset.
         /// </summary>
         public uint MSSS { get; set; }
 
@@ -126,7 +126,7 @@ namespace Asv.Gnss
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            iTOW = BinSerialize.ReadUInt(ref buffer);
+            ITOW = BinSerialize.ReadUInt(ref buffer);
             GpsFix = BinSerialize.ReadByte(ref buffer);
             Flags = BinSerialize.ReadByte(ref buffer);
 

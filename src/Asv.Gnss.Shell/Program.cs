@@ -3,7 +3,7 @@ using Spectre.Console.Cli;
 
 namespace Asv.Gnss.Shell
 {
-    class Program
+    static class Program
     {
         static int Main(string[] args)
         {

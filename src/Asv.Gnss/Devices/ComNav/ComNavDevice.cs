@@ -113,10 +113,7 @@ namespace Asv.Gnss
 
             if (disposeConnection)
             {
-                Disposable.AddAction(() =>
-                {
-                    Connection?.Dispose();
-                });
+                Disposable.AddAction(() => Connection?.Dispose());
             }
         }
 
@@ -146,7 +143,10 @@ namespace Asv.Gnss
             catch (TaskCanceledException)
             {
                 if (IsDisposed)
+                {
                     return;
+                }
+
                 if (cancel.IsCancellationRequested)
                 {
                     throw;
@@ -191,7 +191,10 @@ namespace Asv.Gnss
             where T : ComNavAsciiCommandBase
         {
             if (pkt is not ComNavAsciiLogCommand command)
+            {
                 return;
+            }
+
             command.PortName = command.Type.IsRtcmV2LogCommand()
                 ? $"{_rtcmV2Port:G}"
                 : $"{_mainPort:G}";
@@ -240,7 +243,10 @@ namespace Asv.Gnss
                 catch (TaskCanceledException)
                 {
                     if (IsDisposed)
+                    {
                         return;
+                    }
+
                     if (cancel.IsCancellationRequested)
                     {
                         throw;
@@ -305,13 +311,7 @@ namespace Asv.Gnss
                     await srcConnection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
                     return await tcs.Task.ConfigureAwait(false);
                 }
-                catch (TaskCanceledException)
-                {
-                    if (cancel.IsCancellationRequested)
-                    {
-                        throw;
-                    }
-                }
+                catch (TaskCanceledException) when (!cancel.IsCancellationRequested) { }
             }
 
             throw new ComNavDeviceTimeoutException(

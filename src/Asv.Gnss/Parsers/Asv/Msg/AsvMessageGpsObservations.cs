@@ -16,10 +16,10 @@ namespace Asv.Gnss
             var week = AsvHelper.GetBitU(buffer, ref bitIndex, 10);
             var cycle = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
 
-            Tow = GpsRawHelper.Gps2Time((int)(cycle * 1024 + week), tow);
+            Tow = GpsRawHelper.Gps2Time((int)((cycle * 1024) + week), tow);
             TimeOffset = AsvHelper.GetBitS(buffer, ref bitIndex, 22) * GpsRawHelper.P2_30;
             var svNum = AsvHelper.GetBitU(buffer, ref bitIndex, 5);
-            bitIndex += 1;
+            bitIndex++;
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
 
@@ -35,12 +35,12 @@ namespace Asv.Gnss
         public AsvGpsObservation[] Observations { get; set; }
 
         /// <summary>
-        /// GPS Epoch Time
+        /// Gets or sets gPS Epoch Time.
         /// </summary>
         public DateTime Tow { get; set; }
 
         /// <summary>
-        /// GPS Receiver Time Offset
+        /// Gets or sets gPS Receiver Time Offset.
         /// </summary>
         public double TimeOffset { get; set; }
 
@@ -62,12 +62,15 @@ namespace Asv.Gnss
                 22
             );
             AsvHelper.SetBitU(buffer, (uint)(Observations?.Length ?? 0), ref bitIndex, 5);
-            bitIndex += 1;
+            bitIndex++;
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
 
             if (Observations == null)
+            {
                 return;
+            }
+
             foreach (var obs in Observations)
             {
                 obs.Serialize(ref buffer);
@@ -87,12 +90,16 @@ namespace Asv.Gnss
             var index = 0;
             while (index < length)
             {
-                var prn = random.Next() % 32 + 1;
+                var prn = (random.Next() % 32) + 1;
                 if (randomPrn.Any(_ => _ == prn))
+                {
                     continue;
+                }
+
                 randomPrn[index] = prn;
                 index++;
             }
+
             Observations = new AsvGpsObservation[length];
 
             for (var i = 0; i < length; i++)
@@ -131,10 +138,10 @@ namespace Asv.Gnss
                 Prn += 80;
             }
 
-            SatelliteId = AsvHelper.satno(sys, Prn);
+            SatelliteId = AsvHelper.Satno(sys, Prn);
             SatelliteCode = AsvHelper.Sat2Code(SatelliteId, Prn);
 
-            pr1 = pr1 * 0.02 + amb * AsvHelper.PRUNIT_GPS;
+            pr1 = (pr1 * 0.02) + (amb * AsvHelper.PRUNIT_GPS);
             L1PseudoRange = pr1;
 
             if (ppr1 != -524288) // (0xFFF80000)
@@ -153,7 +160,7 @@ namespace Asv.Gnss
         {
             var bitIndex = 0;
             AsvHelper.SetBitU(buffer, Prn >= 120 ? (uint)(Prn - 80) : (uint)Prn, ref bitIndex, 6);
-            AsvHelper.SetBitU(buffer, L1Code == AsvHelper.CODE_L1C ? (uint)0 : 1, ref bitIndex, 1);
+            AsvHelper.SetBitU(buffer, L1Code == AsvHelper.CODE_L1C ? 0U : 1, ref bitIndex, 1);
             var amb = (uint)(L1PseudoRange / AsvHelper.PRUNIT_GPS);
             var pr1 = (uint)Math.Round((L1PseudoRange % AsvHelper.PRUNIT_GPS) * 50.0);
             AsvHelper.SetBitU(buffer, pr1, ref bitIndex, 24);
@@ -163,7 +170,7 @@ namespace Asv.Gnss
             AsvHelper.SetBitS(buffer, ppr1, ref bitIndex, 20);
             AsvHelper.SetBitU(buffer, AsvHelper.GetLockTimeIndicator(L1LockTime), ref bitIndex, 7);
             AsvHelper.SetBitU(buffer, amb, ref bitIndex, 8);
-            AsvHelper.SetBitU(buffer, ParticipationIndicator ? (uint)1 : 0, ref bitIndex, 1);
+            AsvHelper.SetBitU(buffer, ParticipationIndicator ? 1U : 0, ref bitIndex, 1);
             AsvHelper.SetBitU(buffer, (uint)ReasonForException, ref bitIndex, 4);
             bitIndex += 3;
             AsvHelper.SetBitU(buffer, (uint)Math.Round(Elevation * 10.0), ref bitIndex, 10);
@@ -181,7 +188,7 @@ namespace Asv.Gnss
         public void Randomize(Random random, int prn)
         {
             Prn = prn;
-            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GPS, Prn);
+            SatelliteId = AsvHelper.Satno(NavigationSystemEnum.SYS_GPS, Prn);
             SatelliteCode = AsvHelper.Sat2Code(SatelliteId, Prn);
             L1Code = AsvHelper.CODE_L1C;
             L1LockTime = 937;

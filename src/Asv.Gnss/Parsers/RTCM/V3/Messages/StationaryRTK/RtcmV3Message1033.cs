@@ -10,32 +10,32 @@ namespace Asv.Gnss
         public override string Name => "Receiver and Antenna Description";
 
         /// <summary>
-        /// Number of characters in the name of the receiver type
+        /// Gets or sets number of characters in the name of the receiver type.
         /// </summary>
         public uint ReceiverTypeDescriptorCounterI { get; set; }
 
         /// <summary>
-        /// Receiver Type Descriptor
+        /// Gets or sets receiver Type Descriptor.
         /// </summary>
         public string ReceiverTypeDescriptor { get; set; }
 
         /// <summary>
-        /// Number of characters in the name of the receiver firmware
+        /// Gets or sets number of characters in the name of the receiver firmware.
         /// </summary>
         public uint ReceiverFirmwareVersionCounterJ { get; set; }
 
         /// <summary>
-        /// Receiver Firmware Version
+        /// Gets or sets receiver Firmware Version.
         /// </summary>
         public string ReceiverFirmwareVersion { get; set; }
 
         /// <summary>
-        /// Number of characters in the name of the receiver serial number
+        /// Gets or sets number of characters in the name of the receiver serial number.
         /// </summary>
         public uint ReceiverSerialNumberCounterK { get; set; }
 
         /// <summary>
-        /// Receiver Serial Number
+        /// Gets or sets receiver Serial Number.
         /// </summary>
         public string ReceiverSerialNumber { get; set; }
 

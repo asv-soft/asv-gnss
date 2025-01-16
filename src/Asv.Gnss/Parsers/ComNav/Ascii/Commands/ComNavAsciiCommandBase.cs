@@ -169,19 +169,18 @@ namespace Asv.Gnss
         /// <summary>
         /// Configures the receiver to fix the height at the last calculated value if the number of
         /// satellites available is insufficient for a 3-D solution. This provides a 2-D solution.
-        /// Height calculation resumes when the number of satellites available allows a 3-D solution
+        /// Height calculation resumes when the number of satellites available allows a 3-D solution.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static Task FixAuto(IGnssConnection src, CancellationToken cancel = default)
         {
             return src.Send(new ComNavFixCommand { FixType = ComNavFixType.Auto }, cancel);
         }
 
         /// <summary>
-        /// Unfix. Clears any previous FIX commands
+        /// Unfix. Clears any previous FIX commands.
         /// </summary>
-        /// <param name="src"></param>
-        /// <param name="cancel"></param>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static Task SendFixNone(IGnssConnection src, CancellationToken cancel = default)
         {
             return src.Send(new ComNavFixCommand { FixType = ComNavFixType.None }, cancel);
@@ -197,6 +196,7 @@ namespace Asv.Gnss
         /// overrides any previous FIX HEIGHT or FIX POSITION command.
         /// Note: This command only affects pseudorange corrections and solutions.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static Task SendFixHeight(
             IGnssConnection src,
             double altitude,
@@ -210,6 +210,7 @@ namespace Asv.Gnss
         }
 
         /// <summary>
+        /// <para>
         /// Configures the receiver with its position fixed. This command is used when it is
         /// necessary to generate differential corrections.
         /// For both pseudorange and differential corrections, this command must be properly
@@ -219,17 +220,21 @@ namespace Asv.Gnss
         /// RTCMV3 differential corrections data log format.S
         /// The values entered into the fix position command should reflect the precise position
         /// of the base station antenna phase center. Any errors in the fix position coordinates
-        /// directly bias the corrections calculated by the base receiver
-        ///
+        /// directly bias the corrections calculated by the base receiver.
+        /// </para>
+        /// <para>
         /// The receiver performs all internal computations based on WGS84 and the DATUM
         /// command (see page 131) is defaulted as such. The datum in which you choose to
         /// operate (by changing the DATUM command (see page 131)) is internally converted
         /// to and from WGS84. Therefore, all differential corrections are based on WGS84,
         /// regardless of your operating datum.
-        ///
+        /// </para>
+        /// <para>
         /// The FIX POSITION command overrides any previous FIX HEIGHT or FIX
         /// POSITION command settings.
+        /// </para>
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static Task FixPosition(
             IGnssConnection src,
             double latitude,

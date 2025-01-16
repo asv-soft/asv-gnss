@@ -205,17 +205,18 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1073", msg.MessageStringId);
             var msg1073 = msg as RtcmV3Msm3Msg1073;
-            Assert.Equal((uint)144187000, msg1073.EpochTimeTow);
+            Assert.Equal(144187000U, msg1073.EpochTimeTow);
             Assert.Equal(1, msg1073.MultipleMessageBit);
             Assert.Equal(0, msg1073.Iods);
             Assert.Equal(0, msg1073.Reserved);
-            Assert.Equal((uint)1, msg1073.ClockSteeringIndicator);
-            Assert.Equal((uint)0, msg1073.ExternalClockIndicator);
-            Assert.Equal((uint)0, msg1073.SmoothingIndicator);
-            Assert.Equal((uint)0, msg1073.SmoothingInterval);
+            Assert.Equal(1U, msg1073.ClockSteeringIndicator);
+            Assert.Equal(0U, msg1073.ExternalClockIndicator);
+            Assert.Equal(0U, msg1073.SmoothingIndicator);
+            Assert.Equal(0U, msg1073.SmoothingInterval);
 
             Assert.Equal(8, msg1073.Satellites.Length);
             Assert.Equal(6, msg1073.Satellites.Select(s => s.Signals).Max(ss => ss.Length));
@@ -228,13 +229,16 @@ namespace Asv.Gnss.Test
             Assert.Equal(14, firstSat.Signals[0].LockTime);
             Assert.Equal(0, firstSat.Signals[0].HalfCycle);
             Assert.Equal(
-                0.548828125 * RtcmV3Helper.RANGE_MS
-                    + 0.00029605627059936523 * RtcmV3Helper.RANGE_MS,
+                (0.548828125 * RtcmV3Helper.RANGE_MS)
+                    + (0.00029605627059936523 * RtcmV3Helper.RANGE_MS),
                 firstSat.Signals[0].PseudoRange
             );
             var freq = RtcmV3Helper.Code2Freq(NavigationSystemEnum.SYS_GPS, 1);
             Assert.Equal(
-                (0.548828125 * RtcmV3Helper.RANGE_MS + 0.00029742531478405 * RtcmV3Helper.RANGE_MS)
+                (
+                    (0.548828125 * RtcmV3Helper.RANGE_MS)
+                    + (0.00029742531478405 * RtcmV3Helper.RANGE_MS)
+                )
                     * freq
                     / RtcmV3Helper.CLIGHT,
                 firstSat.Signals[0].CarrierPhase
@@ -460,6 +464,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1083", msg.MessageStringId);
         }
@@ -591,6 +596,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1093", msg.MessageStringId);
         }
@@ -794,6 +800,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1123", msg.MessageStringId);
         }

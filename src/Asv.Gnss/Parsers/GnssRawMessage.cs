@@ -22,7 +22,6 @@ namespace Asv.Gnss
         /// <summary>
         /// Gets the identifier of the message.
         /// </summary>
-        /// <typeparam name="TMsgId">The type of the message identifier.</typeparam>
         /// <returns>
         /// The identifier of the message.
         /// </returns>
@@ -34,9 +33,10 @@ namespace Asv.Gnss
         /// <value>
         /// The raw data as an array of bytes.
         /// </value>
-        public byte[] RawData { get; private set; }
+        public byte[] RawData { get; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="GnssRawMessage{TMsgId}"/> class.
         /// Creates a new instance of the GnssRawMessage class.
         /// </summary>
         /// <param name="messageId">The ID of the message.</param>

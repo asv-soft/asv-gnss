@@ -17,5 +17,14 @@ namespace Asv.Gnss
         {
             SourceName = source;
         }
+
+        public ComNavDeviceException()
+            : base() { }
+
+        public ComNavDeviceException(string message)
+            : base(message) { }
+
+        public ComNavDeviceException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 }

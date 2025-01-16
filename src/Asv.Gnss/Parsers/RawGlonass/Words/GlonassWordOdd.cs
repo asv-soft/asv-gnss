@@ -14,9 +14,11 @@ namespace Asv.Gnss
         protected override void CheckWordId(byte wordId)
         {
             if (wordId <= 5 || wordId % 2 != 1)
+            {
                 throw new Exception(
                     $"Word ID not equals: Word want > 5 and odd number. Got {wordId}"
                 );
+            }
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace Asv.Gnss
         {
             base.Deserialize(data);
             var bitIndex = 8U;
-            omega = GlonassRawHelper.GetBitG(data, bitIndex, 16) * GlonassRawHelper.P2_15 * Math.PI;
+            Omega = GlonassRawHelper.GetBitG(data, bitIndex, 16) * GlonassRawHelper.P2_15 * Math.PI;
             bitIndex += 16;
             ToaSec = GlonassRawHelper.GetBitU(data, bitIndex, 21) * GlonassRawHelper.P2_5;
             bitIndex += 21;
@@ -38,14 +40,17 @@ namespace Asv.Gnss
             var h = (int)GlonassRawHelper.GetBitU(data, bitIndex, 5);
             bitIndex += 5;
             if (h is >= 25 and <= 31)
+            {
                 h -= 32;
-            Frequency = 1602000000 + h * 562500;
+            }
+
+            Frequency = 1602000000 + (h * 562500);
         }
 
         /// <summary>
         ///
         /// </summary>
-        public double omega { get; set; }
+        public double Omega { get; set; }
 
         /// <summary>
         ///

@@ -14,12 +14,12 @@ namespace Asv.Gnss
         public DateTime UtcTime { get; set; }
 
         /// <summary>
-        /// Time-Of-Week : Time-tag, expressed in whole milliseconds from the beginning of the current GPS week.
+        /// Gets or sets time-Of-Week : Time-tag, expressed in whole milliseconds from the beginning of the current GPS week.
         /// </summary>
         public uint TOW { get; set; }
 
         /// <summary>
-        /// The GPS week number associated with the TOW. WNc is a continuous week count(hence the "c").
+        /// Gets or sets the GPS week number associated with the TOW. WNc is a continuous week count(hence the "c").
         /// It is not affected by GPS week rollovers, which occur every 1024 weeks.
         /// By definition of the Galileo system time, WNc is also the Galileo week number plus 1024.
         /// </summary>
@@ -27,11 +27,10 @@ namespace Asv.Gnss
 
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
-            //The Sync field is a 2-byte array always set to {0x24, 0x40}. The first byte of every SBF
-            //block has hexadecimal value 24(decimal 36, ASCII „$‟).The second byte of every SBF
-            //block has hexadecimal value 40(decimal 64, ASCII „@‟).These two bytes identify the
-            //beginning of any SBF block and can be used for synchronization.
-
+            // The Sync field is a 2-byte array always set to {0x24, 0x40}. The first byte of every SBF
+            // block has hexadecimal value 24(decimal 36, ASCII „$‟).The second byte of every SBF
+            // block has hexadecimal value 40(decimal 64, ASCII „@‟).These two bytes identify the
+            // beginning of any SBF block and can be used for synchronization.
             var sync1 = BinSerialize.ReadByte(ref buffer);
             var sync2 = BinSerialize.ReadByte(ref buffer);
 
@@ -47,26 +46,33 @@ namespace Asv.Gnss
             // bits 13 - 15: block revision number, starting from 0 at the initial block definition, and
             // incrementing each time backwards - compatible changes are performed to the
             // block(see section 2.6).
-
             var msgId = BinSerialize.ReadUShort(ref buffer);
             var messageType = (ushort)(msgId & 0x1fff << 0);
             var messageRevision = (ushort)((msgId >> 13) & 0x7);
 
             if (messageType != MessageType)
+            {
                 throw new GnssParserException(
                     SbfBinaryParser.GnssProtocolId,
                     $"Error to deserialize SBF packet message. MessageType not equal (want [{MessageType}] read [{messageType}])"
                 );
+            }
+
             if (messageRevision != MessageRevision)
+            {
                 throw new GnssParserException(
                     SbfBinaryParser.GnssProtocolId,
                     $"Error to deserialize SBF packet message. Id not equal (want [{MessageRevision}] read [{messageRevision}])"
                 );
+            }
+
             if (msgId != MessageId)
+            {
                 throw new GnssParserException(
                     SbfBinaryParser.GnssProtocolId,
                     $"Error to deserialize SBF packet message. Id not equal (want [{MessageId}] read [{msgId}])"
                 );
+            }
 
             // The Length field is a 2-byte unsigned integer containing the size of the SBF block. It is
             // the total number of bytes in the SBF block including the header. It is always a multiple of 4

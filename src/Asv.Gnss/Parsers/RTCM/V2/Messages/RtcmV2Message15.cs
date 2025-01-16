@@ -3,8 +3,8 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    /// Represents an RTCM version 2 message type 15: Ionospheric Delay Message (Fixed).
-    /// /
+    // Represents an RTCM version 2 message type 15: Ionospheric Delay Message (Fixed).
+    // /
     public class RtcmV2Message15 : RtcmV2MessageBase
     {
         /// <summary>
@@ -66,7 +66,7 @@ namespace Asv.Gnss
     public class IonosphericDelayItem
     {
         /// <summary>
-        /// Deserializes the given buffer and populates the necessary properties. </summary> <param name="buffer">The byte buffer from which to deserialize data.</param> <param name="bitIndex">The bit index used to track the current bit being read.</param> <returns>None.</returns>
+        /// Deserializes the given buffer and populates the necessary properties. </summary> <param name="buffer">The byte buffer from which to deserialize data.</param> <param name="bitIndex">The bit index used to track the current bit being read.</param>
         /// /
         public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
@@ -75,7 +75,10 @@ namespace Asv.Gnss
                 sys == 0 ? NavigationSystemEnum.SYS_GPS : NavigationSystemEnum.SYS_GLO;
             Prn = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
             if (Prn == 0)
+            {
                 Prn = 32;
+            }
+
             IonosphericDelay = SpanBitHelper.GetBitU(buffer, ref bitIndex, 14) * 0.001;
             var rateOfChange = SpanBitHelper.GetBitS(buffer, ref bitIndex, 14);
 

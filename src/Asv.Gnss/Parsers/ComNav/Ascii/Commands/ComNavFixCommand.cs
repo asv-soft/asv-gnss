@@ -6,14 +6,14 @@ namespace Asv.Gnss
     public enum ComNavFixType
     {
         /// <summary>
-        /// Unfix. Clears any previous FIX commands
+        /// Unfix. Clears any previous FIX commands.
         /// </summary>
         None,
 
         /// <summary>
         /// Configures the receiver to fix the height at the last calculated value if the number of
         /// satellites available is insufficient for a 3-D solution. This provides a 2-D solution.
-        /// Height calculation resumes when the number of satellites available allows a 3-D solution
+        /// Height calculation resumes when the number of satellites available allows a 3-D solution.
         /// </summary>
         Auto,
 
@@ -30,6 +30,7 @@ namespace Asv.Gnss
         Height,
 
         /// <summary>
+        /// <para>
         /// Configures the receiver with its position fixed. This command is used when it is
         /// necessary to generate differential corrections.
         /// For both pseudorange and differential corrections, this command must be properly
@@ -39,16 +40,19 @@ namespace Asv.Gnss
         /// RTCMV3 differential corrections data log format.S
         /// The values entered into the fix position command should reflect the precise position
         /// of the base station antenna phase center. Any errors in the fix position coordinates
-        /// directly bias the corrections calculated by the base receiver
-        ///
+        /// directly bias the corrections calculated by the base receiver.
+        /// </para>
+        /// <para>
         /// The receiver performs all internal computations based on WGS84 and the DATUM
         /// command (see page 131) is defaulted as such. The datum in which you choose to
         /// operate (by changing the DATUM command (see page 131)) is internally converted
         /// to and from WGS84. Therefore, all differential corrections are based on WGS84,
         /// regardless of your operating datum.
-        ///
+        /// </para>
+        /// <para>
         /// The FIX POSITION command overrides any previous FIX HEIGHT or FIX
         /// POSITION command settings.
+        /// </para>
         /// </summary>
         Position,
     }
@@ -92,7 +96,7 @@ namespace Asv.Gnss
         /// <summary>
         /// Gets or sets the latitude coordinate.
         /// </summary>
-        public double Lat { get; set; } = Double.NaN;
+        public double Lat { get; set; } = double.NaN;
 
         /// <summary>
         /// Gets or sets the longitude value.
@@ -100,7 +104,7 @@ namespace Asv.Gnss
         /// <value>
         /// The longitude value. If the value is undefined, it is set to Double.NaN.
         /// </value>
-        public double Lon { get; set; } = Double.NaN;
+        public double Lon { get; set; } = double.NaN;
 
         /// <summary>
         /// Gets or sets the altitude.
@@ -108,10 +112,10 @@ namespace Asv.Gnss
         /// <value>
         /// The altitude value. The default value is "NaN" (not a number).
         /// </value>
-        public double Alt { get; set; } = Double.NaN;
+        public double Alt { get; set; } = double.NaN;
 
         /// <summary>
-        /// The unique identifier for the message.
+        /// Gets the unique identifier for the message.
         /// </summary>
         /// <value>
         /// The MessageId property represents the unique identifier of the message.

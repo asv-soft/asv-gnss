@@ -16,7 +16,7 @@ namespace Asv.Gnss.Shell
         public sealed class Settings : CommandSettings
         {
             /// <summary>
-            /// Connection string for UBX.
+            /// Gets or sets connection string for UBX.
             /// </summary>
             [Description("Connection string for UBX")]
             [CommandArgument(0, "[connectionString]")]
@@ -27,7 +27,7 @@ namespace Asv.Gnss.Shell
             public bool IsEnabled { get; set; } = true;
 
             /// <summary>
-            /// Message rate for UBX (Hz)
+            /// Gets or sets message rate for UBX (Hz).
             /// </summary>
             [Description("Pvt message rate for UBX (Hz)")]
             [CommandArgument(2, "[PvtRate]")]
@@ -57,7 +57,7 @@ namespace Asv.Gnss.Shell
                 }
             );
             device.Init();
-            Test(device).Wait();
+            UbxTrackCommand.Test(device).Wait();
 
             // Wait for shutdown to start
             waitForProcessShutdownStart.Wait();
@@ -65,7 +65,7 @@ namespace Asv.Gnss.Shell
             return 0;
         }
 
-        public async Task Test(ITrackLogger logger)
+        public static async Task Test(ITrackLogger logger)
         {
             var s = JsonSerializer.Create(new JsonSerializerSettings());
             logger.OnPvtInfo.Subscribe(_ =>
@@ -83,6 +83,7 @@ namespace Asv.Gnss.Shell
                     {
                         wrt.Write(value);
                     }
+
                     wrt.Flush();
                 });
         }

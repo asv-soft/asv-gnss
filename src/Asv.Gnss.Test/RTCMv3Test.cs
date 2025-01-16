@@ -139,12 +139,14 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             msg = null;
             foreach (var p in array)
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
         }
 
@@ -154,12 +156,9 @@ namespace Asv.Gnss.Test
             var parser = new RtcmV3Parser().RegisterDefaultMessages();
             parser.OnError.Subscribe(_ =>
             {
-                //_output.WriteLine("ERR:"+_.Message);
+                // _output.WriteLine("ERR:"+_.Message);
             });
-            parser.OnMessage.Subscribe(_ =>
-            {
-                _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}");
-            });
+            parser.OnMessage.Subscribe(_ => _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}"));
             foreach (var b in TestData.test_rtcm3)
             {
                 parser.Read(b);
@@ -172,12 +171,9 @@ namespace Asv.Gnss.Test
             var parser = new RtcmV3Parser().RegisterDefaultMessages();
             parser.OnError.Subscribe(_ =>
             {
-                //_output.WriteLine("ERR:"+_.Message);
+                // _output.WriteLine("ERR:"+_.Message);
             });
-            parser.OnMessage.Subscribe(_ =>
-            {
-                _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}");
-            });
+            parser.OnMessage.Subscribe(_ => _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}"));
             foreach (var b in TestData.testglo_rtcm3)
             {
                 parser.Read(b);
@@ -736,7 +732,7 @@ namespace Asv.Gnss.Test
             Assert.NotNull(msg);
         }
 
-        private IDictionary<string, (int, string, bool)> Test_rtcm3_base(
+        private static IDictionary<string, (int, string, bool)> Test_rtcm3_base(
             byte[] data,
             out int total,
             out int totalUnknown,
@@ -772,6 +768,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(b);
             }
+
             total = messages.Sum(_ => _.Value.Item1);
             totalUnknown = messages.Where(_ => !_.Value.Item3).Sum(_ => _.Value.Item1);
             totalOk = messages.Where(_ => _.Value.Item3).Sum(_ => _.Value.Item1);
@@ -783,7 +780,7 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Test_rtcm3_parser_from_fw206mrtk_rtcm_file()
         {
-            var messages = Test_rtcm3_base(
+            var messages = RTCMv3Test.Test_rtcm3_base(
                 TestData.fw206mrtk_rtcm,
                 out var total,
                 out var totalUnknown,
@@ -800,6 +797,7 @@ namespace Asv.Gnss.Test
                     $"{message.Key}: {message.Value.Item1, -5} {message.Value.Item2}"
                 );
             }
+
             Assert.Equal(0, err);
             Assert.Equal(4996, total);
         }
@@ -807,7 +805,7 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Test_rtcm3_parser_from_imu_rtcm_file()
         {
-            var messages = Test_rtcm3_base(
+            var messages = RTCMv3Test.Test_rtcm3_base(
                 TestData.imu_rtcm,
                 out var total,
                 out var totalUnknown,
@@ -825,6 +823,7 @@ namespace Asv.Gnss.Test
                     $"{message.Key}: {message.Value.Item1, -5} {message.Value.Item2}"
                 );
             }
+
             Assert.Equal(0, err);
             Assert.Equal(761, total);
         }
@@ -832,7 +831,7 @@ namespace Asv.Gnss.Test
         [Fact]
         public void Test_rtcm3_parser_from_testglo()
         {
-            var messages = Test_rtcm3_base(
+            var messages = RTCMv3Test.Test_rtcm3_base(
                 TestData.testglo_rtcm3,
                 out var total,
                 out var totalUnknown,
@@ -848,6 +847,7 @@ namespace Asv.Gnss.Test
                     $"{message.Key}: {message.Value.Item1, -5} {message.Value.Item2}"
                 );
             }
+
             Assert.Equal(0, err);
             Assert.Equal(429, total);
             Assert.Equal(0, totalUnknown);

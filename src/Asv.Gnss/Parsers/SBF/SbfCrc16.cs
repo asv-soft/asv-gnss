@@ -1,11 +1,11 @@
 ﻿namespace Asv.Gnss
 {
     /// <summary>
-    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm
+    /// SourceName https://docs.novatel.com/OEM7/Content/Messages/32_Bit_CRC.htm.
     /// </summary>
     public static class SbfCrc16
     {
-        static ushort[] CRC_16CCIT_LookUp =
+        static readonly ushort[] CRC_16CCIT_LookUp =
         {
             0x0000,
             0x1021,
@@ -265,7 +265,7 @@
             0x1ef0,
         };
 
-        public static ushort checksum(byte[] buff, int seedInBytes, int len)
+        public static ushort Checksum(byte[] buff, int seedInBytes, int len)
         {
             int i;
             ushort crc = 0;

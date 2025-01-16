@@ -159,20 +159,15 @@ namespace Asv.Gnss
             return Data.Length + 10;
         }
 
-        /// Randomizes the properties of the object using the provided random generator.
-        /// @param random The random generator to be used for randomizing the properties.
-        /// /
+        // Randomizes the properties of the object using the provided random generator.
+        // @param random The random generator to be used for randomizing the properties.
+        // /
         public override void Randomize(Random random)
         {
             Sequence = (ushort)random.Next(0, ushort.MaxValue);
             TargetId = (byte)random.Next(0, byte.MaxValue);
             SenderId = (byte)random.Next(0, byte.MaxValue);
-            Data = new byte[
-                random.Next(
-                    0,
-                    AsvMessageParser.DataSize - 10 /*  */
-                )
-            ];
+            Data = new byte[random.Next(0, AsvMessageParser.DataSize - 10)];
             random.NextBytes(Data);
             LastByteLength = (byte)random.Next(0, 7);
             Msgs = (AsvGbasMessage)
@@ -197,7 +192,7 @@ namespace Asv.Gnss
         public byte LastByteLength { get; set; }
 
         /// <summary>
-        /// Property representing AsvGbasMessage objects.
+        /// Gets or sets property representing AsvGbasMessage objects.
         /// </summary>
         /// <value>
         /// The Msgs property represents a collection of AsvGbasMessage objects.

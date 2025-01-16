@@ -55,41 +55,82 @@ namespace Asv.Gnss
         )
         {
             if (reader.TokenType != JsonToken.StartObject)
+            {
                 ThrowError();
-            if (reader.Read() == false)
+            }
+
+            if (!reader.Read())
+            {
                 ThrowError();
+            }
+
             if (reader.TokenType != JsonToken.PropertyName)
+            {
                 ThrowError();
-            if (reader.Value == null || reader.Value.Equals("Lat") == false)
+            }
+
+            if (reader.Value?.Equals("Lat") != true)
+            {
                 ThrowError();
+            }
+
             var lat = reader.ReadAsDouble();
             if (lat == null)
+            {
                 ThrowError();
+            }
 
-            if (reader.Read() == false)
+            if (!reader.Read())
+            {
                 ThrowError();
+            }
+
             if (reader.TokenType != JsonToken.PropertyName)
+            {
                 ThrowError();
-            if (reader.Value == null || reader.Value.Equals("Lon") == false)
+            }
+
+            if (reader.Value?.Equals("Lon") != true)
+            {
                 ThrowError();
+            }
+
             var lon = reader.ReadAsDouble();
             if (lon == null)
+            {
                 ThrowError();
+            }
 
-            if (reader.Read() == false)
+            if (!reader.Read())
+            {
                 ThrowError();
+            }
+
             if (reader.TokenType != JsonToken.PropertyName)
+            {
                 ThrowError();
-            if (reader.Value == null || reader.Value.Equals("Alt") == false)
+            }
+
+            if (reader.Value?.Equals("Alt") != true)
+            {
                 ThrowError();
+            }
+
             var alt = reader.ReadAsDouble();
             if (alt == null)
+            {
                 ThrowError();
+            }
 
-            if (reader.Read() == false)
+            if (!reader.Read())
+            {
                 ThrowError();
+            }
+
             if (reader.TokenType != JsonToken.EndObject)
+            {
                 ThrowError();
+            }
 
             return new GlobalPosition(new GlobalCoordinates(lat.Value, lon.Value), alt.Value);
         }
@@ -149,22 +190,17 @@ namespace Asv.Gnss
         )
         {
             if (reader.TokenType == JsonToken.Null)
+            {
                 return null;
+            }
+
             return GlobalPositionConverter.Default.ReadJson(
                 reader,
                 objectType,
-                existingValue ?? new GlobalPosition(),
+                existingValue ?? default(GlobalPosition),
                 hasExistingValue,
                 serializer
             );
-        }
-
-        /// <summary>
-        /// Throws an exception indicating an error occurred during deserialization of the GlobalPositionConverter.
-        /// </summary>
-        private void ThrowError()
-        {
-            throw new Exception($"Error to deserialize {nameof(GlobalPositionConverter)}");
         }
     }
 }

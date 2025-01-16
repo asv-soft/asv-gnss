@@ -6,7 +6,7 @@ namespace Asv.Gnss
     public abstract class RtcmV3Message1007and1008 : RtcmV3MessageBase
     {
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its
+        /// Gets or sets the Reference Station ID is determined by the service provider. Its
         /// primary purpose is to link all message data to their unique sourceName. It is
         /// useful in distinguishing between desired and undesired data in cases
         /// where more than one service may be using the same data link
@@ -28,19 +28,19 @@ namespace Asv.Gnss
         public uint ReferenceStationID { get; set; }
 
         /// <summary>
-        /// The Descriptor Counter defines the number of characters (bytes) to
-        /// follow in DF030, Antenna Descriptor
+        /// Gets or sets the Descriptor Counter defines the number of characters (bytes) to
+        /// follow in DF030, Antenna Descriptor.
         /// </summary>
         public uint DescriptorCounterN { get; set; }
 
         /// <summary>
-        /// Alphanumeric characters. IGS limits the number of characters to 20
+        /// Gets or sets alphanumeric characters. IGS limits the number of characters to 20
         /// at this time, but this DF allows more characters for future extension.
         /// </summary>
         public string AntennaDescriptor { get; set; }
 
         /// <summary>
-        /// 0=Use standard IGS Model
+        /// Gets or sets 0=Use standard IGS Model
         /// 1-255=Specific Antenna Setup ID#
         /// The Antenna Setup ID is a parameter for use by the service provider
         /// to indicate the particular reference station-antenna combination.The
@@ -75,6 +75,7 @@ namespace Asv.Gnss
                     (int)DescriptorCounterN
                 );
             }
+
             AntennaSetupID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
         }
     }

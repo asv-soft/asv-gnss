@@ -39,7 +39,7 @@ namespace Asv.Gnss
         public override ushort MessageId => RtcmMessageId;
 
         /// <summary>
-        /// The Reference Station ID is determined by the service provider. Its
+        /// Gets or sets the Reference Station ID is determined by the service provider. Its
         /// primary purpose is to link all message data to their unique sourceName. It is
         /// useful in distinguishing between desired and undesired data in cases
         /// where more than one service may be using the same data link
@@ -66,18 +66,18 @@ namespace Asv.Gnss
     public class SystemMessage
     {
         /// <summary>
-        /// Each announcement lists the Message ID as transmitted by the reference station.
+        /// Gets or sets each announcement lists the Message ID as transmitted by the reference station.
         /// </summary>
         public ushort Id { get; set; }
 
         /// <summary>
-        /// 0 - Asynchronous – not transmitted on a regular basis;
-        /// 1 - Synchronous – scheduled for transmission at regular intervals
+        /// Gets or sets 0 - Asynchronous – not transmitted on a regular basis;
+        /// 1 - Synchronous – scheduled for transmission at regular intervals.
         /// </summary>
         public byte SyncFlag { get; set; }
 
         /// <summary>
-        /// Each announcement lists the Message Transmission Interval as
+        /// Gets or sets each announcement lists the Message Transmission Interval as
         /// transmitted by the reference station. If asynchronous, the transmission
         /// interval is approximate.
         /// </summary>

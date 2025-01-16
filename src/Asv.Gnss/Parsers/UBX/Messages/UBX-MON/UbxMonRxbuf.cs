@@ -25,19 +25,19 @@ namespace Asv.Gnss
         public override byte SubClass => 0x07;
 
         /// <summary>
-        /// Number of bytes pending in transmitter
-        /// buffer for each target
+        /// Gets number of bytes pending in transmitter
+        /// buffer for each target.
         /// </summary>
         public ushort[] Pending { get; } = new ushort[6];
 
         /// <summary>
-        /// Maximum usage transmitter buffer during
-        /// the last sysmon period for each target
+        /// Gets maximum usage transmitter buffer during
+        /// the last sysmon period for each target.
         /// </summary>
         public byte[] Usage { get; } = new byte[6];
 
         /// <summary>
-        /// Maximum usage transmitter buffer for each target
+        /// Gets maximum usage transmitter buffer for each target.
         /// </summary>
         public byte[] PeakUsage { get; } = new byte[6];
 

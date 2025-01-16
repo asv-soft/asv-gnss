@@ -39,6 +39,7 @@ namespace Asv.Gnss
                 var byte3 = BinSerialize.ReadByte(ref buffer);
                 RawData[i] = (uint)((byte1 << 22) | (byte2 << 14) | (byte3 << 6));
             }
+
             var offsetByte = BinSerialize.ReadUShort(ref buffer);
 
             GpsSubFrame = GpsSubFrameFactory.Create(RawData);

@@ -29,57 +29,57 @@ namespace Asv.Gnss
     public enum ComNavTimeStatusEnum : byte
     {
         /// <summary>
-        ///  Time validity is unknown
+        ///  Time validity is unknown.
         /// </summary>
         UNKNOWN,
 
         /// <summary>
-        ///  Time is set approximately
+        ///  Time is set approximately.
         /// </summary>
         APPROXIMATE,
 
         /// <summary>
-        ///  Time is approaching coarse precision
+        ///  Time is approaching coarse precision.
         /// </summary>
         COARSEADJUSTING,
 
         /// <summary>
-        ///  This time is valid to coarse precision
+        ///  This time is valid to coarse precision.
         /// </summary>
         COARSE,
 
         /// <summary>
-        ///  Time is coarse set and is being steered
+        ///  Time is coarse set and is being steered.
         /// </summary>
         COARSESTEERING,
 
         /// <summary>
-        ///  Position is lost and the range bias cannot be calculated
+        ///  Position is lost and the range bias cannot be calculated.
         /// </summary>
         FREEWHEELING,
 
         /// <summary>
-        ///  Time is adjusting to fine precision
+        ///  Time is adjusting to fine precision.
         /// </summary>
         FINEADJUSTING,
 
         /// <summary>
-        ///  Time has fine precision
+        ///  Time has fine precision.
         /// </summary>
         FINE,
 
         /// <summary>
-        ///  Time is fine set and is being steered by the backup system
+        ///  Time is fine set and is being steered by the backup system.
         /// </summary>
         FINEBACKUPSTEERING,
 
         /// <summary>
-        ///  Time is fine set and is being steered
+        ///  Time is fine set and is being steered.
         /// </summary>
         FINESTEERING,
 
         /// <summary>
-        ///  Time from satellite. Only used in logs containing satellite data such as ephemeris and almanac
+        ///  Time from satellite. Only used in logs containing satellite data such as ephemeris and almanac.
         /// </summary>
         SATTIME,
     }
@@ -92,10 +92,12 @@ namespace Asv.Gnss
         {
             var sync = BinSerialize.ReadByte(ref buffer);
             if (sync != ComNavAsciiParser.FirstSyncByte)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"First sync byte error: want {ComNavAsciiParser.FirstSyncByte}, got {sync}"
                 );
+            }
 
             var originBuffer = buffer;
 
@@ -104,10 +106,12 @@ namespace Asv.Gnss
                 .Split(Encoding.ASCII.GetChars(new[] { ComNavAsciiParser.HeaderSeparator }));
 
             if (msg.Length != 2)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Error to deserialize {ProtocolId}:{MessageId} packet"
                 );
+            }
 
             var header = msg[0]
                 .Split(Encoding.ASCII.GetChars(new[] { ComNavAsciiParser.Separator }));
@@ -115,31 +119,37 @@ namespace Asv.Gnss
                 .Split(Encoding.ASCII.GetChars(new[] { ComNavAsciiParser.Separator }));
 
             if (header.Length != 10)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Error to deserialize {ProtocolId}:{MessageId} packet"
                 );
+            }
 
             if (header[0] != MessageId)
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{header[0]}])"
                 );
+            }
 #if NETFRAMEWORK
             Source = Enum.TryParse(header[1], true, out ComNavPortEnum source)
                 ? source
                 : ComNavPortEnum.NO_PORTS;
 #else
             if (Enum.TryParse(typeof(ComNavPortEnum), header[1], true, out var source))
+            {
                 Source = (ComNavPortEnum)source;
+            }
             else
+            {
                 Source = ComNavPortEnum.NO_PORTS;
+            }
 #endif
-            var headerLength = header.Select(_ => _.Length).Sum() + header.Length - 1;
+            var headerLength = header.Sum(_ => _.Length) + header.Length - 1;
             MessageLength =
-                payload.Length != 0
-                    ? (payload.Select(_ => _.Length).Sum() + payload.Length - 1)
-                    : 0;
+                payload.Length != 0 ? (payload.Sum(_ => _.Length) + payload.Length - 1) : 0;
 
 #if NETFRAMEWORK
             TimeStatus = Enum.TryParse(header[4], true, out ComNavTimeStatusEnum timeStatus)
@@ -147,13 +157,19 @@ namespace Asv.Gnss
                 : ComNavTimeStatusEnum.UNKNOWN;
 #else
             if (Enum.TryParse(typeof(ComNavTimeStatusEnum), header[4], true, out var timeStatus))
+            {
                 TimeStatus = (ComNavTimeStatusEnum)timeStatus;
+            }
             else
+            {
                 TimeStatus = ComNavTimeStatusEnum.UNKNOWN;
+            }
 #endif
 
             if (!uint.TryParse(header[5], out var gpsWeek))
+            {
                 gpsWeek = 0;
+            }
 
             if (
                 !double.TryParse(
@@ -163,7 +179,9 @@ namespace Asv.Gnss
                     out var gpsSecs
                 )
             )
+            {
                 gpsSecs = 0.0;
+            }
 
             GpsTime = GetFromGps((int)gpsWeek, gpsSecs);
             UtcTime = Gps2Utc(GpsTime);
@@ -227,47 +245,102 @@ namespace Asv.Gnss
 
         private static int LeapSecondsTAI(int year, int month)
         {
-            //http://maia.usno.navy.mil/ser7/tai-utc.dat
-
-            var yyyymm = year * 100 + month;
+            // http://maia.usno.navy.mil/ser7/tai-utc.dat
+            var yyyymm = (year * 100) + month;
             if (yyyymm >= 201701)
+            {
                 return 37;
+            }
+
             if (yyyymm >= 201507)
+            {
                 return 36;
+            }
+
             if (yyyymm >= 201207)
+            {
                 return 35;
+            }
+
             if (yyyymm >= 200901)
+            {
                 return 34;
+            }
+
             if (yyyymm >= 200601)
+            {
                 return 33;
+            }
+
             if (yyyymm >= 199901)
+            {
                 return 32;
+            }
+
             if (yyyymm >= 199707)
+            {
                 return 31;
+            }
+
             if (yyyymm >= 199601)
+            {
                 return 30;
+            }
+
             if (yyyymm >= 199407)
+            {
                 return 29;
+            }
+
             if (yyyymm >= 199307)
+            {
                 return 28;
+            }
+
             if (yyyymm >= 199207)
+            {
                 return 27;
+            }
+
             if (yyyymm >= 199101)
+            {
                 return 26;
+            }
+
             if (yyyymm >= 199001)
+            {
                 return 25;
+            }
+
             if (yyyymm >= 198801)
+            {
                 return 24;
+            }
+
             if (yyyymm >= 198507)
+            {
                 return 23;
+            }
+
             if (yyyymm >= 198307)
+            {
                 return 22;
+            }
+
             if (yyyymm >= 198207)
+            {
                 return 21;
+            }
+
             if (yyyymm >= 198107)
+            {
                 return 20;
+            }
+
             if (yyyymm >= 0)
+            {
                 return 19;
+            }
 
             return 0;
         }

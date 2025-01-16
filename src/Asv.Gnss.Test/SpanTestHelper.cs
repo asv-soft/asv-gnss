@@ -6,13 +6,13 @@ using Xunit;
 
 namespace Asv.Gnss.Test
 {
-    public class SpanTestHelper
+    public static class SpanTestHelper
     {
         public static void SerializeDeserializeTestBegin(Action<string> output = null)
         {
             output?.Invoke($"{"#", -4} | {"NAME", -25} | {"VALUE", -50} | {"SIZE", -4} | COMMENT ");
             output?.Invoke(
-                $"----------------------------------------------------------------------------------------------------------------"
+                "----------------------------------------------------------------------------------------------------------------"
             );
         }
 
@@ -63,7 +63,7 @@ namespace Asv.Gnss.Test
             catch (Exception e)
             {
                 output?.Invoke(
-                    $"{("ERR"), -4} | {type.GetType().Name, -25} | {type.ToString().Substring(0, 50), -50} | {type.GetByteSize(), -4} | {comment ?? string.Empty}"
+                    $"{"ERR", -4} | {type.GetType().Name, -25} | {type.ToString().Substring(0, 50), -50} | {type.GetByteSize(), -4} | {comment ?? string.Empty}"
                 );
             }
         }

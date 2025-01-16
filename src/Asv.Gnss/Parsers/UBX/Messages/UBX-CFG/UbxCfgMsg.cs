@@ -69,6 +69,7 @@ namespace Asv.Gnss
                     $"Must set only one field: {nameof(CurrentPortRate)} or {nameof(Ports)}"
                 );
             }
+
             if (CurrentPortRate == null && Ports == null)
             {
                 throw new Exception(

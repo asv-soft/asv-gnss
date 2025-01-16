@@ -23,76 +23,85 @@ namespace Asv.Gnss
         {
             nav = SbfNavSysEnum.Unknown;
 
-            if (37 >= svidOrPrn && svidOrPrn >= 1)
+            if (svidOrPrn <= 37 && svidOrPrn >= 1)
             {
                 nav = SbfNavSysEnum.GPS;
                 return $"G{svidOrPrn:00}";
             }
 
-            if (61 >= svidOrPrn && svidOrPrn >= 38)
+            if (svidOrPrn <= 61 && svidOrPrn >= 38)
             {
                 nav = SbfNavSysEnum.GLONASS;
-                return $"R{(svidOrPrn - 37):00}";
+                return $"R{svidOrPrn - 37:00}";
             }
 
             // 62: GLONASS satellite of which the slot number is not known
             if (svidOrPrn == 62)
             {
                 nav = SbfNavSysEnum.GLONASS;
-                return $"R??";
-            }
-            if (68 >= svidOrPrn && svidOrPrn >= 63)
-            {
-                nav = SbfNavSysEnum.GLONASS;
-                return $"R{(svidOrPrn - 38):00}";
-            }
-            if (106 >= svidOrPrn && svidOrPrn >= 71)
-            {
-                nav = SbfNavSysEnum.Galileo;
-                return $"E{(svidOrPrn - 70):00}";
-            }
-            // 107-119: L-Band (MSS) satellite. Corresponding
-            // satellite name can be found in the LBandBeams block.
-            if (119 >= svidOrPrn && svidOrPrn >= 107)
-            {
-                nav = SbfNavSysEnum.Unknown;
-                return $"NA?";
+                return "R??";
             }
 
-            if (140 >= svidOrPrn && svidOrPrn >= 120)
+            if (svidOrPrn <= 68 && svidOrPrn >= 63)
+            {
+                nav = SbfNavSysEnum.GLONASS;
+                return $"R{svidOrPrn - 38:00}";
+            }
+
+            if (svidOrPrn <= 106 && svidOrPrn >= 71)
+            {
+                nav = SbfNavSysEnum.Galileo;
+                return $"E{svidOrPrn - 70:00}";
+            }
+
+            // 107-119: L-Band (MSS) satellite. Corresponding
+            // satellite name can be found in the LBandBeams block.
+            if (svidOrPrn <= 119 && svidOrPrn >= 107)
+            {
+                nav = SbfNavSysEnum.Unknown;
+                return "NA?";
+            }
+
+            if (svidOrPrn <= 140 && svidOrPrn >= 120)
             {
                 nav = SbfNavSysEnum.SBAS;
-                return $"S{(svidOrPrn - 100):00}";
+                return $"S{svidOrPrn - 100:00}";
             }
-            if (180 >= svidOrPrn && svidOrPrn >= 141)
+
+            if (svidOrPrn <= 180 && svidOrPrn >= 141)
             {
                 nav = SbfNavSysEnum.BeiDou;
-                return $"C{(svidOrPrn - 140):00}";
+                return $"C{svidOrPrn - 140:00}";
             }
-            if (187 >= svidOrPrn && svidOrPrn >= 181)
+
+            if (svidOrPrn <= 187 && svidOrPrn >= 181)
             {
                 nav = SbfNavSysEnum.QZSS;
-                return $"J{(svidOrPrn - 180):00}";
+                return $"J{svidOrPrn - 180:00}";
             }
-            if (197 >= svidOrPrn && svidOrPrn >= 191)
+
+            if (svidOrPrn <= 197 && svidOrPrn >= 191)
             {
                 nav = SbfNavSysEnum.IRNS;
-                return $"I{(svidOrPrn - 190):00}";
+                return $"I{svidOrPrn - 190:00}";
             }
-            if (215 >= svidOrPrn && svidOrPrn >= 198)
+
+            if (svidOrPrn <= 215 && svidOrPrn >= 198)
             {
                 nav = SbfNavSysEnum.SBAS;
-                return $"S{(svidOrPrn - 157):00}";
+                return $"S{svidOrPrn - 157:00}";
             }
-            if (222 >= svidOrPrn && svidOrPrn >= 216)
+
+            if (svidOrPrn <= 222 && svidOrPrn >= 216)
             {
                 nav = SbfNavSysEnum.IRNS;
-                return $"I{(svidOrPrn - 208):00}";
+                return $"I{svidOrPrn - 208:00}";
             }
-            if (245 >= svidOrPrn && svidOrPrn >= 223)
+
+            if (svidOrPrn <= 245 && svidOrPrn >= 223)
             {
                 nav = SbfNavSysEnum.BeiDou;
-                return $"C{(svidOrPrn - 182):00}";
+                return $"C{svidOrPrn - 182:00}";
             }
 
             return null;
@@ -100,12 +109,12 @@ namespace Asv.Gnss
 
         public static int GetSattelitePrn(byte svidOrPrn)
         {
-            if (37 >= svidOrPrn && svidOrPrn >= 1)
+            if (svidOrPrn <= 37 && svidOrPrn >= 1)
             {
                 return svidOrPrn;
             }
 
-            if (61 >= svidOrPrn && svidOrPrn >= 38)
+            if (svidOrPrn <= 61 && svidOrPrn >= 38)
             {
                 return svidOrPrn - 37;
             }
@@ -115,46 +124,55 @@ namespace Asv.Gnss
             {
                 return 0;
             }
-            if (68 >= svidOrPrn && svidOrPrn >= 63)
+
+            if (svidOrPrn <= 68 && svidOrPrn >= 63)
             {
                 return svidOrPrn - 38;
             }
-            if (106 >= svidOrPrn && svidOrPrn >= 71)
+
+            if (svidOrPrn <= 106 && svidOrPrn >= 71)
             {
                 return svidOrPrn - 70;
             }
+
             // 107-119: L-Band (MSS) satellite. Corresponding
             // satellite name can be found in the LBandBeams block.
-            if (119 >= svidOrPrn && svidOrPrn >= 107)
+            if (svidOrPrn <= 119 && svidOrPrn >= 107)
             {
                 return 0;
             }
 
-            if (140 >= svidOrPrn && svidOrPrn >= 120)
+            if (svidOrPrn <= 140 && svidOrPrn >= 120)
             {
                 return svidOrPrn - 100;
             }
-            if (180 >= svidOrPrn && svidOrPrn >= 141)
+
+            if (svidOrPrn <= 180 && svidOrPrn >= 141)
             {
                 return svidOrPrn - 140;
             }
-            if (187 >= svidOrPrn && svidOrPrn >= 181)
+
+            if (svidOrPrn <= 187 && svidOrPrn >= 181)
             {
                 return svidOrPrn - 180;
             }
-            if (197 >= svidOrPrn && svidOrPrn >= 191)
+
+            if (svidOrPrn <= 197 && svidOrPrn >= 191)
             {
                 return svidOrPrn - 190;
             }
-            if (215 >= svidOrPrn && svidOrPrn >= 198)
+
+            if (svidOrPrn <= 215 && svidOrPrn >= 198)
             {
                 return svidOrPrn - 157;
             }
-            if (222 >= svidOrPrn && svidOrPrn >= 216)
+
+            if (svidOrPrn <= 222 && svidOrPrn >= 216)
             {
                 return svidOrPrn - 208;
             }
-            if (245 >= svidOrPrn && svidOrPrn >= 223)
+
+            if (svidOrPrn <= 245 && svidOrPrn >= 223)
             {
                 return svidOrPrn - 182;
             }
@@ -164,14 +182,8 @@ namespace Asv.Gnss
 
         /// <summary>
         /// 4.1.10 Signal Type
-        /// Some sub-blocks contain a signal type field, which identifies the type of signal and modulation the sub-blocks applies to.The signal numbering is defined as follows:
+        /// Some sub-blocks contain a signal type field, which identifies the type of signal and modulation the sub-blocks applies to.The signal numbering is defined as follows:.
         /// </summary>
-        /// <param name="signalNumber"></param>
-        /// <param name="freqNr"></param>
-        /// <param name="constellation"></param>
-        /// <param name="carrierFreq"></param>
-        /// <param name="rinexCode"></param>
-        /// <returns></returns>
         public static SbfSignalTypeEnum GetSignalType(
             byte signalNumber,
             byte freqNr,
@@ -182,7 +194,7 @@ namespace Asv.Gnss
         {
             var signalType = SbfSignalTypeEnum.Unknown;
             constellation = SbfNavSysEnum.Unknown;
-            carrierFreq = Double.NaN;
+            carrierFreq = double.NaN;
             rinexCode = null;
             switch (signalNumber)
             {
@@ -237,25 +249,25 @@ namespace Asv.Gnss
                 case 8:
                     signalType = SbfSignalTypeEnum.L1CA;
                     constellation = SbfNavSysEnum.GLONASS;
-                    carrierFreq = 1602.00 + (freqNr - 8f) * 9 / 16;
+                    carrierFreq = 1602.00 + ((freqNr - 8f) * 9 / 16);
                     rinexCode = "1C";
                     break;
                 case 9:
                     signalType = SbfSignalTypeEnum.L1P;
                     constellation = SbfNavSysEnum.GLONASS;
-                    carrierFreq = 1602.00 + (freqNr - 8f) * 9 / 16;
+                    carrierFreq = 1602.00 + ((freqNr - 8f) * 9 / 16);
                     rinexCode = "1P";
                     break;
                 case 10:
                     signalType = SbfSignalTypeEnum.L2P;
                     constellation = SbfNavSysEnum.GLONASS;
-                    carrierFreq = 1246.00 + (freqNr - 8f) * 7 / 16;
+                    carrierFreq = 1246.00 + ((freqNr - 8f) * 7 / 16);
                     rinexCode = "2P";
                     break;
                 case 11:
                     signalType = SbfSignalTypeEnum.L2CA;
                     constellation = SbfNavSysEnum.GLONASS;
-                    carrierFreq = 1246.00 + (freqNr - 8f) * 7 / 16;
+                    carrierFreq = 1246.00 + ((freqNr - 8f) * 7 / 16);
                     rinexCode = "2C";
                     break;
                 case 12:
@@ -285,8 +297,8 @@ namespace Asv.Gnss
                 case 16:
                     signalType = SbfSignalTypeEnum.Reserved;
                     constellation = SbfNavSysEnum.Unknown;
-                    carrierFreq = Double.NaN;
-                    rinexCode = "";
+                    carrierFreq = double.NaN;
+                    rinexCode = string.Empty;
                     break;
                 case 17:
                     signalType = SbfSignalTypeEnum.E1_L1BC;
@@ -297,8 +309,8 @@ namespace Asv.Gnss
                 case 18:
                     signalType = SbfSignalTypeEnum.Reserved;
                     constellation = SbfNavSysEnum.Unknown;
-                    carrierFreq = Double.NaN;
-                    rinexCode = "";
+                    carrierFreq = double.NaN;
+                    rinexCode = string.Empty;
                     break;
                 case 19:
                     signalType = SbfSignalTypeEnum.E6_E6BC;
@@ -327,7 +339,7 @@ namespace Asv.Gnss
                 case 23:
                     signalType = SbfSignalTypeEnum.LBand;
                     constellation = SbfNavSysEnum.MSS;
-                    carrierFreq = Double.NaN;
+                    carrierFreq = double.NaN;
                     rinexCode = "NA";
                     break;
                 case 24:
@@ -352,7 +364,7 @@ namespace Asv.Gnss
                     signalType = SbfSignalTypeEnum.L6;
                     constellation = SbfNavSysEnum.QZSS;
                     carrierFreq = 1278.75;
-                    rinexCode = "";
+                    rinexCode = string.Empty;
                     break;
                 case 28:
                     signalType = SbfSignalTypeEnum.B1I;
@@ -375,8 +387,8 @@ namespace Asv.Gnss
                 case 31:
                     signalType = SbfSignalTypeEnum.Reserved;
                     constellation = SbfNavSysEnum.Unknown;
-                    carrierFreq = Double.NaN;
-                    rinexCode = "";
+                    carrierFreq = double.NaN;
+                    rinexCode = string.Empty;
                     break;
                 case 32:
                     signalType = SbfSignalTypeEnum.L1C;
@@ -399,8 +411,8 @@ namespace Asv.Gnss
                 case 35:
                     signalType = SbfSignalTypeEnum.Reserved;
                     constellation = SbfNavSysEnum.Unknown;
-                    carrierFreq = Double.NaN;
-                    rinexCode = "";
+                    carrierFreq = double.NaN;
+                    rinexCode = string.Empty;
                     break;
                 case 36:
                     signalType = SbfSignalTypeEnum.S;

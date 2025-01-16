@@ -12,6 +12,7 @@ namespace Asv.Gnss
     public abstract class GnssMessageBase<TMsgId> : IGnssMessageBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="GnssMessageBase{TMsgId}"/> class.
         /// Base class for GNSS message types.
         /// </summary>
         protected GnssMessageBase()
@@ -19,8 +20,10 @@ namespace Asv.Gnss
 #if DEBUG
             // ReSharper disable once VirtualMemberCallInConstructor
             Debug.Assert(Name != null, nameof(Name) + " != null");
+
             // ReSharper disable once VirtualMemberCallInConstructor
             Debug.Assert(MessageId != null, nameof(MessageId) + " != null");
+
             // ReSharper disable once VirtualMemberCallInConstructor
             // ReSharper disable once VirtualMemberCallInConstructor
 #endif
@@ -48,7 +51,6 @@ namespace Asv.Gnss
         /// <summary>
         /// Gets the unique identifier of the message.
         /// </summary>
-        /// <typeparam name="TMsgId">The type of the message identifier.</typeparam>
         /// <returns>The unique identifier of the message.</returns>
         public abstract TMsgId MessageId { get; }
 

@@ -9,8 +9,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Gets the software and hardware version information of the device.
     /// </summary>
-    /// <param name="src">The IUbxDevice instance.</param>
-    /// <param name="cancel">The cancellation token.</param>
     /// <returns>A Task that represents the asynchronous operation. The task result contains the UbxMonVer object.</returns>
     public static class UbxDeviceHelper
     {
@@ -358,7 +356,7 @@ namespace Asv.Gnss
         /// - ClearMask: <see cref="UbxCfgSection.All"/> (indicating to clear all sections before saving)
         /// - SaveMask: <see cref="UbxCfgSection.All"/> (indicating to save all sections)
         /// - LoadMask: <see cref="UbxCfgSection.None"/> (indicating to not load any sections)
-        /// - DeviceMask: <see cref="UbxCfgDeviceMask.DevBbr"/> (indicating to save the configuration to the BBR memory)
+        /// - DeviceMask: <see cref="UbxCfgDeviceMask.DevBbr"/> (indicating to save the configuration to the BBR memory).
         /// </remarks>
         public static Task CallCfgSave(this IUbxDevice src, CancellationToken cancel = default)
         {
@@ -653,7 +651,10 @@ namespace Asv.Gnss
             for (var a = 0; a <= 0xf; a++)
             {
                 if (a is 0x0B or 0x0C or 0x0E)
+                {
                     continue;
+                }
+
                 await src.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, (byte)a, 0, cancel);
             }
         }
@@ -684,6 +685,7 @@ namespace Asv.Gnss
                     await Task.Delay(TimeSpan.FromSeconds(1), cancel);
                 }
             }
+
             await src.CallCfgLoad(cancel);
         }
 
@@ -735,11 +737,13 @@ namespace Asv.Gnss
 
             // rxm-raw/rawx - 1s
             await src.SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x15, 1, cancel);
-            //await SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x10, 1, cancel);
+
+            // await SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x10, 1, cancel);
 
             // rxm-sfrb/sfrb - 2s
             await src.SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x13, 2, cancel);
-            //await SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x11, 2, cancel);
+
+            // await SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x11, 2, cancel);
 
             // mon-hw - 2s
             await src.SetMessageRate((byte)UbxHelper.ClassIDs.MON, 0x09, 2, cancel);

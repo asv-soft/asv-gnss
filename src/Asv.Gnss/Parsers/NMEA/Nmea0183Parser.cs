@@ -74,7 +74,7 @@ namespace Asv.Gnss
             End2,
 
             /// <summary>
-            /// Represents the NoCheckSum state of the State enum
+            /// Represents the NoCheckSum state of the State enum.
             /// </summary>
             NoChecksum,
         }
@@ -108,6 +108,7 @@ namespace Asv.Gnss
                         _msgReaded = 0;
                         _state = State.Msg;
                     }
+
                     break;
                 case State.Msg:
                     if (data == '*')
@@ -131,6 +132,7 @@ namespace Asv.Gnss
                             ++_msgReaded;
                         }
                     }
+
                     break;
                 case State.Crc1:
                     crcBuffer[0] = data;
@@ -146,6 +148,7 @@ namespace Asv.Gnss
                         Reset();
                         return false;
                     }
+
                     _state = State.End2;
                     break;
                 case State.End2:
@@ -154,6 +157,7 @@ namespace Asv.Gnss
                         Reset();
                         return false;
                     }
+
                     var strMessage = Encoding.ASCII.GetString(_buffer, 0, _msgReaded);
                     var readCrc = Encoding.ASCII.GetString(crcBuffer);
                     var calcCrc = NmeaCrc.Calc(new ReadOnlySpan<byte>(_buffer, 0, _msgReaded));
@@ -165,7 +169,10 @@ namespace Asv.Gnss
                             foreach (var idDelegate in _proprietaryMessageIdGetterList)
                             {
                                 if (!idDelegate(strMessage, out var parsedMessageId))
+                                {
                                     continue;
+                                }
+
                                 msgId = parsedMessageId;
                                 break;
                             }
@@ -174,16 +181,19 @@ namespace Asv.Gnss
                         {
                             msgId = strMessage.Substring(2, 3).ToUpper();
                         }
+
                         if (msgId == null)
                         {
                             Reset();
                             return false;
                         }
+
                         var span = new ReadOnlySpan<byte>(_buffer, 0, _msgReaded);
                         ParsePacket(msgId, ref span);
                         Reset();
                         return true;
                     }
+
                     PublishWhenCrcError();
                     Reset();
                     break;
@@ -193,6 +203,7 @@ namespace Asv.Gnss
                         Reset();
                         return false;
                     }
+
                     var strMessage1 = Encoding.ASCII.GetString(_buffer, 0, _msgReaded);
                     string msgId1 = null;
                     if (strMessage1.StartsWith('P')) // proprietary message
@@ -200,7 +211,10 @@ namespace Asv.Gnss
                         foreach (var idDelegate in _proprietaryMessageIdGetterList)
                         {
                             if (!idDelegate(strMessage1, out var parsedMessageId))
+                            {
                                 continue;
+                            }
+
                             msgId1 = parsedMessageId;
                             break;
                         }
@@ -209,11 +223,13 @@ namespace Asv.Gnss
                     {
                         msgId1 = strMessage1.Substring(2, 3).ToUpper();
                     }
+
                     if (msgId1 == null)
                     {
                         Reset();
                         return false;
                     }
+
                     var span1 = new ReadOnlySpan<byte>(_buffer, 0, _msgReaded);
                     ParsePacket(msgId1, ref span1);
                     Reset();
@@ -221,6 +237,7 @@ namespace Asv.Gnss
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             return false;
         }
 
@@ -230,7 +247,7 @@ namespace Asv.Gnss
         )
         {
             _proprietaryMessageIdGetterList.Add(idGetter);
-            base.Register(factory);
+            this.Register(factory);
         }
 
         /// <summary>

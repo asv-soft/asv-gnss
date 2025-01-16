@@ -58,12 +58,9 @@ namespace Asv.Gnss.Test
             var parser = new RtcmV2Parser().RegisterDefaultMessages();
             parser.OnError.Subscribe(_ =>
             {
-                //_output.WriteLine("ERR:"+_.Message);
+                // _output.WriteLine("ERR:"+_.Message);
             });
-            parser.OnMessage.Subscribe(_ =>
-            {
-                _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}");
-            });
+            parser.OnMessage.Subscribe(_ => _output.WriteLine($"[{_.MessageStringId}]=> {_.Name}"));
             foreach (var b in TestData.testglo_rtcm2)
             {
                 parser.Read(b);

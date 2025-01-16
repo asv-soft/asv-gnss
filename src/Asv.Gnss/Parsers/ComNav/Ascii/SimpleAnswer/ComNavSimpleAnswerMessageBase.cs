@@ -23,17 +23,21 @@ namespace Asv.Gnss
             var msgId = string.Join(Separator.ToString(), message, 0, msgIdLength);
 
             if (!string.Equals(MessageId, msgId, StringComparison.InvariantCultureIgnoreCase))
+            {
                 throw new GnssParserException(
                     ProtocolId,
                     $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{msgId}])"
                 );
+            }
 
             var bodyBuilder = new StringBuilder();
 
             for (var i = msgIdLength; i < message.Length; i++)
             {
                 if (!string.IsNullOrWhiteSpace(message[i]))
+                {
                     bodyBuilder.Append($"{message[i]} ");
+                }
             }
 
             Body = bodyBuilder.ToString().Trim();

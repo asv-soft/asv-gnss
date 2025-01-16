@@ -20,12 +20,12 @@ namespace Asv.Gnss
         protected override int GetContentByteSize() => 2;
 
         /// <summary>
-        /// Class ID of the Acknowledged Message
+        /// Gets or sets class ID of the Acknowledged Message.
         /// </summary>
         public byte AckClassId { get; set; }
 
         /// <summary>
-        /// Message ID of the Acknowledged Message
+        /// Gets or sets message ID of the Acknowledged Message.
         /// </summary>
         public byte AckSubclassId { get; set; }
 

@@ -86,25 +86,55 @@ namespace Asv.Gnss
         {
             ushort appliedBitMask = 0;
             if (ApplyDynamicModel)
+            {
                 appliedBitMask |= 0x01;
+            }
+
             if (ApplyMinimumElevation)
+            {
                 appliedBitMask |= 0x02;
+            }
+
             if (ApplyFixMode)
+            {
                 appliedBitMask |= 0x04;
+            }
+
             if (ApplyDrLimit)
+            {
                 appliedBitMask |= 0x08;
+            }
+
             if (ApplyPositionMask)
+            {
                 appliedBitMask |= 0x10;
+            }
+
             if (ApplyTimeMask)
+            {
                 appliedBitMask |= 0x20;
+            }
+
             if (ApplyStaticHold)
+            {
                 appliedBitMask |= 0x40;
+            }
+
             if (ApplyDGPS)
+            {
                 appliedBitMask |= 0x80;
+            }
+
             if (ApplyCnoThreshold)
+            {
                 appliedBitMask |= 0x100;
+            }
+
             if (ApplyUTC)
+            {
                 appliedBitMask |= 0x400;
+            }
+
             BinSerialize.WriteUShort(ref buffer, appliedBitMask);
 
             BinSerialize.WriteByte(ref buffer, (byte)PlatformModel);
@@ -184,23 +214,23 @@ namespace Asv.Gnss
         {
             ApplyDynamicModel = random.NextDouble() > 0.5;
             ApplyMinimumElevation = random.NextDouble() > 0.5;
-            ;
+
             ApplyFixMode = random.NextDouble() > 0.5;
-            ;
+
             ApplyDrLimit = random.NextDouble() > 0.5;
-            ;
+
             ApplyPositionMask = random.NextDouble() > 0.5;
-            ;
+
             ApplyTimeMask = random.NextDouble() > 0.5;
-            ;
+
             ApplyStaticHold = random.NextDouble() > 0.5;
-            ;
+
             ApplyDGPS = random.NextDouble() > 0.5;
-            ;
+
             ApplyCnoThreshold = random.NextDouble() > 0.5;
-            ;
+
             ApplyUTC = random.NextDouble() > 0.5;
-            ;
+
             PlatformModel = (ModelEnum)random.Next(0, 10);
             PositionMode = (PositionModeEnum)random.Next(1, 3);
             FixedAltitude = random.NextDouble() * 60;

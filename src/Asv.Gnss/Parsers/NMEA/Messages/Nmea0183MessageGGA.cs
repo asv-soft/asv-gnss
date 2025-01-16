@@ -31,7 +31,7 @@ namespace Asv.Gnss
     /// 13) Age of differential GPS data, time in seconds since last SC104
     ///  type 1 or 9 update, null field when DGPS is not used
     /// 14) Differential reference station ID, 0000-1023
-    /// 15) Checksum
+    /// 15) Checksum.
     /// </summary>
     public class Nmea0183MessageGGA : Nmea0183MessageBase
     {
@@ -42,10 +42,10 @@ namespace Asv.Gnss
 
         private const byte Unit = 0x4D;
 
-        /// Gets the message ID associated with the NMEA message.
-        /// This property is read-only and returns the NMEA message ID.
-        /// @return The message ID as a string.
-        /// /
+        // Gets the message ID associated with the NMEA message.
+        // This property is read-only and returns the NMEA message ID.
+        // @return The message ID as a string.
+        // /
         public override string MessageId => NmeaMessageId;
 
         /// <summary>
@@ -57,10 +57,16 @@ namespace Asv.Gnss
             Time = Nmea0183Helper.ParseTime(items[1]);
             Latitude = Nmea0183Helper.ParseLatitude(items[2]);
             if (string.Equals(items[3], "S", StringComparison.InvariantCultureIgnoreCase))
+            {
                 Latitude *= -1;
+            }
+
             Longitude = Nmea0183Helper.ParseLongitude(items[4]);
             if (string.Equals(items[5], "W", StringComparison.InvariantCultureIgnoreCase))
+            {
                 Longitude *= -1;
+            }
+
             GpsQuality = Nmea0183Helper.ParseGpsQuality(items[6]);
             NumberOfSatellites = Nmea0183Helper.ParseInt(items[7]);
             HorizontalDilutionPrecision = Nmea0183Helper.ParseDouble(items[8]);
@@ -75,48 +81,48 @@ namespace Asv.Gnss
         protected override void InternalSerialize(ref Span<byte> buffer, Encoding encoding)
         {
             Nmea0183Helper.SerializeTime(Time).CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             Nmea0183Helper.SerializeLatitude(Latitude).CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             InsertByte(ref buffer, Latitude < 0 ? South : North);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             Nmea0183Helper.SerializeLongitude(Longitude).CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             InsertByte(ref buffer, Longitude < 0 ? West : East);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             Nmea0183Helper.SerializeGpsQuality(GpsQuality).CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             (NumberOfSatellites.HasValue ? NumberOfSatellites.Value.ToString("00") : "00").CopyTo(
                 ref buffer,
                 encoding
             );
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             var hdop = double.IsNaN(HorizontalDilutionPrecision)
                 ? string.Empty
                 : Math.Round(HorizontalDilutionPrecision, 1)
                     .ToString("F1", CultureInfo.InvariantCulture);
             hdop.CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             var alt = double.IsNaN(AntennaAltitudeMsl)
                 ? string.Empty
                 : Math.Round(AntennaAltitudeMsl, 3).ToString("F3", CultureInfo.InvariantCulture);
             alt.CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             InsertByte(ref buffer, Unit);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             var sep = double.IsNaN(GeoidalSeparation)
                 ? string.Empty
                 : Math.Round(GeoidalSeparation, 3).ToString("F3", CultureInfo.InvariantCulture);
             sep.CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             InsertByte(ref buffer, Unit);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             var ageDGps = double.IsNaN(AgeOfDifferentialGPSData)
                 ? string.Empty
                 : Math.Round(AgeOfDifferentialGPSData, 1)
                     .ToString("00.0", CultureInfo.InvariantCulture);
             ageDGps.CopyTo(ref buffer, encoding);
-            InsertSeparator(ref buffer);
+            Nmea0183MessageBase.InsertSeparator(ref buffer);
             var refId = ReferenceStationID.HasValue
                 ? ReferenceStationID.Value.ToString("0000")
                 : string.Empty;
@@ -132,37 +138,37 @@ namespace Asv.Gnss
         public int? ReferenceStationID { get; set; }
 
         /// <summary>
-        /// Age of differential GPS data, time in seconds since last SC104
-        /// type 1 or 9 update, null field when DGPS is not used
+        /// Gets or sets age of differential GPS data, time in seconds since last SC104
+        /// type 1 or 9 update, null field when DGPS is not used.
         /// </summary>
         public double AgeOfDifferentialGPSData { get; set; }
 
         public string GeoidalSeparationUnits { get; set; }
 
         /// <summary>
-        ///  Geoidal separation, the difference between the WGS-84 earth
+        ///  Gets or sets geoidal separation, the difference between the WGS-84 earth
         ///  ellipsoid and mean-sea-level(geoid), "-" means mean-sea-level below ellipsoid
-        /// return MSL - Ellipsoid
+        /// return MSL - Ellipsoid.
         /// </summary>
         public double GeoidalSeparation { get; set; }
 
         /// <summary>
-        ///  Units of antenna altitude, meters
+        ///  Gets or sets units of antenna altitude, meters.
         /// </summary>
         public string AntennaAltitudeUnits { get; set; }
 
         /// <summary>
-        ///  Antenna Altitude above/below mean-sea-level (geoid)
+        ///  Gets or sets antenna Altitude above/below mean-sea-level (geoid).
         /// </summary>
         public double AntennaAltitudeMsl { get; set; }
 
         /// <summary>
-        ///  Horizontal Dilution of precision
+        ///  Gets or sets horizontal Dilution of precision.
         /// </summary>
         public double HorizontalDilutionPrecision { get; set; }
 
         /// <summary>
-        /// Number of satellites in view, 00 - 12
+        /// Gets or sets number of satellites in view, 00 - 12.
         /// </summary>
         public int? NumberOfSatellites { get; set; }
 
@@ -175,15 +181,14 @@ namespace Asv.Gnss
         public NmeaGpsQuality GpsQuality { get; set; }
 
         /// <summary>
-        /// The EastWest property represents the east-west direction.
+        /// Gets or sets the EastWest property represents the east-west direction.
         /// </summary>
         /// <value>
         /// A string value that represents the east-west direction.
         /// </value>
         // public string EastWest { get; set; }
-
-        /// Gets or sets the longitude of a location.
-        /// /
+        // Gets or sets the longitude of a location.
+        // /
         public double Longitude { get; set; }
 
         /// <summary>
@@ -193,13 +198,12 @@ namespace Asv.Gnss
         /// The value of the NorthSouth property.
         /// </value>
         // public string NorthSouth { get; set; }
-
-        /// Gets or sets a value representing the latitude.
-        /// /
+        // Gets or sets a value representing the latitude.
+        // /
         public double Latitude { get; set; }
 
         /// <summary>
-        /// Time (UTC)
+        /// Gets or sets time (UTC).
         /// </summary>
         public DateTime? Time { get; set; }
     }

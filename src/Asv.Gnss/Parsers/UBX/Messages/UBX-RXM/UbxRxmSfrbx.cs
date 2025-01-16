@@ -37,48 +37,48 @@ namespace Asv.Gnss
         public override byte SubClass => 0x13;
 
         /// <summary>
-        /// GNSS identifier
+        /// Gets or sets gNSS identifier.
         /// </summary>
         public UbxGnssTypeEnum UbxGnssId { get; set; }
 
         /// <summary>
-        /// Satellite identifier
+        /// Gets or sets satellite identifier.
         /// </summary>
         public byte SvId { get; set; }
 
         /// <summary>
-        /// Reserved
+        /// Gets or sets reserved.
         /// </summary>
         public byte Reserved1 { get; set; }
 
-        /// Only used for GLONASS: This is the
-        /// frequency slot (range from -7 to 6)
-        /// </summary>
+        // Only used for GLONASS: This is the
+        // frequency slot (range from -7 to 6)
+        // </summary>
         public sbyte FreqId { get; set; }
 
         /// <summary>
-        /// The number of data words contained in
-        /// this message (0..16)
+        /// Gets or sets the number of data words contained in
+        /// this message (0..16).
         /// </summary>
         public byte NumWords { get; set; }
 
         /// <summary>
-        /// Reserved
+        /// Gets or sets reserved.
         /// </summary>
         public byte Chn { get; set; }
 
         /// <summary>
-        /// Message version (0x01 for this version)
+        /// Gets or sets message version (0x01 for this version).
         /// </summary>
         public byte Version { get; set; }
 
         /// <summary>
-        /// Reserved
+        /// Gets or sets reserved.
         /// </summary>
         public byte Reserved2 { get; set; }
 
         /// <summary>
-        /// The data words
+        /// Gets or sets the data words.
         /// </summary>
         public uint[] RawData { get; set; }
 

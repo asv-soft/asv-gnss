@@ -76,13 +76,21 @@ namespace Asv.Gnss
                 {
                     var preamb = (byte)(_word >> 22);
                     if ((_word & 0x40000000) != 0)
+                    {
                         preamb ^= 0xFF; /* decode preamble */
+                    }
+
                     if (preamb != SyncByte)
+                    {
                         continue;
+                    }
 
                     /* check parity */
                     if (!DecodeWord(_word, _buffer, 0))
+                    {
                         continue;
+                    }
+
                     _readedBytes = 3;
                     _readedBits = 0;
                     continue;
@@ -103,11 +111,18 @@ namespace Asv.Gnss
                     _word &= 0x3;
                     continue;
                 }
+
                 _readedBytes += 3;
                 if (_readedBytes == 6)
-                    _len = (_buffer[5] >> 3) * 3 + 6;
+                {
+                    _len = ((_buffer[5] >> 3) * 3) + 6;
+                }
+
                 if (_readedBytes < _len)
+                {
                     continue;
+                }
+
                 _readedBytes = 0;
                 _word &= 0x3;
 
@@ -119,6 +134,7 @@ namespace Asv.Gnss
                 Reset();
                 return true;
             }
+
             return false;
         }
 
@@ -146,19 +162,29 @@ namespace Asv.Gnss
             uint parity = 0;
 
             if ((word & 0x40000000) != 0)
+            {
                 word ^= 0x3FFFFFC0;
+            }
 
             for (var i = 0; i < 6; i++)
             {
                 parity <<= 1;
                 for (var w = (word & hamming[i]) >> 6; w != 0; w >>= 1)
+                {
                     parity ^= w & 0x1;
+                }
             }
+
             if (parity != (word & 0x3F))
+            {
                 return false;
+            }
 
             for (var i = 0; i < 3; i++)
-                data[i + offset] = (byte)(word >> (22 - i * 8));
+            {
+                data[i + offset] = (byte)(word >> (22 - (i * 8)));
+            }
+
             return true;
         }
 
@@ -167,7 +193,7 @@ namespace Asv.Gnss
         /// </summary>
         public override void Reset()
         {
-            //_word = 0;
+            // _word = 0;
             _readedBytes = 0;
             _readedBits = 0;
             _len = 0;

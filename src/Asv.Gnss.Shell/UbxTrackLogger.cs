@@ -11,48 +11,6 @@ using ZLogger;
 
 namespace Asv.Gnss.Shell
 {
-    public class PvtInfo
-    {
-        public DateTime UtcTime { get; set; }
-        public DateTime GpsTime { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double AltitudeEllipse { get; set; }
-        public double AltitudeMsl { get; set; }
-        public double GroundSpeed2D { get; set; }
-        public double HeadingOfMotion2D { get; set; }
-    }
-
-    public interface ITrackLogger
-    {
-        IRxValue<PvtInfo> OnPvtInfo { get; }
-        IRxValue<Nmea0183MessageBase> OnNmea { get; }
-        public void Init();
-    }
-
-    public class UbxTrackLoggerConfig
-    {
-        /// <summary>
-        /// Connection string for UBX.
-        /// </summary>
-        public string ConnectionString { get; set; } = "tcp://10.10.5.16:30"; //"serial:COM10?br=115200";
-
-        public bool IsEnabled { get; set; } = true;
-
-        /// <summary>
-        /// Pvt logging rate for UBX (Hz)
-        /// </summary>
-        public byte PvtRate { get; set; } = 1;
-
-        /// <summary>
-        /// Gets or sets the timeout value in milliseconds for reconnecting.
-        /// </summary>
-        /// <value>
-        /// The timeout value in milliseconds for reconnecting. The default value is 10,000 milliseconds.
-        /// </value>
-        public int ReconnectTimeoutMs { get; set; } = 10_000;
-    }
-
     public class UbxTrackLogger : DisposableOnceWithCancel, ITrackLogger
     {
         private readonly ILogger<UbxTrackLogger> _logger;
@@ -121,7 +79,10 @@ namespace Asv.Gnss.Shell
         {
             // if disabled => do nothing
             if (_cfg.IsEnabled == false)
+            {
                 return;
+            }
+
             Observable
                 .Timer(TimeSpan.FromMilliseconds(1000))
                 .Subscribe(_ => InitUbxDevice(), DisposeCancel);
@@ -179,10 +140,13 @@ namespace Asv.Gnss.Shell
                     ).DisposeItWith(Disposable);
                     var cfgPort = (UbxCfgPrtConfigUart)
                         (await device.GetCfgPort(1, DisposeCancel).ConfigureAwait(false)).Config;
+
                     // _svc.Server.StatusText.Info($"GNSS device BoundRate: {cfgPort.BoundRate}");
                     _logger.LogInformation($"GNSS device BoundRate: {cfgPort.BoundRate}");
                     if (cfgPort.BoundRate == requiredBoundRate)
+                    {
                         return device;
+                    }
 
                     // _svc.Server.StatusText.Info($"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}");
                     _logger.LogInformation(
@@ -214,12 +178,15 @@ namespace Asv.Gnss.Shell
 
                     cfgPort = (UbxCfgPrtConfigUart)
                         (await device.GetCfgPort(1, DisposeCancel).ConfigureAwait(false)).Config;
+
                     // _svc.Server.StatusText.Info($"GNSS device BoundRate: {cfgPort.BoundRate}");
                     _logger.LogInformation(
                         $"Change BoundRate {cfgPort.BoundRate} => {requiredBoundRate}"
                     );
                     if (cfgPort.BoundRate == requiredBoundRate)
+                    {
                         return device;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -322,11 +289,14 @@ namespace Asv.Gnss.Shell
                 }
 
                 var ver = await _device.GetMonVer(DisposeCancel);
+
                 // _svc.Server.StatusText.Debug($"Found GNSS HW:{ver.Hardware.Trim('\0')}");
                 _logger.LogInformation($"Found GNSS HW:{ver.Hardware.Trim('\0')}");
+
                 // _svc.Server.StatusText.Debug($"GNSS SW:{ver.Software.Trim('\0')}");
                 _logger.LogInformation($"GNSS SW:{ver.Software.Trim('\0')}");
                 var ext = ver.Extensions.Select(_ => _.Trim('\0')).Distinct().ToArray();
+
                 // _svc.Server.StatusText.Debug($"GNSS EXT:{string.Join(",", ext)}");
                 _logger.LogInformation($"GNSS EXT:{string.Join(",", ext)}");
                 await _device.SetCfgNav5(
@@ -372,20 +342,28 @@ namespace Asv.Gnss.Shell
                     },
                     DisposeCancel
                 );
+
                 // surveyin msg - for feedback
                 await _device.SetMessageRate<UbxNavSvin>(2, DisposeCancel);
+
                 // pvt msg - for feedback
                 await _device.SetMessageRate<UbxNavPvt>(1, DisposeCancel);
+
                 // Turn On NMEA GGA
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, 0x00, 1, DisposeCancel);
+
                 // Turn On NMEA RMC
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.NMEA, 0x04, 1, DisposeCancel);
+
                 // mon-hw - 2s
                 await _device.SetMessageRate((byte)UbxHelper.ClassIDs.MON, 0x09, 2, DisposeCancel);
 
                 _isInit = true;
                 if (!await StartIdleMode(DisposeCancel))
+                {
                     throw new Exception();
+                }
+
                 _isInit = true;
             }
             catch (Exception e)
@@ -408,12 +386,18 @@ namespace Asv.Gnss.Shell
         private async Task<bool> StartIdleMode(CancellationToken cancel)
         {
             if (CheckInitAndBeginCall() == false)
+            {
                 return false;
+            }
+
             try
             {
                 var mode = await _device.GetCfgTMode3(cancel);
                 if (mode.Mode == TMode3Enum.Disabled)
+                {
                     return true;
+                }
+
                 await _device
                     .Push(
                         new UbxCfgTMode3 { Mode = TMode3Enum.Disabled, IsGivenInLLA = false },
@@ -458,9 +442,54 @@ namespace Asv.Gnss.Shell
             }
 
             if (_isInit)
+            {
                 return true;
+            }
+
             _logger.LogWarning("Temporarily rejected: now is busy");
             return false;
         }
+    }
+
+    public class PvtInfo
+    {
+        public DateTime UtcTime { get; set; }
+        public DateTime GpsTime { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double AltitudeEllipse { get; set; }
+        public double AltitudeMsl { get; set; }
+        public double GroundSpeed2D { get; set; }
+        public double HeadingOfMotion2D { get; set; }
+    }
+
+    public interface ITrackLogger
+    {
+        IRxValue<PvtInfo> OnPvtInfo { get; }
+        IRxValue<Nmea0183MessageBase> OnNmea { get; }
+        public void Init();
+    }
+
+    public class UbxTrackLoggerConfig
+    {
+        /// <summary>
+        /// Connection string for UBX.
+        /// </summary>
+        public string ConnectionString { get; set; } = "tcp://10.10.5.16:30"; //"serial:COM10?br=115200";
+
+        public bool IsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Pvt logging rate for UBX (Hz)
+        /// </summary>
+        public byte PvtRate { get; set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the timeout value in milliseconds for reconnecting.
+        /// </summary>
+        /// <value>
+        /// The timeout value in milliseconds for reconnecting. The default value is 10,000 milliseconds.
+        /// </value>
+        public int ReconnectTimeoutMs { get; set; } = 10_000;
     }
 }

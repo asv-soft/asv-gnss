@@ -30,5 +30,20 @@
             Request = request;
             TimeoutMs = timeoutMs;
         }
+
+        public UbxDeviceTimeoutException(string source, string message)
+            : base(source, message) { }
+
+        public UbxDeviceTimeoutException(string source, string message, System.Exception inner)
+            : base(source, message, inner) { }
+
+        public UbxDeviceTimeoutException()
+            : base() { }
+
+        public UbxDeviceTimeoutException(string message)
+            : base(message) { }
+
+        public UbxDeviceTimeoutException(string message, System.Exception innerException)
+            : base(message, innerException) { }
     }
 }

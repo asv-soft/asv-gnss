@@ -25,57 +25,57 @@ namespace Asv.Gnss
         public override byte SubClass => 0x04;
 
         /// <summary>
-        /// GPS time of week of the navigation epoch.
+        /// Gets or sets gPS time of week of the navigation epoch.
         /// </summary>
-        public ulong iTOW { get; set; }
+        public ulong ITOW { get; set; }
 
         /// <summary>
-        /// Geometric DOP
+        /// Gets or sets geometric DOP.
         /// </summary>
-        public double gDOP { get; set; }
+        public double GDOP { get; set; }
 
         /// <summary>
-        /// Position DOP
+        /// Gets or sets position DOP.
         /// </summary>
-        public double pDOP { get; set; }
+        public double PDOP { get; set; }
 
         /// <summary>
-        /// Time DOP
+        /// Gets or sets time DOP.
         /// </summary>
-        public double tDOP { get; set; }
+        public double TDOP { get; set; }
 
         /// <summary>
-        /// Vertical DOP
+        /// Gets or sets vertical DOP.
         /// </summary>
-        public double vDOP { get; set; }
+        public double VDOP { get; set; }
 
         /// <summary>
-        /// Horizontal DOP
+        /// Gets or sets horizontal DOP.
         /// </summary>
-        public double hDOP { get; set; }
+        public double HDOP { get; set; }
 
         /// <summary>
-        /// Northing DOP
+        /// Gets or sets northing DOP.
         /// </summary>
-        public double nDOP { get; set; }
+        public double NDOP { get; set; }
 
         /// <summary>
-        /// Easting DOP
+        /// Gets or sets easting DOP.
         /// </summary>
-        public double eDOP { get; set; }
+        public double EDOP { get; set; }
 
         protected override void SerializeContent(ref Span<byte> buffer) { }
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            iTOW = BinSerialize.ReadUInt(ref buffer);
-            gDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            pDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            tDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            vDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            hDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            nDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            eDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            ITOW = BinSerialize.ReadUInt(ref buffer);
+            GDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            PDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            TDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            VDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            HDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            NDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
+            EDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
         }
 
         protected override int GetContentByteSize() => 18;

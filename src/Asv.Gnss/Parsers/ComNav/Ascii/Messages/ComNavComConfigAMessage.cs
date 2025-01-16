@@ -30,20 +30,24 @@ namespace Asv.Gnss
                     ? dir
                     : ComNavPortEnum.NO_PORTS;
 #else
-                if (Enum.TryParse(typeof(ComNavPortEnum), msg[0 + i * 10], true, out var dir))
+                if (Enum.TryParse(typeof(ComNavPortEnum), msg[0 + (i * 10)], true, out var dir))
+                {
                     port.Port = (ComNavPortEnum)dir;
+                }
                 else
+                {
                     port.Port = ComNavPortEnum.NO_PORTS;
+                }
 #endif
-                port.BaudRate = uint.TryParse(msg[1 + i * 10], out var baudRate) ? baudRate : 0;
-                port.OtherParams[0] = uint.TryParse(msg[2 + i * 10], out var param1) ? param1 : 0;
-                port.OtherParams[1] = uint.TryParse(msg[3 + i * 10], out var param2) ? param2 : 0;
-                port.OtherParams[2] = uint.TryParse(msg[4 + i * 10], out var param3) ? param3 : 0;
-                port.OtherParams[3] = uint.TryParse(msg[5 + i * 10], out var param4) ? param4 : 0;
-                port.OtherParams[4] = uint.TryParse(msg[6 + i * 10], out var param5) ? param5 : 0;
-                port.OtherParams[5] = uint.TryParse(msg[7 + i * 10], out var param6) ? param6 : 0;
-                port.OtherParams[6] = uint.TryParse(msg[8 + i * 10], out var param7) ? param7 : 0;
-                port.OtherParams[7] = uint.TryParse(msg[9 + i * 10], out var param8) ? param8 : 0;
+                port.BaudRate = uint.TryParse(msg[1 + (i * 10)], out var baudRate) ? baudRate : 0;
+                port.OtherParams[0] = uint.TryParse(msg[2 + (i * 10)], out var param1) ? param1 : 0;
+                port.OtherParams[1] = uint.TryParse(msg[3 + (i * 10)], out var param2) ? param2 : 0;
+                port.OtherParams[2] = uint.TryParse(msg[4 + (i * 10)], out var param3) ? param3 : 0;
+                port.OtherParams[3] = uint.TryParse(msg[5 + (i * 10)], out var param4) ? param4 : 0;
+                port.OtherParams[4] = uint.TryParse(msg[6 + (i * 10)], out var param5) ? param5 : 0;
+                port.OtherParams[5] = uint.TryParse(msg[7 + (i * 10)], out var param6) ? param6 : 0;
+                port.OtherParams[6] = uint.TryParse(msg[8 + (i * 10)], out var param7) ? param7 : 0;
+                port.OtherParams[7] = uint.TryParse(msg[9 + (i * 10)], out var param8) ? param8 : 0;
                 Ports[i] = port;
             }
         }

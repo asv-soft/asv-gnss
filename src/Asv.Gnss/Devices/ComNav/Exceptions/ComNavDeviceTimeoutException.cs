@@ -18,5 +18,20 @@ namespace Asv.Gnss
             Request = request;
             TimeoutMs = timeoutMs;
         }
+
+        public ComNavDeviceTimeoutException(string source, string message)
+            : base(source, message) { }
+
+        public ComNavDeviceTimeoutException(string source, string message, System.Exception inner)
+            : base(source, message, inner) { }
+
+        public ComNavDeviceTimeoutException()
+            : base() { }
+
+        public ComNavDeviceTimeoutException(string message)
+            : base(message) { }
+
+        public ComNavDeviceTimeoutException(string message, System.Exception innerException)
+            : base(message, innerException) { }
     }
 }

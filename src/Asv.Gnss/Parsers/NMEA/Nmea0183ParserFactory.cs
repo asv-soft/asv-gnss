@@ -6,7 +6,7 @@ namespace Asv.Gnss
     public static class Nmea0183ParserFactory
     {
         /// <summary>
-        /// Represents a collection of default Nmea0183 message types.
+        /// Gets represents a collection of default Nmea0183 message types.
         /// </summary>
         public static IEnumerable<Func<Nmea0183MessageBase>> DefaultMessages
         {
@@ -48,6 +48,7 @@ namespace Asv.Gnss
             {
                 src.Register(func);
             }
+
             foreach (var func in DefaultProprietaryMessages)
             {
                 src.RegisterProprietary(func.Item1, func.Item2);

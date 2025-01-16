@@ -40,7 +40,10 @@ namespace Asv.Gnss
             {
                 case State.Sync:
                     if (data != FirstSyncByte)
+                    {
                         return false;
+                    }
+
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = FirstSyncByte;
                     _state = State.Header;
@@ -52,6 +55,7 @@ namespace Asv.Gnss
                         _buffer[_bufferIndex++] = FirstSyncByte;
                         _state = State.Header;
                     }
+
                     if (
                         _bufferIndex >= MaxPacketSize - 6 // ;(1 byte) + *(1 byte) + CRC32
                         || data is MessageSeparator or CarriageReturn or LineFeed
@@ -60,9 +64,13 @@ namespace Asv.Gnss
                         Reset();
                         break;
                     }
+
                     _buffer[_bufferIndex++] = data;
                     if (data == HeaderSeparator)
+                    {
                         _state = State.Message;
+                    }
+
                     break;
                 case State.Message:
                     if (data == FirstSyncByte)
@@ -71,6 +79,7 @@ namespace Asv.Gnss
                         _buffer[_bufferIndex++] = FirstSyncByte;
                         _state = State.Header;
                     }
+
                     if (
                         _bufferIndex >= MaxPacketSize - 5 // *(1 byte) + CRC32
                         || data is HeaderSeparator or CarriageReturn or LineFeed
@@ -79,9 +88,13 @@ namespace Asv.Gnss
                         Reset();
                         break;
                     }
+
                     _buffer[_bufferIndex++] = data;
                     if (data == MessageSeparator)
+                    {
                         _state = State.Crc;
+                    }
+
                     break;
                 case State.Crc:
                     if (data == FirstSyncByte)
@@ -90,6 +103,7 @@ namespace Asv.Gnss
                         _buffer[_bufferIndex++] = FirstSyncByte;
                         _state = State.Header;
                     }
+
                     if (
                         _bufferIndex >= MaxPacketSize - 4 /* CRC32 */
                         || data is HeaderSeparator or MessageSeparator or LineFeed
@@ -121,12 +135,14 @@ namespace Asv.Gnss
                             Reset();
                             break;
                         }
+
                         _state = State.CarriageReturn;
                     }
                     else
                     {
                         _crc.Append(Encoding.ASCII.GetString(new[] { data }));
                     }
+
                     break;
                 case State.CarriageReturn:
                     if (data != LineFeed)
@@ -155,7 +171,7 @@ namespace Asv.Gnss
                             .Split(Encoding.ASCII.GetChars(new[] { HeaderSeparator }))
                             .SelectMany(_ => _.Split(Encoding.ASCII.GetChars(new[] { Separator })))
                             .ToArray();
-                        if (!msg.Any())
+                        if (msg.Length == 0)
                         {
                             Reset();
                             break;
@@ -167,10 +183,12 @@ namespace Asv.Gnss
                         Reset();
                         return true;
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             return false;
         }
 

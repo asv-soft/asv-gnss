@@ -37,6 +37,7 @@ namespace Asv.Gnss.Test
                     ParserTestHelper.TestParser(parser, message, r, AsvMessageParser.Sync1);
                 }
             }
+
             // this is test for POOL messages (only send to receiver)
             foreach (var func in UbxFactory.DefaultPoolMessages)
             {

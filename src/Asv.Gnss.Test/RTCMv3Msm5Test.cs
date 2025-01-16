@@ -60,17 +60,18 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1075", msg.MessageStringId);
             var msg1075 = msg as RtcmV3Msm5Msg1075;
-            Assert.Equal((uint)200011000, msg1075.EpochTimeTow);
+            Assert.Equal(200011000U, msg1075.EpochTimeTow);
             Assert.Equal(1, msg1075.MultipleMessageBit);
             Assert.Equal(0, msg1075.Iods);
             Assert.Equal(0, msg1075.Reserved);
-            Assert.Equal((uint)1, msg1075.ClockSteeringIndicator);
-            Assert.Equal((uint)0, msg1075.ExternalClockIndicator);
-            Assert.Equal((uint)0, msg1075.SmoothingIndicator);
-            Assert.Equal((uint)0, msg1075.SmoothingInterval);
+            Assert.Equal(1U, msg1075.ClockSteeringIndicator);
+            Assert.Equal(0U, msg1075.ExternalClockIndicator);
+            Assert.Equal(0U, msg1075.SmoothingIndicator);
+            Assert.Equal(0U, msg1075.SmoothingInterval);
 
             Assert.Single(msg1075.Satellites);
             Assert.Single(msg1075.Satellites[0].Signals);
@@ -92,13 +93,13 @@ namespace Asv.Gnss.Test
             Assert.Equal(30 + 0.5, firstSat.Signals[0].Cnr);
             Assert.True(
                 (
-                    (-388 + 0.26330000000000003) * freq / RtcmV3Helper.CLIGHT
+                    ((-388 + 0.26330000000000003) * freq / RtcmV3Helper.CLIGHT)
                     - firstSat.Signals[0].PhaseRangeRate
                 ) < double.Epsilon
             );
             Assert.True(
                 (
-                    (84 + 0.0002228040248155594) * freq / RtcmV3Helper.CLIGHT
+                    ((84 + 0.0002228040248155594) * freq / RtcmV3Helper.CLIGHT)
                     - firstSat.Signals[0].CarrierPhase
                 ) < double.Epsilon
             );
@@ -503,6 +504,7 @@ namespace Asv.Gnss.Test
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1085", msg.MessageStringId);
             var msg1085 = msg as RtcmV3Msm5Msg1085;
@@ -510,10 +512,10 @@ namespace Asv.Gnss.Test
             Assert.Equal(1, msg1085.MultipleMessageBit);
             Assert.Equal(0, msg1085.Iods);
             Assert.Equal(0, msg1085.Reserved);
-            Assert.Equal((uint)1, msg1085.ClockSteeringIndicator);
-            Assert.Equal((uint)0, msg1085.ExternalClockIndicator);
-            Assert.Equal((uint)0, msg1085.SmoothingIndicator);
-            Assert.Equal((uint)0, msg1085.SmoothingInterval);
+            Assert.Equal(1U, msg1085.ClockSteeringIndicator);
+            Assert.Equal(0U, msg1085.ExternalClockIndicator);
+            Assert.Equal(0U, msg1085.SmoothingIndicator);
+            Assert.Equal(0U, msg1085.SmoothingInterval);
 
             Assert.Equal(10, msg1085.Satellites.Length);
             Assert.Equal(5, msg1085.Satellites.Select(s => s.Signals).Max(ss => ss.Length));
@@ -956,15 +958,13 @@ namespace Asv.Gnss.Test
             };
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                Console.WriteLine("ERR:" + _.Message);
-            });
+            parser.OnError.Subscribe(_ => Console.WriteLine("ERR:" + _.Message));
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1095", msg.MessageStringId);
             var msg1095 = msg as RtcmV3Msm5Msg1095;
@@ -972,10 +972,10 @@ namespace Asv.Gnss.Test
             Assert.Equal(1, msg1095.MultipleMessageBit);
             Assert.Equal(0, msg1095.Iods);
             Assert.Equal(0, msg1095.Reserved);
-            Assert.Equal((uint)1, msg1095.ClockSteeringIndicator);
-            Assert.Equal((uint)0, msg1095.ExternalClockIndicator);
-            Assert.Equal((uint)0, msg1095.SmoothingIndicator);
-            Assert.Equal((uint)0, msg1095.SmoothingInterval);
+            Assert.Equal(1U, msg1095.ClockSteeringIndicator);
+            Assert.Equal(0U, msg1095.ExternalClockIndicator);
+            Assert.Equal(0U, msg1095.SmoothingIndicator);
+            Assert.Equal(0U, msg1095.SmoothingInterval);
 
             Assert.Equal(9, msg1095.Satellites.Length);
             Assert.Equal(5, msg1095.Satellites.Select(s => s.Signals).Max(ss => ss.Length));
@@ -1445,15 +1445,13 @@ namespace Asv.Gnss.Test
 
             var parser = new RtcmV3Parser().RegisterExtendedMessages();
             RtcmV3MessageBase msg = null;
-            parser.OnError.Subscribe(_ =>
-            {
-                Console.WriteLine("ERR:" + _.Message);
-            });
+            parser.OnError.Subscribe(_ => Console.WriteLine("ERR:" + _.Message));
             parser.OnMessage.Cast<RtcmV3MessageBase>().Subscribe(_ => msg = _);
             foreach (var p in array)
             {
                 parser.Read(p);
             }
+
             Assert.NotNull(msg);
             Assert.Equal("1125", msg.MessageStringId);
             var msg1125 = msg as RtcmV3Msm5Msg1125;
@@ -1461,10 +1459,10 @@ namespace Asv.Gnss.Test
             Assert.Equal(1, msg1125.MultipleMessageBit);
             Assert.Equal(0, msg1125.Iods);
             Assert.Equal(0, msg1125.Reserved);
-            Assert.Equal((uint)1, msg1125.ClockSteeringIndicator);
-            Assert.Equal((uint)0, msg1125.ExternalClockIndicator);
-            Assert.Equal((uint)0, msg1125.SmoothingIndicator);
-            Assert.Equal((uint)0, msg1125.SmoothingInterval);
+            Assert.Equal(1U, msg1125.ClockSteeringIndicator);
+            Assert.Equal(0U, msg1125.ExternalClockIndicator);
+            Assert.Equal(0U, msg1125.SmoothingIndicator);
+            Assert.Equal(0U, msg1125.SmoothingInterval);
 
             Assert.Equal(9, msg1125.Satellites.Length);
             Assert.Equal(6, msg1125.Satellites.Select(s => s.Signals).Max(ss => ss.Length));

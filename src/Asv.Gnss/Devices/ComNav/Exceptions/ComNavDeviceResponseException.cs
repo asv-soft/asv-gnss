@@ -9,5 +9,20 @@ namespace Asv.Gnss
         {
             Request = request;
         }
+
+        public ComNavDeviceResponseException(string source, string message)
+            : base(source, message) { }
+
+        public ComNavDeviceResponseException(string source, string message, System.Exception inner)
+            : base(source, message, inner) { }
+
+        public ComNavDeviceResponseException()
+            : base() { }
+
+        public ComNavDeviceResponseException(string message)
+            : base(message) { }
+
+        public ComNavDeviceResponseException(string message, System.Exception innerException)
+            : base(message, innerException) { }
     }
 }

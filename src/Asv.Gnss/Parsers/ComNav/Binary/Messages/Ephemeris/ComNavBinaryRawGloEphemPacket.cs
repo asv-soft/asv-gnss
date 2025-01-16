@@ -13,7 +13,7 @@ namespace Asv.Gnss
         protected override void InternalContentDeserialize(ref ReadOnlySpan<byte> buffer)
         {
             SvId = BinSerialize.ReadUShort(ref buffer);
-            Frequency = 1.60200E9 + (BinSerialize.ReadUShort(ref buffer) - 7f) * 9E6 / 16;
+            Frequency = 1.60200E9 + ((BinSerialize.ReadUShort(ref buffer) - 7f) * 9E6 / 16);
             SatPrn = ComNavBinaryHelper.GetPnrAndRinexCode(
                 ComNavSatelliteSystemEnum.GLONASS,
                 SvId,
@@ -33,12 +33,15 @@ namespace Asv.Gnss
             for (var k = 0; k < recNum; k++)
             {
                 RawData[k] = new uint[3];
+
                 // Считываем 11 byte в RawBuffer
                 for (var i = 0; i < 3; i++)
                 {
                     for (var j = 0; j < 4 && i * j != 6; j++)
                     {
-                        RawData[k][i] |= (uint)(BinSerialize.ReadByte(ref buffer) << (24 - j * 8));
+                        RawData[k][i] |= (uint)(
+                            BinSerialize.ReadByte(ref buffer) << (24 - (j * 8))
+                        );
                     }
                 }
 
@@ -67,7 +70,7 @@ namespace Asv.Gnss
 
         protected override int InternalGetContentByteSize()
         {
-            return 20 + 12 * RawData.Length;
+            return 20 + (12 * RawData.Length);
         }
 
         public ushort SvId { get; set; }

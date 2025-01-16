@@ -9,7 +9,7 @@ namespace Asv.Gnss
     public static class RtcmV3FactoryExtension
     {
         /// <summary>
-        /// Messages that are not in the default set.
+        /// Gets messages that are not in the default set.
         /// </summary>
         public static IEnumerable<Func<RtcmV3MessageBase>> ExtendedMessages
         {
@@ -33,27 +33,29 @@ namespace Asv.Gnss
 
                 yield return () => new RtcmV3Msg4094();
 
-                //yield return () => new RtcmV3Msm6Msg1076();
-                //yield return () => new RtcmV3Msm6Msg1086();
-                //yield return () => new RtcmV3Msm6Msg1096();
-                //yield return () => new RtcmV3Msm6Msg1116();
-                //yield return () => new RtcmV3Msm6Msg1126();
-
+                // yield return () => new RtcmV3Msm6Msg1076();
+                // yield return () => new RtcmV3Msm6Msg1086();
+                // yield return () => new RtcmV3Msm6Msg1096();
+                // yield return () => new RtcmV3Msm6Msg1116();
+                // yield return () => new RtcmV3Msm6Msg1126();
                 yield return () => new RtcmV3Message1042();
                 yield return () => new RtcmV3Message1046();
-                //yield return () => new RtcmV3MsmMsg1023();
+
+                // yield return () => new RtcmV3MsmMsg1023();
             }
         }
 
         /// <summary>
         /// Registers extended messages.
         /// </summary>
+        /// <returns></returns>
         public static RtcmV3Parser RegisterExtendedMessages(this RtcmV3Parser src)
         {
             foreach (var func in ExtendedMessages)
             {
                 src.Register(func);
             }
+
             return src;
         }
     }

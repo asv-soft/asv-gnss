@@ -6,7 +6,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Base class for RTCMv3 messages.
     /// </summary>
-    /// <typeparam name="T">The type of the message ID.</typeparam>
     public abstract class RtcmV3MessageBase : GnssMessageBase<ushort>
     {
         /// <summary>
@@ -47,6 +46,7 @@ namespace Asv.Gnss
                     $"Deserialization RTCMv3 message failed: want {RtcmV3Helper.SyncByte:X}. Read {preamble:X}"
                 );
             }
+
             Reserved = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
             var messageLength = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
             if (
@@ -60,6 +60,7 @@ namespace Asv.Gnss
                     $"Deserialization RTCMv3 message failed: length too small. Want '{messageLength}'. Read = '{buffer.Length}'"
                 );
             }
+
             var msgId = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             if (msgId != MessageId)
             {
@@ -67,10 +68,11 @@ namespace Asv.Gnss
                     $"Deserialization RTCMv3 message failed: want message number '{MessageId}'. Read = '{msgId}'"
                 );
             }
+
             DeserializeContent(buffer, ref bitIndex, messageLength);
             bitIndex += 3 * 8; // skip crc
             buffer =
-                bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
+                bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice((bitIndex / 8) + 1);
         }
 
         /// <summary>

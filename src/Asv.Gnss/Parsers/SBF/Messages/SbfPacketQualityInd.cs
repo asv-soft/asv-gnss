@@ -11,10 +11,10 @@ namespace Asv.Gnss
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            var N = BinSerialize.ReadByte(ref buffer);
+            var n = BinSerialize.ReadByte(ref buffer);
             Reserved = BinSerialize.ReadByte(ref buffer);
-            Indicators = new QualityIndicator[N];
-            for (var i = 0; i < N; i++)
+            Indicators = new QualityIndicator[n];
+            for (var i = 0; i < n; i++)
             {
                 var indicator = BinSerialize.ReadUShort(ref buffer);
                 Indicators[i] = new QualityIndicator
@@ -35,37 +35,37 @@ namespace Asv.Gnss
     public enum SbfQualityIndicatorTypeEnum
     {
         /// <summary>
-        /// Overall quality
+        /// Overall quality.
         /// </summary>
         All = 0,
 
         /// <summary>
-        /// GNSS signals from main antenna
+        /// GNSS signals from main antenna.
         /// </summary>
         SignalMainAntenna = 1,
 
         /// <summary>
-        /// GNSS signals from aux1 antenna
+        /// GNSS signals from aux1 antenna.
         /// </summary>
         SignalAux1Antenna = 2,
 
         /// <summary>
-        /// RF power level from the main antenna
+        /// RF power level from the main antenna.
         /// </summary>
         RfPowerLevelMainAntenna = 11,
 
         /// <summary>
-        /// RF power level from the aux1 antenna
+        /// RF power level from the aux1 antenna.
         /// </summary>
         RfPowerLevelAux1Antenna = 12,
 
         /// <summary>
-        /// CPU headroom
+        /// CPU headroom.
         /// </summary>
         CpuHeadroom = 21,
 
         /// <summary>
-        /// OCXO stability (only available on PolaRx5S receivers)
+        /// OCXO stability (only available on PolaRx5S receivers).
         /// </summary>
         OcxoStability = 25,
 

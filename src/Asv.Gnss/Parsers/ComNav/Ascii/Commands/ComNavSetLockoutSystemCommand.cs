@@ -5,9 +5,9 @@ namespace Asv.Gnss
     public enum ComNavSatelliteSystemEnum
     {
         GPS = 0,
-        BD2 = 4,
         GLONASS = 1,
         GALILEO = 3,
+        BD2 = 4,
         BD3 = 7,
     }
 
@@ -17,7 +17,7 @@ namespace Asv.Gnss
     /// </summary>
     public class ComNavSetLockoutSystemCommand : ComNavAsciiCommandBase
     {
-        /// Gets or sets the satellite system of the property.
+        // Gets or sets the satellite system of the property.
         public ComNavSatelliteSystemEnum SatelliteSystem { get; set; }
 
         /// <summary>

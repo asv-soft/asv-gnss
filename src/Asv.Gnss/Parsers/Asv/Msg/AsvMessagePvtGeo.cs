@@ -34,7 +34,7 @@ namespace Asv.Gnss
             var tow = AsvHelper.GetBitU(buffer, ref bitIndex, 30) * 0.001;
             var week = AsvHelper.GetBitU(buffer, ref bitIndex, 10);
             var cycle = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
-            Tow = GpsRawHelper.Gps2Time((int)(cycle * 1024 + week), tow);
+            Tow = GpsRawHelper.Gps2Time((int)((cycle * 1024) + week), tow);
 
             PosType = (AsvPosTypeEnum)AsvHelper.GetBitU(buffer, ref bitIndex, 4);
             Error = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
@@ -112,13 +112,13 @@ namespace Asv.Gnss
             PosType = AsvPosTypeEnum.DifferentialPvt;
             TimeSystem = AsvTimeSystemEnum.Gps;
             Datum = AsvDatumEnum.WGS84;
-            Latitude = random.NextDouble() * 180.0 - 90.0;
-            Longitude = random.NextDouble() * 360.0 - 180.0;
+            Latitude = (random.NextDouble() * 180.0) - 90.0;
+            Longitude = (random.NextDouble() * 360.0) - 180.0;
             Height = random.NextDouble() * 2000.0;
         }
 
         /// <summary>
-        /// GPS Epoch Time
+        /// Gets or sets gPS Epoch Time.
         /// </summary>
         public DateTime Tow { get; set; }
 

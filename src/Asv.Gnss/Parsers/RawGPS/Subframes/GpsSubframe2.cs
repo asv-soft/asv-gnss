@@ -23,11 +23,11 @@ namespace Asv.Gnss
         {
             base.Deserialize(dataWithoutParity);
             var word2Start = 24U * 2;
-            iode = (int)GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 8);
+            Iode = (int)GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 8);
             word2Start += 8;
             Crs = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_5;
             word2Start += 16;
-            deln =
+            Deln =
                 GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16)
                 * GpsRawHelper.P2_43
                 * GpsRawHelper.SC2RAD;
@@ -39,7 +39,7 @@ namespace Asv.Gnss
             word2Start += 32;
             Cuc = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_29;
             word2Start += 16;
-            e = GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 32) * GpsRawHelper.P2_33;
+            E = GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 32) * GpsRawHelper.P2_33;
             word2Start += 32;
             Cus = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_29;
             word2Start += 16;
@@ -56,8 +56,8 @@ namespace Asv.Gnss
         public double Fit { get; set; }
 
         public double M0 { get; set; }
-        public double deln { get; set; }
-        public double e { get; set; }
+        public double Deln { get; set; }
+        public double E { get; set; }
         public double A { get; set; }
 
         public double Cuc { get; set; }
@@ -65,6 +65,6 @@ namespace Asv.Gnss
         public double Crs { get; set; }
 
         public double ToeSec { get; set; }
-        public int iode { get; set; }
+        public int Iode { get; set; }
     }
 }

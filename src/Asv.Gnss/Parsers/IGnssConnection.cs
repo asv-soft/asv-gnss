@@ -122,7 +122,8 @@ namespace Asv.Gnss
         /// </summary>
         /// <typeparam name="TMsg">The type of messages to filter.</typeparam>
         /// <typeparam name="TMsgId">The type of the MessageId.</typeparam>
-        /// <param name="src">The source observable stream of GnssMessageBase<TMsgId>.</param>
+        ///
+        /// <returns></returns><param name="src">The source observable stream of GnssMessageBase.<TMsgId>.</param>
         /// <returns>An observable stream of type TMsg.</returns>
         public static IObservable<TMsg> Filter<TMsg, TMsgId>(
             this IObservable<GnssMessageBase<TMsgId>> src

@@ -9,7 +9,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Converts degrees to radians.
     /// </summary>
-    /// <param name="degrees">The angle in degrees.</param>
     /// <returns>The angle in radians.</returns>
     public static class GeoMath
     {
@@ -244,7 +243,9 @@ namespace Asv.Gnss
         )
         {
             if (lineX.Equals(lineY))
+            {
                 return p; // если прямая задана одинаковыми точками
+            }
 
             var azimuth = DegreesToRadians(lineX.Azimuth(lineY) - lineX.Azimuth(p));
             var d = Distance(lineX, p);
@@ -338,15 +339,15 @@ namespace Asv.Gnss
         /// Generate wagging path points
         /// [2]     [4]
         /// [START]--/   \   /   \--[STOP]
-        /// [3]
+        /// [3].
         /// </summary>
-        /// <param name="start">The starting point of the path</param>
-        /// <param name="stop">The ending point of the path</param>
-        /// <param name="convergencePoint">The point of convergence for the wagging path</param>
-        /// <param name="waggingCountsValue">The number of sub-points to generate between the start and stop points</param>
-        /// <param name="deviationFromCenterLineInMeters">The maximum deviation from the center line of the wagging path in meters</param>
-        /// <param name="minAltitudeInMeters">The minimum altitude value for the generated points</param>
-        /// <returns>An enumerable collection of GeoPoint representing the wagging path points</returns>
+        /// <param name="start">The starting point of the path.</param>
+        /// <param name="stop">The ending point of the path.</param>
+        /// <param name="convergencePoint">The point of convergence for the wagging path.</param>
+        /// <param name="waggingCountsValue">The number of sub-points to generate between the start and stop points.</param>
+        /// <param name="deviationFromCenterLineInMeters">The maximum deviation from the center line of the wagging path in meters.</param>
+        /// <param name="minAltitudeInMeters">The minimum altitude value for the generated points.</param>
+        /// <returns>An enumerable collection of GeoPoint representing the wagging path points.</returns>
         public static IEnumerable<GeoPoint> GenerateWaggingLatLonPoints(
             GeoPoint start,
             GeoPoint stop,
@@ -390,11 +391,12 @@ namespace Asv.Gnss
                     yield return start
                         .RadialPoint(currentDist, azimuth)
                         .RadialPoint(
-                            (distanceToStart + m * currentDist) * factor,
+                            (distanceToStart + (m * currentDist)) * factor,
                             azimuth + (i % 2 == 0 ? -90 : 90)
                         )
                         .SetAltitude(alt);
                 }
+
                 yield return stop;
             }
         }
@@ -477,7 +479,10 @@ namespace Asv.Gnss
                                 ? startDownAltitude - currentDownAlt
                                 : startUpAltitude - currentUpAlt;
                         if (alt < minAltitudeInMeters)
+                        {
                             alt = minAltitudeInMeters;
+                        }
+
                         yield return start.RadialPoint(currentDist, azimuth).SetAltitude(alt);
                     }
                 }
@@ -495,7 +500,10 @@ namespace Asv.Gnss
                                 ? startDownAltitude + currentDownAlt
                                 : startUpAltitude + currentUpAlt;
                         if (alt < minAltitudeInMeters)
+                        {
                             alt = minAltitudeInMeters;
+                        }
+
                         yield return start.RadialPoint(currentDist, azimuth).SetAltitude(alt);
                     }
                 }

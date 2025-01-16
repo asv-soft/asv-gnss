@@ -25,60 +25,60 @@ namespace Asv.Gnss
         public override byte SubClass => 0x08;
 
         /// <summary>
-        /// Number of bytes pending in transmitter
-        /// buffer for each target
+        /// Gets number of bytes pending in transmitter
+        /// buffer for each target.
         /// </summary>
         public ushort[] Pending { get; } = new ushort[6];
 
         /// <summary>
-        /// Maximum usage transmitter buffer during
-        /// the last sysmon period for each target
+        /// Gets maximum usage transmitter buffer during
+        /// the last sysmon period for each target.
         /// </summary>
         public byte[] Usage { get; } = new byte[6];
 
         /// <summary>
-        /// Maximum usage transmitter buffer for each target
+        /// Gets maximum usage transmitter buffer for each target.
         /// </summary>
         public byte[] PeakUsage { get; } = new byte[6];
 
         /// <summary>
-        /// Maximum usage of transmitter buffer
-        /// during the last sysmon period for all targets
+        /// Gets or sets maximum usage of transmitter buffer
+        /// during the last sysmon period for all targets.
         /// </summary>
         public byte TUsage { get; set; }
 
         /// <summary>
-        /// Maximum usage of transmitter buffer for
-        /// all targets
+        /// Gets or sets maximum usage of transmitter buffer for
+        /// all targets.
         /// </summary>
         public byte TPeakUsage { get; set; }
 
         /// <summary>
-        /// Error bitmask (error bits in region below)
+        /// Gets or sets error bitmask (error bits in region below).
         /// </summary>
         public byte Errors { get; set; }
 
         #region Errors bits
 
         /// <summary>
-        /// Allocation error (TX buffer full)
+        /// Gets or sets a value indicating whether allocation error (TX buffer full).
         /// </summary>
         public bool IsAlloc { get; set; }
 
         /// <summary>
-        /// Memory Allocation error
+        /// Gets or sets a value indicating whether memory Allocation error.
         /// </summary>
         public bool IsMem { get; set; }
 
         /// <summary>
-        /// Buffer limit of corresponding target reached
+        /// Gets or sets a value indicating whether buffer limit of corresponding target reached.
         /// </summary>
         public bool IsLimit { get; set; }
 
         #endregion
 
         /// <summary>
-        /// Reserved
+        /// Gets or sets reserved.
         /// </summary>
         public byte Reserved1 { get; set; }
 

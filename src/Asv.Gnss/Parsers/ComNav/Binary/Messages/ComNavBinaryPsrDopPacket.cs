@@ -10,37 +10,37 @@ namespace Asv.Gnss
         public override string Name => "PSRDOP";
 
         /// <summary>
-        /// Geometric dilution of precision
+        /// Gets or sets geometric dilution of precision.
         /// </summary>
         public float Gdop { get; set; }
 
         /// <summary>
-        /// Position dilution of precision
+        /// Gets or sets position dilution of precision.
         /// </summary>
         public float Pdop { get; set; }
 
         /// <summary>
-        /// Horizontal dilution of precision
+        /// Gets or sets horizontal dilution of precision.
         /// </summary>
         public float Hdop { get; set; }
 
         /// <summary>
-        /// Horizontal position and time dilution of precision
+        /// Gets or sets horizontal position and time dilution of precision.
         /// </summary>
         public float Htdop { get; set; }
 
         /// <summary>
-        /// Time dilution of precision
+        /// Gets or sets time dilution of precision.
         /// </summary>
         public float Tdop { get; set; }
 
         /// <summary>
-        /// Elevation cut-off angle
+        /// Gets or sets elevation cut-off angle.
         /// </summary>
         public float Cutoff { get; set; }
 
         /// <summary>
-        /// PRNs of SV PRN tracking
+        /// Gets or sets pRNs of SV PRN tracking.
         /// </summary>
         public uint[] Satellites { get; set; }
 
@@ -69,7 +69,7 @@ namespace Asv.Gnss
 
         protected override int InternalGetContentByteSize()
         {
-            return 28 + Satellites.Length * 4;
+            return 28 + (Satellites.Length * 4);
         }
     }
 }

@@ -14,12 +14,12 @@ namespace Asv.Gnss
             Prn = BinSerialize.ReadByte(ref buffer);
             var reserved = BinSerialize.ReadByte(ref buffer);
             Week = BinSerialize.ReadUShort(ref buffer);
-            var CAorPonL2 = BinSerialize.ReadByte(ref buffer);
+            var cAorPonL2 = BinSerialize.ReadByte(ref buffer);
             Accuracy = BinSerialize.ReadByte(ref buffer);
             Health = BinSerialize.ReadByte(ref buffer);
-            var L2DataFlag = BinSerialize.ReadByte(ref buffer);
-            iodc = BinSerialize.ReadUShort(ref buffer);
-            iode = BinSerialize.ReadByte(ref buffer);
+            var l2DataFlag = BinSerialize.ReadByte(ref buffer);
+            Iodc = BinSerialize.ReadUShort(ref buffer);
+            Iode = BinSerialize.ReadByte(ref buffer);
             var iode3 = BinSerialize.ReadByte(ref buffer);
             var fitIntFlg = BinSerialize.ReadByte(ref buffer);
             var reserved2 = BinSerialize.ReadByte(ref buffer);
@@ -39,11 +39,11 @@ namespace Asv.Gnss
             Cic = BinSerialize.ReadFloat(ref buffer);
             OMEGA0 = BinSerialize.ReadDouble(ref buffer);
             Cis = BinSerialize.ReadFloat(ref buffer);
-            i0 = BinSerialize.ReadDouble(ref buffer);
+            I0 = BinSerialize.ReadDouble(ref buffer);
             Crc = BinSerialize.ReadFloat(ref buffer);
-            omega = BinSerialize.ReadDouble(ref buffer);
+            Omega = BinSerialize.ReadDouble(ref buffer);
             OmegaDot = BinSerialize.ReadFloat(ref buffer);
-            idot = BinSerialize.ReadFloat(ref buffer);
+            Idot = BinSerialize.ReadFloat(ref buffer);
             var weekToc = BinSerialize.ReadUShort(ref buffer);
             var weekToe = BinSerialize.ReadUShort(ref buffer);
 
@@ -58,9 +58,9 @@ namespace Asv.Gnss
 
         public uint ToeSec { get; set; }
 
-        public byte iode { get; set; }
+        public byte Iode { get; set; }
 
-        public ushort iodc { get; set; }
+        public ushort Iodc { get; set; }
 
         public byte Health { get; set; }
 
@@ -81,13 +81,13 @@ namespace Asv.Gnss
         #region SV orbit parameters
         public double A { get; set; }
         public double E { get; set; }
-        public double omega { get; set; }
+        public double Omega { get; set; }
         public double OMEGA0 { get; set; }
-        public double i0 { get; set; }
+        public double I0 { get; set; }
         public double M0 { get; set; }
         public float DeltaN { get; set; }
         public float OmegaDot { get; set; }
-        public float idot { get; set; }
+        public float Idot { get; set; }
         public float Crc { get; set; }
         public float Crs { get; set; }
         public float Cuc { get; set; }

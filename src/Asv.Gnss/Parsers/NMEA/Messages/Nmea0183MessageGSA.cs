@@ -13,12 +13,12 @@ namespace Asv.Gnss
     /// 15) PDOP in meters
     /// 16) HDOP in meters
     /// 17) VDOP in meters
-    /// 18) Checksum
+    /// 18) Checksum.
     /// </summary>
     public class Nmea0183MessageGSA : Nmea0183MessageBase
     {
         /// <summary>
-        /// The message identifier for a specific message.
+        /// Gets the message identifier for a specific message.
         /// </summary>
         /// <value>
         /// The message identifier.
@@ -29,7 +29,6 @@ namespace Asv.Gnss
         /// Method for deserializing an array of string items and setting the corresponding properties.
         /// </summary>
         /// <param name="items">The array of string items to deserialize.</param>
-        /// <returns>Void</returns>
         protected override void InternalDeserializeFromStringArray(string[] items)
         {
             SelectionMode = items[1];

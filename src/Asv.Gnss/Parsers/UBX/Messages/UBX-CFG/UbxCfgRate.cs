@@ -39,7 +39,7 @@ namespace Asv.Gnss
     /// • For most applications a 1 Hz update rate would be sufficient.
     /// • When using power save mode, measurement and navigation rate can differ
     /// from the values configured here.
-    /// • See Measurement and navigation rate with power save mode for details
+    /// • See Measurement and navigation rate with power save mode for details.
     /// </summary>
     public class UbxCfgRate : UbxMessageBase
     {
@@ -62,7 +62,7 @@ namespace Asv.Gnss
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
-            BinSerialize.WriteUShort(ref buffer, GetRate(RateHz));
+            BinSerialize.WriteUShort(ref buffer, UbxCfgRate.GetRate(RateHz));
             BinSerialize.WriteUShort(ref buffer, NavRate);
             BinSerialize.WriteUShort(ref buffer, (ushort)TimeSystem);
         }
@@ -76,17 +76,22 @@ namespace Asv.Gnss
 
         protected override int GetContentByteSize() => 6;
 
-        private ushort GetRate(double rateHz)
+        private static ushort GetRate(double rateHz)
         {
             var result =
                 rateHz <= 0.0152613506295307 ? (ushort)65525 : (ushort)Math.Round(1000.0 / rateHz);
 
             if (result <= 25)
+            {
                 return 25;
+            }
 
             var multiplicity = (ushort)(result % 25);
             if (multiplicity <= 12)
+            {
                 return (ushort)(result - multiplicity);
+            }
+
             return (ushort)(result + (25 - multiplicity));
         }
 

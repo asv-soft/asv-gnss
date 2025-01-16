@@ -6,7 +6,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Base class for RTCMv2 messages.
     /// </summary>
-    /// <typeparam name="T">The type of the RTCMv2 message ID.</typeparam>
     public abstract class RtcmV2MessageBase : GnssMessageBase<ushort>
     {
         /// <summary>
@@ -73,6 +72,7 @@ namespace Asv.Gnss
                     $"Deserialization RTCMv2 message failed: want {RtcmV2Parser.SyncByte:X}. Read {preamble:X}"
                 );
             }
+
             var msgType = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
             if (msgType != MessageId)
             {
@@ -80,6 +80,7 @@ namespace Asv.Gnss
                     $"Deserialization RTCMv2 message failed: want message number '{MessageId}'. Read = '{msgType}'"
                 );
             }
+
             ReferenceStationId = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
             var zCountRaw = SpanBitHelper.GetBitU(buffer, ref bitIndex, 13);
             ZCount = zCountRaw * 0.6;
@@ -88,6 +89,7 @@ namespace Asv.Gnss
             {
                 throw new Exception($"RTCMv2 Modified Z-count error: zcnt={ZCount}");
             }
+
             GpsTime = Adjhour(ZCount);
 
             SequenceNumber = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3);
@@ -104,10 +106,11 @@ namespace Asv.Gnss
                     $"Deserialization RTCMv2 message failed: length too small. Want '{payloadLength}'. Read = '{buffer.Length - 6}'"
                 );
             }
-            Udre = GetUdre((byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3));
+
+            Udre = RtcmV2MessageBase.GetUdre((byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 3));
             DeserializeContent(buffer, ref bitIndex, payloadLength);
             buffer =
-                bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice(bitIndex / 8 + 1);
+                bitIndex % 8.0 == 0 ? buffer.Slice(bitIndex / 8) : buffer.Slice((bitIndex / 8) + 1);
         }
 
         /// <summary>
@@ -141,10 +144,10 @@ namespace Asv.Gnss
             throw new NotImplementedException();
         }
 
-        /// Adjusts the hour of the current UTC time based on the given zcnt value.
-        /// @param zcnt The value used to adjust the hour of the current UTC time.
-        /// @return The adjusted DateTime value.
-        /// /
+        // Adjusts the hour of the current UTC time based on the given zcnt value.
+        // @param zcnt The value used to adjust the hour of the current UTC time.
+        // @return The adjusted DateTime value.
+        // /
         protected virtual DateTime Adjhour(double zcnt)
         {
             var utc = DateTime.UtcNow;
@@ -157,13 +160,17 @@ namespace Asv.Gnss
             RtcmV3Helper.GetFromTime(time, ref week, ref tow);
 
             var hour = Math.Floor(tow / 3600.0);
-            var sec = tow - hour * 3600.0;
+            var sec = tow - (hour * 3600.0);
             if (zcnt < sec - 1800.0)
+            {
                 zcnt += 3600.0;
+            }
             else if (zcnt > sec + 1800.0)
+            {
                 zcnt -= 3600.0;
+            }
 
-            return RtcmV3Helper.GetFromGps(week, hour * 3600 + zcnt);
+            return RtcmV3Helper.GetFromGps(week, (hour * 3600) + zcnt);
         }
 
         /// <summary>
@@ -182,7 +189,7 @@ namespace Asv.Gnss
         /// If rsHealth is 7, the Udre value is 0.0.
         /// If rsHealth is not within the valid range of 0 to 7, the Udre value is NaN (Not a Number).
         /// </returns>
-        private double GetUdre(byte rsHealth)
+        private static double GetUdre(byte rsHealth)
         {
             switch (rsHealth)
             {

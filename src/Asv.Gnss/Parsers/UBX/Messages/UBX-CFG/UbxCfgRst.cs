@@ -16,7 +16,7 @@ namespace Asv.Gnss
     /// • If Galileo is enabled, UBX-CFG-RST Controlled GNSS start must be followed by
     /// UBX-CFG-RST with resetMode set to Hardware reset.
     /// • If Galileo is enabled, use resetMode Hardware reset instead of Controlled
-    /// software reset or Controlled software reset (GNSS only)
+    /// software reset or Controlled software reset (GNSS only).
     /// </summary>
     public class UbxCfgRst : UbxMessageBase
     {

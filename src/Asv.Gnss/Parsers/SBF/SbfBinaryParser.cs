@@ -29,7 +29,10 @@ namespace Asv.Gnss
             {
                 case State.Sync1:
                     if (data != 0x24)
+                    {
                         return false;
+                    }
+
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = 0x24;
                     _state = State.Sync2;
@@ -44,6 +47,7 @@ namespace Asv.Gnss
                         _state = State.CrcAndIdAndLength;
                         _buffer[_bufferIndex++] = 0x40;
                     }
+
                     break;
                 case State.CrcAndIdAndLength:
                     if (_bufferIndex >= _buffer.Length)
@@ -51,6 +55,7 @@ namespace Asv.Gnss
                         _state = State.Sync1;
                         return false;
                     }
+
                     _buffer[_bufferIndex++] = data;
                     if (_bufferIndex == 8)
                     {
@@ -59,6 +64,7 @@ namespace Asv.Gnss
                         _length = BitConverter.ToUInt16(_buffer, 6);
                         _state = State.Message;
                     }
+
                     break;
                 case State.Message:
                     if (_bufferIndex >= _buffer.Length)
@@ -66,10 +72,11 @@ namespace Asv.Gnss
                         _state = State.Sync1;
                         return false;
                     }
+
                     _buffer[_bufferIndex++] = data;
                     if (_bufferIndex == _length)
                     {
-                        var calculatedHash = SbfCrc16.checksum(_buffer, 4, _length - 4);
+                        var calculatedHash = SbfCrc16.Checksum(_buffer, 4, _length - 4);
                         if (calculatedHash == _crc)
                         {
                             var span = new ReadOnlySpan<byte>(_buffer, 0, _length);
@@ -77,13 +84,16 @@ namespace Asv.Gnss
                             Reset();
                             return true;
                         }
+
                         PublishWhenCrcError();
                         Reset();
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             return false;
         }
 

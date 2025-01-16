@@ -10,12 +10,12 @@ namespace Asv.Gnss
         public uint[] NAVBitsU32 { get; set; }
 
         /// <summary>
-        /// Receiver channel (see 4.1.11)
+        /// Gets or sets receiver channel (see 4.1.11).
         /// </summary>
         public byte RxChannel { get; set; }
 
         /// <summary>
-        /// GLONASS frequency number, with an offset of 8.
+        /// Gets or sets gLONASS frequency number, with an offset of 8.
         /// It ranges from 1 (corresponding to an actual frequency number of -7) to 21 (corresponding to an
         /// actual frequency number of 13).
         /// For non-GLONASS satellites, FreqNr is reserved
@@ -24,32 +24,32 @@ namespace Asv.Gnss
         public byte FreqNr { get; set; }
 
         /// <summary>
-        /// Bit field:
+        /// Gets or sets bit field:
         /// Bits 0-4: Signal type from which the bits have been received, as defined
         /// in 4.1.10
-        /// Bits 5-7: Reserved
+        /// Bits 5-7: Reserved.
         /// </summary>
         public byte Source { get; set; }
 
         /// <summary>
-        /// Not applicable
+        /// Gets or sets not applicable.
         /// </summary>
         public byte ViterbiCnt { get; set; }
 
         /// <summary>
-        /// Status of the CRC or parity check:
+        /// Gets or sets a value indicating whether status of the CRC or parity check:
         /// 0: CRC or parity check failed
-        /// 1: CRC or parity check passed
+        /// 1: CRC or parity check passed.
         /// </summary>
         public bool CrcPassed { get; set; }
 
         /// <summary>
-        /// Satellite ID, see 4.1.9
+        /// Gets or sets satellite ID, see 4.1.9.
         /// </summary>
         public byte SvId { get; set; }
 
         /// <summary>
-        /// RINEX satellite code
+        /// Gets or sets rINEX satellite code.
         /// </summary>
         public string RinexSatCode { get; set; }
 
@@ -80,7 +80,10 @@ namespace Asv.Gnss
             );
 
             if (constellation != NavSystem)
+            {
                 throw new Exception("Navigation system code not euqals");
+            }
+
             CarrierFreq = carrierFreq * 1000000.0;
             RindexSignalCode = signalRinexCode;
             RxChannel = BinSerialize.ReadByte(ref buffer);
@@ -89,7 +92,8 @@ namespace Asv.Gnss
             {
                 NAVBitsU32[i] = BinSerialize.ReadUInt(ref buffer);
             }
-            //Padding ignored
+
+            // Padding ignored
         }
 
         public int SatPrn { get; set; }

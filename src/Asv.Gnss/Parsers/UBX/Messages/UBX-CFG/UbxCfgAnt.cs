@@ -88,27 +88,27 @@ namespace Asv.Gnss
     public enum UbxCfgAntFlags : ushort
     {
         /// <summary>
-        /// Enable antenna supply voltage control signal
+        /// Enable antenna supply voltage control signal.
         /// </summary>
         Svcs = 0b00000001,
 
         /// <summary>
-        /// Enable short circuit detection
+        /// Enable short circuit detection.
         /// </summary>
         Scd = 0b00000010,
 
         /// <summary>
-        /// Enable open circuit detection
+        /// Enable open circuit detection.
         /// </summary>
         Ocd = 0b00000100,
 
         /// <summary>
-        /// Power down antenna supply if short circuit is detected. (only in combination with bit 1)
+        /// Power down antenna supply if short circuit is detected. (only in combination with bit 1).
         /// </summary>
         PdwnOnScd = 0b00001000,
 
         /// <summary>
-        /// Enable automatic recovery from short state
+        /// Enable automatic recovery from short state.
         /// </summary>
         Recovery = 0b00010000,
     }

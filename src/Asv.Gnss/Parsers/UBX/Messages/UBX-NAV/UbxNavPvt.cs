@@ -27,208 +27,208 @@ namespace Asv.Gnss
         public override byte SubClass => 0x07;
 
         /// <summary>
-        /// Magnetic declination accuracy. Only supported in ADR 4.10 and later. deg
+        /// Gets or sets magnetic declination accuracy. Only supported in ADR 4.10 and later. deg.
         /// </summary>
         public double MagneticDeclinationAccuracy { get; set; }
 
         /// <summary>
-        /// Magnetic declination. Only supported in ADR 4.10 and later. deg
+        /// Gets or sets magnetic declination. Only supported in ADR 4.10 and later. deg.
         /// </summary>
         public double MagneticDeclination { get; set; }
 
         /// <summary>
-        /// Heading of vehicle (2-D), this is only valid when headVehValid is set, otherwise the output is set to the heading of motion
+        /// Gets or sets heading of vehicle (2-D), this is only valid when headVehValid is set, otherwise the output is set to the heading of motion.
         /// </summary>
         public double HeadingOfVehicle2D { get; set; }
 
         /// <summary>
-        /// Invalid lon, lat, height and hMSL
+        /// Gets or sets a value indicating whether invalid lon, lat, height and hMSL.
         /// </summary>
         public bool IsValidLLH { get; set; }
 
         /// <summary>
-        /// Position DOP
+        /// Gets or sets position DOP.
         /// </summary>
         public double PositionDOP { get; set; }
 
         /// <summary>
-        /// Heading accuracy estimate (both motion and vehicle), deg
+        /// Gets or sets heading accuracy estimate (both motion and vehicle), deg.
         /// </summary>
         public double HeadingAccuracyEstimate { get; set; }
 
         /// <summary>
-        /// Speed accuracy estimate, m\s
+        /// Gets or sets speed accuracy estimate, m\s.
         /// </summary>
         public double SpeedAccuracyEstimate { get; set; }
 
         /// <summary>
-        /// Heading of motion (2-D), deg
+        /// Gets or sets heading of motion (2-D), deg.
         /// </summary>
         public double HeadingOfMotion2D { get; set; }
 
         /// <summary>
-        /// Ground Speed (2-D), m\s
+        /// Gets or sets ground Speed (2-D), m\s.
         /// </summary>
         public double GroundSpeed2D { get; set; }
 
         /// <summary>
-        /// NED down velocity, m\s
+        /// Gets or sets nED down velocity, m\s.
         /// </summary>
         public double VelocityDown { get; set; }
 
         /// <summary>
-        /// NED east velocity, m\s
+        /// Gets or sets nED east velocity, m\s.
         /// </summary>
         public double VelocityEast { get; set; }
 
         /// <summary>
-        /// NED north velocity, m\s
+        /// Gets or sets nED north velocity, m\s.
         /// </summary>
         public double VelocityNorth { get; set; }
 
         /// <summary>
-        /// Vertical accuracy estimate, m
+        /// Gets or sets vertical accuracy estimate, m.
         /// </summary>
         public double VerticalAccuracyEstimate { get; set; }
 
         /// <summary>
-        /// Horizontal accuracy estimate, m
+        /// Gets or sets horizontal accuracy estimate, m.
         /// </summary>
         public double HorizontalAccuracyEstimate { get; set; }
 
         /// <summary>
-        /// Height above mean sea level, m
+        /// Gets or sets height above mean sea level, m.
         /// </summary>
         public double AltMsl { get; set; }
 
         /// <summary>
-        /// Height above ellipsoid, m
+        /// Gets or sets height above ellipsoid, m.
         /// </summary>
         public double AltElipsoid { get; set; }
 
         /// <summary>
-        /// Latitude
+        /// Gets or sets latitude.
         /// </summary>
         public double Latitude { get; set; }
 
         /// <summary>
-        /// Longitude
+        /// Gets or sets longitude.
         /// </summary>
         public double Longitude { get; set; }
 
         /// <summary>
-        /// Number of satellites used in Nav Solution
+        /// Gets or sets number of satellites used in Nav Solution.
         /// </summary>
         public byte NumberOfSatellites { get; set; }
 
         /// <summary>
-        /// UTC Time of Day could be confirmed (see Time Validity section for details)
+        /// Gets or sets a value indicating whether uTC Time of Day could be confirmed (see Time Validity section for details).
         /// </summary>
         public bool UTCConfirmedTime { get; set; }
 
         /// <summary>
-        /// UTC Date validity could be confirmed (see Time Validity section for details)
+        /// Gets or sets a value indicating whether uTC Date validity could be confirmed (see Time Validity section for details).
         /// </summary>
         public bool UTCConfirmedDate { get; set; }
 
         /// <summary>
-        /// 1 = information about UTC Date and Time of Day validity confirmation is available (see Time Validity section for details)
-        /// This flag is only supported in Protocol Versions 19.00, 19.10, 20.10, 20.20, 20.30, 22.00, 23.00, 23.01, 27 and 28
+        /// Gets or sets a value indicating whether 1 = information about UTC Date and Time of Day validity confirmation is available (see Time Validity section for details)
+        /// This flag is only supported in Protocol Versions 19.00, 19.10, 20.10, 20.20, 20.30, 22.00, 23.00, 23.01, 27 and 28.
         /// </summary>
         public bool UTCConfirmedAvailable { get; set; }
 
         /// <summary>
-        /// ???
+        /// Gets or sets ???.
         /// </summary>
         public byte PsmState { get; set; }
 
         public UbxCarrierSolutionStatus CarrierSolution { get; set; }
 
         /// <summary>
-        /// valid fix (i.e within DOP & accuracy masks)
+        /// Gets or sets a value indicating whether valid fix (i.e within DOP & accuracy masks).
         /// </summary>
         public bool GnssFixOK { get; set; }
 
         /// <summary>
-        /// Differential corrections were applied
+        /// Gets or sets a value indicating whether differential corrections were applied.
         /// </summary>
         public bool IsAppliedDifferentialCorrections { get; set; }
 
         /// <summary>
-        /// Differential corrections were applied
+        /// Gets or sets a value indicating whether differential corrections were applied.
         /// </summary>
         public bool IsValidVehicleHeading { get; set; }
 
         /// <summary>
-        /// GNSSfix Type
+        /// Gets or sets gNSSfix Type.
         /// </summary>
         public UbxGnssFixType FixType { get; set; }
 
         /// <summary>
-        /// Fraction of second, range -1e9 .. 1e9 (UTC)
+        /// Gets or sets fraction of second, range -1e9 .. 1e9 (UTC).
         /// </summary>
         public double UTCFractionOfSecond { get; set; }
 
         /// <summary>
-        /// Time accuracy estimate (UTC)
+        /// Gets or sets time accuracy estimate (UTC).
         /// </summary>
         public double UTCTimeAccuracyEstimate { get; set; }
 
         /// <summary>
-        /// valid magnetic declination
+        /// Gets or sets a value indicating whether valid magnetic declination.
         /// </summary>
         public bool IsValidMagneticDeclination { get; set; }
 
         /// <summary>
-        /// = UTC time of day has been fully resolved (no seconds uncertainty). Cannot be used to check if time is completely solved.
+        /// Gets or sets a value indicating whether = UTC time of day has been fully resolved (no seconds uncertainty). Cannot be used to check if time is completely solved.
         /// </summary>
         public bool UTCTimeOfDayIsFullyResolved { get; set; }
 
         /// <summary>
-        /// valid UTC time of day (see Time Validity section for details)
+        /// Gets or sets a value indicating whether valid UTC time of day (see Time Validity section for details).
         /// </summary>
         public bool UTCTimeIsConfirmation { get; set; }
 
         /// <summary>
-        /// valid UTC Date (see Time Validity section for details)
+        /// Gets or sets a value indicating whether valid UTC Date (see Time Validity section for details).
         /// </summary>
         public bool UTCDateIsConfirmation { get; set; }
 
         /// <summary>
-        /// Seconds of minute, range 0..60 (UTC)
+        /// Gets or sets seconds of minute, range 0..60 (UTC).
         /// </summary>
         public byte Sec { get; set; }
 
         /// <summary>
-        /// Minute of hour, range 0..59 (UTC)
+        /// Gets or sets minute of hour, range 0..59 (UTC).
         /// </summary>
         public byte Min { get; set; }
 
         /// <summary>
-        /// Hour of day, range 0..23 (UTC)
+        /// Gets or sets hour of day, range 0..23 (UTC).
         /// </summary>
         public byte Hour { get; set; }
 
         /// <summary>
-        /// Day of month, range 1..31 (UTC)
+        /// Gets or sets day of month, range 1..31 (UTC).
         /// </summary>
         public byte Day { get; set; }
 
         /// <summary>
-        /// Month, range 1..12 (UTC)
+        /// Gets or sets month, range 1..12 (UTC).
         /// </summary>
         public byte Month { get; set; }
 
         /// <summary>
-        /// Year (UTC)
+        /// Gets or sets year (UTC).
         /// </summary>
         public ushort Year { get; set; }
 
         /// <summary>
-        /// GPS time of week of the navigation epoch.
+        /// Gets or sets gPS time of week of the navigation epoch.
         /// See the description of iTOW for details.
         /// </summary>
-        public ulong iTOW { get; set; }
+        public ulong ITOW { get; set; }
 
         public GlobalPosition MovingBaseLocation { get; set; }
 
@@ -239,7 +239,7 @@ namespace Asv.Gnss
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            iTOW = BinSerialize.ReadUInt(ref buffer);
+            ITOW = BinSerialize.ReadUInt(ref buffer);
             Year = BinSerialize.ReadUShort(ref buffer);
             Month = BinSerialize.ReadByte(ref buffer);
             Day = BinSerialize.ReadByte(ref buffer);
@@ -247,8 +247,8 @@ namespace Asv.Gnss
             Min = BinSerialize.ReadByte(ref buffer);
             Sec = BinSerialize.ReadByte(ref buffer);
             var valid = BinSerialize.ReadByte(ref buffer);
-            //UTC Date and Time Confirmation Status   Date: CONFIRMED, Time: CONFIRMED
 
+            // UTC Date and Time Confirmation Status   Date: CONFIRMED, Time: CONFIRMED
             UTCDateIsConfirmation = (valid & 0b0000_0001) != 0;
             UTCTimeIsConfirmation = (valid & 0b0000_0010) != 0;
             UTCTimeOfDayIsFullyResolved = (valid & 0b0000_0100) != 0;
@@ -270,7 +270,7 @@ namespace Asv.Gnss
             UTCConfirmedAvailable = (flags & 0b0010_0000) != 0;
             UTCConfirmedDate = (flags & 0b0100_0000) != 0;
             UTCConfirmedTime = (flags & 0b1000_0000) != 0;
-            //
+
             NumberOfSatellites = BinSerialize.ReadByte(ref buffer);
             Longitude = BinSerialize.ReadInt(ref buffer) * 1e-7;
             Latitude = BinSerialize.ReadInt(ref buffer) * 1e-7;
@@ -291,10 +291,13 @@ namespace Asv.Gnss
             buffer = buffer[5..];
             HeadingOfVehicle2D = BinSerialize.ReadInt(ref buffer) * 1e-5;
             if (!IsValidVehicleHeading)
+            {
                 HeadingOfVehicle2D = double.NaN;
+            }
+
             MagneticDeclination = BinSerialize.ReadShort(ref buffer) * 1e-2;
             MagneticDeclinationAccuracy = BinSerialize.ReadUShort(ref buffer) * 1e-2;
-            //
+
             if (FixType >= UbxGnssFixType.Fix3D && GnssFixOK)
             {
                 MovingBaseLocation = new GlobalPosition(
@@ -309,12 +312,17 @@ namespace Asv.Gnss
 
             var week = 0;
             var towP = 0.0;
-            var tow = iTOW * 1e-3;
+            var tow = ITOW * 1e-3;
             GpsRawHelper.Time2Gps(GpsRawHelper.Utc2Gps(UtcTime), ref week, ref towP);
             if (tow < towP - 302400.0)
-                week += 1;
+            {
+                week++;
+            }
             else if (tow > towP + 302400.0)
-                week -= 1;
+            {
+                week--;
+            }
+
             GpsTime = GpsRawHelper.Gps2Time(week, tow);
         }
 
@@ -330,17 +338,17 @@ namespace Asv.Gnss
     public enum UbxCarrierSolutionStatus
     {
         /// <summary>
-        /// no carrier phase range solution
+        /// no carrier phase range solution.
         /// </summary>
         NoCarrierSolution = 0,
 
         /// <summary>
-        /// carrier phase range solution with floating ambiguities
+        /// carrier phase range solution with floating ambiguities.
         /// </summary>
         FloatingAmbiguities = 1,
 
         /// <summary>
-        /// carrier phase range solution with fixed ambiguities
+        /// carrier phase range solution with fixed ambiguities.
         /// </summary>
         FixedAmbiguities = 2,
     }

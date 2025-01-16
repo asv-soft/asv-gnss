@@ -7,8 +7,9 @@ namespace Asv.Gnss
     public static class BitToCharHelper
     {
         /// <summary>
-        /// string from bit array
+        /// string from bit array.
         /// </summary>
+        /// <returns></returns>
         public static string BitArrayToString(
             ReadOnlySpan<byte> buffer,
             ref int bitIndex,
@@ -21,6 +22,7 @@ namespace Asv.Gnss
                 var b = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
                 byteArr[i] = b;
             }
+
             return Encoding.GetEncoding("ISO-8859-1").GetString(byteArr);
         }
     }

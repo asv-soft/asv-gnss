@@ -15,15 +15,6 @@ namespace Asv.Gnss
     public class GnssConnection : DisposableOnceWithCancel, IGnssConnection
     {
         /// <summary>
-        /// Represents a private readonly data stream.
-        /// </summary>
-        /// <remarks>
-        /// This variable holds a reference to an object implementing the IDataStream interface, which represents a data stream that can be read.
-        /// The readonly modifier ensures that the reference cannot be changed once it is assigned.
-        /// </remarks>
-        private readonly IDataStream _stream;
-
-        /// <summary>
         /// Array of objects implementing the IGnssMessageParser interface.
         /// </summary>
         private readonly IGnssMessageParser[] _parsers;
@@ -62,21 +53,22 @@ namespace Asv.Gnss
         private readonly RxValue<int> _txBytesSubject = new();
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="GnssConnection"/> class.
         /// Represents a connection to a GNSS device.
         /// </summary>
         /// <param name="stream">The data stream used for communication.</param>
         /// <param name="parsers">The parsers used to parse incoming GNSS messages.</param>
         public GnssConnection(IDataStream stream, params IGnssMessageParser[] parsers)
         {
-            _stream = stream;
+            Stream = stream;
             _parsers = parsers;
             foreach (var parser in parsers)
             {
                 parser.DisposeItWith(Disposable);
                 parser.OnError.Subscribe(_onErrorSubject).DisposeItWith(Disposable);
                 parser.OnMessage.Subscribe(_onRxMessageSubject).DisposeItWith(Disposable);
-                ;
             }
+
             Disposable.Add(_onErrorSubject);
             Disposable.Add(_onRxMessageSubject);
             Disposable.Add(_onTxMessageSubject);
@@ -100,7 +92,7 @@ namespace Asv.Gnss
         /// <value>
         /// The data stream.
         /// </value>
-        public IDataStream Stream => _stream;
+        public IDataStream Stream { get; }
 
         /// <summary>
         /// Gets the statistic for received bytes.
@@ -109,7 +101,7 @@ namespace Asv.Gnss
         public IRxValue<int> StatisticRxBytes => _rxBytesSubject;
 
         /// <summary>
-        /// Represents the statistic for transmitted bytes.
+        /// Gets represents the statistic for transmitted bytes.
         /// </summary>
         /// <value>
         /// An instance of <see cref="IRxValue{T}"/> that provides the value of the transmitted bytes.
@@ -136,7 +128,7 @@ namespace Asv.Gnss
         public IObservable<GnssParserException> OnError => _onErrorSubject;
 
         /// <summary>
-        /// An IObservable property that represents the stream of incoming GNSS messages.
+        /// Gets an IObservable property that represents the stream of incoming GNSS messages.
         /// </summary>
         public IObservable<IGnssMessageBase> OnMessage => _onRxMessageSubject;
 
@@ -169,7 +161,10 @@ namespace Asv.Gnss
                         {
                             parser1 = parser;
                             if (!parser.Read(data))
+                            {
                                 continue;
+                            }
+
                             packetFound = true;
                             break;
                         }
@@ -191,7 +186,7 @@ namespace Asv.Gnss
                                 e
                             )
                         );
-                        Debug.Assert(false);
+                        Debug.Fail(string.Empty);
                     }
                 }
             }
@@ -206,7 +201,7 @@ namespace Asv.Gnss
         public async Task<bool> Send(IGnssMessageBase msg, CancellationToken cancel)
         {
             _onTxMessageSubject.OnNext(msg);
-            var result = await _stream.Send(msg, out var byteSended, cancel);
+            var result = await Stream.Send(msg, out var byteSended, cancel);
             _txBytesSubject.OnNext(byteSended);
             return result;
         }

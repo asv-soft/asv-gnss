@@ -25,78 +25,78 @@ namespace Asv.Gnss
         public override byte SubClass => 0x32;
 
         /// <summary>
-        /// GPS time of week of the navigation epoch.
+        /// Gets or sets gPS time of week of the navigation epoch.
         /// </summary>
-        public uint iTOW { get; set; }
+        public uint ITOW { get; set; }
 
         /// <summary>
-        /// PRN Number of the GEO where correction and integrity data is used from
+        /// Gets or sets pRN Number of the GEO where correction and integrity data is used from.
         /// </summary>
         public byte Geo { get; set; }
 
         /// <summary>
-        /// SBAS Mode
+        /// Gets or sets sBAS Mode
         /// 0 Disabled
         /// 1 Enabled integrity
-        /// 3 Enabled test mode
+        /// 3 Enabled test mode.
         /// </summary>
         public UbxSbasMode Mode { get; set; }
 
         /// <summary>
-        /// SBAS System (WAAS/EGNOS/...)
+        /// Gets or sets sBAS System (WAAS/EGNOS/...)
         /// -1 Unknown
         /// 0 WAAS
         /// 1 EGNOS
         /// 2 MSAS
         /// 3 GAGAN
-        /// 16 GPS
+        /// 16 GPS.
         /// </summary>
         public UbxSbasSystem Sys { get; set; }
 
         /// <summary>
-        /// SBAS Services available (see graphic below)
+        /// Gets or sets sBAS Services available (see graphic below).
         /// </summary>
         public byte Service { get; set; }
 
         #region Service bits
 
         /// <summary>
-        /// GEO may be used as ranging source
+        /// Gets or sets a value indicating whether gEO may be used as ranging source.
         /// </summary>
         public bool IsRanging { get; set; }
 
         /// <summary>
-        /// GEO is providing correction data
+        /// Gets or sets a value indicating whether gEO is providing correction data.
         /// </summary>
         public bool IsCorrections { get; set; }
 
         /// <summary>
-        /// GEO is providing integrity
+        /// Gets or sets a value indicating whether gEO is providing integrity.
         /// </summary>
         public bool IsIntegrity { get; set; }
 
         /// <summary>
-        /// GEO is in test mode
+        /// Gets or sets a value indicating whether gEO is in test mode.
         /// </summary>
         public bool IsTestmode { get; set; }
 
         /// <summary>
-        /// Problem with signal or broadcast data indicated
+        /// Gets or sets a value indicating whether problem with signal or broadcast data indicated.
         /// </summary>
         public bool IsBad { get; set; }
 
         #endregion
 
         /// <summary>
-        /// Number of SV data following
+        /// Gets or sets number of SV data following.
         /// </summary>
         public byte Cnt { get; set; }
 
         /// <summary>
-        /// SBAS status flags
+        /// Gets or sets sBAS status flags
         /// 0 = Unknown
         /// 1 = Integrity information is not available or SBAS integrity is not enabled
-        /// 2 = Receiver uses only GPS satellites for which integrity information is available
+        /// 2 = Receiver uses only GPS satellites for which integrity information is available.
         /// </summary>
         public byte StatusFlags { get; set; }
 
@@ -107,7 +107,7 @@ namespace Asv.Gnss
         #endregion
 
         /// <summary>
-        /// Reserved 1
+        /// Gets or sets reserved 1.
         /// </summary>
         public ushort Reserved1 { get; set; }
 
@@ -117,7 +117,7 @@ namespace Asv.Gnss
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            iTOW = BinSerialize.ReadUInt(ref buffer);
+            ITOW = BinSerialize.ReadUInt(ref buffer);
             Geo = BinSerialize.ReadByte(ref buffer);
             Mode = (UbxSbasMode)BinSerialize.ReadByte(ref buffer);
             Sys = (UbxSbasSystem)BinSerialize.ReadSByte(ref buffer);
@@ -192,17 +192,17 @@ namespace Asv.Gnss
     public enum UbxStatusFlags
     {
         /// <summary>
-        /// Unknown
+        /// Unknown.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// Integrity information is not available or SBAS integrity is not enabled
+        /// Integrity information is not available or SBAS integrity is not enabled.
         /// </summary>
         IntegrityUsed = 1,
 
         /// <summary>
-        /// Receiver uses only GPS satellites for which integrity information is available
+        /// Receiver uses only GPS satellites for which integrity information is available.
         /// </summary>
         GpsOnly = 2,
     }
@@ -210,78 +210,78 @@ namespace Asv.Gnss
     public class SvData
     {
         /// <summary>
-        /// SV ID
+        /// Gets or sets sV ID.
         /// </summary>
         public byte SvId { get; set; }
 
         /// <summary>
-        /// Flags for this SV
+        /// Gets or sets flags for this SV.
         /// </summary>
         public byte Flags { get; set; }
 
         /// <summary>
-        /// Monitoring status
+        /// Gets or sets monitoring status.
         /// </summary>
         public byte Udre { get; set; }
 
         /// <summary>
-        /// System (WAAS/EGNOS/...)
-        /// same as SYS
+        /// Gets or sets system (WAAS/EGNOS/...)
+        /// same as SYS.
         /// </summary>
         public byte SvSys { get; set; }
 
         /// <summary>
-        /// Services available
-        /// same as SERVICE
+        /// Gets or sets services available
+        /// same as SERVICE.
         /// </summary>
         public byte SvService { get; set; }
 
         #region SvService bits
 
         /// <summary>
-        /// GEO may be used as ranging source
+        /// Gets or sets a value indicating whether gEO may be used as ranging source.
         /// </summary>
         public bool IsRanging { get; set; }
 
         /// <summary>
-        /// GEO is providing correction data
+        /// Gets or sets a value indicating whether gEO is providing correction data.
         /// </summary>
         public bool IsCorrections { get; set; }
 
         /// <summary>
-        /// GEO is providing integrity
+        /// Gets or sets a value indicating whether gEO is providing integrity.
         /// </summary>
         public bool IsIntegrity { get; set; }
 
         /// <summary>
-        /// GEO is in test mode
+        /// Gets or sets a value indicating whether gEO is in test mode.
         /// </summary>
         public bool IsTestmode { get; set; }
 
         /// <summary>
-        /// Problem with signal or broadcast data indicated
+        /// Gets or sets a value indicating whether problem with signal or broadcast data indicated.
         /// </summary>
         public bool IsBad { get; set; }
 
         #endregion
 
         /// <summary>
-        /// Reserved 2
+        /// Gets or sets reserved 2.
         /// </summary>
         public byte Reserved2 { get; set; }
 
         /// <summary>
-        /// Pseudo Range correction in [cm]
+        /// Gets or sets pseudo Range correction in [cm].
         /// </summary>
         public short Prc { get; set; }
 
         /// <summary>
-        /// Reserved 3
+        /// Gets or sets reserved 3.
         /// </summary>
         public ushort Reserved3 { get; set; }
 
         /// <summary>
-        /// Ionosphere correction in [cm]
+        /// Gets or sets ionosphere correction in [cm].
         /// </summary>
         public short Ic { get; set; }
     }

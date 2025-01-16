@@ -27,17 +27,17 @@ namespace Asv.Gnss
         public override byte SubClass => 0x35;
 
         /// <summary>
-        /// GPS time of week of the navigation epoch. See the description of iTOW for details.
+        /// Gets or sets gPS time of week of the navigation epoch. See the description of iTOW for details.
         /// </summary>
-        public ulong iTOW { get; set; }
+        public ulong ITOW { get; set; }
 
         /// <summary>
-        /// Message version (0x01 for this version)
+        /// Gets or sets message version (0x01 for this version).
         /// </summary>
         public byte Version { get; set; }
 
         /// <summary>
-        /// Number of satellites
+        /// Gets or sets number of satellites.
         /// </summary>
         public byte NumSvs { get; set; }
         public UbxNavSatelliteItem[] Items { get; set; }
@@ -49,7 +49,7 @@ namespace Asv.Gnss
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
         {
-            iTOW = BinSerialize.ReadUInt(ref buffer);
+            ITOW = BinSerialize.ReadUInt(ref buffer);
             Version = BinSerialize.ReadByte(ref buffer);
             NumSvs = BinSerialize.ReadByte(ref buffer);
             var reserved1 = BinSerialize.ReadByte(ref buffer);
@@ -72,110 +72,110 @@ namespace Asv.Gnss
         public UbxNavSatGnssId GnssType { get; set; }
 
         /// <summary>
-        /// GNSS identifier (see Satellite Numbering) for assignment
+        /// Gets or sets gNSS identifier (see Satellite Numbering) for assignment.
         /// </summary>
         public byte GnssId { get; set; }
 
         /// <summary>
-        /// Satellite identifier (see Satellite Numbering) for assignment
+        /// Gets or sets satellite identifier (see Satellite Numbering) for assignment.
         /// </summary>
         public byte SvId { get; set; }
 
         /// <summary>
-        /// Carrier to noise ratio (signal strength)
+        /// Gets or sets carrier to noise ratio (signal strength).
         /// </summary>
         public byte CnobBHz { get; set; }
 
         /// <summary>
-        /// Elevation (range: +/-90), unknown if out of range
+        /// Gets or sets elevation (range: +/-90), unknown if out of range.
         /// </summary>
         public sbyte ElevDeg { get; set; }
 
         /// <summary>
-        /// Azimuth (range 0-360), unknown if elevation is out of range
+        /// Gets or sets azimuth (range 0-360), unknown if elevation is out of range.
         /// </summary>
         public short AzimDeg { get; set; }
 
         /// <summary>
-        /// Pseudorange residual
+        /// Gets or sets pseudorange residual.
         /// </summary>
         public double PrResM { get; set; }
 
         public UbxQualityIndEnum QualityInd { get; set; }
 
         /// <summary>
-        /// Signal in the subset specified in Signal Identifiers is currently being used for navigation
+        /// Gets or sets a value indicating whether signal in the subset specified in Signal Identifiers is currently being used for navigation.
         /// </summary>
         public bool SvUsed { get; set; }
         public UbxHealthInd Health { get; set; }
 
         /// <summary>
-        /// differential correction data is available for this SV
+        /// Gets or sets a value indicating whether differential correction data is available for this SV.
         /// </summary>
         public bool DiffCorr { get; set; }
 
         /// <summary>
-        /// Carrier smoothed pseudorange used
+        /// Gets or sets a value indicating whether carrier smoothed pseudorange used.
         /// </summary>
         public bool Smoothed { get; set; }
 
         /// <summary>
-        /// Orbit source
+        /// Gets or sets orbit source.
         /// </summary>
         public UbxOrbitSource OrbitSource { get; set; }
 
         /// <summary>
-        ///  ephemeris is available for this SV
+        ///  Gets or sets a value indicating whether ephemeris is available for this SV.
         /// </summary>
         public bool IsephAvail { get; set; }
 
         /// <summary>
-        ///  almanac is available for this SV
+        ///  Gets or sets a value indicating whether almanac is available for this SV.
         /// </summary>
         public bool IsalmAvail { get; set; }
 
         /// <summary>
-        ///  AssistNow Offline data is available for this SV
+        ///  Gets or sets a value indicating whether assistNow Offline data is available for this SV.
         /// </summary>
         public bool IsanoAvail { get; set; }
 
         /// <summary>
-        ///  AssistNow Autonomous data is available for this SV
+        ///  Gets or sets a value indicating whether assistNow Autonomous data is available for this SV.
         /// </summary>
         public bool IsaopAvail { get; set; }
 
         /// <summary>
-        ///  SBAS corrections have been used for a signal in the subset specified in Signal Identifiers
+        ///  Gets or sets a value indicating whether sBAS corrections have been used for a signal in the subset specified in Signal Identifiers.
         /// </summary>
         public bool IssbasCorrUsed { get; set; }
 
         /// <summary>
-        ///  RTCM corrections have been used for a signal in the subset specified in Signal Identifiers
+        ///  Gets or sets a value indicating whether rTCM corrections have been used for a signal in the subset specified in Signal Identifiers.
         /// </summary>
         public bool IsrtcmCorrUsed { get; set; }
 
         /// <summary>
-        ///  QZSS SLAS corrections have been used for a signal in the subset specified in Signal Identifiers
+        ///  Gets or sets a value indicating whether qZSS SLAS corrections have been used for a signal in the subset specified in Signal Identifiers.
         /// </summary>
         public bool IsslasCorrUsed { get; set; }
 
         /// <summary>
-        ///  SPARTN corrections have been used for a signal in the subset specified in Signal Identifiers
+        ///  Gets or sets a value indicating whether sPARTN corrections have been used for a signal in the subset specified in Signal Identifiers.
         /// </summary>
         public bool IsspartnCorrUsed { get; set; }
 
         /// <summary>
-        ///  Pseudorange corrections have been used for a signal in the subset specified in Signal Identifiers
+        ///  Gets or sets a value indicating whether pseudorange corrections have been used for a signal in the subset specified in Signal Identifiers.
         /// </summary>
         public bool IsprCorrUsed { get; set; }
 
         /// <summary>
-        ///  Carrier range corrections have been used for a signal in the subset specified in Signal Identifiers
+        ///  Gets or sets a value indicating whether carrier range corrections have been used for a signal in the subset specified in Signal Identifiers.
         /// </summary>
         public bool IscrCorrUsed { get; set; }
 
         /// <summary>
-        ///  Range rate (Doppler) corrections have been used for a signal in the subset specified in Signal
+        ///  Gets or sets a value indicating whether range rate (Doppler) corrections have been used for a signal in the subset specified in Signal.
         /// </summary>
         public bool IsdoCorrUsed { get; set; }
 

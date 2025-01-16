@@ -49,9 +49,9 @@ namespace Asv.Gnss
             Reserved2 = BinSerialize.ReadByte(ref buffer);
 
             Ecef = (
-                X: MeanX * 0.01 + MeanXhp * 0.0001,
-                Y: MeanY * 0.01 + MeanYhp * 0.0001,
-                Z: MeanZ * 0.01 + MeanZhp * 0.0001
+                X: (MeanX * 0.01) + (MeanXhp * 0.0001),
+                Y: (MeanY * 0.01) + (MeanYhp * 0.0001),
+                Z: (MeanZ * 0.01) + (MeanZhp * 0.0001)
             );
             Accuracy = BinSerialize.ReadUInt(ref buffer) / 10000.0;
             Observations = BinSerialize.ReadUInt(ref buffer);

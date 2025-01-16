@@ -100,7 +100,7 @@ namespace Asv.Gnss
         public AsvDeviceType DeviceType { get; set; }
 
         /// <summary>
-        /// Represents the state of a device.
+        /// Gets or sets represents the state of a device.
         /// </summary>
         /// <value>
         /// The device state.
@@ -183,9 +183,9 @@ namespace Asv.Gnss
         /// </returns>
         protected override int InternalGetContentByteSize() => 7;
 
-        /// Randomizes the properties of the object using the provided random number generator.
-        /// @param random The random number generator to use for generating random values.
-        /// /
+        // Randomizes the properties of the object using the provided random number generator.
+        // @param random The random number generator to use for generating random values.
+        // /
         public override void Randomize(Random random)
         {
             Tag = null;

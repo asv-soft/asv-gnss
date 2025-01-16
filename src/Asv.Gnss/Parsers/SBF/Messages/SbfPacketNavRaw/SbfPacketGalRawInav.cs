@@ -1,8 +1,8 @@
 ﻿namespace Asv.Gnss
 {
     /// <summary>
-    /// This block contains the 234 bits of a Galileo I/NAV navigation page, after deinterleaving and Viterbi decoding.
-    ///
+    /// <para>This block contains the 234 bits of a Galileo I/NAV navigation page, after deinterleaving and Viterbi decoding.</para>
+    /// <para>
     /// NAVBits contains the 234 bits of an I/NAV navigation page (in nominal
     /// or alert mode). Note that the I/NAV page is transmitted as two sub-pages
     /// (the so-called even and odd pages) of duration 1 second each (120 bits
@@ -14,6 +14,7 @@
     /// Encoding: NAVBits contains all the bits of the frame, with the exception of the synchronization field. The first received bit is stored as the
     /// MSB of NAVBits[0]. The unused bits in NAVBits[7] must be ignored
     /// by the decoding software.
+    /// </para>
     /// </summary>
     public class SbfPacketGalRawInav : SbfPacketGnssRawNavMsgBase
     {

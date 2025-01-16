@@ -6,7 +6,6 @@ namespace Asv.Gnss
     /// <summary>
     /// Base class for ASV (Autonomous Surface Vehicle) messages used in GNSS communication.
     /// </summary>
-    /// <typeparam name="T">The type of the message identifier.</typeparam>
     public abstract class AsvMessageBase : GnssMessageBase<ushort>
     {
         /// <summary>
@@ -46,7 +45,7 @@ namespace Asv.Gnss
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             var crcSpan = buffer;
-            var bitIndex = 0;
+            const int bitIndex = 0;
             var sync1 = BinSerialize.ReadByte(ref buffer);
             var sync2 = BinSerialize.ReadByte(ref buffer);
 
@@ -54,6 +53,7 @@ namespace Asv.Gnss
             {
                 throw new Exception($"Error to deserialize {ProtocolId}.{Name}");
             }
+
             var length = BinSerialize.ReadUShort(ref buffer);
             var crc = AsvCrc16.Calc(crcSpan, length + 10);
             crcSpan = crcSpan.Slice(length + 10);
@@ -78,6 +78,7 @@ namespace Asv.Gnss
             }
 
             var dataSpan = buffer.Slice(bitIndex / 8, length);
+
             // var dataSpan = buffer.Slice(0, length);
             InternalContentDeserialize(ref dataSpan);
             buffer = buffer.Slice(

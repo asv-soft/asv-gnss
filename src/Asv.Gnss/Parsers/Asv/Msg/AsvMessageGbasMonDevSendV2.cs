@@ -54,7 +54,7 @@ namespace Asv.Gnss
         public ushort MsgLength { get; set; }
 
         /// <summary>
-        /// Represents the CRC16 hash calculated from the scrambled message without the synchronizing sequence (48 bits) and leading zeroes.
+        /// Gets or sets represents the CRC16 hash calculated from the scrambled message without the synchronizing sequence (48 bits) and leading zeroes.
         /// </summary>
         public ushort MsgCrc { get; set; }
 
@@ -68,13 +68,13 @@ namespace Asv.Gnss
         {
             var slotAndMsg = BinSerialize.ReadByte(ref buffer);
             Slot = (AsvGbasSlotMsg)(slotAndMsg & 0b0000_0111);
-            // GbasMessageId = (byte)(slotAndMsg >> 3);
 
+            // GbasMessageId = (byte)(slotAndMsg >> 3);
             var flags = BinSerialize.ReadByte(ref buffer);
             IsLastSlotInFrame = (flags & 0b0000_1000) != 0;
+
             // LastByteOffset = (byte)((flags >> 1) & 0b0000_0111);
             // ReservedFlgas = (byte)(flags >> 4);
-
             LifeTime = BinSerialize.ReadByte(ref buffer);
 
             MsgLength = BinSerialize.ReadUShort(ref buffer);

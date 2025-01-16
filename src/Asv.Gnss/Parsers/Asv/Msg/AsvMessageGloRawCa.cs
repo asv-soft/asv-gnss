@@ -25,7 +25,7 @@ namespace Asv.Gnss
             Prn = (int)AsvHelper.GetBitU(buffer, ref bitIndex, 6);
             CrcPassed = AsvHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
             var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1);
-            Frequency = 1602000000 + (AsvHelper.GetBitU(buffer, ref bitIndex, 5) - 7) * 562500;
+            Frequency = 1602000000 + ((AsvHelper.GetBitU(buffer, ref bitIndex, 5) - 7) * 562500);
 
             SignalType = GnssSignalTypeEnum.L1CA;
             RindexSignalCode = "1C";
@@ -34,7 +34,7 @@ namespace Asv.Gnss
             var recNum = AsvHelper.GetBitU(buffer, ref bitIndex, 4);
             bitIndex += 4;
 
-            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GLO, Prn);
+            SatelliteId = AsvHelper.Satno(NavigationSystemEnum.SYS_GLO, Prn);
 
             var byteIndex = bitIndex / 8;
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
@@ -48,8 +48,10 @@ namespace Asv.Gnss
                 {
                     NAVBitsU32[i][j] = BinSerialize.ReadUInt(ref buffer);
                 }
+
                 GloWords[i] = GlonassWordFactory.Create(NAVBitsU32[i]);
             }
+
             L1Code = code1 != 0 ? AsvHelper.CODE_L1P : AsvHelper.CODE_L1C;
         }
 
@@ -66,7 +68,7 @@ namespace Asv.Gnss
             var time = EpochTime.AddHours(3);
             var datum = new DateTime(1996, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var cycle = (int)((time - datum).TotalDays / 1461) + 1;
-            var day = (uint)((time - datum.AddYears((cycle - 1) * 4)).TotalDays) + 1;
+            var day = (uint)(time - datum.AddYears((cycle - 1) * 4)).TotalDays + 1;
             var tod = (time - datum.AddYears((cycle - 1) * 4).AddDays(day - 1)).TotalSeconds;
 
             var bitIndex = 0;
@@ -84,7 +86,7 @@ namespace Asv.Gnss
             );
             AsvHelper.SetBitU(
                 buffer,
-                (uint)((Frequency - 1602000000) / 562500 + 7),
+                (uint)(((Frequency - 1602000000) / 562500) + 7),
                 ref bitIndex,
                 5
             );
@@ -95,11 +97,17 @@ namespace Asv.Gnss
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
 
             if (NAVBitsU32 == null)
+            {
                 return;
+            }
+
             foreach (var nav in NAVBitsU32)
             {
                 if (nav == null)
+                {
                     continue;
+                }
+
                 for (var j = 0; j < NavBitsU32Length; j++)
                 {
                     BinSerialize.WriteUInt(ref buffer, nav[j]);
@@ -109,19 +117,19 @@ namespace Asv.Gnss
 
         protected override int InternalGetContentByteSize()
         {
-            return 8 + (NAVBitsU32?.Length ?? 0) * NavBitsU32Length * sizeof(uint);
+            return 8 + ((NAVBitsU32?.Length ?? 0) * NavBitsU32Length * sizeof(uint));
         }
 
         public override void Randomize(Random random)
         {
             EpochTime = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc);
-            Prn = random.Next() % 24 + 1;
-            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GLO, Prn);
+            Prn = (random.Next() % 24) + 1;
+            SatelliteId = AsvHelper.Satno(NavigationSystemEnum.SYS_GLO, Prn);
             L1Code = AsvHelper.CODE_L1C;
             SignalType = GnssSignalTypeEnum.L1CA;
             RindexSignalCode = "1C";
             RinexSatCode = $"R{Prn}";
-            Frequency = 1602000000 + (random.Next() % 16 - 7) * 562500;
+            Frequency = 1602000000 + (((random.Next() % 16) - 7) * 562500);
             NAVBitsU32 = new uint[15][];
             GloWords = new GlonassWordBase[15];
             for (var i = 0; i < 15; i++)
@@ -133,7 +141,7 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// GLO Epoch Time
+        /// Gets or sets gLO Epoch Time.
         /// </summary>
         public DateTime EpochTime { get; set; }
 
@@ -151,8 +159,10 @@ namespace Asv.Gnss
 
         public GloRawCa[] GetGnssRawNavMsg()
         {
-            if (NAVBitsU32 == null || !NAVBitsU32.Any())
+            if (NAVBitsU32?.Any() != true)
+            {
                 return Array.Empty<GloRawCa>();
+            }
 
             var result = new GloRawCa[NAVBitsU32.Length];
             for (var i = 0; i < NAVBitsU32.Length; i++)
@@ -172,6 +182,7 @@ namespace Asv.Gnss
                 };
                 Array.Copy(NAVBitsU32[i], result[i].RawData, NAVBitsU32[i].Length);
             }
+
             return result;
         }
     }

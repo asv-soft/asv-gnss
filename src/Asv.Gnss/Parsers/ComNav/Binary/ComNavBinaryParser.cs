@@ -57,9 +57,9 @@ namespace Asv.Gnss
         /// </summary>
         private byte _headerLength;
 
-        /// Represents the length of a message.
-        /// This variable is a private member of a class.
-        /// </summary>
+        // Represents the length of a message.
+        // This variable is a private member of a class.
+        // </summary>
         private ushort _messageLength;
 
         /// <summary>
@@ -125,7 +125,10 @@ namespace Asv.Gnss
             {
                 case State.Sync1:
                     if (data != FirstSyncByte)
+                    {
                         return false;
+                    }
+
                     _bufferIndex = 0;
                     _buffer[_bufferIndex++] = FirstSyncByte;
                     _state = State.Sync2;
@@ -140,6 +143,7 @@ namespace Asv.Gnss
                         _state = State.Sync3;
                         _buffer[_bufferIndex++] = SecondSyncByte;
                     }
+
                     break;
                 case State.Sync3:
                     if (data != ThirdSyncByte)
@@ -151,6 +155,7 @@ namespace Asv.Gnss
                         _state = State.HeaderLength;
                         _buffer[_bufferIndex++] = ThirdSyncByte;
                     }
+
                     break;
                 case State.HeaderLength:
                     _headerLength = data;
@@ -169,6 +174,7 @@ namespace Asv.Gnss
                         ;
                         _state = State.Message;
                     }
+
                     break;
                 case State.Message:
                     _buffer[_bufferIndex++] = data;
@@ -189,13 +195,16 @@ namespace Asv.Gnss
                             Reset();
                             return true;
                         }
+
                         PublishWhenCrcError();
                         Reset();
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             return false;
         }
 

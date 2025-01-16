@@ -77,6 +77,7 @@ namespace Asv.Gnss
             {
                 VP[i] = BinSerialize.ReadByte(ref buffer);
             }
+
             JamInd = BinSerialize.ReadByte(ref buffer);
             BinSerialize.ReadUShort(ref buffer); // reserved 2
             PinIrq = BinSerialize.ReadInt(ref buffer);

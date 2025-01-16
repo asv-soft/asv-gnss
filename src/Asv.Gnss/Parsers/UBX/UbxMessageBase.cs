@@ -17,7 +17,7 @@ namespace Asv.Gnss
         public override string ProtocolId => UbxBinaryParser.GnssProtocolId;
 
         /// <summary>
-        /// Represents a property that exposes the class value in a byte format.
+        /// Gets represents a property that exposes the class value in a byte format.
         /// This property is read-only. </summary>
         /// /
         public abstract byte Class { get; }

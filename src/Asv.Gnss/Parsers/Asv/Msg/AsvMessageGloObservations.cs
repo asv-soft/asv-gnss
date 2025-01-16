@@ -39,12 +39,12 @@ namespace Asv.Gnss
         public AsvGloObservation[] Observations { get; set; }
 
         /// <summary>
-        /// GPS Epoch Time
+        /// Gets or sets gPS Epoch Time.
         /// </summary>
         public DateTime Tod { get; set; }
 
         /// <summary>
-        /// GPS Receiver Time Offset
+        /// Gets or sets gPS Receiver Time Offset.
         /// </summary>
         public double TimeOffset { get; set; }
 
@@ -53,7 +53,7 @@ namespace Asv.Gnss
             var time = Tod.AddHours(3);
             var datum = new DateTime(1996, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var cycle = (int)((time - datum).TotalDays / 1461) + 1;
-            var day = (uint)((time - datum.AddYears((cycle - 1) * 4)).TotalDays) + 1;
+            var day = (uint)(time - datum.AddYears((cycle - 1) * 4)).TotalDays + 1;
             var tod = (time - datum.AddYears((cycle - 1) * 4).AddDays(day - 1)).TotalSeconds;
 
             var bitIndex = 0;
@@ -73,7 +73,10 @@ namespace Asv.Gnss
             buffer = buffer.Slice(byteIndex, buffer.Length - byteIndex);
 
             if (Observations == null)
+            {
                 return;
+            }
+
             foreach (var obs in Observations)
             {
                 obs.Serialize(ref buffer);
@@ -93,12 +96,16 @@ namespace Asv.Gnss
             var index = 0;
             while (index < length)
             {
-                var prn = random.Next() % 24 + 1;
+                var prn = (random.Next() % 24) + 1;
                 if (randomPrn.Any(_ => _ == prn))
+                {
                     continue;
+                }
+
                 randomPrn[index] = prn;
                 index++;
             }
+
             Observations = new AsvGloObservation[length];
 
             for (var i = 0; i < length; i++)
@@ -118,7 +125,7 @@ namespace Asv.Gnss
             var sys = NavigationSystemEnum.SYS_GLO;
             Prn = (int)AsvHelper.GetBitU(buffer, ref bitIndex, 6);
             var code1 = AsvHelper.GetBitU(buffer, ref bitIndex, 1);
-            Frequency = 1602000000 + (AsvHelper.GetBitU(buffer, ref bitIndex, 5) - 7) * 562500;
+            Frequency = 1602000000 + ((AsvHelper.GetBitU(buffer, ref bitIndex, 5) - 7) * 562500);
             var pr1 = (double)AsvHelper.GetBitU(buffer, ref bitIndex, 25);
             var ppr1 = AsvHelper.GetBitS(buffer, ref bitIndex, 20);
             L1LockTime = AsvHelper.GetLockTime((byte)AsvHelper.GetBitU(buffer, ref bitIndex, 7));
@@ -138,10 +145,10 @@ namespace Asv.Gnss
                 Prn += 80;
             }
 
-            SatelliteId = AsvHelper.satno(sys, Prn);
+            SatelliteId = AsvHelper.Satno(sys, Prn);
             SatelliteCode = AsvHelper.Sat2Code(SatelliteId, Prn);
 
-            pr1 = pr1 * 0.02 + amb * AsvHelper.PRUNIT_GLO;
+            pr1 = (pr1 * 0.02) + (amb * AsvHelper.PRUNIT_GLO);
             L1PseudoRange = pr1;
 
             if (ppr1 != -524288) // (0xFFF80000)
@@ -160,7 +167,7 @@ namespace Asv.Gnss
         public void Serialize(ref Span<byte> buffer)
         {
             var bitIndex = 0;
-            var sys = NavigationSystemEnum.SYS_GLO;
+            const NavigationSystemEnum sys = NavigationSystemEnum.SYS_GLO;
 
             AsvHelper.SetBitU(buffer, (uint)(Prn >= 40 ? Prn - 80 : Prn), ref bitIndex, 6);
             AsvHelper.SetBitU(
@@ -171,7 +178,7 @@ namespace Asv.Gnss
             );
             AsvHelper.SetBitU(
                 buffer,
-                (uint)((Frequency - 1602000000) / 562500 + 7),
+                (uint)(((Frequency - 1602000000) / 562500) + 7),
                 ref bitIndex,
                 5
             );
@@ -268,10 +275,10 @@ namespace Asv.Gnss
         public void Randomize(Random random, int prn)
         {
             Prn = prn;
-            SatelliteId = AsvHelper.satno(NavigationSystemEnum.SYS_GLO, Prn);
+            SatelliteId = AsvHelper.Satno(NavigationSystemEnum.SYS_GLO, Prn);
             SatelliteCode = AsvHelper.Sat2Code(SatelliteId, Prn);
             L1Code = AsvHelper.CODE_L1C;
-            Frequency = 1602000000 + (random.Next() % 16 - 7) * 562500;
+            Frequency = 1602000000 + (((random.Next() % 16) - 7) * 562500);
             L1LockTime = 937;
         }
     }

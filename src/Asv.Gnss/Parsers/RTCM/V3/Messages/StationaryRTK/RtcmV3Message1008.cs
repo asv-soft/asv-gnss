@@ -10,13 +10,13 @@ namespace Asv.Gnss
         public override string Name => "Antenna Descriptor & Serial Number";
 
         /// <summary>
-        /// The Serial Number Counter defines the number of characters (bytes)
-        /// to follow in Antenna Serial Number
+        /// Gets or sets the Serial Number Counter defines the number of characters (bytes)
+        /// to follow in Antenna Serial Number.
         /// </summary>
         public uint SerialNumberCounterM { get; set; }
 
         /// <summary>
-        /// Alphanumeric characters. The Antenna Serial Number is the
+        /// Gets or sets alphanumeric characters. The Antenna Serial Number is the
         /// individual antenna serial number as issued by the manufacturer of the
         /// antenna.A possible duplication of the Antenna Serial Number is not
         /// possible, because together with the Antenna Descriptor only one

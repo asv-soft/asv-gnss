@@ -14,8 +14,11 @@ namespace Asv.Gnss
         /// <returns>A GpsSubframeBase object representing the parsed subframe.</returns>
         public static GpsSubframeBase Create(uint[] navBits)
         {
-            if (GpsRawHelper.CheckPreamble(navBits) == false)
+            if (!GpsRawHelper.CheckPreamble(navBits))
+            {
                 throw new Exception("Preamble error");
+            }
+
             var subframeId = GpsRawHelper.GetSubframeId(navBits);
             var tow = GpsRawHelper.GetTow15epoch(navBits);
             var data = GpsRawHelper.GetRawDataWithoutParity(navBits);
@@ -42,11 +45,15 @@ namespace Asv.Gnss
                         $"Unknown GPS subframe ID:{Convert.ToString(subframeId, 2), -8}"
                     );
             }
+
             subframe.Deserialize(data);
             if (tow != subframe.TOW1_5Epoh)
+            {
                 throw new Exception(
                     "Something goes wrong with byte conversion from uint to byte array."
                 );
+            }
+
             return subframe;
         }
     }

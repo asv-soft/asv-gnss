@@ -32,14 +32,14 @@ namespace Asv.Gnss
             word1Start += 4;
             SatelliteHealth = (byte)GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 6);
             word1Start += 6;
-            iodc = 0;
-            iodc |= (int)GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 2) << 8;
+            Iodc = 0;
+            Iodc |= (int)GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 2) << 8;
             word1Start += 2;
             Flag = (int)GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 1);
-            word1Start += 24U * 3 + 1 + 15;
+            word1Start += (24U * 3) + 1 + 15;
             var tgd = GpsRawHelper.GetBitS(dataWithoutParity, word1Start, 8);
             word1Start += 8;
-            iodc |= (int)GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 8);
+            Iodc |= (int)GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 8);
             word1Start += 8;
             TocSec = GpsRawHelper.GetBitU(dataWithoutParity, word1Start, 16) * 16.0;
             word1Start += 16;
@@ -62,7 +62,7 @@ namespace Asv.Gnss
         public double Af1 { get; set; }
         public double Af2 { get; set; }
         public double TocSec { get; set; }
-        public int iodc { get; set; }
+        public int Iodc { get; set; }
 
         public double[] Tgd { get; set; } = new double[1];
 

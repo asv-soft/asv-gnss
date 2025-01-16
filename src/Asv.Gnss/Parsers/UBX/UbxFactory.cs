@@ -11,7 +11,7 @@ namespace Asv.Gnss
     public static class UbxFactory
     {
         /// <summary>
-        /// Returns a collection of functions that creates instances of various UBX message types.
+        /// Gets a collection of functions that creates instances of various UBX message types.
         /// </summary>
         /// <returns>
         /// An IEnumerable of Func&lt;UbxMessageBase&gt;, where each Func&lt;UbxMessageBase&gt; represents a function that creates a specific UBX message instance.

@@ -18,7 +18,7 @@ namespace Asv.Gnss
         /// </summary>
         /// <param name="tb">The time value.</param>
         /// <returns>The calculated DateTime.</returns>
-        private DateTime GetDateTime(uint tb)
+        private static DateTime GetDateTime(uint tb)
         {
             var utc = DateTime.UtcNow;
             var week = 0;
@@ -29,9 +29,14 @@ namespace Asv.Gnss
             tow -= toh;
 
             if (toe < toh - 1800.0)
+            {
                 toe += 3600.0;
+            }
             else if (toe > toh + 1800.0)
+            {
                 toe -= 3600.0;
+            }
+
             return RtcmV3Helper.GetFromGps(week, tow + toe).AddHours(3.0);
         }
 
@@ -44,12 +49,12 @@ namespace Asv.Gnss
             _system = system;
         }
 
-        /// Deserializes data from a buffer and updates the state of the object.
-        /// @param buffer The buffer containing the serialized data.
-        /// @param bitIndex The index of the current bit in the buffer. This is an input/output parameter that is used to keep track of the current bit position in the buffer.
-        /// @remarks This method reads and interprets data from the specified buffer to update the state of the object. The buffer contains serialized data in a specific format, which is des
-        /// erialized and assigned to the appropriate fields and properties of the object.
-        /// /
+        // Deserializes data from a buffer and updates the state of the object.
+        // @param buffer The buffer containing the serialized data.
+        // @param bitIndex The index of the current bit in the buffer. This is an input/output parameter that is used to keep track of the current bit position in the buffer.
+        // @remarks This method reads and interprets data from the specified buffer to update the state of the object. The buffer contains serialized data in a specific format, which is des
+        // erialized and assigned to the appropriate fields and properties of the object.
+        // /
         public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
             var fact = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
@@ -60,7 +65,9 @@ namespace Asv.Gnss
             var iod = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
 
             if (prn == 0)
+            {
                 prn = 32;
+            }
 
             Prn = prn;
 
@@ -74,11 +81,15 @@ namespace Asv.Gnss
                 Prc = prc * (fact == 1 ? 0.32 : 0.02);
                 Rrc = rrc * (fact == 1 ? 0.032 : 0.002);
             }
-            SatelliteId = RtcmV3Helper.satno(_system, prn);
+
+            SatelliteId = RtcmV3Helper.Satno(_system, prn);
             Iod = _system == NavigationSystemEnum.SYS_GLO ? (byte)(iod & 0x7F) : iod;
             if (_system == NavigationSystemEnum.SYS_GLO)
-                Tk = GetDateTime((uint)(Iod * 30));
-            Udre = GetUdre(udre);
+            {
+                Tk = DObservationItem.GetDateTime((uint)(Iod * 30));
+            }
+
+            Udre = DObservationItem.GetUdre(udre);
         }
 
         /// <summary>
@@ -87,7 +98,7 @@ namespace Asv.Gnss
         /// <param name="udre">The byte value representing UDRE.</param>
         /// <returns>The SatUdreEnum value corresponding to the given UDRE value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the given UDRE value is not within the valid range of 0 to 3.</exception>
-        private SatUdreEnum GetUdre(byte udre)
+        private static SatUdreEnum GetUdre(byte udre)
         {
             return udre switch
             {
@@ -146,7 +157,7 @@ namespace Asv.Gnss
         public SatUdreEnum Udre { get; set; }
 
         /// <summary>
-        /// Represents the Tk property. </summary> <value>
+        /// Gets or sets represents the Tk property. </summary> <value>
         /// Gets or sets the value of Tk property. </value> <remarks>
         /// This property is of type DateTime and it represents the Tk value. </remarks>
         /// /

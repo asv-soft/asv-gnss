@@ -95,13 +95,14 @@ namespace Asv.Gnss
         private readonly UbxDeviceConfig _config;
 
         /// <summary>
-        /// Initializes a new instance of the UbxDevice class with the specified connection string and default configuration.
+        /// Initializes a new instance of the <see cref="UbxDevice"/> class with the specified connection string and default configuration.
         /// </summary>
         /// <param name="connectionString">The connection string to the device.</param>
         public UbxDevice(string connectionString)
             : this(connectionString, UbxDeviceConfig.Default) { }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="UbxDevice"/> class.
         /// Represents a UBX GNSS device.
         /// </summary>
         public UbxDevice(string connectionString, UbxDeviceConfig config)
@@ -123,7 +124,9 @@ namespace Asv.Gnss
             _config = config;
 
             if (disposeConnection)
+            {
                 connection.DisposeItWith(Disposable);
+            }
         }
 
         /// <summary>
@@ -182,7 +185,10 @@ namespace Asv.Gnss
                 catch (TaskCanceledException)
                 {
                     if (IsDisposed)
+                    {
                         return;
+                    }
+
                     if (cancel.IsCancellationRequested)
                     {
                         throw;
@@ -248,13 +254,7 @@ namespace Asv.Gnss
                     await Connection.Send(pkt, linkedCancel.Token).ConfigureAwait(false);
                     return await tcs.Task.ConfigureAwait(false);
                 }
-                catch (TaskCanceledException)
-                {
-                    if (cancel.IsCancellationRequested)
-                    {
-                        throw;
-                    }
-                }
+                catch (TaskCanceledException) when (!cancel.IsCancellationRequested) { }
             }
 
             throw new UbxDeviceTimeoutException(
