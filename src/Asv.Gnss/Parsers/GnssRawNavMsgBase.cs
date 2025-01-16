@@ -11,14 +11,14 @@ namespace Asv.Gnss
         public uint[] RawData { get; set; }
 
         /// <summary>
-        /// Satellite ID
+        /// Gets or sets satellite ID.
         /// </summary>
         public int SatId { get; set; }
 
         public int SatPrn { get; set; }
 
         /// <summary>
-        /// RINEX satellite code
+        /// Gets or sets rINEX satellite code.
         /// </summary>
         public string RinexSatCode { get; set; }
         public GnssSignalTypeEnum SignalType { get; set; }
@@ -50,7 +50,7 @@ namespace Asv.Gnss
         IRNS,
         LEO,
         MSS,
-        NavIC
+        NavIC,
     }
 
     public enum GnssSignalTypeEnum
@@ -87,6 +87,6 @@ namespace Asv.Gnss
         L1S,
         B2b,
         B2_AltBoc,
-        S
+        S,
     }
 }

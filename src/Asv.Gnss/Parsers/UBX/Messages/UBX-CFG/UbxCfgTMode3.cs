@@ -6,14 +6,13 @@ using Geodesy;
 namespace Asv.Gnss
 {
     /// <summary>
-    /// Receiver Mode
+    /// Receiver Mode.
     /// </summary>
-    public enum TMode3Enum:ushort
+    public enum TMode3Enum : ushort
     {
         Disabled = 0,
         SurveyIn = 1,
-        FixedMode = 2
-        
+        FixedMode = 2,
     }
 
     public class UbxCfgTMode3Pool : UbxMessageBase
@@ -22,25 +21,16 @@ namespace Asv.Gnss
         public override byte Class => 0x06;
         public override byte SubClass => 0x71;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
-        
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 
-    public class UbxCfgTMode3:UbxMessageBase
+    public class UbxCfgTMode3 : UbxMessageBase
     {
         public override string Name => "UBX-CFG-TMODE3";
         public override byte Class => 0x06;
@@ -49,24 +39,27 @@ namespace Asv.Gnss
         public byte Version { get; set; }
 
         /// <summary>
-        /// Position is given in LAT/LON/ALT (default is ECEF)
+        /// Gets or sets a value indicating whether position is given in LAT/LON/ALT (default is ECEF).
         /// </summary>
         public bool IsGivenInLLA { get; set; }
 
         /// <summary>
-        /// Receiver Mode
+        /// Gets or sets receiver Mode.
         /// </summary>
         public TMode3Enum Mode { get; set; }
+
         /// <summary>
-        /// Survey-in position accuracy limit
+        /// Gets or sets survey-in position accuracy limit.
         /// </summary>
         public double SurveyInPositionAccuracyLimit { get; set; }
+
         /// <summary>
-        /// Survey-in minimum duration
+        /// Gets or sets survey-in minimum duration.
         /// </summary>
         public uint SurveyInMinDuration { get; set; }
+
         /// <summary>
-        /// Fixed position 3D accuracy
+        /// Gets or sets fixed position 3D accuracy.
         /// </summary>
         public double FixedPosition3DAccuracy { get; set; }
 
@@ -77,23 +70,29 @@ namespace Asv.Gnss
             BinSerialize.WriteByte(ref buffer, Version);
             BinSerialize.WriteByte(ref buffer, 0); // reserved
 
-            BinSerialize.WriteUShort(ref buffer, (ushort)((ushort)Mode | ((IsGivenInLLA ? 1 : 0) << 8)));
+            BinSerialize.WriteUShort(
+                ref buffer,
+                (ushort)((ushort)Mode | ((IsGivenInLLA ? 1 : 0) << 8))
+            );
 
             if (Mode == TMode3Enum.FixedMode)
             {
-                if (Location.HasValue == false)
+                if (!Location.HasValue)
                 {
-                    throw new Exception($"{nameof(Location)} must be not null, when {nameof(Mode)} == {nameof(TMode3Enum.FixedMode)}");
+                    throw new Exception(
+                        $"{nameof(Location)} must be not null, when {nameof(Mode)} == {nameof(TMode3Enum.FixedMode)}"
+                    );
                 }
+
                 var lat = (int)Math.Round(Location.Value.Latitude * 1e7);
                 var lon = (int)Math.Round(Location.Value.Longitude * 1e7);
                 var alt = (int)Math.Round(Location.Value.Altitude * 100.0);
                 var xpX = (long)Math.Round(Location.Value.Latitude * 1e9);
                 var xpY = (long)Math.Round(Location.Value.Longitude * 1e9);
                 var xpZ = (long)Math.Round(Location.Value.Altitude * 10000.0);
-                var latHp = (byte)(xpX - (long)lat * 100);
-                var lonHp = (byte)(xpY - (long)lon * 100);
-                var altHp = (byte)(xpZ - (long)alt * 100);
+                var latHp = (byte)(xpX - ((long)lat * 100));
+                var lonHp = (byte)(xpY - ((long)lon * 100));
+                var altHp = (byte)(xpZ - ((long)alt * 100));
 
                 BinSerialize.WriteInt(ref buffer, lat);
                 BinSerialize.WriteInt(ref buffer, lon);
@@ -115,14 +114,16 @@ namespace Asv.Gnss
 
             BinSerialize.WriteUInt(ref buffer, (uint)Math.Round(FixedPosition3DAccuracy * 10000.0));
             BinSerialize.WriteUInt(ref buffer, SurveyInMinDuration);
-            BinSerialize.WriteUInt(ref buffer, (uint)Math.Round(SurveyInPositionAccuracyLimit * 10000.0));
+            BinSerialize.WriteUInt(
+                ref buffer,
+                (uint)Math.Round(SurveyInPositionAccuracyLimit * 10000.0)
+            );
 
             // reserved3
             for (int i = 0; i < 8; i++)
             {
                 BinSerialize.WriteByte(ref buffer, 0);
             }
-
         }
 
         protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
@@ -145,9 +146,9 @@ namespace Asv.Gnss
                 if (!IsGivenInLLA)
                 {
                     (double X, double Y, double Z) ecef;
-                    ecef.X = ecefXorLat * 0.01 + ecefXOrLatHP * 0.0001;
-                    ecef.Y = ecefYorLon * 0.01 + ecefYOrLonHP * 0.0001;
-                    ecef.Z = ecefZorAlt * 0.01 + ecefZOrAltHP * 0.0001;
+                    ecef.X = (ecefXorLat * 0.01) + (ecefXOrLatHP * 0.0001);
+                    ecef.Y = (ecefYorLon * 0.01) + (ecefYOrLonHP * 0.0001);
+                    ecef.Z = (ecefZorAlt * 0.01) + (ecefZOrAltHP * 0.0001);
 
                     var position = UbxHelper.Ecef2Pos(ecef);
                     var lat = position.X * 180.0 / Math.PI;
@@ -157,9 +158,9 @@ namespace Asv.Gnss
                 }
                 else
                 {
-                    var lat = ecefXorLat * 1e-7 + ecefXOrLatHP * 1e-9;
-                    var lon = ecefYorLon * 1e-7 + ecefYOrLonHP * 1e-9;
-                    var alt = ecefZorAlt * 0.01 + ecefZOrAltHP * 0.0001;
+                    var lat = (ecefXorLat * 1e-7) + (ecefXOrLatHP * 1e-9);
+                    var lon = (ecefYorLon * 1e-7) + (ecefYOrLonHP * 1e-9);
+                    var alt = (ecefZorAlt * 0.01) + (ecefZOrAltHP * 0.0001);
                     Location = new GeoPoint(lat, lon, alt);
                 }
             }
@@ -173,14 +174,17 @@ namespace Asv.Gnss
             SurveyInPositionAccuracyLimit = BinSerialize.ReadUInt(ref buffer) * 0.0001;
 
             buffer = buffer.Slice(8);
-
         }
 
         protected override int GetContentByteSize() => 40;
 
         public override void Randomize(Random random)
         {
-            Location = new GeoPoint(random.Next(-90, 90), random.Next(0, 180), random.Next(-1000, 1000));
+            Location = new GeoPoint(
+                random.Next(-90, 90),
+                random.Next(0, 180),
+                random.Next(-1000, 1000)
+            );
             FixedPosition3DAccuracy = Math.Round(random.NextDouble() * 10, 1);
             IsGivenInLLA = true;
             Mode = TMode3Enum.FixedMode;

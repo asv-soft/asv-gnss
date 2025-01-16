@@ -4,9 +4,9 @@ using Asv.IO;
 namespace Asv.Gnss
 {
     /// <summary>
-    /// Dilution of precision
+    /// Dilution of precision.
     /// </summary>
-    public class SbfPacketDOP:SbfMessageBase
+    public class SbfPacketDOP : SbfMessageBase
     {
         public override ushort MessageRevision => 0;
         public override ushort MessageType => 4001;
@@ -17,7 +17,11 @@ namespace Asv.Gnss
             NrSV = BinSerialize.ReadByte(ref buffer);
             Reserved = BinSerialize.ReadByte(ref buffer);
             PDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-            if (Math.Abs(PDOP) < double.Epsilon) PDOP = Double.NaN;
+            if (Math.Abs(PDOP) < double.Epsilon)
+            {
+                PDOP = double.NaN;
+            }
+
             TDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
             HDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
             VDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
@@ -25,13 +29,13 @@ namespace Asv.Gnss
             VPL = CheckNan(BinSerialize.ReadDouble(ref buffer));
         }
 
-        
         /// <summary>
-        /// Vertical Protection Level (see the DO 229 standard).
+        /// Gets or sets vertical Protection Level (see the DO 229 standard).
         /// </summary>
         public double VPL { get; set; }
+
         /// <summary>
-        /// Horizontal Protection Level (see the DO 229 standard)
+        /// Gets or sets horizontal Protection Level (see the DO 229 standard).
         /// </summary>
         public double HPL { get; set; }
 
@@ -42,23 +46,21 @@ namespace Asv.Gnss
         public double TDOP { get; set; }
 
         /// <summary>
-        /// If 0, PDOP not available
+        /// Gets or sets if 0, PDOP not available.
         /// </summary>
         public double PDOP { get; set; }
 
         public byte Reserved { get; set; }
 
         /// <summary>
-        /// Total number of satellites used in the DOP computation, or 0 if the DOP
-        /// information is not available(in that case, the xDOP fields are all set to 0)
+        /// Gets or sets total number of satellites used in the DOP computation, or 0 if the DOP
+        /// information is not available(in that case, the xDOP fields are all set to 0).
         /// </summary>
         public byte NrSV { get; set; }
 
         private static double CheckNan(double toSingle)
         {
-            return toSingle == -2E10 ? Single.NaN : toSingle;
+            return toSingle == -2E10 ? float.NaN : toSingle;
         }
-
-        
     }
 }

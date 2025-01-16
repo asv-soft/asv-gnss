@@ -27,7 +27,7 @@ namespace Asv.Gnss
         /// The buffer has a size of 1030 bytes, consisting of:
         /// - 3 bytes for the preamble
         /// - 0-1023 bytes for data
-        /// - 3 bytes for the CRC (Cyclic Redundancy Check)
+        /// - 3 bytes for the CRC (Cyclic Redundancy Check).
         /// </remarks>
         private readonly byte[] _buffer = new byte[1030]; // 3 (preamb.) + 0-1023 bytes data + 3 (CRC)
 
@@ -84,9 +84,8 @@ namespace Asv.Gnss
             /// <summary>
             /// Represents the possible state of a system.
             /// </summary>
-            Crc3
+            Crc3,
         }
-
 
         /// <summary>
         /// Gets the unique identifier of the GNSS protocol.
@@ -111,6 +110,7 @@ namespace Asv.Gnss
                         _state = State.Preamb1;
                         _buffer[0] = data;
                     }
+
                     break;
                 case State.Preamb1:
                     _buffer[1] = data;
@@ -119,13 +119,19 @@ namespace Asv.Gnss
                 case State.Preamb2:
                     _buffer[2] = data;
                     _state = State.Payload;
-                    _payloadLength = (ushort)BitHelper.GetBitU(_buffer, 14 /* preamble-8bit + reserved-6bit */, 10 /* length-10bit */);
+                    _payloadLength = (ushort)
+                        BitHelper.GetBitU(
+                            _buffer,
+                            14, /* preamble-8bit + reserved-6bit */
+                            10 /* length-10bit */
+                        );
                     _payloadReadedBytes = 0;
                     if (_payloadLength > _buffer.Length)
                     {
                         // buffer oversize
                         Reset();
                     }
+
                     break;
                 case State.Payload:
                     // read payload
@@ -139,6 +145,7 @@ namespace Asv.Gnss
                         _state = State.Crc1;
                         goto case State.Crc1;
                     }
+
                     break;
                 case State.Crc1:
                     _buffer[_payloadLength + 3] = data;
@@ -152,19 +159,36 @@ namespace Asv.Gnss
                     _buffer[_payloadLength + 3 + 2] = data;
 
                     var originalCrc = RtcmV3Crc24.Calc(_buffer, _payloadLength + 3, 0);
-                    var sourceCrc = BitHelper.GetBitU(_buffer, (uint)((_payloadLength + 3) * 8), 24);
+                    var sourceCrc = BitHelper.GetBitU(
+                        _buffer,
+                        (uint)((_payloadLength + 3) * 8),
+                        24
+                    );
                     if (originalCrc == sourceCrc)
                     {
-                        var msgNumber = (ushort)BitHelper.GetBitU(_buffer, 24 /* preamble-8bit + reserved-6bit + length-10bit */, 12);
-                        var span = new ReadOnlySpan<byte>(_buffer,0,_payloadLength + 6 /* preamble-8bit + reserved-6bit + length-10bit */ + 3 /*CRC24*/);
+                        var msgNumber = (ushort)
+                            BitHelper.GetBitU(
+                                _buffer,
+                                24, /* preamble-8bit + reserved-6bit + length-10bit */
+                                12
+                            );
+                        var span = new ReadOnlySpan<byte>(
+                            _buffer,
+                            0,
+                            _payloadLength
+                                + 6 /* preamble-8bit + reserved-6bit + length-10bit */
+                                + 3 /*CRC24*/
+                        );
                         if (_onRawData.HasObservers)
                         {
-                            _onRawData.OnNext(new RtcmV3RawMessage(msgNumber,span));
+                            _onRawData.OnNext(new RtcmV3RawMessage(msgNumber, span));
                         }
-                        ParsePacket(msgNumber, ref span,true);
+
+                        ParsePacket(msgNumber, ref span, true);
                         Reset();
                         return true;
                     }
+
                     PublishWhenCrcError();
                     Reset();
                     break;
@@ -184,7 +208,7 @@ namespace Asv.Gnss
         }
 
         /// <summary>
-        /// Event that is raised when a RTCMv3 raw message is received.
+        /// Gets event that is raised when a RTCMv3 raw message is received.
         /// </summary>
         /// <value>
         /// An <see cref="IObservable{T}"/> representing the event stream of RTCMv3 raw messages.

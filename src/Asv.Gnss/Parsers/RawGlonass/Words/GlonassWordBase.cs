@@ -9,21 +9,12 @@ namespace Asv.Gnss
     public abstract class GlonassWordBase
     {
         /// <summary>
-        /// Represents a unique identifier for a word.
-        /// </summary>
-        private byte _wordId;
-
-        /// <summary>
         /// Gets or sets the WordId property.
         /// </summary>
         /// <value>
         /// The WordId property.
         /// </value>
-        public virtual byte WordId
-        {
-            get => _wordId;
-            protected set => _wordId = value;
-        }
+        public virtual byte WordId { get; protected set; }
 
         /// <summary>
         /// Deserializes the given byte array.
@@ -32,10 +23,19 @@ namespace Asv.Gnss
         /// <exception cref="Exception">Thrown when the length of the data array is not 12 bytes.</exception>
         public virtual void Deserialize(byte[] data)
         {
-            if (data.Length != 11) throw new Exception($"Length of {nameof(data)} array must be 85 bit (~ 11 bytes)  (as Glonass ICD word length )");
-            
+            if (data.Length != 11)
+            {
+                throw new Exception(
+                    $"Length of {nameof(data)} array must be 85 bit (~ 11 bytes)  (as Glonass ICD word length )"
+                );
+            }
+
             var wordId = (byte)GpsRawHelper.GetBitU(data, 4, 4);
-            if (wordId > 5) WordId = wordId;
+            if (wordId > 5)
+            {
+                WordId = wordId;
+            }
+
             CheckWordId(wordId);
             Array.Copy(data, RawData, 11);
         }
@@ -46,7 +46,10 @@ namespace Asv.Gnss
         /// <param name="wordId">The word ID to check.</param>
         protected virtual void CheckWordId(byte wordId)
         {
-            if (wordId != WordId) throw new Exception($"Word ID not equals: want {WordId}. Got {wordId}");
+            if (wordId != WordId)
+            {
+                throw new Exception($"Word ID not equals: want {WordId}. Got {wordId}");
+            }
         }
 
         public byte[] RawData { get; } = new byte[11];

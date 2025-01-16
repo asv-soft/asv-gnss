@@ -4,6 +4,7 @@
     {
         /// <inheritdoc/>
         public override ushort MessageId => 1075;
+
         /// <inheritdoc/>
         public override string Name => "GPS MSM5";
     }

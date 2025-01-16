@@ -18,7 +18,7 @@ namespace Asv.Gnss.Shell
         public sealed class Settings : CommandSettings
         {
             /// <summary>
-            /// Connection string for UBX.
+            /// Gets or sets connection string for UBX.
             /// </summary>
             [Description("Connection string for UBX")]
             [CommandArgument(0, "[connectionString]")]
@@ -34,10 +34,10 @@ namespace Asv.Gnss.Shell
         public override int Execute(CommandContext context, Settings settings)
         {
             using var device = new UbxDevice(settings.Cs);
-            Test(device).Wait();
+            UbxCommand.Test(device).Wait();
             device.SetupByDefault().Wait();
             device.SetSurveyInMode().Wait();
-            
+
             return 0;
         }
 
@@ -46,12 +46,12 @@ namespace Asv.Gnss.Shell
         /// </summary>
         /// <param name="device">The IUbxDevice to test.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        public async Task Test(IUbxDevice device)
+        public static async Task Test(IUbxDevice device)
         {
             var root = new Tree(device.Connection.Stream.Name);
-            
+
             root.Print(await device.GetMonVer());
-            root.Print(await device.GetCfgPort(0),0);
+            root.Print(await device.GetCfgPort(0), 0);
             root.Print(await device.GetCfgPort(1), 1);
             root.Print(await device.GetCfgPort(2), 2);
             root.Print(await device.GetCfgPort(3), 3);
@@ -61,9 +61,8 @@ namespace Asv.Gnss.Shell
         }
     }
 
-
-    /// This class, `AnsiConsoleHelper`, contains helper methods for formatting and printing console output in ANSI colors and styles.
-    /// /
+    // This class, `AnsiConsoleHelper`, contains helper methods for formatting and printing console output in ANSI colors and styles.
+    // /
     public static class AnsiConsoleHelper
     {
         /// <summary>
@@ -86,7 +85,7 @@ namespace Asv.Gnss.Shell
         public static void Print(this Tree root, UbxMonVer data)
         {
             var node = root.AddNode($"[green]{data.Name}[/]");
-            node.PrintKeyValue(nameof(data.Software),data.Software);
+            node.PrintKeyValue(nameof(data.Software), data.Software);
             node.PrintKeyValue(nameof(data.Hardware), data.Hardware);
             node.PrintKeyValue(nameof(data.Extensions), data.Extensions);
         }
@@ -97,9 +96,9 @@ namespace Asv.Gnss.Shell
         /// <param name="node">The <see cref="TreeNode"/> where the key-value pair will be printed.</param>
         /// <param name="key">The key to be printed.</param>
         /// <param name="value">The value to be printed.</param>
-        public static void PrintKeyValue(this TreeNode node, string key,string value)
+        public static void PrintKeyValue(this TreeNode node, string key, string value)
         {
-            node.AddNode($"[yellow]{key,-20}[/]:{value}");
+            node.AddNode($"[yellow]{key, -20}[/]:{value}");
         }
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace Asv.Gnss.Shell
         /// <param name="value">The collection of values associated with the key.</param>
         public static void PrintKeyValue(this TreeNode node, string key, IEnumerable<string> value)
         {
-            var subNode = node.AddNode($"[yellow]{key,-20}[/]");
+            var subNode = node.AddNode($"[yellow]{key, -20}[/]");
             foreach (var v in value)
             {
                 subNode.AddNode(v);

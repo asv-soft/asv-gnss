@@ -19,7 +19,7 @@ namespace Asv.Gnss.Test
     //         _output = output;
     //         _svIn = new RxValue<UbxNavSvin>().DisposeItWith(Disposable);
     //     }
-    //     
+    //
     //     [Fact]
     //     public void ConnectToDevice()
     //     {
@@ -33,7 +33,7 @@ namespace Asv.Gnss.Test
     //         var b = new byte[1024];
     //         var buffer = new Span<byte>(b);
     //         msg.Serialize(ref buffer);
-    //         
+    //
     //         _device = new UbxDevice("tcp://172.16.0.1:3307").DisposeItWith(Disposable);
     //         _device.Connection.Filter<UbxNavSvin>().Subscribe(_svIn).DisposeItWith(Disposable);
     //         _device.SetStationaryMode(false, 1).Wait(CancellationToken.None);
@@ -41,7 +41,7 @@ namespace Asv.Gnss.Test
     //         _device.SetMessageRate<UbxNavSvin>(1).Wait(CancellationToken.None);
     //         _device.SetMessageRate<UbxNavPvt>(1).Wait(CancellationToken.None);
     //         _device.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0x05, 5).Wait(CancellationToken.None);
-    //         
+    //
     //         _device.SetupRtcmMSM4Rate(1,CancellationToken.None).Wait(CancellationToken.None);
     //         _device.SetupRtcmMSM7Rate(0,default).Wait(CancellationToken.None);
     //         _device.SetMessageRate((byte)UbxHelper.ClassIDs.RTCM3, 0xE6, 5).Wait(CancellationToken.None);
@@ -50,8 +50,8 @@ namespace Asv.Gnss.Test
     //         _device.SetMessageRate((byte)UbxHelper.ClassIDs.RXM, 0x13, 2, default).Wait(CancellationToken.None);
     //         _device.SetMessageRate((byte)UbxHelper.ClassIDs.MON, 0x09, 2, default).Wait(CancellationToken.None);
     //
-    //         
-    //         
+    //
+    //
     //         _device.CallCfgSave(CancellationToken.None).Wait(CancellationToken.None);
     //         _device.Connection
     //             .Send(new UbxCfgRst { Bbr = BbrMask.ColdStart, Mode = ResetMode.ControlledSoftwareResetGnssOnly },
@@ -70,7 +70,7 @@ namespace Asv.Gnss.Test
     //             }
     //         }
     //         _device.CallCfgLoad(CancellationToken.None).Wait(CancellationToken.None);
-    //         
+    //
     //         var ver = _device.GetMonVer().Result;
     //         var cfgTMode3 = _device.GetCfgTMode3(CancellationToken.None).Result;
     //         _isInit = true;
