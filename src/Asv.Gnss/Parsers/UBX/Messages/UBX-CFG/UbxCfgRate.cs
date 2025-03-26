@@ -9,22 +9,13 @@ namespace Asv.Gnss
         public override byte Class => 0x06;
         public override byte SubClass => 0x08;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-            
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-            
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 
     /// <summary>
@@ -48,14 +39,13 @@ namespace Asv.Gnss
     /// • For most applications a 1 Hz update rate would be sufficient.
     /// • When using power save mode, measurement and navigation rate can differ
     /// from the values configured here.
-    /// • See Measurement and navigation rate with power save mode for details
+    /// • See Measurement and navigation rate with power save mode for details.
     /// </summary>
-    public class UbxCfgRate:UbxMessageBase
+    public class UbxCfgRate : UbxMessageBase
     {
         public override string Name => "UBX-CFG-RATE";
         public override byte Class => 0x06;
         public override byte SubClass => 0x08;
-
 
         public double RateHz { get; set; } = 1.0;
         public ushort NavRate { get; set; } = 1;
@@ -67,14 +57,12 @@ namespace Asv.Gnss
             Gps = 1,
             Glonass = 2,
             BeiDou = 3,
-            Galileo = 4
+            Galileo = 4,
         }
-
-        
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
-            BinSerialize.WriteUShort(ref buffer,GetRate(RateHz));
+            BinSerialize.WriteUShort(ref buffer, UbxCfgRate.GetRate(RateHz));
             BinSerialize.WriteUShort(ref buffer, NavRate);
             BinSerialize.WriteUShort(ref buffer, (ushort)TimeSystem);
         }
@@ -88,22 +76,29 @@ namespace Asv.Gnss
 
         protected override int GetContentByteSize() => 6;
 
-        private ushort GetRate(double rateHz)
+        private static ushort GetRate(double rateHz)
         {
-            var result = rateHz <= 0.0152613506295307 ? (ushort)65525 : (ushort)Math.Round(1000.0 / rateHz);
+            var result =
+                rateHz <= 0.0152613506295307 ? (ushort)65525 : (ushort)Math.Round(1000.0 / rateHz);
 
-            if (result <= 25) return 25;
+            if (result <= 25)
+            {
+                return 25;
+            }
 
             var multiplicity = (ushort)(result % 25);
-            if (multiplicity <= 12) return (ushort)(result - multiplicity);
+            if (multiplicity <= 12)
+            {
+                return (ushort)(result - multiplicity);
+            }
+
             return (ushort)(result + (25 - multiplicity));
         }
-
 
         public override void Randomize(Random random)
         {
             RateHz = 1;
-            NavRate = (ushort)random.Next(0,127);
+            NavRate = (ushort)random.Next(0, 127);
             TimeSystem = (TimeSystemEnum)(random.Next() % 5);
         }
     }

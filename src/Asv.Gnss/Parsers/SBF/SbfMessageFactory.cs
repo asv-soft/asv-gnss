@@ -26,6 +26,7 @@ namespace Asv.Gnss
             {
                 src.Register(func);
             }
+
             return src;
         }
     }

@@ -3,9 +3,11 @@
 namespace Asv.Gnss
 {
     /// <summary>
+    /// <para>
     /// This block contains the 300 bits of a GPS C/A subframe. It is generated each time a new
     /// subframe is received, i.e.every 6 seconds.
-    ///
+    /// </para>
+    /// <para>
     /// NAVBits contains the 300 bits of a GPS C/A subframe.
     /// Encoding: For easier parsing, the bits are stored as a succession of
     /// 10 32-bit words. Since the actual words in the subframe are 30-bit long,
@@ -15,7 +17,8 @@ namespace Asv.Gnss
     /// with the last transmitted bit of the previous word (D∗ 30)).
     /// Bits 6-29: sourceName data bits (referred to as dn in the GPS ICD). The first
     /// received bit is the MSB.
-    /// Bits 30-31: Reserved
+    /// Bits 30-31: Reserved.
+    /// </para>
     /// </summary>
     public class SbfPacketGpsRawCa : SbfPacketGnssRawNavMsgBase
     {

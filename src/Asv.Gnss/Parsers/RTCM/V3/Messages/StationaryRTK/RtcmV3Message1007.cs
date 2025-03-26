@@ -1,6 +1,6 @@
-﻿using Asv.Gnss;
+﻿using System;
+using Asv.Gnss;
 using Asv.IO;
-using System;
 
 namespace Asv.Gnss
 {
@@ -9,7 +9,5 @@ namespace Asv.Gnss
         public const int RtcmMessageId = 1007;
         public override ushort MessageId => RtcmMessageId;
         public override string Name => "Antenna Descriptor";
-
-
     }
 }

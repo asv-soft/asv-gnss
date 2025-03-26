@@ -12,55 +12,74 @@ namespace Asv.Gnss
     }
 
     [Flags]
-    public enum UbxCfgSection:uint
+    public enum UbxCfgSection : uint
     {
         None = 0b0000_0000_0000_0000,
-        All = 0b0001_1111_0001_1111,
 
         /// <summary>
         ///  Communications port settings. Modifying this sub-section results in an IO system reset. Because of
         ///  this undefined data may be output for a short period of time after receiving the message.
         /// </summary>
         IoPort = 0b0000_0000_0000_0001,
+
         /// <summary>
-        ///  Message configuration
+        ///  Message configuration.
         /// </summary>
         MsgConf = 0b0000_0000_0000_0010,
+
         /// <summary>
-        ///  INF message configuration
+        ///  INF message configuration.
         /// </summary>
         InfMsg = 0b0000_0000_0000_0100,
+
         /// <summary>
-        ///  Navigation configuration
+        ///  Navigation configuration.
         /// </summary>
         NavConf = 0b0000_0000_0000_1000,
+
         /// <summary>
-        ///  Receiver Manager configuration
+        ///  Receiver Manager configuration.
         /// </summary>
         RxmConf = 0b0000_0000_0001_0000,
+
         /// <summary>
-        ///  Sensor interface configuration (not supported in protocol versions less than 19)
+        ///  Sensor interface configuration (not supported in protocol versions less than 19).
         /// </summary>
         SenConf = 0b0000_0001_0000_0000,
+
         /// <summary>
-        ///  Remote inventory configuration
+        ///  Remote inventory configuration.
         /// </summary>
         RinvConf = 0b0000_0010_0000_0000,
+
         /// <summary>
-        ///  Antenna configuration
+        ///  Antenna configuration.
         /// </summary>
         AntConf = 0b0000_0100_0000_0000,
+
         /// <summary>
-        ///  Logging configuration
+        ///  Logging configuration.
         /// </summary>
         LogConf = 0b0000_1000_0000_0000,
+
         /// <summary>
-        ///  FTS configuration. Only applicable to the FTS product variant
+        ///  FTS configuration. Only applicable to the FTS product variant.
         /// </summary>
         FtsConf = 0b0001_0000_0000_0000,
+        All =
+            IoPort
+            | MsgConf
+            | InfMsg
+            | NavConf
+            | RxmConf
+            | SenConf
+            | RinvConf
+            | AntConf
+            | LogConf
+            | FtsConf,
     }
 
-    public class UbxCfgCfg:UbxMessageBase
+    public class UbxCfgCfg : UbxMessageBase
     {
         public override string Name => "UBX-CFG-CFG";
         public override byte Class => 0x06;
@@ -73,12 +92,12 @@ namespace Asv.Gnss
 
         protected override void SerializeContent(ref Span<byte> buffer)
         {
-            BinSerialize.WriteUInt(ref buffer,(uint)ClearMask);
+            BinSerialize.WriteUInt(ref buffer, (uint)ClearMask);
             BinSerialize.WriteUInt(ref buffer, (uint)SaveMask);
             BinSerialize.WriteUInt(ref buffer, (uint)LoadMask);
             if (DeviceMask.HasValue)
             {
-                BinSerialize.WriteByte(ref buffer,(byte)DeviceMask.Value);
+                BinSerialize.WriteByte(ref buffer, (byte)DeviceMask.Value);
             }
         }
 
@@ -87,7 +106,7 @@ namespace Asv.Gnss
             ClearMask = (UbxCfgSection)BinSerialize.ReadUInt(ref buffer);
             SaveMask = (UbxCfgSection)BinSerialize.ReadUInt(ref buffer);
             LoadMask = (UbxCfgSection)BinSerialize.ReadUInt(ref buffer);
-            if (buffer.IsEmpty == false)
+            if (!buffer.IsEmpty)
             {
                 DeviceMask = (UbxCfgDeviceMask?)BinSerialize.ReadByte(ref buffer);
             }

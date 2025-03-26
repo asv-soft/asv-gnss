@@ -16,6 +16,7 @@ namespace Asv.Gnss
         public string SourceName { get; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="UbxDeviceException"/> class.
         /// Represents an exception specific to UbxDevice.
         /// </summary>
         /// <remarks>
@@ -23,20 +24,31 @@ namespace Asv.Gnss
         /// </remarks>
         /// <param name="source">The source of the exception.</param>
         /// <param name="message">The error message that explains the reason for the exception.</param>
-        public UbxDeviceException(string source, string message) : base(message)
+        public UbxDeviceException(string source, string message)
+            : base(message)
         {
             SourceName = source;
         }
 
         /// <summary>
-        /// Initializes a new instance of the UbxDeviceException class with a specified source, message, and inner exception.
+        /// Initializes a new instance of the <see cref="UbxDeviceException"/> class with a specified source, message, and inner exception.
         /// </summary>
         /// <param name="source">The source of the exception.</param>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="inner">The exception that is the cause of the current exception.</param>
-        public UbxDeviceException(string source, string message, Exception inner) : base(message, inner)
+        public UbxDeviceException(string source, string message, Exception inner)
+            : base(message, inner)
         {
             SourceName = source;
         }
+
+        public UbxDeviceException()
+            : base() { }
+
+        public UbxDeviceException(string message)
+            : base(message) { }
+
+        public UbxDeviceException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 }

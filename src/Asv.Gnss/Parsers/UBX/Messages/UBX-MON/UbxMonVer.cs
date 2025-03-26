@@ -11,40 +11,34 @@ namespace Asv.Gnss
         public override byte Class => 0x0A;
         public override byte SubClass => 0x04;
 
-        protected override void SerializeContent(ref Span<byte> buffer)
-        {
-        }
+        protected override void SerializeContent(ref Span<byte> buffer) { }
 
-        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
-        {
-        }
+        protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer) { }
 
         protected override int GetContentByteSize() => 0;
-        
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 
     [SerializationNotSupported]
-    public class UbxMonVer: UbxMessageBase
+    public class UbxMonVer : UbxMessageBase
     {
         public override string Name => "UBX-MON-VER";
         public override byte Class => 0x0A;
         public override byte SubClass => 0x04;
 
         /// <summary>
-        /// Nul-terminated software version string.
+        /// Gets or sets nul-terminated software version string.
         /// </summary>
         public string Software { get; set; }
+
         /// <summary>
-        /// Nul-terminated hardware version string
+        /// Gets or sets nul-terminated hardware version string.
         /// </summary>
         public string Hardware { get; set; }
+
         /// <summary>
-        /// Extended software information strings. A series of nul-terminated strings.Each
+        /// Gets or sets extended software information strings. A series of nul-terminated strings.Each
         /// extension field is 30 characters long and contains varying software information.
         /// Not all extension fields may appear. Examples of reported information: the
         /// software version string of the underlying ROM (when the receiver's firmware is
@@ -76,12 +70,8 @@ namespace Asv.Gnss
             }
         }
 
-        protected override int GetContentByteSize() => 40 + (Extensions?.Count ?? 0) * 30;
-        
+        protected override int GetContentByteSize() => 40 + ((Extensions?.Count ?? 0) * 30);
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 }

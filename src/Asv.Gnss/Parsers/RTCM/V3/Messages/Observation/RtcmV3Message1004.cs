@@ -4,15 +4,20 @@ using Asv.IO;
 namespace Asv.Gnss
 {
     /// <summary>
-    /// Table 3.5-5 Contents of the Satellite-Specific Portion of a Type 1004 Message, Each Satellite – GPS Extended RTK, L1 & L2
-    /// 
+    /// <para>Table 3.5-5 Contents of the Satellite-Specific Portion of a Type 1004 Message, Each Satellite – GPS Extended RTK, L1 & L2.</para>
+    /// <para>
     /// The Type 1004 Message supports dual-frequency RTK operation, and includes an indication of the satellite carrier-to-noise (CNR) as
     /// measured by the reference station.Since the CNR does not usually change from measurement to measurement, this message type can
     /// be mixed with the Type 1003, and used only when a satellite CNR changes, thus saving broadcast link throughput.
+    /// </para>
     /// </summary>
     public class RtcmV3Message1004 : RtcmV3RTKObservableMessagesBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
             Satellites = new GPSSatellite[SatelliteCount];
@@ -20,7 +25,7 @@ namespace Asv.Gnss
             for (var i = 0; i < SatelliteCount; i++)
             {
                 var satellite = new GPSSatellite();
-                satellite.Deserialize(buffer,ref bitIndex);
+                satellite.Deserialize(buffer, ref bitIndex);
                 Satellites[i] = satellite;
             }
         }
@@ -29,15 +34,19 @@ namespace Asv.Gnss
         public override string Name => "Extended L1&L2 GPS RTK Observables";
 
         public GPSSatellite[] Satellites { get; set; }
-
     }
 
-    public class GPSSatellite 
+    public class GPSSatellite
     {
-        private static readonly int[] L2Codes = { RtcmV3Helper.CODE_L2X, RtcmV3Helper.CODE_L2P, RtcmV3Helper.CODE_L2D, RtcmV3Helper.CODE_L2W };
+        private static readonly int[] L2Codes =
+        {
+            RtcmV3Helper.CODE_L2X,
+            RtcmV3Helper.CODE_L2P,
+            RtcmV3Helper.CODE_L2D,
+            RtcmV3Helper.CODE_L2W,
+        };
 
         private static readonly double[] Freq = { RtcmV3Helper.FREQ1, RtcmV3Helper.FREQ2 };
-
 
         public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
@@ -63,7 +72,7 @@ namespace Asv.Gnss
                 prn += 80;
             }
 
-            var sat = RtcmV3Helper.satno(sys, (int)prn);
+            var sat = RtcmV3Helper.Satno(sys, (int)prn);
 
             if (sat == 0)
             {
@@ -73,10 +82,9 @@ namespace Asv.Gnss
             SatelliteNumber = sat;
             SatelliteCode = RtcmV3Helper.Sat2Code(SatelliteNumber, (int)prn);
 
-            pr1 = pr1 * 0.02 + amb * RtcmV3Helper.PRUNIT_GPS;
+            pr1 = (pr1 * 0.02) + (amb * RtcmV3Helper.PRUNIT_GPS);
             L1PseudoRange = pr1;
 
-            
             if (ppr1 != -524288) // (0xFFF80000)
             {
                 L1CarrierPhase = ppr1 * 0.0005 * Freq[0] / RtcmV3Helper.CLIGHT;
@@ -87,12 +95,12 @@ namespace Asv.Gnss
             }
 
             L1LockTime = (byte)lock1;
-            L1CNR = RtcmV3Helper.snratio(cnr1 * 0.25);
+            L1CNR = RtcmV3Helper.Snratio(cnr1 * 0.25);
             L1Code = code1 != 0 ? RtcmV3Helper.CODE_L1P : RtcmV3Helper.CODE_L1C;
 
             if (pr21 != -8192) // 0xFFFFE000
             {
-                L2PseudoRange = pr1 + pr21 * 0.02;
+                L2PseudoRange = pr1 + (pr21 * 0.02);
             }
 
             if (ppr2 != -524288) // 0xFFF80000
@@ -105,12 +113,12 @@ namespace Asv.Gnss
             }
 
             L2LockTime = (byte)lock2;
-            L2CNR = RtcmV3Helper.snratio(cnr2 * 0.25);
+            L2CNR = RtcmV3Helper.Snratio(cnr2 * 0.25);
             L2Code = (byte)L2Codes[code2];
         }
 
         /// <summary>
-        /// A GPS Satellite ID number from 1 to 32 refers to the PRN code of the
+        /// Gets or sets a GPS Satellite ID number from 1 to 32 refers to the PRN code of the
         /// GPS satellite. Satellite ID’s higher than 32 are reserved for satellite
         /// signals from Satellite-Based Augmentation Systems (SBAS’s) such as
         /// the FAA’s Wide-Area Augmentation System (WAAS). SBAS PRN
@@ -123,17 +131,17 @@ namespace Asv.Gnss
         public string SatelliteCode { get; set; }
 
         /// <summary>
-        /// The GPS L1 Code Indicator identifies the code being tracked by the
+        /// Gets or sets the GPS L1 Code Indicator identifies the code being tracked by the
         /// reference station. Civil receivers can track the C/A code, and
         /// optionally the P code, while military receivers can track C/A, and can
         /// also track P and Y code, whichever is broadcast by the satellite
         /// 0 - C/A Code
-        /// 1 - P(Y) Code Direct
+        /// 1 - P(Y) Code Direct.
         /// </summary>
         public byte L1Code { get; set; }
 
         /// <summary>
-        /// The GPS L1 Pseudorange field provides the raw L1 pseudorange
+        /// Gets or sets the GPS L1 Pseudorange field provides the raw L1 pseudorange
         /// measurement at the reference station in meters, modulo one lightmillisecond (299,792.458 meters). The GPS L1 pseudorange
         /// measurement is reconstructed by the user receiver from the L1
         /// pseudorange field by:
@@ -147,7 +155,7 @@ namespace Asv.Gnss
         public double L1PseudoRange { get; set; }
 
         /// <summary>
-        /// The GPS L1 PhaseRange – L1 Pseudorange field provides the
+        /// Gets or sets the GPS L1 PhaseRange – L1 Pseudorange field provides the
         /// information necessary to determine the L1 phase measurement. Note
         /// that the PhaseRange defined here has the same sign as the
         /// pseudorange. The PhaseRange has much higher resolution than the
@@ -169,34 +177,32 @@ namespace Asv.Gnss
         /// See also comments in sections 3.1.6 and 3.5.1 for correction of antenna
         /// phase center variations in Network RTK applications.
         /// 80000h - L1 phase is invalid; used only in the calculation of L2
-        /// measurements. 
+        /// measurements.
         /// </summary>
         public double L1PhaseRange { get; set; }
-
 
         public double L1CarrierPhase { get; set; }
 
         /// <summary>
-        /// The GPS L1 Lock Time Indicator provides a measure of the amount of
+        /// Gets or sets a value indicating whether the GPS L1 Lock Time Indicator provides a measure of the amount of
         /// time that has elapsed during which the Reference Station receiver has
         /// maintained continuous lock on that satellite signal. If a cycle slip
         /// occurs during the previous measurement cycle, the lock indicator will
-        /// be reset to zero. 
+        /// be reset to zero.
         /// </summary>
         public bool L1LossOfLockIndicator { get; set; }
-        
+
         public byte L1LockTime { get; set; }
 
-
         /// <summary>
-        /// The GPS L1 CNR measurements provide the reference station's
+        /// Gets or sets the GPS L1 CNR measurements provide the reference station's
         /// estimate of the carrier-to-noise ratio of the satellite’s signal in dB-Hz.
-        /// 0 - the CNR measurement is not computed. 
+        /// 0 - the CNR measurement is not computed.
         /// </summary>
         public ushort L1CNR { get; set; }
 
         /// <summary>
-        /// The GPS L2 Code Indicator depicts which L2 code is processed by the
+        /// Gets or sets the GPS L2 Code Indicator depicts which L2 code is processed by the
         /// reference station, and how it is processed.
         /// 0 - C/A or L2C code
         /// 1 - P(Y) code direct
@@ -216,12 +222,12 @@ namespace Asv.Gnss
         /// measurement (Y2-Y1) to the measured L1 C/A code. The code
         /// indicator should be set to 3 when the GPS reference station receiver is
         /// using a proprietary method that uses only the L2 P(Y) code signal to
-        /// derive L2 pseudorange. 
+        /// derive L2 pseudorange.
         /// </summary>
         public byte L2Code { get; set; }
 
         /// <summary>
-        /// The GPS L2-L1 Pseudorange Difference field is utilized, rather than
+        /// Gets or sets the GPS L2-L1 Pseudorange Difference field is utilized, rather than
         /// the full L2 pseudorange, in order to reduce the message length. The
         /// receiver must reconstruct the L2 code phase pseudorange by using the
         /// following formula:
@@ -229,12 +235,12 @@ namespace Asv.Gnss
         /// (GPS L1 pseudorange as reconstructed from L1 pseudorange field) +
         /// (GPS L2-L1 pseudorange field)
         /// 2000h (-163.84m) - no valid L2 code available, or that the value
-        /// exceeds the allowed range. 
+        /// exceeds the allowed range.
         /// </summary>
         public double L2PseudoRange { get; set; }
 
         /// <summary>
-        /// The GPS L2 PhaseRange - L1 Pseudorange field provides the
+        /// Gets or sets the GPS L2 PhaseRange - L1 Pseudorange field provides the
         /// information necessary to determine the L2 phase measurement. Note
         /// that the PhaseRange defined here has the same sign as the
         /// pseudorange. The PhaseRange has much higher resolution than the
@@ -265,20 +271,20 @@ namespace Asv.Gnss
         public double L2CarrierPhase { get; set; }
 
         /// <summary>
-        /// The GPS L2 Lock Time Indicator provides a measure of the amount of
+        /// Gets or sets a value indicating whether the GPS L2 Lock Time Indicator provides a measure of the amount of
         /// time that has elapsed during which the Reference Station receiver has
         /// maintained continuous lock on that satellite signal. If a cycle slip
         /// occurs during the previous measurement cycle, the lock indicator will
-        /// be reset to zero. 
+        /// be reset to zero.
         /// </summary>
         public bool L2LossOfLockIndicator { get; set; }
 
         public byte L2LockTime { get; set; }
 
         /// <summary>
-        /// The GPS L2 CNR measurements provide the reference station's
+        /// Gets or sets the GPS L2 CNR measurements provide the reference station's
         /// estimate of the carrier-to-noise ratio of the satellite’s signal in dB-Hz.
-        /// 0 - the CNR measurement is not computed 
+        /// 0 - the CNR measurement is not computed.
         /// </summary>
         public ushort L2CNR { get; set; }
     }
