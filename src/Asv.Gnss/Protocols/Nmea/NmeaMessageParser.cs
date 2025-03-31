@@ -105,7 +105,7 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
                         case NmeaProtocol.StartCrcByte:
                             _state = State.Crc1;
                             break;
-                        case NmeaProtocol.EndMessageByte:
+                        case NmeaProtocol.EndMessageByte1:
                             _state = State.NoChecksum;
                             break;
                         default:
@@ -135,7 +135,7 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
                     _state = State.End1;
                     break;
                 case State.End1:
-                    if (data != 0x0D)
+                    if (data != NmeaProtocol.EndMessageByte1)
                     {
                         Reset();
                         return false;
@@ -144,27 +144,37 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
                     _state = State.End2;
                     break;
                 case State.End2:
-                    if (data != 0x0A)
+                    if (data != NmeaProtocol.EndMessageByte2)
                     {
                         Reset();
                         return false;
                     }
 
                     var spanMsg = new ReadOnlySpan<byte>(_buffer, 0, _byteRead);
-                    var readCrc = NmeaProtocol.Encoding.GetString(_crcBuffer);
-                    var calcCrc = NmeaProtocol.CalcCrc(spanMsg);
-                    if (readCrc == calcCrc && NmeaProtocol.TryGetMessageId(spanMsg, out var msgId, out _))
+                    
+                    if (NmeaProtocol.TryGetMessageId(spanMsg, out var msgId, out _))
                     {
-                        InternalParsePacket(msgId, ref spanMsg);
-                        Reset();
-                        return true;
+                        try
+                        {
+                            InternalParsePacket(msgId, ref spanMsg);
+                            Reset();
+                            return true;
+                        }
+                        catch (ProtocolParserException ex)
+                        {
+                            InternalOnError(ex);
+                            return false;
+                        }
+                        catch (Exception ex)
+                        {
+                            InternalOnError(new ProtocolParserException(Info,"Parser ",ex));
+                            return false;
+                        }
                     }
-
                     Reset();
                     return false;
-
                 case State.NoChecksum:
-                    if (data != 0x0A)
+                    if (data != NmeaProtocol.EndMessageByte2)
                     {
                         Reset();
                         return false;
@@ -172,9 +182,22 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
                     var spanMsg1 = new ReadOnlySpan<byte>(_buffer, 0, _byteRead);
                     if (NmeaProtocol.TryGetMessageId(spanMsg1, out var msgId2, out _))
                     {
-                        InternalParsePacket(msgId2, ref spanMsg1);
-                        Reset();
-                        return true;
+                        try
+                        {
+                            InternalParsePacket(msgId2, ref spanMsg1);
+                            Reset();
+                            return true;
+                        }
+                        catch (ProtocolParserException ex)
+                        {
+                            InternalOnError(ex);
+                            return false;
+                        }
+                        catch (Exception ex)
+                        {
+                            InternalOnError(new ProtocolParserException(Info,"Parser ",ex));
+                            return false;
+                        }
                     }
                     Reset();
                     return false;

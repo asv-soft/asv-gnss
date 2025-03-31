@@ -3,6 +3,11 @@ using System;
 namespace Asv.Gnss
 {
     /// <summary>
+    /// GBS - GPS Satellite Fault Detection
+    ///             1      2   3   4   5   6   7   8   9
+    ///             |      |   |   |   |   |   |   |   |
+    /// $--GBS,hhmmss.ss,x.x,x.x,x.x,x.x,x.x,x.x,x.x*hh<CR><LF>
+    /// 
     /// 1. UTC time of the GGA or GNS fix associated with this sentence
     /// 2. Expected 1-sigma error in latitude (meters)
     /// 3. Expected 1-sigma error in longitude (meters)
@@ -11,8 +16,11 @@ namespace Asv.Gnss
     /// 6. Probability of missed detection for most likely failed satellite
     /// 7. Estimate of bias in meters on most likely failed satellite
     /// 8. Standard deviation of bias estimate
+    /// 
+    /// Source: https://gpsd.gitlab.io/gpsd/NMEA.html#MX521
+    /// Example: $GPGBS,125027,23.43,M,13.91,M,34.01,M*07
     /// </summary>
-    public class Nmea0183MessageGBS : NmeaMessage
+    public class NmeaMessageGBS : NmeaMessage
     {
         public const string MessageName = "GBS";
         public static readonly NmeaMessageId MessageId = new(MessageName);
@@ -43,24 +51,24 @@ namespace Asv.Gnss
         protected override void InternalSerialize(ref Span<byte> buffer)
         {
             WriteTime(ref buffer, TimeUtc);
-            WriteDouble(ref buffer, LatitudeError, "0.000");
-            WriteDouble(ref buffer, LongitudeError, "0.000");
-            WriteDouble(ref buffer, AltitudeError, "0.000");
-            WriteInt(ref buffer, FailedSatelliteId, "000");
-            WriteDouble(ref buffer, ProbabilityOfMissedDetection,"0.000");
-            WriteDouble(ref buffer, BiasEstimate,"0.000");
-            WriteDouble(ref buffer, BiasEstimateStandardDeviation, "0.000");
+            WriteDouble(ref buffer, LatitudeError, NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, LongitudeError, NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, AltitudeError, NmeaDoubleFormat.Double1X3);
+            WriteInt(ref buffer, FailedSatelliteId, NmeaIntFormat.IntD3);
+            WriteDouble(ref buffer, ProbabilityOfMissedDetection,NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, BiasEstimate,NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, BiasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
         }
 
         protected override int InternalGetByteSize() =>
             SizeOfTime(TimeUtc)
-            + SizeOfDouble(LatitudeError, "0.000")
-            + SizeOfDouble(LongitudeError, "0.000")
-            + SizeOfDouble(LongitudeError, "0.000")
-            + SizeOfInt(FailedSatelliteId, "000")
-            + SizeOfDouble(ProbabilityOfMissedDetection, "0.000")
-            + SizeOfDouble(BiasEstimate, "0.000")
-            + SizeOfDouble(BiasEstimateStandardDeviation, "0.000");
+            + SizeOfDouble(LatitudeError, NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(LongitudeError, NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(LongitudeError, NmeaDoubleFormat.Double1X3)
+            + SizeOfInt(FailedSatelliteId, NmeaIntFormat.IntD3)
+            + SizeOfDouble(ProbabilityOfMissedDetection, NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(BiasEstimate, NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(BiasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
 
         /// <summary>
         /// UTC time of the GGA or GNS fix associated with this sentence
@@ -101,9 +109,6 @@ namespace Asv.Gnss
         /// Standard deviation of bias estimate
         /// </summary>
         public double BiasEstimateStandardDeviation { get; set; }
-
-       
-
         
     }
 }

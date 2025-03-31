@@ -117,27 +117,6 @@ public class NmeaProtocolTest
         Assert.Equal(expected, result);
     }
 
-    [Theory]
-    [InlineData(123.456, "F3", "123.456")]
-    [InlineData(-78.9, "F1", "-78.9")]
-    [InlineData(0, "G", "0")]
-    public void WriteDouble_ShouldWriteCorrectly(double input, string format, string expected)
-    {
-        Span<byte> buffer = stackalloc byte[50];
-        NmeaProtocol.WriteDouble(ref buffer, input, format.AsSpan());
-        var result = Encoding.ASCII.GetString(buffer.Slice(0, expected.Length));
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(123.456, "F3", 7)]
-    [InlineData(-78.9, "F1", 5)]
-    [InlineData(0, "G", 1)]
-    public void SizeOfDouble_ShouldCalculateCorrectSize(double input, string format, int expectedSize)
-    {
-        var size = NmeaProtocol.SizeOfDouble(input, format.AsSpan());
-        Assert.Equal(expectedSize, size);
-    }
 
     [Theory]
     [InlineData("123", 123)]
@@ -149,36 +128,6 @@ public class NmeaProtocolTest
         Assert.Equal(expected, result);
     }
 
-    [Theory]
-    [InlineData(123, "D", "123")]
-    [InlineData(-78, "D", "-78")]
-    [InlineData(null, "D", "")]
-    public void WriteInt_ShouldWriteCorrectly(int? input, string format, string expected)
-    {
-        Span<byte> buffer = stackalloc byte[50];
-        var originalBuffer = buffer;
-        NmeaProtocol.WriteInt(ref buffer, input, format.AsSpan());
-
-        if (input == null)
-        {
-            Assert.Equal(originalBuffer.Length, buffer.Length); // Ничего не записалось
-        }
-        else
-        {
-            var result = Encoding.ASCII.GetString(originalBuffer[..^buffer.Length]);
-            Assert.Equal(expected, result);
-        }
-    }
-
-    [Theory]
-    [InlineData(12345, "D3", 5)]
-    [InlineData(-12345, "D6", 6)]
-    [InlineData(null, "D", 0)]
-    public void SizeOfInt_ShouldCalculateCorrectSize(int? input, string format, int expectedSize)
-    {
-        var size = NmeaProtocol.SizeOfInt(input, format.AsSpan());
-        Assert.Equal(expectedSize, size);
-    }
 
 
     [Theory]

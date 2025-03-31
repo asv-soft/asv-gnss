@@ -9,20 +9,86 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
+public readonly struct NmeaIntFormat(string format, int minSize)
+{
+    public string Format { get; } = format;
+    
+    public int GetByteSize(int? value)
+    {
+        return value == null ? 0 : Math.Max(minSize, NmeaProtocol.CountDigits(value.Value));
+    }
+    
+    public static NmeaIntFormat IntD1 = new("0", 1);
+    public static NmeaIntFormat IntD2 = new("00", 2);
+    public static NmeaIntFormat IntD3 = new("000", 3);
+    public static NmeaIntFormat IntD4 = new("0000", 4);
+    public static NmeaIntFormat IntD5 = new("00000", 5);
+    public static NmeaIntFormat IntD6 = new("000000", 6);
+    public static NmeaIntFormat IntD7 = new("0000000", 7);
+    public static NmeaIntFormat IntD8 = new("00000000", 8);
+}
+
+public readonly struct NmeaDoubleFormat(string format, int minSizeBeforeDot, int minSizeAfterDot)
+{
+    public string Format { get; } = format;
+    public int GetByteSize(double value)
+    {
+        return double.IsFinite(value) ? 0 : Math.Max(minSizeBeforeDot + 1 /*Dot (.)*/ + minSizeAfterDot, NmeaProtocol.CountDigits((int)value) + 1 /*Dot (.)*/ + minSizeAfterDot);
+    }
+    
+    public static readonly NmeaDoubleFormat Double1X1 = new("0.0", 1, 1);
+    public static readonly NmeaDoubleFormat Double1X2 = new("0.00", 1, 2);
+    public static readonly NmeaDoubleFormat Double1X3 = new("0.000", 1, 3);
+    public static readonly NmeaDoubleFormat Double1X4 = new("0.0000", 1, 4);
+    public static readonly NmeaDoubleFormat Double1X5 = new("0.00000", 1, 5);
+    public static readonly NmeaDoubleFormat Double1X6 = new("0.000000", 1, 6);
+    public static readonly NmeaDoubleFormat Double2X1 = new("00.0", 2, 1);
+    public static readonly NmeaDoubleFormat Double2X2 = new("00.00", 2, 2);
+    public static readonly NmeaDoubleFormat Double2X3 = new("00.000", 2, 3);
+    public static readonly NmeaDoubleFormat Double2X4 = new("00.0000", 2, 4);
+    public static readonly NmeaDoubleFormat Double2X5 = new("00.00000", 2, 5);
+    public static readonly NmeaDoubleFormat Double2X6 = new("00.000000", 2, 6);
+    public static readonly NmeaDoubleFormat Double3X1 = new("000.0", 3, 1);
+    public static readonly NmeaDoubleFormat Double3X2 = new("000.00", 3, 2);
+    public static readonly NmeaDoubleFormat Double3X3 = new("000.000", 3, 3);
+    public static readonly NmeaDoubleFormat Double3X4 = new("000.0000", 3, 4);
+    public static readonly NmeaDoubleFormat Double3X5 = new("000.00000", 3, 5);
+    public static readonly NmeaDoubleFormat Double3X6 = new("000.000000", 3, 6);
+    public static readonly NmeaDoubleFormat Double4X1 = new("0000.0", 4, 1);
+    public static readonly NmeaDoubleFormat Double4X2 = new("0000.00", 4, 2);
+    public static readonly NmeaDoubleFormat Double4X3 = new("0000.000", 4, 3);
+    public static readonly NmeaDoubleFormat Double4X4 = new("0000.0000", 4, 4);
+    public static readonly NmeaDoubleFormat Double4X5 = new("0000.00000", 4, 5);
+    public static readonly NmeaDoubleFormat Double4X6 = new("0000.000000", 4, 6);
+    public static readonly NmeaDoubleFormat Double5X1 = new("00000.0", 5, 1);
+    public static readonly NmeaDoubleFormat Double5X2 = new("00000.00", 5, 2);
+    public static readonly NmeaDoubleFormat Double5X3 = new("00000.000", 5, 3);
+    public static readonly NmeaDoubleFormat Double5X4 = new("00000.0000", 5, 4);
+    public static readonly NmeaDoubleFormat Double5X5 = new("00000.00000", 5, 5);
+    public static readonly NmeaDoubleFormat Double5X6 = new("00000.000000", 5, 6);
+    public static readonly NmeaDoubleFormat Double6X1 = new("000000.0", 6, 1);
+    public static readonly NmeaDoubleFormat Double6X2 = new("000000.00", 6, 2);
+    public static readonly NmeaDoubleFormat Double6X3 = new("000000.000", 6, 3);
+    public static readonly NmeaDoubleFormat Double6X4 = new("000000.0000", 6, 4);
+    public static readonly NmeaDoubleFormat Double6X5 = new("000000.00000", 6, 5);
+    public static readonly NmeaDoubleFormat Double6X6 = new("000000.000000", 6, 6);
+        
+}
 
 
 public static class NmeaProtocol
 {
-    public const byte ComaByte = (byte)',';
+    public const byte ComaByte = (byte)TokenSeparator;
     public const char TokenSeparator = ',';
-    public const byte StartCrcByte = (byte)'*';
+    public const char StartCrcChar = '*';
+    public const byte StartCrcByte = (byte)StartCrcChar;
+    
     public const byte StartMessageByte1 = (byte)'$';
     public const byte StartMessageByte2 = (byte)'!';
-    public const byte EndMessageByte = 0x0D;
+    public const byte EndMessageByte1 = 0x0D;
+    public const byte EndMessageByte2 = 0x0A;
     private const byte DigitSeparator = (byte)'.';
-
     public const char ProprietaryPrefix = 'P';
-
     public static ProtocolInfo ProtocolInfo { get; } = new("NAME", "NMEA 0183");
     public static Encoding Encoding => Encoding.ASCII;
     
@@ -142,18 +208,18 @@ public static class NmeaProtocol
     {
         if (value == null) return;
         var time = value.Value;
-        time.Hours.TryFormat(buffer, out var written, "00");
+        time.Hours.TryFormat(buffer, out var written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "hh == 2 char" );
         buffer = buffer[written..];
-        time.Minutes.TryFormat(buffer, out written, "00");
+        time.Minutes.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "mm == 2 char" );
         buffer = buffer[written..];
-        time.Seconds.TryFormat(buffer, out written, "00");
+        time.Seconds.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "ss == 2 char" );
         buffer = buffer[written..];
         buffer[0] = DigitSeparator;
         buffer = buffer[1..];
-        time.Milliseconds.TryFormat(buffer, out written, "000");
+        time.Milliseconds.TryFormat(buffer, out written, NmeaIntFormat.IntD3.Format);
         Debug.Assert(written == 3, "sss == 3 char" );
         buffer = buffer[written..];
     }
@@ -162,8 +228,6 @@ public static class NmeaProtocol
     {
         return value == null ? 0 : 10 /* hhmmss.sss */;
     }
-
-    
 
     /// <summary>
     /// x.x
@@ -174,22 +238,17 @@ public static class NmeaProtocol
     {
         return value.IsEmpty ? double.NaN : double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
     }
-    public static void WriteDouble(ref Span<byte> buffer, double value, ReadOnlySpan<char> format)
+    public static void WriteDouble(ref Span<byte> buffer, double value, NmeaDoubleFormat format)
     {
         if (double.IsFinite(value))
         {
-            value.TryFormat(buffer, out var written, format, NumberFormatInfo.InvariantInfo);
+            value.TryFormat(buffer, out var written, format.Format, NumberFormatInfo.InvariantInfo);
             buffer = buffer[written..];
         }
     }
-
-    public static int SizeOfDouble(double value, ReadOnlySpan<char> format)
-    {
-        return double.IsFinite(value) ? Math.Max(format.Length, CountDigits((int)value)) : 0;
-    }
-
     
-    
+    public static int SizeOfDouble(double value, NmeaDoubleFormat format) => format.GetByteSize(value);
+
     /// <summary>
     /// x | xx | xxx | xxxx | xxxxx | xxxxxx
     /// </summary>
@@ -201,18 +260,15 @@ public static class NmeaProtocol
         return int.Parse(value, CultureInfo.InvariantCulture);
     }
     
-    public static void WriteInt(ref Span<byte> buffer, int? value, ReadOnlySpan<char> format)
+    public static void WriteInt(ref Span<byte> buffer, int? value, NmeaIntFormat format)
     {
         if (value == null) return;
-        value.Value.TryFormat(buffer, out var written,format, NumberFormatInfo.InvariantInfo);
+        value.Value.TryFormat(buffer, out var written,format.Format, NumberFormatInfo.InvariantInfo);
         buffer = buffer[written..];
     }
 
-    public static int SizeOfInt(int? value, ReadOnlySpan<char> format)
-    {
-        return value == null ? 0 : Math.Max(CountDigits(value.Value), format.Length);
-    }
-
+    public static int SizeOfInt(int? value, NmeaIntFormat format) => format.GetByteSize(value);
+    
     public static int CountDigits(int value)
     {
         return value switch
