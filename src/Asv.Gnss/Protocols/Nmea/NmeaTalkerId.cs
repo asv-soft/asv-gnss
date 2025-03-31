@@ -1,4 +1,7 @@
 using System;
+using System.Buffers;
+using System.Diagnostics;
+using Asv.IO;
 
 namespace Asv.Gnss;
 /// <summary>
@@ -182,215 +185,308 @@ public enum NmeaTalkerClass
     TimekeeperRadioUpdate
 }
 
-public readonly struct NmeaTalkerId
+
+public readonly struct NmeaTalkerId : ISizedSpanSerializable, IEquatable<NmeaTalkerId>
 {
-    public const string Ag = "AG";
-    public const string Ap = "AP";
-    public const string Cd = "CD";
-    public const string Cr = "CR";
-    public const string Cs = "CS";
-    public const string Ct = "CT";
-    public const string Cv = "CV";
-    public const string Cx = "CX";
-    public const string Df = "DF";
-    public const string Ec = "EC";
-    public const string Ep = "EP";
-    public const string Er = "ER";
-    public const string Gp = "GP";
-    public const string Hc = "HC";
-    public const string He = "HE";
-    public const string Hn = "HN";
-    public const string Ii = "II";
-    public const string In = "IN";
-    public const string Lc = "LC";
-    public const string P = "P";
-    public const string Ra = "RA";
-    public const string Sd = "SD";
-    public const string Sn = "SN";
-    public const string Ss = "SS";
-    public const string Ti = "TI";
-    public const string Vd = "VD";
-    public const string Dm = "DM";
-    public const string Vw = "VW";
-    public const string Wi = "WI";
-    public const string Yx = "YX";
-    public const string Za = "ZA";
-    public const string Zc = "ZC";
-    public const string Zq = "ZQ";
-    public const string Zv = "ZV";
+    private const string Ag = "AG";
+    private const string Ap = "AP";
+    private const string Cd = "CD";
+    private const string Cr = "CR";
+    private const string Cs = "CS";
+    private const string Ct = "CT";
+    private const string Cv = "CV";
+    private const string Cx = "CX";
+    private const string Df = "DF";
+    private const string Ec = "EC";
+    private const string Ep = "EP";
+    private const string Er = "ER";
+    private const string Gp = "GP";
+    private const string Hc = "HC";
+    private const string He = "HE";
+    private const string Hn = "HN";
+    private const string Ii = "II";
+    private const string In = "IN";
+    private const string Lc = "LC";
+    private const string P = "P";
+    private const string Ra = "RA";
+    private const string Sd = "SD";
+    private const string Sn = "SN";
+    private const string Ss = "SS";
+    private const string Ti = "TI";
+    private const string Vd = "VD";
+    private const string Dm = "DM";
+    private const string Vw = "VW";
+    private const string Wi = "WI";
+    private const string Yx = "YX";
+    private const string Za = "ZA";
+    private const string Zc = "ZC";
+    private const string Zq = "ZQ";
+    private const string Zv = "ZV";
 
-    public NmeaTalkerId(string msgId)
-        : this(msgId.AsSpan())
+
+
+    public NmeaTalkerId(NmeaTalkerClass type)
     {
+        Type = type;
+
+        Id = type switch
+        {
+            NmeaTalkerClass.AutopilotGeneral => Ag,
+            NmeaTalkerClass.AutopilotMagnetic => Ap,
+            NmeaTalkerClass.CommunicationsDigitalSelectiveCalling => Cd,
+            NmeaTalkerClass.CommunicationsReceiver => Cr,
+            NmeaTalkerClass.CommunicationsSatellite => Cs,
+            NmeaTalkerClass.CommunicationsRadioTelephoneMfhf => Ct,
+            NmeaTalkerClass.CommunicationsRadioTelephoneVhf => Cv,
+            NmeaTalkerClass.CommunicationsScanningReceiver => Cx,
+            NmeaTalkerClass.DirectionFinder => Df,
+            NmeaTalkerClass.ElectronicChartDisplayInformationSystem => Ec,
+            NmeaTalkerClass.EmergencyPositionIndicatingBeacon => Ep,
+            NmeaTalkerClass.EngineRoomMonitoring => Er,
+            NmeaTalkerClass.GlobalPositioningSystem => Gp,
+            NmeaTalkerClass.HeadingMagneticCompass => Hc,
+            NmeaTalkerClass.HeadingNorthSeekingGyro => He,
+            NmeaTalkerClass.HeadingNonNorthSeekingGyro => Hn,
+            NmeaTalkerClass.IntegratedInstrumentation => Ii,
+            NmeaTalkerClass.IntegratedNavigation => In,
+            NmeaTalkerClass.LoranC => Lc,
+            NmeaTalkerClass.ProprietaryCode => P,
+            NmeaTalkerClass.RadarArpa => Ra,
+            NmeaTalkerClass.DepthSounder => Sd,
+            NmeaTalkerClass.ElectronicPositioningSystemGeneral => Sn,
+            NmeaTalkerClass.ScanningSounder => Ss,
+            NmeaTalkerClass.TurnRateIndicator => Ti,
+            NmeaTalkerClass.DopplerVelocitySensor => Vd,
+            NmeaTalkerClass.SpeedLogWaterMagnetic => Dm,
+            NmeaTalkerClass.SpeedLogWaterMechanical => Vw,
+            NmeaTalkerClass.WeatherInstruments => Wi,
+            NmeaTalkerClass.Transducer => Yx,
+            NmeaTalkerClass.TimekeeperAtomicClock => Za,
+            NmeaTalkerClass.TimekeeperChronometer => Zc,
+            NmeaTalkerClass.TimekeeperQuartz => Zq,
+            NmeaTalkerClass.TimekeeperRadioUpdate => Zv,
+            NmeaTalkerClass.Unknown => throw new ArgumentOutOfRangeException(nameof(type), type,
+                "Unknown talker type is not supported"),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Invalid talker type")
+        };
     }
 
-    public NmeaTalkerId(ReadOnlySpan<char> msgId)
+    public NmeaTalkerId(string talkerId)
+        : this(talkerId.AsSpan())
     {
-        if (msgId.IsEmpty)
+        
+    }
+    
+    public NmeaTalkerId(ReadOnlySpan<char> talkerId)
+    {
+        if (talkerId.IsEmpty)
         {
-            throw new ArgumentException("MessageId is empty", nameof(msgId));
+            throw new ArgumentException("MessageId is empty", nameof(talkerId));
         }
-
-        if (msgId[0] == NmeaProtocol.ProprietaryPrefix)
+        Id = string.Empty;
+        if (talkerId[0] == NmeaProtocol.ProprietaryPrefix)
         {
-            Type = NmeaTalkerClass.ProprietaryCode;
             Id = P;
+            Type = NmeaTalkerClass.ProprietaryCode;
+            return;
         }
-        else
+        
+        if (talkerId.Length < 2)
         {
-            if (msgId.Length < 2)
-            {
-                throw new ArgumentException("MessageId is too short", nameof(msgId));
-            }
+            throw new ArgumentException($"Message must be '{P}' for proprietary or two characters long", nameof(talkerId));
+        }
 
-            var talkerId = msgId[0..2];
-            switch (talkerId)
-            {
-                case Ag:
-                    Id = Ag;
-                    Type = NmeaTalkerClass.AutopilotGeneral;
-                    break;
-                case Ap:
-                    Id = Ap;
-                    Type = NmeaTalkerClass.AutopilotMagnetic;
-                    break;
-                case Cd:
-                    Id = Cd;
-                    Type = NmeaTalkerClass.CommunicationsDigitalSelectiveCalling;
-                    break;
-                case Cr:
-                    Id = Cr;
-                    Type = NmeaTalkerClass.CommunicationsReceiver;
-                    break;
-                case Cs:
-                    Id = Cs;
-                    Type = NmeaTalkerClass.CommunicationsSatellite;
-                    break;
-                case Ct:
-                    Id = Ct;
-                    Type = NmeaTalkerClass.CommunicationsRadioTelephoneMfhf;
-                    break;
-                case Cv:
-                    Id = Cv;
-                    Type = NmeaTalkerClass.CommunicationsRadioTelephoneVhf;
-                    break;
-                case Cx:
-                    Id = Cx;
-                    Type = NmeaTalkerClass.CommunicationsScanningReceiver;
-                    break;
-                case Df:
-                    Id = Df;
-                    Type = NmeaTalkerClass.DirectionFinder;
-                    break;
-                case Ec:
-                    Id = Ec;
-                    Type = NmeaTalkerClass.ElectronicChartDisplayInformationSystem;
-                    break;
-                case Ep:
-                    Id = Ep;
-                    Type = NmeaTalkerClass.EmergencyPositionIndicatingBeacon;
-                    break;
-                case Er:
-                    Id = Er;
-                    Type = NmeaTalkerClass.EngineRoomMonitoring;
-                    break;
-                case Gp:
-                    Id = Gp;
-                    Type = NmeaTalkerClass.GlobalPositioningSystem;
-                    break;
-                case Hc:
-                    Id = Hc;
-                    Type = NmeaTalkerClass.HeadingMagneticCompass;
-                    break;
-                case He:
-                    Id = He;
-                    Type = NmeaTalkerClass.HeadingNorthSeekingGyro;
-                    break;
-                case Hn:
-                    Id = Hn;
-                    Type = NmeaTalkerClass.HeadingNonNorthSeekingGyro;
-                    break;
-                case Ii:
-                    Id = Ii;
-                    Type = NmeaTalkerClass.IntegratedInstrumentation;
-                    break;
-                case In:
-                    Id = In;
-                    Type = NmeaTalkerClass.IntegratedNavigation;
-                    break;
-                case Lc:
-                    Id = Lc;
-                    Type = NmeaTalkerClass.LoranC;
-                    break;
-                case Ra:
-                    Id = Ra;
-                    Type = NmeaTalkerClass.RadarArpa;
-                    break;
-                case Sd:
-                    Id = Sd;
-                    Type = NmeaTalkerClass.DepthSounder;
-                    break;
-                case Sn:
-                    Id = Sn;
-                    Type = NmeaTalkerClass.ElectronicPositioningSystemGeneral;
-                    break;
-                case Ss:
-                    Id = Ss;
-                    Type = NmeaTalkerClass.ScanningSounder;
-                    break;
-                case Ti:
-                    Id = Ti;
-                    Type = NmeaTalkerClass.TurnRateIndicator;
-                    break;
-                case Vd:
-                    Id = Vd;
-                    Type = NmeaTalkerClass.DopplerVelocitySensor;
-                    break;
-                case Dm:
-                    Id = Dm;
-                    Type = NmeaTalkerClass.SpeedLogWaterMagnetic;
-                    break;
-                case Vw:
-                    Id = Vw;
-                    Type = NmeaTalkerClass.SpeedLogWaterMechanical;
-                    break;
-                case Wi:
-                    Id = Wi;
-                    Type = NmeaTalkerClass.WeatherInstruments;
-                    break;
-                case Yx:
-                    Id = Yx;
-                    Type = NmeaTalkerClass.Transducer;
-                    break;
-                case Za:
-                    Id = Za;
-                    Type = NmeaTalkerClass.TimekeeperAtomicClock;
-                    break;
-                case Zc:
-                    Id = Zc;
-                    Type = NmeaTalkerClass.TimekeeperChronometer;
-                    break;
-                case Zq:
-                    Id = Zq;
-                    Type = NmeaTalkerClass.TimekeeperQuartz;
-                    break;
-                case Zv:
-                    Id = Zv;
-                    Type = NmeaTalkerClass.TimekeeperRadioUpdate;
-                    break;
-                default:
-                    Id = new string(talkerId);
-                    Type = NmeaTalkerClass.Unknown;
-                    break;
-            }
+        talkerId = talkerId[..2];
+        switch (talkerId)
+        {
+            case Ag:
+                Id = Ag;
+                Type = NmeaTalkerClass.AutopilotGeneral;
+                break;
+            case Ap:
+                Id = Ap;
+                Type = NmeaTalkerClass.AutopilotMagnetic;
+                break;
+            case Cd:
+                Id = Cd;
+                Type = NmeaTalkerClass.CommunicationsDigitalSelectiveCalling;
+                break;
+            case Cr:
+                Id = Cr;
+                Type = NmeaTalkerClass.CommunicationsReceiver;
+                break;
+            case Cs:
+                Id = Cs;
+                Type = NmeaTalkerClass.CommunicationsSatellite;
+                break;
+            case Ct:
+                Id = Ct;
+                Type = NmeaTalkerClass.CommunicationsRadioTelephoneMfhf;
+                break;
+            case Cv:
+                Id = Cv;
+                Type = NmeaTalkerClass.CommunicationsRadioTelephoneVhf;
+                break;
+            case Cx:
+                Id = Cx;
+                Type = NmeaTalkerClass.CommunicationsScanningReceiver;
+                break;
+            case Df:
+                Id = Df;
+                Type = NmeaTalkerClass.DirectionFinder;
+                break;
+            case Ec:
+                Id = Ec;
+                Type = NmeaTalkerClass.ElectronicChartDisplayInformationSystem;
+                break;
+            case Ep:
+                Id = Ep;
+                Type = NmeaTalkerClass.EmergencyPositionIndicatingBeacon;
+                break;
+            case Er:
+                Id = Er;
+                Type = NmeaTalkerClass.EngineRoomMonitoring;
+                break;
+            case Gp:
+                Id = Gp;
+                Type = NmeaTalkerClass.GlobalPositioningSystem;
+                break;
+            case Hc:
+                Id = Hc;
+                Type = NmeaTalkerClass.HeadingMagneticCompass;
+                break;
+            case He:
+                Id = He;
+                Type = NmeaTalkerClass.HeadingNorthSeekingGyro;
+                break;
+            case Hn:
+                Id = Hn;
+                Type = NmeaTalkerClass.HeadingNonNorthSeekingGyro;
+                break;
+            case Ii:
+                Id = Ii;
+                Type = NmeaTalkerClass.IntegratedInstrumentation;
+                break;
+            case In:
+                Id = In;
+                Type = NmeaTalkerClass.IntegratedNavigation;
+                break;
+            case Lc:
+                Id = Lc;
+                Type = NmeaTalkerClass.LoranC;
+                break;
+            case Ra:
+                Id = Ra;
+                Type = NmeaTalkerClass.RadarArpa;
+                break;
+            case Sd:
+                Id = Sd;
+                Type = NmeaTalkerClass.DepthSounder;
+                break;
+            case Sn:
+                Id = Sn;
+                Type = NmeaTalkerClass.ElectronicPositioningSystemGeneral;
+                break;
+            case Ss:
+                Id = Ss;
+                Type = NmeaTalkerClass.ScanningSounder;
+                break;
+            case Ti:
+                Id = Ti;
+                Type = NmeaTalkerClass.TurnRateIndicator;
+                break;
+            case Vd:
+                Id = Vd;
+                Type = NmeaTalkerClass.DopplerVelocitySensor;
+                break;
+            case Dm:
+                Id = Dm;
+                Type = NmeaTalkerClass.SpeedLogWaterMagnetic;
+                break;
+            case Vw:
+                Id = Vw;
+                Type = NmeaTalkerClass.SpeedLogWaterMechanical;
+                break;
+            case Wi:
+                Id = Wi;
+                Type = NmeaTalkerClass.WeatherInstruments;
+                break;
+            case Yx:
+                Id = Yx;
+                Type = NmeaTalkerClass.Transducer;
+                break;
+            case Za:
+                Id = Za;
+                Type = NmeaTalkerClass.TimekeeperAtomicClock;
+                break;
+            case Zc:
+                Id = Zc;
+                Type = NmeaTalkerClass.TimekeeperChronometer;
+                break;
+            case Zq:
+                Id = Zq;
+                Type = NmeaTalkerClass.TimekeeperQuartz;
+                break;
+            case Zv:
+                Id = Zv;
+                Type = NmeaTalkerClass.TimekeeperRadioUpdate;
+                break;
+            case P:
+                Debug.Assert(false, "We should not be here");
+                break;
+            default:
+                Id = new string(talkerId);
+                Type = NmeaTalkerClass.Unknown;
+                break;
         }
     }
 
-    public string Id { get; }
-    public NmeaTalkerClass Type { get; }
+    public string Id { get; } = string.Empty;
+    public NmeaTalkerClass Type { get; } = NmeaTalkerClass.Unknown;
 
     public override string ToString()
     {
         return Id;
+    }
+
+    public void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        throw new NotImplementedException($"We don't need this method for {nameof(NmeaTalkerId)} cause it's readonly struct");
+    }
+
+    public void Serialize(ref Span<byte> buffer)
+    {
+        var slice = NmeaProtocol.Encoding.GetBytes(Id, buffer);
+        buffer = buffer[slice..];
+    }
+
+    public int GetByteSize()
+    {
+        return NmeaProtocol.Encoding.GetByteCount(Id);
+    }
+
+    public bool Equals(NmeaTalkerId other)
+    {
+        return string.Equals(Id, other.Id, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is NmeaTalkerId other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return StringComparer.InvariantCultureIgnoreCase.GetHashCode(Id);
+    }
+
+    public static bool operator ==(NmeaTalkerId left, NmeaTalkerId right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(NmeaTalkerId left, NmeaTalkerId right)
+    {
+        return !left.Equals(right);
     }
 }

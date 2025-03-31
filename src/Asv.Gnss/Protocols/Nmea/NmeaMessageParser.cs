@@ -153,7 +153,7 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
                     var spanMsg = new ReadOnlySpan<byte>(_buffer, 0, _byteRead);
                     var readCrc = NmeaProtocol.Encoding.GetString(_crcBuffer);
                     var calcCrc = NmeaProtocol.CalcCrc(spanMsg);
-                    if (readCrc == calcCrc && NmeaProtocol.TryGetMessageId(spanMsg, out var msgId))
+                    if (readCrc == calcCrc && NmeaProtocol.TryGetMessageId(spanMsg, out var msgId, out _))
                     {
                         InternalParsePacket(msgId, ref spanMsg);
                         Reset();
@@ -170,7 +170,7 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
                         return false;
                     }
                     var spanMsg1 = new ReadOnlySpan<byte>(_buffer, 0, _byteRead);
-                    if (NmeaProtocol.TryGetMessageId(spanMsg1, out var msgId2))
+                    if (NmeaProtocol.TryGetMessageId(spanMsg1, out var msgId2, out _))
                     {
                         InternalParsePacket(msgId2, ref spanMsg1);
                         Reset();

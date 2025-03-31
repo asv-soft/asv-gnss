@@ -26,6 +26,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Devices\" />
-    <Folder Include="Protocols\Nmea\Messages\" />
   </ItemGroup>
 </Project>

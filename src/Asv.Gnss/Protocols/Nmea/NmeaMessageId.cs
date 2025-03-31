@@ -1,51 +1,45 @@
 using System;
 using System.Text;
+using Asv.IO;
 
 namespace Asv.Gnss;
 
 
 
-public readonly struct NmeaMessageId : IEquatable<NmeaMessageId>
+public readonly struct NmeaMessageId : IEquatable<NmeaMessageId>, ISizedSpanSerializable
 {
-    public static NmeaMessageId Unknown = new(NmeaProtocol.UnknownMessageId);
-    
     public NmeaMessageId(string messageId) 
-        : this(messageId.AsSpan())
     {
-        
+        MessageId = messageId;        
     }
-
-    public NmeaMessageId(ReadOnlySpan<char> msgId)
-    {
-        if (msgId.IsEmpty)
-        {
-            throw new ArgumentException("MessageId is empty", nameof(msgId));
-        }
-
-        if (msgId[0] == NmeaProtocol.ProprietaryPrefix)
-        {
-            MessageId = new string(msgId);
-        }
-        
-        if (msgId.Length < 5)
-        {
-            throw new ArgumentException("MessageId is too short", nameof(msgId));
-        }
-        
-        if (msgId[0] == NmeaProtocol.TalkerIgnoreSymbol && msgId[1] == NmeaProtocol.ProprietaryPrefix)
-        {
-            MessageId = new string(msgId);
-        }
-
-        MessageId = new StringBuilder(msgId.Length)
-            .Append(NmeaProtocol.TalkerIgnoreSymbol)
-            .Append(NmeaProtocol.TalkerIgnoreSymbol)
-            .Append(msgId[2..]).ToString();
-    }
-    public string MessageId { get; }
-    public bool IsProprietary => MessageId[0] == NmeaProtocol.ProprietaryPrefix;
     
-    public override string ToString() => MessageId;
+    public NmeaMessageId(ReadOnlySpan<char> messageId) 
+    {
+        MessageId = new string(messageId);        
+    }
+
+    public string MessageId { get; }
+
+    public override string ToString()
+    {
+        return MessageId;   
+    }
+
+    public void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        throw new NotImplementedException($"We don't need this method for {nameof(NmeaMessageId)} cause it's readonly struct");
+    }
+
+    public void Serialize(ref Span<byte> buffer)
+    {
+        var slice = NmeaProtocol.Encoding.GetBytes(MessageId, buffer);
+        buffer = buffer[slice..];
+    }
+
+    public int GetByteSize()
+    {
+        return NmeaProtocol.Encoding.GetByteCount(MessageId);
+    }
 
     public bool Equals(NmeaMessageId other)
     {
@@ -71,4 +65,6 @@ public readonly struct NmeaMessageId : IEquatable<NmeaMessageId>
     {
         return !left.Equals(right);
     }
+
+    
 }

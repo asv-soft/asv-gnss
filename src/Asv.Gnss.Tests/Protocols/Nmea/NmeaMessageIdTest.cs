@@ -9,73 +9,57 @@ public class NmeaMessageIdTest
 {
 
     [Fact]
-    public void Constructor_WithEmptyMessage_ThrowsArgumentException()
+    public void Constructor_ShouldSetMessageId()
     {
-        Assert.Throws<ArgumentException>(() => new NmeaMessageId(ReadOnlySpan<char>.Empty));
+        var id = new NmeaMessageId("GGA");
+        
+        Assert.Equal("GGA", id.MessageId);
     }
 
     [Fact]
-    public void Constructor_WithShortMessage_ThrowsArgumentException()
+    public void Constructor_FromSpan_ShouldSetMessageId()
     {
-        Assert.Throws<ArgumentException>(() => new NmeaMessageId("ABC"));
+        ReadOnlySpan<char> msgSpan = "RMC";
+        var id = new NmeaMessageId(msgSpan);
+        
+        Assert.Equal("RMC", id.MessageId);
     }
 
-    [Fact]
-    public void Constructor_WithProprietaryPrefix_SetsMessageIdCorrectly()
-    {
-        var messageId = new NmeaMessageId("PTEST");
-        Assert.Equal("PTEST", messageId.MessageId);
-        Assert.True(messageId.IsProprietary);
-    }
 
     [Fact]
-    public void Constructor_WithTalkerIgnoreAndProprietaryPrefix_SetsMessageIdCorrectly()
+    public void Equals_ShouldReturnTrue_WhenIdsMatch_IgnoringCase()
     {
-        var messageId = new NmeaMessageId("-PXYZ");
-        Assert.Equal("-PXYZ", messageId.MessageId);
-        Assert.False(messageId.IsProprietary);
-    }
-
-    [Fact]
-    public void Constructor_WithStandardPrefix_ReformatsMessageIdCorrectly()
-    {
-        var messageId = new NmeaMessageId("GPABC");
-        Assert.Equal("--ABC", messageId.MessageId);
-        Assert.False(messageId.IsProprietary);
-    }
-
-    [Fact]
-    public void Equals_WithDifferentCaseMessageIds_ReturnsTrue()
-    {
-        var id1 = new NmeaMessageId("GPABC");
-        var id2 = new NmeaMessageId("gpabc");
+        var id1 = new NmeaMessageId("gga");
+        var id2 = new NmeaMessageId("GGA");
+        
         Assert.True(id1.Equals(id2));
         Assert.True(id1 == id2);
-        Assert.False(id1 != id2);
     }
 
     [Fact]
-    public void Equals_WithDifferentMessageIds_ReturnsFalse()
+    public void Equals_ShouldReturnFalse_WhenIdsDiffer()
     {
-        var id1 = new NmeaMessageId("GPABC");
-        var id2 = new NmeaMessageId("GPABD");
+        var id1 = new NmeaMessageId("GGA");
+        var id2 = new NmeaMessageId("RMC");
+        
         Assert.False(id1.Equals(id2));
-        Assert.False(id1 == id2);
         Assert.True(id1 != id2);
     }
 
     [Fact]
-    public void GetHashCode_SameMessageIdDifferentCase_HashCodesEqual()
+    public void GetHashCode_ShouldBeEqual_ForEqualIds_IgnoringCase()
     {
-        var id1 = new NmeaMessageId("GPABC");
-        var id2 = new NmeaMessageId("gpabc");
+        var id1 = new NmeaMessageId("GGA");
+        var id2 = new NmeaMessageId("gga");
+        
         Assert.Equal(id1.GetHashCode(), id2.GetHashCode());
     }
 
     [Fact]
-    public void ToString_ReturnsMessageId()
+    public void ToString_ShouldReturnMessageId()
     {
-        var messageId = new NmeaMessageId("GPABC");
-        Assert.Equal("--ABC", messageId.ToString());
+        var id = new NmeaMessageId("GSA");
+        
+        Assert.Equal("GSA", id.ToString());
     }
 }
