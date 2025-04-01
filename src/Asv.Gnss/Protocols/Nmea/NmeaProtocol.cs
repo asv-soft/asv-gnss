@@ -9,73 +9,6 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public readonly struct NmeaIntFormat(string format, int minSize)
-{
-    public string Format { get; } = format;
-    
-    public int GetByteSize(int? value)
-    {
-        return value == null ? 0 : Math.Max(minSize, NmeaProtocol.CountDigits(value.Value));
-    }
-    
-    public static NmeaIntFormat IntD1 = new("0", 1);
-    public static NmeaIntFormat IntD2 = new("00", 2);
-    public static NmeaIntFormat IntD3 = new("000", 3);
-    public static NmeaIntFormat IntD4 = new("0000", 4);
-    public static NmeaIntFormat IntD5 = new("00000", 5);
-    public static NmeaIntFormat IntD6 = new("000000", 6);
-    public static NmeaIntFormat IntD7 = new("0000000", 7);
-    public static NmeaIntFormat IntD8 = new("00000000", 8);
-}
-
-public readonly struct NmeaDoubleFormat(string format, int minSizeBeforeDot, int minSizeAfterDot)
-{
-    public string Format { get; } = format;
-    public int GetByteSize(double value)
-    {
-        return double.IsFinite(value) ? 0 : Math.Max(minSizeBeforeDot + 1 /*Dot (.)*/ + minSizeAfterDot, NmeaProtocol.CountDigits((int)value) + 1 /*Dot (.)*/ + minSizeAfterDot);
-    }
-    
-    public static readonly NmeaDoubleFormat Double1X1 = new("0.0", 1, 1);
-    public static readonly NmeaDoubleFormat Double1X2 = new("0.00", 1, 2);
-    public static readonly NmeaDoubleFormat Double1X3 = new("0.000", 1, 3);
-    public static readonly NmeaDoubleFormat Double1X4 = new("0.0000", 1, 4);
-    public static readonly NmeaDoubleFormat Double1X5 = new("0.00000", 1, 5);
-    public static readonly NmeaDoubleFormat Double1X6 = new("0.000000", 1, 6);
-    public static readonly NmeaDoubleFormat Double2X1 = new("00.0", 2, 1);
-    public static readonly NmeaDoubleFormat Double2X2 = new("00.00", 2, 2);
-    public static readonly NmeaDoubleFormat Double2X3 = new("00.000", 2, 3);
-    public static readonly NmeaDoubleFormat Double2X4 = new("00.0000", 2, 4);
-    public static readonly NmeaDoubleFormat Double2X5 = new("00.00000", 2, 5);
-    public static readonly NmeaDoubleFormat Double2X6 = new("00.000000", 2, 6);
-    public static readonly NmeaDoubleFormat Double3X1 = new("000.0", 3, 1);
-    public static readonly NmeaDoubleFormat Double3X2 = new("000.00", 3, 2);
-    public static readonly NmeaDoubleFormat Double3X3 = new("000.000", 3, 3);
-    public static readonly NmeaDoubleFormat Double3X4 = new("000.0000", 3, 4);
-    public static readonly NmeaDoubleFormat Double3X5 = new("000.00000", 3, 5);
-    public static readonly NmeaDoubleFormat Double3X6 = new("000.000000", 3, 6);
-    public static readonly NmeaDoubleFormat Double4X1 = new("0000.0", 4, 1);
-    public static readonly NmeaDoubleFormat Double4X2 = new("0000.00", 4, 2);
-    public static readonly NmeaDoubleFormat Double4X3 = new("0000.000", 4, 3);
-    public static readonly NmeaDoubleFormat Double4X4 = new("0000.0000", 4, 4);
-    public static readonly NmeaDoubleFormat Double4X5 = new("0000.00000", 4, 5);
-    public static readonly NmeaDoubleFormat Double4X6 = new("0000.000000", 4, 6);
-    public static readonly NmeaDoubleFormat Double5X1 = new("00000.0", 5, 1);
-    public static readonly NmeaDoubleFormat Double5X2 = new("00000.00", 5, 2);
-    public static readonly NmeaDoubleFormat Double5X3 = new("00000.000", 5, 3);
-    public static readonly NmeaDoubleFormat Double5X4 = new("00000.0000", 5, 4);
-    public static readonly NmeaDoubleFormat Double5X5 = new("00000.00000", 5, 5);
-    public static readonly NmeaDoubleFormat Double5X6 = new("00000.000000", 5, 6);
-    public static readonly NmeaDoubleFormat Double6X1 = new("000000.0", 6, 1);
-    public static readonly NmeaDoubleFormat Double6X2 = new("000000.00", 6, 2);
-    public static readonly NmeaDoubleFormat Double6X3 = new("000000.000", 6, 3);
-    public static readonly NmeaDoubleFormat Double6X4 = new("000000.0000", 6, 4);
-    public static readonly NmeaDoubleFormat Double6X5 = new("000000.00000", 6, 5);
-    public static readonly NmeaDoubleFormat Double6X6 = new("000000.000000", 6, 6);
-        
-}
-
-
 public static class NmeaProtocol
 {
     public const byte ComaByte = (byte)TokenSeparator;
@@ -85,9 +18,13 @@ public static class NmeaProtocol
     
     public const byte StartMessageByte1 = (byte)'$';
     public const byte StartMessageByte2 = (byte)'!';
-    public const byte EndMessageByte1 = 0x0D;
-    public const byte EndMessageByte2 = 0x0A;
-    private const byte DigitSeparator = (byte)'.';
+    public const char EndMessage1 = '\r'; //0x0D;
+    public const byte EndMessageByte1 = (byte)EndMessage1; 
+    public const char EndMessage2 = '\n'; // 0x0A;
+    public const byte EndMessageByte2 = (byte)EndMessage2;
+
+    public const char DigitSeparator = '.';
+    public const byte DigitSeparatorByte = (byte)DigitSeparator;
     public const char ProprietaryPrefix = 'P';
     public static ProtocolInfo ProtocolInfo { get; } = new("NAME", "NMEA 0183");
     public static Encoding Encoding => Encoding.ASCII;
@@ -165,43 +102,81 @@ public static class NmeaProtocol
         }
     }
     
-    public static bool TryReadNextToken(ref ReadOnlySpan<char> charBufferSpan, out ReadOnlySpan<char> token)
+    public static bool TryReadNextToken(ref ReadOnlySpan<char> buffer, out ReadOnlySpan<char> token)
     {
-        var idEndIndex = charBufferSpan.IndexOf(TokenSeparator);
-        if (idEndIndex == -1)
+        if (buffer.IsEmpty)
         {
             token = ReadOnlySpan<char>.Empty;
             return false;
         }
-        token = charBufferSpan[..idEndIndex];
-        charBufferSpan = charBufferSpan[(idEndIndex+1)..];
+        var idEndIndex = buffer.IndexOfAny(TokenSeparator, StartCrcChar, EndMessage1);
+        if (idEndIndex == -1)
+        {
+            token = buffer;
+            buffer = ReadOnlySpan<char>.Empty;
+            return true;
+        }
+        token = buffer[..idEndIndex];
+        buffer = buffer[(idEndIndex+1)..];
         return true;
     }
-    public static ReadOnlySpan<char> ReadNextRequiredToken(ref ReadOnlySpan<char> charBufferSpan)
-    {
-        if (TryReadNextToken(ref charBufferSpan, out var token) == false)
-        {
-            throw new FormatException("Token not found");
-        }
-        return token;
-    }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteSeparator(ref Span<byte> buffer) => BinSerialize.WriteByte(ref buffer, ComaByte);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SizeOfSeparator() => 1 /*COMA*/;
 
     /// <summary>
-    /// hhmmss.ss | hhmmss | 
+    /// Parses UTC time in the format hhmmss[.sss] into a nullable TimeSpan.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static TimeSpan? ReadTime(ReadOnlySpan<char> value)
+    /// <param name="value">Input time as a span of characters (e.g., "123519.123").</param>
+    /// <param name="field">Output nullable TimeSpan, or null if empty or invalid.</param>
+    public static void ReadTime(ReadOnlySpan<char> value, out TimeSpan? field)
     {
-        if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var temp)) return null;
-        var sss = (int)((temp - (int)temp) * 1000.0);
-        var hh = (int)((int)temp / 10000.0);
-        var mm = (int)(((int)temp - hh * 10000.0) / 100.0);
-        var ss = (int)((int)temp - hh * 10000.0 - mm * 100.0);
-        return new TimeSpan(0, hh, mm, ss, sss);
+        field = null;
+        if (value.IsEmpty)
+        {
+            return;
+        }
+
+        var dotIndex = value.IndexOf(DigitSeparator);
+        ReadOnlySpan<char> hmsSpan;
+        var milliseconds = 0;
+
+        if (dotIndex >= 0)
+        {
+            hmsSpan = value[..dotIndex];
+            var fracSpan = value[(dotIndex + 1)..];
+            if (fracSpan.Length > 3) fracSpan = fracSpan[..3]; // cap to milliseconds
+            // pad right if needed (e.g. ".1" -> "100")
+            Span<char> padded = stackalloc char[3];
+            fracSpan.CopyTo(padded);
+            for (var i = fracSpan.Length; i < 3; i++)
+            {
+                padded[i] = '0';
+            }
+
+            if (!int.TryParse(padded, out milliseconds))
+                return;
+        }
+        else
+        {
+            hmsSpan = value;
+        }
+
+        if (!int.TryParse(hmsSpan, out var hms) || hms < 0 || hms > 235959)
+            return;
+
+        var hours = hms / 10000;
+        var minutes = (hms % 10000) / 100;
+        var seconds = hms % 100;
+
+        // Basic validation
+        if ((hours is < 0 or > 23) || minutes is < 0 or > 59 || seconds is < 0 or > 59)
+            return;
+
+        field = new TimeSpan(0, hours, minutes, seconds, milliseconds);
     }
     
     public static void WriteTime(ref Span<byte> buffer, TimeSpan? value)
@@ -217,28 +192,33 @@ public static class NmeaProtocol
         time.Seconds.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "ss == 2 char" );
         buffer = buffer[written..];
-        buffer[0] = DigitSeparator;
+        buffer[0] = DigitSeparatorByte;
         buffer = buffer[1..];
         time.Milliseconds.TryFormat(buffer, out written, NmeaIntFormat.IntD3.Format);
         Debug.Assert(written == 3, "sss == 3 char" );
         buffer = buffer[written..];
     }
     
-    public static int SizeOfTime(TimeSpan? value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfTime(in TimeSpan? value)
     {
         return value == null ? 0 : 10 /* hhmmss.sss */;
     }
 
     /// <summary>
-    /// x.x
+    /// Parses a double value from a character span.
+    /// Returns NaN if the input is empty or invalid.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static double ReadDouble(ReadOnlySpan<char> value)
+    /// <param name="value">Input span containing the number.</param>
+    /// <param name="field">Parsed double value or NaN.</param>
+    public static void ReadDouble(ReadOnlySpan<char> value, out double field)
     {
-        return value.IsEmpty ? double.NaN : double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
+        if (value.IsEmpty || !double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out field))
+        {
+            field = double.NaN;
+        }
     }
-    public static void WriteDouble(ref Span<byte> buffer, double value, NmeaDoubleFormat format)
+    public static void WriteDouble(ref Span<byte> buffer,in double value,in NmeaDoubleFormat format)
     {
         if (double.IsFinite(value))
         {
@@ -247,27 +227,35 @@ public static class NmeaProtocol
         }
     }
     
-    public static int SizeOfDouble(double value, NmeaDoubleFormat format) => format.GetByteSize(value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfDouble(in double value,in NmeaDoubleFormat format) => format.GetByteSize(in value);
 
     /// <summary>
-    /// x | xx | xxx | xxxx | xxxxx | xxxxxx
+    /// Parses an integer value from a character span.
+    /// Returns null if the input is empty or invalid.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static int? ReadInt(ReadOnlySpan<char> value)
+    /// <param name="value">Input span containing the integer.</param>
+    /// <param name="field">Parsed integer value or null.</param>
+    public static void ReadInt(ReadOnlySpan<char> value, out int? field)
     {
-        if (value.IsEmpty) return null;
-        return int.Parse(value, CultureInfo.InvariantCulture);
+        if (value.IsEmpty || !int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+        {
+            field = null;
+            return;
+        }
+
+        field = result;
     }
     
-    public static void WriteInt(ref Span<byte> buffer, int? value, NmeaIntFormat format)
+    public static void WriteInt(ref Span<byte> buffer,in int? value,in NmeaIntFormat format)
     {
         if (value == null) return;
         value.Value.TryFormat(buffer, out var written,format.Format, NumberFormatInfo.InvariantInfo);
         buffer = buffer[written..];
     }
 
-    public static int SizeOfInt(int? value, NmeaIntFormat format) => format.GetByteSize(value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfInt(in int? value,in NmeaIntFormat format) => format.GetByteSize(value);
     
     public static int CountDigits(int value)
     {

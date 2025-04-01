@@ -1,5 +1,7 @@
 using System;
 using System.Buffers;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Asv.IO;
 
 namespace Asv.Gnss;
@@ -41,27 +43,54 @@ public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
         var charBuffer = ArrayPool<char>.Shared.Rent(buffer.Length);
         try
         {
-            var charBufferSpan = charBuffer.AsSpan(0, buffer.Length);
-            NmeaProtocol.Encoding.GetChars(buffer, charBufferSpan);
-            InternalDeserialize(charBufferSpan);
+            var wSpan = charBuffer.AsSpan(0, buffer.Length);
+            NmeaProtocol.Encoding.GetChars(buffer, wSpan);
+            var rSpan = new ReadOnlySpan<char>(charBuffer,0,buffer.Length);
+            InternalDeserialize(ref rSpan);
+            buffer = buffer[^rSpan.Length..];
         }
         finally
         {
             ArrayPool<char>.Shared.Return(charBuffer);
         }
-        
-        var stop = buffer.IndexOf(NmeaProtocol.EndMessageByte1);
-        if (stop >= 0)
+
+        if (crcIndex > 0)
         {
-            buffer = buffer[..stop];
+            // skip CRC
+            buffer = buffer[2..];
         }
-        var stop2 = buffer.IndexOf(NmeaProtocol.EndMessageByte1);
-        if (stop2 >= 0)
+
+        if (buffer.IsEmpty)
         {
-            buffer = buffer[..stop2];
+            return;
+        }
+        // here /r/n
+        if (buffer[0] == NmeaProtocol.EndMessage1)
+        {
+            buffer = buffer[1..];
+        }
+        else
+        {
+            throw new ProtocolParserException(Protocol, $"Invalid end message byte: want '{NmeaProtocol.EndMessage1}', got '{buffer[0]}'");
+        }
+        if (buffer.IsEmpty)
+        {
+            return;
+        }
+        if (buffer[0] == NmeaProtocol.EndMessage2)
+        {
+            buffer = buffer[1..];
+        }
+        else
+        {
+            throw new ProtocolParserException(Protocol, $"Invalid end message byte: want '{NmeaProtocol.EndMessage2}', got '{buffer[0]}'");
+        }
+        if (buffer.IsEmpty == false)
+        {
+            Debug.Assert(false,"Buffer is not empty");
         }
     }
-    protected abstract void InternalDeserialize(ReadOnlySpan<char> charBufferSpan);
+    protected abstract void InternalDeserialize(ref ReadOnlySpan<char> charBufferSpan);
     public void Serialize(ref Span<byte> buffer)
     {
         BinSerialize.WriteByte(ref buffer, NmeaProtocol.StartMessageByte2);
@@ -86,8 +115,9 @@ public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
         + Id.GetByteSize() 
         + 1 /*coma after message id*/ 
         + InternalGetByteSize()
+        + 1 /*start CRC (*) */ 
         + 2 /*CRC*/
-        + 1 /*End*/;
+        + 2 /*End1 + End2*/;
     protected abstract int InternalGetByteSize();
 
     public ref ProtocolTags Tags => ref _tags;
@@ -104,50 +134,90 @@ public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
         set => _talkerId = value;
     }
 
-    protected static TimeSpan? ReadTime(ref ReadOnlySpan<char> charBufferSpan)
+    protected void ReadTime(ref ReadOnlySpan<char> buffer, out TimeSpan? field, bool required = true)
     {
-        return NmeaProtocol.ReadTime(NmeaProtocol.ReadNextRequiredToken(ref charBufferSpan));
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token) != false)
+        {
+            NmeaProtocol.ReadTime(token, out field);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.ProtocolInfo, this, "Time is required");
+        }
+
+        field = null;
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static void WriteTime(ref Span<byte> charBufferSpan, TimeSpan? value)
     {
         NmeaProtocol.WriteTime(ref charBufferSpan, value);   
         NmeaProtocol.WriteSeparator(ref charBufferSpan);
     }
     
-    protected static int SizeOfTime(TimeSpan? value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfTime(in TimeSpan? value)
     {
-        return NmeaProtocol.SizeOfTime(value) + NmeaProtocol.SizeOfSeparator();    
+        return NmeaProtocol.SizeOfTime(in value) + NmeaProtocol.SizeOfSeparator();    
     }
     
-    protected static double ReadDouble(ref ReadOnlySpan<char> charBufferSpan)
+    protected void ReadDouble(ref ReadOnlySpan<char> buffer, out double field, bool required = true)
     {
-        return NmeaProtocol.ReadDouble(NmeaProtocol.ReadNextRequiredToken(ref charBufferSpan));
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token) != false)
+        {
+            NmeaProtocol.ReadDouble(token, out field);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.ProtocolInfo, this, "Time is required");
+        }
+
+        field = double.NaN;
     }
 
-    protected static void WriteDouble(ref Span<byte> buffer, double value, NmeaDoubleFormat format)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteDouble(ref Span<byte> buffer,in double value,in NmeaDoubleFormat format)
     {
-        NmeaProtocol.WriteDouble(ref buffer, value, format);   
+        NmeaProtocol.WriteDouble(ref buffer,in value, format);   
         NmeaProtocol.WriteSeparator(ref buffer);
     }
     
-    protected static int SizeOfDouble(double value, NmeaDoubleFormat format)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfDouble(in double value,in  NmeaDoubleFormat format)
     {
-        return NmeaProtocol.SizeOfDouble(value, format) + NmeaProtocol.SizeOfSeparator();    
+        return NmeaProtocol.SizeOfDouble(in value, format) + NmeaProtocol.SizeOfSeparator();    
     }
     
-    protected static int? ReadInt(ref ReadOnlySpan<char> buffer)
+    protected void ReadInt(ref ReadOnlySpan<char> buffer, out int? field, bool required = true)
     {
-        return NmeaProtocol.ReadInt(NmeaProtocol.ReadNextRequiredToken(ref buffer));
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token) != false)
+        {
+            NmeaProtocol.ReadInt(token, out field);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.ProtocolInfo, this, "Time is required");
+        }
+
+        field = null;
     }
-    protected static void WriteInt(ref Span<byte> buffer, int? value, NmeaIntFormat format)
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteInt(ref Span<byte> buffer,in int? value,in NmeaIntFormat format)
     {
-        NmeaProtocol.WriteInt(ref buffer, value, format);
+        NmeaProtocol.WriteInt(ref buffer,in value,in format);
         NmeaProtocol.WriteSeparator(ref buffer);
         
     }
     
-    protected static int SizeOfInt(int? value, NmeaIntFormat format)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfInt(in int? value,in NmeaIntFormat format)
     {
         return NmeaProtocol.SizeOfInt(value, format) + NmeaProtocol.SizeOfSeparator();    
     }

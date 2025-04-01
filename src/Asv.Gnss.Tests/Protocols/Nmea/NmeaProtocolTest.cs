@@ -113,7 +113,7 @@ public class NmeaProtocolTest
     [InlineData("", double.NaN)]
     public void ReadDouble_ShouldParseCorrectly(string input, double expected)
     {
-        var result = NmeaProtocol.ReadDouble(input.AsSpan());
+        NmeaProtocol.ReadDouble(input.AsSpan(), out var result );
         Assert.Equal(expected, result);
     }
 
@@ -124,7 +124,7 @@ public class NmeaProtocolTest
     [InlineData("", null)]
     public void ReadInt_ShouldParseCorrectly(string input, int? expected)
     {
-        var result = NmeaProtocol.ReadInt(input.AsSpan());
+        NmeaProtocol.ReadInt(input.AsSpan(), out var result);
         Assert.Equal(expected, result);
     }
 

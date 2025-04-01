@@ -18,97 +18,128 @@ namespace Asv.Gnss
     /// 8. Standard deviation of bias estimate
     /// 
     /// Source: https://gpsd.gitlab.io/gpsd/NMEA.html#MX521
-    /// Example: $GPGBS,125027,23.43,M,13.91,M,34.01,M*07
+    /// Example: $GPGBS,015509.00,-0.031,-0.186,0.219,19,0.000,-0.354,6.972*4D
+    /// 
     /// </summary>
-    public class NmeaMessageGBS : NmeaMessage
+    public class NmeaMessageGbs : NmeaMessage
     {
         public const string MessageName = "GBS";
         public static readonly NmeaMessageId MessageId = new(MessageName);
+        private TimeSpan? _timeUtc;
+        private double _latitudeError;
+        private double _longitudeError;
+        private double _altitudeError;
+        private int? _failedSatelliteId;
+        private double _probabilityOfMissedDetection;
+        private double _biasEstimate;
+        private double _biasEstimateStandardDeviation;
         public override string Name => MessageName;
         public override NmeaMessageId Id => MessageId;
         
-        protected override void InternalDeserialize(ReadOnlySpan<char> charBufferSpan)
+        protected override void InternalDeserialize(ref ReadOnlySpan<char> charBufferSpan)
         {
-            TimeUtc = ReadTime(ref charBufferSpan);
-            LatitudeError = ReadDouble(ref charBufferSpan);
-            LongitudeError = ReadDouble(ref charBufferSpan);
-            AltitudeError = ReadDouble(ref charBufferSpan);
-            FailedSatelliteId = ReadInt(ref charBufferSpan);
-            if (FailedSatelliteId.HasValue)
-            {
-                ProbabilityOfMissedDetection = ReadDouble(ref charBufferSpan);
-                BiasEstimate = ReadDouble(ref charBufferSpan);
-                BiasEstimateStandardDeviation = ReadDouble(ref charBufferSpan);
-            }
-            else
-            {
-                ProbabilityOfMissedDetection = double.NaN;
-                BiasEstimate = double.NaN;
-                BiasEstimateStandardDeviation = double.NaN;
-            }
+            ReadTime(ref charBufferSpan,out _timeUtc);
+            ReadDouble(ref charBufferSpan, out _latitudeError);
+            ReadDouble(ref charBufferSpan, out _longitudeError);
+            ReadDouble(ref charBufferSpan, out _altitudeError);
+            ReadInt(ref charBufferSpan, out _failedSatelliteId, false);
+            ReadDouble(ref charBufferSpan, out _probabilityOfMissedDetection, false);
+            ReadDouble(ref charBufferSpan, out _biasEstimate, false);
+            ReadDouble(ref charBufferSpan, out _biasEstimateStandardDeviation, false);
         }
 
         protected override void InternalSerialize(ref Span<byte> buffer)
         {
             WriteTime(ref buffer, TimeUtc);
-            WriteDouble(ref buffer, LatitudeError, NmeaDoubleFormat.Double1X3);
-            WriteDouble(ref buffer, LongitudeError, NmeaDoubleFormat.Double1X3);
-            WriteDouble(ref buffer, AltitudeError, NmeaDoubleFormat.Double1X3);
-            WriteInt(ref buffer, FailedSatelliteId, NmeaIntFormat.IntD3);
-            WriteDouble(ref buffer, ProbabilityOfMissedDetection,NmeaDoubleFormat.Double1X3);
-            WriteDouble(ref buffer, BiasEstimate,NmeaDoubleFormat.Double1X3);
-            WriteDouble(ref buffer, BiasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, in _latitudeError, NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, in _longitudeError, NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, in _altitudeError, NmeaDoubleFormat.Double1X3);
+            WriteInt(ref buffer, in _failedSatelliteId, NmeaIntFormat.IntD3);
+            WriteDouble(ref buffer, in _probabilityOfMissedDetection,NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, in _biasEstimate,NmeaDoubleFormat.Double1X3);
+            WriteDouble(ref buffer, in _biasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
         }
 
         protected override int InternalGetByteSize() =>
-            SizeOfTime(TimeUtc)
-            + SizeOfDouble(LatitudeError, NmeaDoubleFormat.Double1X3)
-            + SizeOfDouble(LongitudeError, NmeaDoubleFormat.Double1X3)
-            + SizeOfDouble(LongitudeError, NmeaDoubleFormat.Double1X3)
-            + SizeOfInt(FailedSatelliteId, NmeaIntFormat.IntD3)
-            + SizeOfDouble(ProbabilityOfMissedDetection, NmeaDoubleFormat.Double1X3)
-            + SizeOfDouble(BiasEstimate, NmeaDoubleFormat.Double1X3)
-            + SizeOfDouble(BiasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
+            SizeOfTime(in _timeUtc)
+            + SizeOfDouble(in _latitudeError,in NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(in _longitudeError,in NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(in _altitudeError,in NmeaDoubleFormat.Double1X3)
+            + SizeOfInt(in _failedSatelliteId,in NmeaIntFormat.IntD3)
+            + SizeOfDouble(in _probabilityOfMissedDetection,in NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(in _biasEstimate,in NmeaDoubleFormat.Double1X3)
+            + SizeOfDouble(in _biasEstimateStandardDeviation,in NmeaDoubleFormat.Double1X3);
 
         /// <summary>
         /// UTC time of the GGA or GNS fix associated with this sentence
         /// </summary>
-        public TimeSpan? TimeUtc { get; set; }
+        public TimeSpan? TimeUtc
+        {
+            get => _timeUtc;
+            set => _timeUtc = value;
+        }
 
         /// <summary>
         /// Expected 1-sigma error in latitude (meters)
         /// </summary>
-        public double LatitudeError { get; set; }
+        public double LatitudeError
+        {
+            get => _latitudeError;
+            set => _latitudeError = value;
+        }
 
         /// <summary>
         /// Expected 1-sigma error in longitude (meters)
         /// </summary>
-        public double LongitudeError { get; set; }
+        public double LongitudeError
+        {
+            get => _longitudeError;
+            set => _longitudeError = value;
+        }
 
         /// <summary>
         /// Expected 1-sigma error in altitude (meters)
         /// </summary>
-        public double AltitudeError { get; set; }
+        public double AltitudeError
+        {
+            get => _altitudeError;
+            set => _altitudeError = value;
+        }
 
         /// <summary>
         /// ID of most likely failed satellite (1 to 138)
         /// </summary>
-        public int? FailedSatelliteId { get; set; }
+        public int? FailedSatelliteId
+        {
+            get => _failedSatelliteId;
+            set => _failedSatelliteId = value;
+        }
 
         /// <summary>
         /// Probability of missed detection for most likely failed satellite
         /// </summary>
-        public double ProbabilityOfMissedDetection { get; set; }
+        public double ProbabilityOfMissedDetection
+        {
+            get => _probabilityOfMissedDetection;
+            set => _probabilityOfMissedDetection = value;
+        }
 
         /// <summary>
         /// Estimate of bias in meters on most likely failed satellite
         /// </summary>
-        public double BiasEstimate { get; set; }
+        public double BiasEstimate
+        {
+            get => _biasEstimate;
+            set => _biasEstimate = value;
+        }
 
         /// <summary>
         /// Standard deviation of bias estimate
         /// </summary>
-        public double BiasEstimateStandardDeviation { get; set; }
-        
+        public double BiasEstimateStandardDeviation
+        {
+            get => _biasEstimateStandardDeviation;
+            set => _biasEstimateStandardDeviation = value;
+        }
     }
 }
