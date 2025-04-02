@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 
 namespace Asv.Gnss
 {
@@ -30,22 +31,22 @@ namespace Asv.Gnss
         private double _longitudeError;
         private double _altitudeError;
         private int? _failedSatelliteId;
-        private double _probabilityOfMissedDetection;
-        private double _biasEstimate;
-        private double _biasEstimateStandardDeviation;
+        private double _probabilityOfMissedDetection = double.NaN;
+        private double _biasEstimate = double.NaN;
+        private double _biasEstimateStandardDeviation = double.NaN;
         public override string Name => MessageName;
         public override NmeaMessageId Id => MessageId;
         
-        protected override void InternalDeserialize(ref ReadOnlySpan<char> charBufferSpan)
+        protected override void InternalDeserialize(ref ReadOnlySpan<char> buffer)
         {
-            ReadTime(ref charBufferSpan,out _timeUtc);
-            ReadDouble(ref charBufferSpan, out _latitudeError);
-            ReadDouble(ref charBufferSpan, out _longitudeError);
-            ReadDouble(ref charBufferSpan, out _altitudeError);
-            ReadInt(ref charBufferSpan, out _failedSatelliteId, false);
-            ReadDouble(ref charBufferSpan, out _probabilityOfMissedDetection, false);
-            ReadDouble(ref charBufferSpan, out _biasEstimate, false);
-            ReadDouble(ref charBufferSpan, out _biasEstimateStandardDeviation, false);
+            ReadTime(ref buffer,out _timeUtc);
+            ReadDouble(ref buffer, out _latitudeError);
+            ReadDouble(ref buffer, out _longitudeError);
+            ReadDouble(ref buffer, out _altitudeError);
+            ReadInt(ref buffer, out _failedSatelliteId, false);
+            ReadDouble(ref buffer, out _probabilityOfMissedDetection, false);
+            ReadDouble(ref buffer, out _biasEstimate, false);
+            ReadDouble(ref buffer, out _biasEstimateStandardDeviation, false);
         }
 
         protected override void InternalSerialize(ref Span<byte> buffer)
@@ -54,7 +55,7 @@ namespace Asv.Gnss
             WriteDouble(ref buffer, in _latitudeError, NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _longitudeError, NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _altitudeError, NmeaDoubleFormat.Double1X3);
-            WriteInt(ref buffer, in _failedSatelliteId, NmeaIntFormat.IntD3);
+            WriteInt(ref buffer, in _failedSatelliteId, NmeaIntFormat.IntD1);
             WriteDouble(ref buffer, in _probabilityOfMissedDetection,NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _biasEstimate,NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _biasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
@@ -65,7 +66,7 @@ namespace Asv.Gnss
             + SizeOfDouble(in _latitudeError,in NmeaDoubleFormat.Double1X3)
             + SizeOfDouble(in _longitudeError,in NmeaDoubleFormat.Double1X3)
             + SizeOfDouble(in _altitudeError,in NmeaDoubleFormat.Double1X3)
-            + SizeOfInt(in _failedSatelliteId,in NmeaIntFormat.IntD3)
+            + SizeOfInt(in _failedSatelliteId,in NmeaIntFormat.IntD1)
             + SizeOfDouble(in _probabilityOfMissedDetection,in NmeaDoubleFormat.Double1X3)
             + SizeOfDouble(in _biasEstimate,in NmeaDoubleFormat.Double1X3)
             + SizeOfDouble(in _biasEstimateStandardDeviation,in NmeaDoubleFormat.Double1X3);
@@ -76,7 +77,7 @@ namespace Asv.Gnss
         public TimeSpan? TimeUtc
         {
             get => _timeUtc;
-            set => _timeUtc = value;
+            init => _timeUtc = value;
         }
 
         /// <summary>
@@ -140,6 +141,22 @@ namespace Asv.Gnss
         {
             get => _biasEstimateStandardDeviation;
             set => _biasEstimateStandardDeviation = value;
+        }
+
+        public override string ToString()
+        {
+            var size = GetByteSize();
+            var arr = ArrayPool<byte>.Shared.Rent(size);
+            try
+            {
+                var span = new ReadOnlySpan<byte>(arr,0, size);
+                Deserialize(ref span);
+                return NmeaProtocol.Encoding.GetString(arr, 0, size);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(arr);
+            }
         }
     }
 }

@@ -10,7 +10,11 @@ namespace Asv.Gnss;
 /// <summary>
 /// The Nmea0183Parser class is responsible for parsing NMEA 0183 messages.
 /// </summary>
-public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
+public class NmeaMessageParser(
+    IProtocolMessageFactory<NmeaMessage, NmeaMessageId> messageFactory,
+    IProtocolContext context,
+    IStatisticHandler? statisticHandler)
+    : ProtocolParser<NmeaMessage, NmeaMessageId>(messageFactory, context, statisticHandler)
 {
     
     /// <summary>
@@ -33,16 +37,7 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
     /// </summary>
     private int _byteRead;
 
-    private readonly ILogger<NmeaMessageParser> _logger;
-
-    public NmeaMessageParser(
-        IProtocolMessageFactory<NmeaMessage,NmeaMessageId> messageFactory, 
-        IProtocolContext context, 
-        IStatisticHandler? statisticHandler) 
-        : base(messageFactory, context, statisticHandler)
-    {
-        _logger = context.LoggerFactory.CreateLogger<NmeaMessageParser>();
-    }
+    private readonly ILogger<NmeaMessageParser> _logger = context.LoggerFactory.CreateLogger<NmeaMessageParser>();
 
     /// <summary>
     /// Represents the state of the system.
@@ -227,5 +222,5 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessage, NmeaMessageId>
         _state = State.Sync;
     }
 
-    public override ProtocolInfo Info => NmeaProtocol.ProtocolInfo;
+    public override ProtocolInfo Info => NmeaProtocol.Info;
 }

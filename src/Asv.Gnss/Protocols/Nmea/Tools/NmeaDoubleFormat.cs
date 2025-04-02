@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using Asv.Common;
 
 namespace Asv.Gnss;
 
@@ -17,12 +18,12 @@ public readonly struct NmeaDoubleFormat(string format, int minSizeBeforeDot, int
         if (value < 0 && ceil == 0)
         {
             return Math.Max(minSizeBeforeDot + 1 /*Dot (.)*/ + minSizeAfterDot,
-                1 /*Minus (-)*/ + NmeaProtocol.CountDigits(ceil) + 1 /*Dot (.)*/ + minSizeAfterDot);
+                1 /*Minus (-)*/ + ceil.CountDigits() + 1 /*Dot (.)*/ + minSizeAfterDot);
         }
         else
         {
             return Math.Max(minSizeBeforeDot + 1 /*Dot (.)*/ + minSizeAfterDot,
-                NmeaProtocol.CountDigits(ceil) + 1 /*Dot (.)*/ + minSizeAfterDot);
+                ceil.CountDigits() + 1 /*Dot (.)*/ + minSizeAfterDot);
         }
     }
     
@@ -50,6 +51,7 @@ public readonly struct NmeaDoubleFormat(string format, int minSizeBeforeDot, int
     public static readonly NmeaDoubleFormat Double4X4 = new("0000.0000", 4, 4);
     public static readonly NmeaDoubleFormat Double4X5 = new("0000.00000", 4, 5);
     public static readonly NmeaDoubleFormat Double4X6 = new("0000.000000", 4, 6);
+    public static readonly NmeaDoubleFormat Double4X7 = new("0000.000000", 4, 7);
     public static readonly NmeaDoubleFormat Double5X1 = new("00000.0", 5, 1);
     public static readonly NmeaDoubleFormat Double5X2 = new("00000.00", 5, 2);
     public static readonly NmeaDoubleFormat Double5X3 = new("00000.000", 5, 3);

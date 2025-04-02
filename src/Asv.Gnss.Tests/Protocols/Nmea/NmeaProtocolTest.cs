@@ -85,7 +85,7 @@ public class NmeaProtocolTest
     [Fact]
     public void TryGetMessageId_ShouldReturnFalse_OnIncompleteMessage()
     {
-        var incompleteMessage = Encoding.ASCII.GetBytes("$GP\r");
+        var incompleteMessage = "$GP\r"u8.ToArray();
         var result = NmeaProtocol.TryGetMessageId(incompleteMessage, out _, out _);
         
         Assert.False(result);
@@ -129,16 +129,4 @@ public class NmeaProtocolTest
     }
 
 
-
-    [Theory]
-    [InlineData(0, 1)]
-    [InlineData(9, 1)]
-    [InlineData(10, 2)]
-    [InlineData(12345, 5)]
-    [InlineData(123456789, 9)] 
-    public void CountDigits_ShouldReturnCorrectDigitCount(uint input, int expectedDigits)
-    {
-        var digits = NmeaProtocol.CountDigits(input);
-        Assert.Equal(expectedDigits, digits);
-    }
 }
