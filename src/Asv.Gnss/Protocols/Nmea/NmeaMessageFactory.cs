@@ -6,16 +6,16 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
+
 public class NmeaMessageFactory : IProtocolMessageFactory<NmeaMessage, NmeaMessageId>
 {
     private readonly ImmutableDictionary<NmeaMessageId,Func<NmeaMessage>> _factory;
-    public ProtocolInfo Info => NmeaProtocol.ProtocolInfo;
-    public static NmeaMessageFactory Instance { get; } = new();
+    public ProtocolInfo Info => NmeaProtocol.Info;
 
-    private NmeaMessageFactory()
+    public NmeaMessageFactory()
     {
         var builder = ImmutableDictionary.CreateBuilder<NmeaMessageId, Func<NmeaMessage>>(); 
-        
+        builder.Add(NmeaMessageGbs.MessageId, () => new NmeaMessageGbs());
         _factory = builder.ToImmutable();
     }
     public NmeaMessage? Create(NmeaMessageId id) => _factory.TryGetValue(id, out var factory) ? factory() : null;

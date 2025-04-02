@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using Asv.Common;
 
 namespace Asv.Gnss;
 
@@ -10,7 +11,7 @@ public readonly record struct NmeaIntFormat(string Format, int MinSize)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetByteSize(int? value)
     {
-        return value == null ? 0 : Math.Max(MinSize, NmeaProtocol.CountDigits(value.Value));
+        return value == null ? 0 : Math.Max(MinSize, value.Value.CountDigits());
     }
     
     public static NmeaIntFormat IntD1 = new("0", 1);

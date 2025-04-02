@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Asv.IO;
+using DotNext;
 
 namespace Asv.Gnss;
 
@@ -26,8 +27,27 @@ public static class NmeaProtocol
     public const char DigitSeparator = '.';
     public const byte DigitSeparatorByte = (byte)DigitSeparator;
     public const char ProprietaryPrefix = 'P';
-    public static ProtocolInfo ProtocolInfo { get; } = new("NAME", "NMEA 0183");
+    
+    public static NmeaDoubleFormat LatitudeFormat = NmeaDoubleFormat.Double4X7;
+    private const string LatitudeSouthChars = "Ss";
+    private const string LatitudeNorthChars = "Nn";
+    public static NmeaDoubleFormat LongitudeFormat = NmeaDoubleFormat.Double4X7;
+    private const string LongitudeEastChars = "Ee";
+    private const string LongitudeWestChars = "Ww";
+    public static ProtocolInfo Info { get; } = new("NAME", "NMEA 0183");
     public static Encoding Encoding => Encoding.ASCII;
+    
+    
+    public static void RegisterNmeaProtocol(this IProtocolParserBuilder builder, Action<IProtocolMessageFactoryBuilder<NmeaMessage, NmeaMessageId>>? configure = null)
+    {
+        var factory = new ProtocolMessageFactoryBuilder<NmeaMessage, NmeaMessageId>(Info);
+        // register default messages
+        factory
+            .Add<NmeaMessageGbs>();
+        configure?.Invoke(factory);
+        var messageFactory = factory.Build();
+        builder.Register(Info, (core,stat) => new NmeaMessageParser(messageFactory, core,stat));
+    }
     
     /// <summary>
     /// Calculates the CRC checksum for the given buffer of bytes.
@@ -127,6 +147,8 @@ public static class NmeaProtocol
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SizeOfSeparator() => 1 /*COMA*/;
 
+    #region Time
+    
     /// <summary>
     /// Parses UTC time in the format hhmmss[.sss] into a nullable TimeSpan.
     /// </summary>
@@ -178,7 +200,9 @@ public static class NmeaProtocol
 
         field = new TimeSpan(0, hours, minutes, seconds, milliseconds);
     }
+
     
+
     public static void WriteTime(ref Span<byte> buffer, TimeSpan? value)
     {
         if (value == null) return;
@@ -205,6 +229,10 @@ public static class NmeaProtocol
         return value == null ? 0 : 10 /* hhmmss.sss */;
     }
 
+    #endregion
+
+    #region Double
+
     /// <summary>
     /// Parses a double value from a character span.
     /// Returns NaN if the input is empty or invalid.
@@ -229,6 +257,10 @@ public static class NmeaProtocol
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SizeOfDouble(in double value,in NmeaDoubleFormat format) => format.GetByteSize(in value);
+
+    #endregion
+
+    #region Int
 
     /// <summary>
     /// Parses an integer value from a character span.
@@ -256,63 +288,151 @@ public static class NmeaProtocol
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SizeOfInt(in int? value,in NmeaIntFormat format) => format.GetByteSize(value);
-    
-    public static int CountDigits(int value)
+
+    #endregion
+
+    /// <summary>
+    /// Converts NMEA coordinate format (ddmm.mmmmmmm) to decimal degrees (dd.dddddd).
+    /// </summary>
+    /// <param name="value">Coordinate in NMEA format (e.g. "4916.45" => 49° 16.45')</param>
+    /// <returns>Decimal degrees or NaN if invalid input</returns>
+    private static double ConvertToDecimalDegrees(in double value)
     {
-        return value switch
+        var degrees = (int)(value / 100);
+        var minutes = value - degrees * 100;
+        return degrees + (minutes / 60.0);
+    }
+    
+    /// <summary>
+    /// Converts decimal degrees (dd.dddddd) to NMEA coordinate format (ddmm.mmmmmmm).
+    /// </summary>
+    /// <param name="decimalDegrees">Input in decimal degrees (e.g. 49.274167)</param>
+    /// <returns>Coordinate in ddmm.mmmmmmm format</returns>
+    private static double ConvertToDdmmMmmmmm(double decimalDegrees)
+    {
+        if (!double.IsFinite(decimalDegrees))
+            return double.NaN;
+
+        decimalDegrees = Math.Abs(decimalDegrees);
+        var degrees = (int)decimalDegrees;
+        var minutes = (decimalDegrees - degrees) * 60.0;
+
+        return degrees * 100 + minutes;
+    }
+    
+    #region Latitude
+
+    public static void ReadLatitude(ReadOnlySpan<char> digit,ReadOnlySpan<char> northOrSouth, out double field)
+    {
+        if (northOrSouth.IsEmpty)
         {
-            0 => 1,
-            < 0 => CountDigits((uint)-value) + 1,
-            _ => CountDigits((uint)value)
-        };
+            field = double.NaN;
+            return;
+        }
+
+        ReadDouble(digit, out var lat);
+        field = ConvertToDecimalDegrees(in lat);
+
+        if (northOrSouth[0].IsOneOf(LatitudeSouthChars))
+        {
+            field *= -1;
+        }
+        else if (northOrSouth[0].IsOneOf(LatitudeNorthChars) == false)
+        {
+            throw new Exception($"Latitude char must be {LatitudeSouthChars} or {LatitudeNorthChars}");
+        }
+    }
+
+    public static void WriteLatitude(ref Span<byte> buffer, in double field)
+    {
+        WriteDouble(ref buffer, ConvertToDdmmMmmmmm(field), LatitudeFormat);
+        WriteSeparator(ref buffer);
+        buffer[0] = field < 0 ? (byte)LatitudeSouthChars[0] : (byte)LatitudeNorthChars[0];
+        buffer = buffer[1..];
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CountDigits(uint value)
-    {
-        // Algorithm based on https://lemire.me/blog/2021/06/03/computing-the-number-of-digits-of-an-integer-even-faster.
-        ReadOnlySpan<long> table =
-        [
-            4294967296,
-            8589934582,
-            8589934582,
-            8589934582,
-            12884901788,
-            12884901788,
-            12884901788,
-            17179868184,
-            17179868184,
-            17179868184,
-            21474826480,
-            21474826480,
-            21474826480,
-            21474826480,
-            25769703776,
-            25769703776,
-            25769703776,
-            30063771072,
-            30063771072,
-            30063771072,
-            34349738368,
-            34349738368,
-            34349738368,
-            34349738368,
-            38554705664,
-            38554705664,
-            38554705664,
-            41949672960,
-            41949672960,
-            41949672960,
-            42949672960,
-            42949672960
-        ];
-        Debug.Assert(table.Length == 32, "Every result of uint.Log2(value) needs a long entry in the table.");
+    public static int SizeOfLatitude(in double latitude) => LatitudeFormat.GetByteSize(ConvertToDdmmMmmmmm(latitude)) + 1 /*COMA*/ + 1 /*N/S*/;
 
-        // TODO: Replace with table[uint.Log2(value)] once https://github.com/dotnet/runtime/issues/79257 is fixed
-        var tableValue = Unsafe.Add(ref MemoryMarshal.GetReference(table), uint.Log2(value));
-        return (int)((value + tableValue) >> 32);
-    }
-
+    #endregion
 
     
+
+    #region Longitude
+
+    public static void ReadLongitude(ReadOnlySpan<char> digit, ReadOnlySpan<char> eastOrWest, out double field)
+    {
+        if (eastOrWest.IsEmpty)
+        {
+            field = double.NaN;
+            return;
+        }
+
+        ReadDouble(digit, out var lat);
+        field = ConvertToDecimalDegrees(in lat);
+
+        if (eastOrWest[0].IsOneOf(LongitudeWestChars))
+        {
+            field *= -1;
+        }
+        else if (eastOrWest[0].IsOneOf(LongitudeEastChars) == false)
+        {
+            throw new Exception($"Longitude char must be {LongitudeEastChars} or {LongitudeWestChars}");
+        }
+    }
+    
+    public static void WriteLongitude(ref Span<byte> buffer, in double longitude)
+    {
+        WriteDouble(ref buffer, ConvertToDdmmMmmmmm(longitude), LongitudeFormat);
+        WriteSeparator(ref buffer);
+        buffer[0] = longitude < 0 ? (byte)LongitudeWestChars[0] : (byte)LongitudeEastChars[0];
+        buffer = buffer[1..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfLongitude(in double longitude) => LongitudeFormat.GetByteSize(ConvertToDdmmMmmmmm(longitude)) + 1 /*COMA*/ + 1 /*E/W*/;
+    
+    #endregion
+
+    #region GpsQuality
+
+    public static void ReadGpsQuality(ReadOnlySpan<char> buffer, out NmeaGpsQuality gpsQuality)
+    {
+        ReadInt(buffer, out var value);
+        if (value.HasValue)
+        {
+            gpsQuality = (NmeaGpsQuality)value.Value;    
+        }
+        else
+        {
+            gpsQuality = NmeaGpsQuality.Unknown;
+        }
+    }
+    
+    public static void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality gpsQuality)
+    {
+        WriteInt(ref buffer, (int)gpsQuality, NmeaIntFormat.IntD1);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfGpsQuality(in NmeaGpsQuality gpsQuality) => SizeOfInt((int)gpsQuality, NmeaIntFormat.IntD1);
+
+    #endregion
+
+    #region String
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string ReadString(ReadOnlySpan<char> token) => token.IsEmpty ? string.Empty : token.ToString();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteString(ref Span<byte> buffer, string value)
+    {
+        var count = Encoding.GetBytes(value, buffer);
+        buffer = buffer[count..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfString(string value) => Encoding.GetByteCount(value);
+
+    #endregion
 }
