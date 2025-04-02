@@ -22,7 +22,7 @@ namespace Asv.Gnss
     /// Example: $GPGBS,015509.00,-0.031,-0.186,0.219,19,0.000,-0.354,6.972*4D
     /// 
     /// </summary>
-    public class NmeaMessageGbs : NmeaMessage
+    public class NmeaMessageGbs : NmeaMessageBase
     {
         public const string MessageName = "GBS";
         public static readonly NmeaMessageId MessageId = new(MessageName);

@@ -31,19 +31,19 @@ namespace Asv.Gnss;
 /// 14) Differential reference station ID, 0000-1023
 /// 15) Checksum
 /// </summary>
-public class NmeaMessageGga : NmeaMessage
+public class NmeaMessageGga : NmeaMessageBase
 {
     public const string MessageName = "GGA";
     public static readonly NmeaMessageId MessageId = new(MessageName);
     private int? _referenceStationId;
     private double _ageOfDifferentialGpsData;
-    private string _geoidalSeparationUnits;
+    private string? _geoidalSeparationUnits;
     private double _geoidalSeparation;
-    private string _antennaAltitudeUnits;
+    private string? _antennaAltitudeUnits;
     private double _antennaAltitudeMsl;
     private double _horizontalDilutionPrecision;
     private int? _numberOfSatellites;
-    private NmeaGpsQuality _gpsQuality;
+    private NmeaGpsQuality? _gpsQuality;
     private TimeSpan? _time;
     private double _latitude;
     private double _longitude;
@@ -138,7 +138,7 @@ public class NmeaMessageGga : NmeaMessage
         set => _ageOfDifferentialGpsData = value;
     }
 
-    public string GeoidalSeparationUnits
+    public string? GeoidalSeparationUnits
     {
         get => _geoidalSeparationUnits;
         set => _geoidalSeparationUnits = value;
@@ -158,7 +158,7 @@ public class NmeaMessageGga : NmeaMessage
     /// <summary>
     ///  Units of antenna altitude, meters
     /// </summary>
-    public string AntennaAltitudeUnits
+    public string? AntennaAltitudeUnits
     {
         get => _antennaAltitudeUnits;
         set => _antennaAltitudeUnits = value;
@@ -197,7 +197,7 @@ public class NmeaMessageGga : NmeaMessage
     /// <value>
     /// The GPS quality. This property represents the quality of the GPS signal received, indicating the accuracy of the reported data.
     /// </value>
-    public NmeaGpsQuality GpsQuality
+    public NmeaGpsQuality? GpsQuality
     {
         get => _gpsQuality;
         set => _gpsQuality = value;

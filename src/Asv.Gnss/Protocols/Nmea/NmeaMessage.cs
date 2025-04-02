@@ -6,7 +6,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
+public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 {
     private ProtocolTags _tags = [];
     private NmeaTalkerId _talkerId;
@@ -308,11 +308,11 @@ public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
 
     #region GpsQuality
 
-    protected void ReadGpsQuality(ref ReadOnlySpan<char> buffer, out NmeaGpsQuality field, bool required = true)
+    protected void ReadGpsQuality(ref ReadOnlySpan<char> buffer, out NmeaGpsQuality? value, bool required = true)
     {
         if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
         {
-            NmeaProtocol.ReadGpsQuality(token, out field);
+            NmeaProtocol.ReadGpsQuality(token, out value);
             return;
         }
 
@@ -321,18 +321,18 @@ public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
             throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "Time is required");
         }
 
-        field = NmeaGpsQuality.Unknown;
+        value = NmeaGpsQuality.Unknown;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality gpsQuality)
+    protected void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality? gpsQuality)
     {
         NmeaProtocol.WriteGpsQuality(ref buffer, in gpsQuality);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfGpsQuality(in NmeaGpsQuality gpsQuality)
+    protected int SizeOfGpsQuality(in NmeaGpsQuality? gpsQuality)
     {
         return NmeaProtocol.SizeOfGpsQuality(in gpsQuality) + NmeaProtocol.SizeOfSeparator();    
     }
@@ -358,16 +358,139 @@ public abstract class NmeaMessage : IProtocolMessage<NmeaMessageId>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteString(ref Span<byte> buffer, string value)
+    protected void WriteString(ref Span<byte> buffer, string? value)
     {
         NmeaProtocol.WriteString(ref buffer, value);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfString(string value)
+    protected int SizeOfString(string? value)
     {
         return NmeaProtocol.SizeOfString(value) + NmeaProtocol.SizeOfSeparator();
+    }
+
+    #endregion
+
+    #region Status
+
+    protected void ReadDataStatus(ref ReadOnlySpan<char> buffer, out NmeaDataStatus? status, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadDataStatus(ref token, out status);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+        }
+
+        status = null;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected void WriteDataStatus(ref Span<byte> buffer, in NmeaDataStatus? status)
+    {
+        NmeaProtocol.WriteDataStatus(ref buffer, in status);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int SizeOfStatus(NmeaDataStatus? status) => NmeaProtocol.SizeOfStatus(status) + NmeaProtocol.SizeOfSeparator();
+
+    #endregion
+    
+    #region Status
+
+    protected void ReadPositioningSystemMode(ref ReadOnlySpan<char> buffer, out NmeaPositioningSystemMode? status, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadPositioningSystemMode(ref token, out status);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+        }
+
+        status = null;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected void WritePositioningSystemMode(ref Span<byte> buffer, in NmeaPositioningSystemMode? status)
+    {
+        NmeaProtocol.WritePositioningSystemMode(ref buffer, in status);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int SizeOfPositioningSystemMode(NmeaPositioningSystemMode? status) 
+        => NmeaProtocol.SizeOfPositioningSystemMode(status) + NmeaProtocol.SizeOfSeparator();
+
+    #endregion
+
+
+    #region FixMode
+
+    protected void ReadFixMode(ref ReadOnlySpan<char> buffer, out NmeaFixQuality? value, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadFixMode(ref token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+        }
+
+        value = null;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected void WriteFixMode(ref Span<byte> buffer, in NmeaFixQuality? value)
+    {
+        NmeaProtocol.WriteFixMode(ref buffer, in value);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int SizeOfFixMode(in NmeaFixQuality? fixMode)
+    {
+        return NmeaProtocol.SizeOfFixMode(fixMode) + NmeaProtocol.SizeOfSeparator();
+    }
+
+    #endregion
+
+    #region DopMod
+
+    protected void ReadDopMode(ref ReadOnlySpan<char> buffer, out NmeaDopMode? value, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadDopMode(ref token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+        }
+
+        value = null;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected void WriteDopMode(ref Span<byte> buffer, in NmeaDopMode? value)
+    {
+        NmeaProtocol.WriteDopMode(ref buffer, in value);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected int SizeOfDopMode(in NmeaDopMode? value)
+    {
+        return NmeaProtocol.SizeOfDopMode(in value) + NmeaProtocol.SizeOfSeparator();
     }
 
     #endregion

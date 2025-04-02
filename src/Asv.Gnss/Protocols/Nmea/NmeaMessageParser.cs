@@ -11,10 +11,10 @@ namespace Asv.Gnss;
 /// The Nmea0183Parser class is responsible for parsing NMEA 0183 messages.
 /// </summary>
 public class NmeaMessageParser(
-    IProtocolMessageFactory<NmeaMessage, NmeaMessageId> messageFactory,
+    IProtocolMessageFactory<NmeaMessageBase, NmeaMessageId> messageFactory,
     IProtocolContext context,
     IStatisticHandler? statisticHandler)
-    : ProtocolParser<NmeaMessage, NmeaMessageId>(messageFactory, context, statisticHandler)
+    : ProtocolParser<NmeaMessageBase, NmeaMessageId>(messageFactory, context, statisticHandler)
 {
     
     /// <summary>

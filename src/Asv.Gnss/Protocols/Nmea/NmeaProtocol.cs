@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using Asv.IO;
 using DotNext;
@@ -34,16 +33,19 @@ public static class NmeaProtocol
     public static NmeaDoubleFormat LongitudeFormat = NmeaDoubleFormat.Double4X7;
     private const string LongitudeEastChars = "Ee";
     private const string LongitudeWestChars = "Ww";
+    
     public static ProtocolInfo Info { get; } = new("NAME", "NMEA 0183");
     public static Encoding Encoding => Encoding.ASCII;
     
     
-    public static void RegisterNmeaProtocol(this IProtocolParserBuilder builder, Action<IProtocolMessageFactoryBuilder<NmeaMessage, NmeaMessageId>>? configure = null)
+    public static void RegisterNmeaProtocol(this IProtocolParserBuilder builder, Action<IProtocolMessageFactoryBuilder<NmeaMessageBase, NmeaMessageId>>? configure = null)
     {
-        var factory = new ProtocolMessageFactoryBuilder<NmeaMessage, NmeaMessageId>(Info);
+        var factory = new ProtocolMessageFactoryBuilder<NmeaMessageBase, NmeaMessageId>(Info);
         // register default messages
         factory
-            .Add<NmeaMessageGbs>();
+            .Add<NmeaMessageGbs>()
+            .Add<NmeaMessageGga>()
+            .Add<NmeaMessageGll>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core,stat) => new NmeaMessageParser(messageFactory, core,stat));
@@ -290,37 +292,8 @@ public static class NmeaProtocol
     public static int SizeOfInt(in int? value,in NmeaIntFormat format) => format.GetByteSize(value);
 
     #endregion
-
-    /// <summary>
-    /// Converts NMEA coordinate format (ddmm.mmmmmmm) to decimal degrees (dd.dddddd).
-    /// </summary>
-    /// <param name="value">Coordinate in NMEA format (e.g. "4916.45" => 49° 16.45')</param>
-    /// <returns>Decimal degrees or NaN if invalid input</returns>
-    private static double ConvertToDecimalDegrees(in double value)
-    {
-        var degrees = (int)(value / 100);
-        var minutes = value - degrees * 100;
-        return degrees + (minutes / 60.0);
-    }
     
-    /// <summary>
-    /// Converts decimal degrees (dd.dddddd) to NMEA coordinate format (ddmm.mmmmmmm).
-    /// </summary>
-    /// <param name="decimalDegrees">Input in decimal degrees (e.g. 49.274167)</param>
-    /// <returns>Coordinate in ddmm.mmmmmmm format</returns>
-    private static double ConvertToDdmmMmmmmm(double decimalDegrees)
-    {
-        if (!double.IsFinite(decimalDegrees))
-            return double.NaN;
-
-        decimalDegrees = Math.Abs(decimalDegrees);
-        var degrees = (int)decimalDegrees;
-        var minutes = (decimalDegrees - degrees) * 60.0;
-
-        return degrees * 100 + minutes;
-    }
-    
-    #region Latitude
+    #region Latitude 
 
     public static void ReadLatitude(ReadOnlySpan<char> digit,ReadOnlySpan<char> northOrSouth, out double field)
     {
@@ -354,9 +327,36 @@ public static class NmeaProtocol
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SizeOfLatitude(in double latitude) => LatitudeFormat.GetByteSize(ConvertToDdmmMmmmmm(latitude)) + 1 /*COMA*/ + 1 /*N/S*/;
 
-    #endregion
-
+    /// <summary>
+    /// Converts NMEA coordinate format (ddmm.mmmmmmm) to decimal degrees (dd.dddddd).
+    /// </summary>
+    /// <param name="value">Coordinate in NMEA format (e.g. "4916.45" => 49° 16.45')</param>
+    /// <returns>Decimal degrees or NaN if invalid input</returns>
+    private static double ConvertToDecimalDegrees(in double value)
+    {
+        var degrees = (int)(value / 100);
+        var minutes = value - degrees * 100;
+        return degrees + (minutes / 60.0);
+    }
     
+    /// <summary>
+    /// Converts decimal degrees (dd.dddddd) to NMEA coordinate format (ddmm.mmmmmmm).
+    /// </summary>
+    /// <param name="decimalDegrees">Input in decimal degrees (e.g. 49.274167)</param>
+    /// <returns>Coordinate in ddmm.mmmmmmm format</returns>
+    private static double ConvertToDdmmMmmmmm(double decimalDegrees)
+    {
+        if (!double.IsFinite(decimalDegrees))
+            return double.NaN;
+
+        decimalDegrees = Math.Abs(decimalDegrees);
+        var degrees = (int)decimalDegrees;
+        var minutes = (decimalDegrees - degrees) * 60.0;
+
+        return degrees * 100 + minutes;
+    }
+    
+    #endregion
 
     #region Longitude
 
@@ -394,45 +394,153 @@ public static class NmeaProtocol
     
     #endregion
 
-    #region GpsQuality
-
-    public static void ReadGpsQuality(ReadOnlySpan<char> buffer, out NmeaGpsQuality gpsQuality)
-    {
-        ReadInt(buffer, out var value);
-        if (value.HasValue)
-        {
-            gpsQuality = (NmeaGpsQuality)value.Value;    
-        }
-        else
-        {
-            gpsQuality = NmeaGpsQuality.Unknown;
-        }
-    }
-    
-    public static void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality gpsQuality)
-    {
-        WriteInt(ref buffer, (int)gpsQuality, NmeaIntFormat.IntD1);
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int SizeOfGpsQuality(in NmeaGpsQuality gpsQuality) => SizeOfInt((int)gpsQuality, NmeaIntFormat.IntD1);
-
-    #endregion
-
     #region String
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ReadString(ReadOnlySpan<char> token) => token.IsEmpty ? string.Empty : token.ToString();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void WriteString(ref Span<byte> buffer, string value)
+    public static void WriteString(ref Span<byte> buffer, string? value)
     {
+        if (value == null) return;
         var count = Encoding.GetBytes(value, buffer);
         buffer = buffer[count..];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int SizeOfString(string value) => Encoding.GetByteCount(value);
+    public static int SizeOfString(string? value) => value == null ? 0 : Encoding.GetByteCount(value);
+
+    #endregion
+
+    #region GpsQuality
+
+    public static void ReadGpsQuality(ReadOnlySpan<char> buffer, out NmeaGpsQuality? value)
+    {
+        ReadInt(buffer, out var temp);
+        if (temp.HasValue)
+        {
+            value = (NmeaGpsQuality)temp.Value;    
+        }
+        else
+        {
+            value = null;
+        }
+    }
+    
+    public static void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality? value)
+    {
+        WriteInt(ref buffer, (int?)value, NmeaIntFormat.IntD1);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfGpsQuality(in NmeaGpsQuality? gpsQuality) => SizeOfInt((int?)gpsQuality, NmeaIntFormat.IntD1);
+
+    #endregion
+    
+    #region Status
+
+    public static void ReadDataStatus(ref ReadOnlySpan<char> buffer, out NmeaDataStatus? value)
+    {
+        if (buffer.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaDataStatus)buffer[0];
+        buffer = buffer[1..];
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteDataStatus(ref Span<byte> buffer, in NmeaDataStatus? value)
+    {
+        if (value != null)
+        {
+            buffer[0] = (byte)value;    
+        }
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfStatus(NmeaDataStatus? status) => status == null ? 0 : 1;
+
+    #endregion
+
+    #region PositioningSystemMode
+    
+    public static void ReadPositioningSystemMode(ref ReadOnlySpan<char> buffer, out NmeaPositioningSystemMode? value)
+    {
+        if (buffer.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaPositioningSystemMode)buffer[0];
+        buffer = buffer[1..];
+    }
+
+    public static void WritePositioningSystemMode(ref Span<byte> buffer, in NmeaPositioningSystemMode? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfPositioningSystemMode(NmeaPositioningSystemMode? status) => status == null ? 0 : 1;
+
+    #endregion
+
+    #region FixMode
+
+    public static void ReadFixMode(ref ReadOnlySpan<char> buffer, out NmeaFixQuality? value)
+    {
+        if (buffer.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaFixQuality)buffer[0];
+        buffer = buffer[1..];
+    }
+
+    public static void WriteFixMode(ref Span<byte> buffer, in NmeaFixQuality? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    public static int SizeOfFixMode(in NmeaFixQuality? value) => value == null ? 0 : 1;
+
+    #endregion
+
+    #region DopMode
+
+    public static void ReadDopMode(ref ReadOnlySpan<char> buffer, out NmeaDopMode? value)
+    {
+        if (buffer.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaDopMode)buffer[0];
+        buffer = buffer[1..];
+    }
+
+    public static void WriteDopMode(ref Span<byte> buffer, in NmeaDopMode? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    public static int SizeOfDopMode(in NmeaDopMode? value) => value == null ? 0 : 1;
 
     #endregion
 }
