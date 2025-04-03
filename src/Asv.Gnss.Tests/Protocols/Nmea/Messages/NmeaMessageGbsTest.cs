@@ -1,9 +1,8 @@
 using System;
-using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Tests.Messages;
+namespace Asv.Gnss.Tests;
 
 [TestSubject(typeof(NmeaMessageGbs))]
 public class NmeaMessageGbsTest
@@ -50,7 +49,7 @@ public class NmeaMessageGbsTest
                 BiasEstimateStandardDeviation = 6.972
             };
 
-            var buffer = new byte[message.GetByteSize()]; // Достаточно большой буфер
+            var buffer = new byte[message.GetByteSize()];
             var bufferSpan = buffer.AsSpan();
 
             // Act

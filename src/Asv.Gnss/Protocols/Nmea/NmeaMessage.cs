@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Asv.IO;
+using DotNext;
 
 namespace Asv.Gnss;
 
@@ -13,14 +14,16 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
     public void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
-        if (buffer.Length < 5) throw new Exception("Too small string for NMEA");
+        buffer = buffer
+            .TrimEnd(NmeaProtocol.EndMessageByte1)
+            .TrimEnd(NmeaProtocol.EndMessageByte2)
+            .TrimEnd(NmeaProtocol.SpaceByte)
+            .TrimStart(NmeaProtocol.SpaceByte)
+            .TrimStart(NmeaProtocol.StartMessageByte1)
+            .TrimStart(NmeaProtocol.StartMessageByte2);
         
-        var start = buffer.IndexOfAny(NmeaProtocol.StartMessageByte2, NmeaProtocol.StartMessageByte1);
-        if (start >= 0)
-        {
-            // skip start symbols
-            buffer = buffer.Slice(start + 1, buffer.Length - start - 1);
-        }
+        if (buffer.Length < 5) throw new Exception("Too small string for NMEA");
+       
         var crcIndex = buffer.IndexOf(NmeaProtocol.StartCrcByte);
         var trimFromEnd = 0;
         if (crcIndex > 0)
@@ -32,7 +35,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
             {
                 throw new ProtocolDeserializeMessageException(Protocol, this, $"Invalid crc: want {calcCrc}, got {readCrc}");
             }
-            trimFromEnd = buffer.Length - crcIndex - 1 /*we stay end star (*) here */;
+            trimFromEnd = buffer.Length - crcIndex;
         }
         
         if (NmeaProtocol.TryGetMessageId(ref buffer, out var msgId, out _talkerId))
@@ -284,7 +287,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "Time is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"Int is required: '{buffer}'");
         }
 
         field = null;
@@ -318,7 +321,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "Time is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaGpsQuality)} is required: '...{buffer}'");
         }
 
         value = NmeaGpsQuality.Unknown;
@@ -351,7 +354,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(String)} is required: '...{buffer}'");
         }
 
         value = string.Empty;
@@ -384,7 +387,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaDataStatus)} is required: '...{buffer}'");
         }
 
         status = null;
@@ -412,7 +415,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaPositioningSystemMode)} is required: '...{buffer}'");
         }
 
         status = null;
@@ -443,7 +446,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaFixQuality)} is required: '...{buffer}'");
         }
 
         value = null;
@@ -475,7 +478,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
         if (required)
         {
-            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "String is required");
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaDopMode)} is required: '...{buffer}'");
         }
 
         value = null;
@@ -494,5 +497,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
 
     #endregion
+
     
+
 }

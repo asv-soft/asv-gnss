@@ -22,6 +22,8 @@ public static class NmeaProtocol
     public const byte EndMessageByte1 = (byte)EndMessage1; 
     public const char EndMessage2 = '\n'; // 0x0A;
     public const byte EndMessageByte2 = (byte)EndMessage2;
+    public const char SpaceChar = ' ';
+    public const byte SpaceByte = (byte)SpaceChar;
 
     public const char DigitSeparator = '.';
     public const byte DigitSeparatorByte = (byte)DigitSeparator;
@@ -45,7 +47,9 @@ public static class NmeaProtocol
         factory
             .Add<NmeaMessageGbs>()
             .Add<NmeaMessageGga>()
-            .Add<NmeaMessageGll>();
+            .Add<NmeaMessageGll>()
+            .Add<NmeaMessageGsa>()
+            .Add<NmeaMessageGst>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core,stat) => new NmeaMessageParser(messageFactory, core,stat));
@@ -131,7 +135,7 @@ public static class NmeaProtocol
             token = ReadOnlySpan<char>.Empty;
             return false;
         }
-        var idEndIndex = buffer.IndexOfAny(TokenSeparator, StartCrcChar, EndMessage1);
+        var idEndIndex = buffer.IndexOf(TokenSeparator);
         if (idEndIndex == -1)
         {
             token = buffer;
@@ -141,6 +145,11 @@ public static class NmeaProtocol
         token = buffer[..idEndIndex];
         buffer = buffer[(idEndIndex+1)..];
         return true;
+    }
+    
+    public static int TokenCount(ref ReadOnlySpan<char> buffer)
+    {
+        return buffer.Count(TokenSeparator) + 1;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -543,4 +552,168 @@ public static class NmeaProtocol
     public static int SizeOfDopMode(in NmeaDopMode? value) => value == null ? 0 : 1;
 
     #endregion
+    
+    public static bool GetPrnFromNmeaSatId(int nmeaSatId, out int prn, out NmeaNavigationSystemEnum nav)
+    {
+        nav = NmeaNavigationSystemEnum.SysNone;
+        prn = -1;
+        if (nmeaSatId <= 0) return false;
+
+        switch (nmeaSatId)
+        {
+            case <= 32:
+                prn = nmeaSatId;
+                nav = NmeaNavigationSystemEnum.SysGps;
+                return true;
+            case <= 54:
+                prn = nmeaSatId + 87;
+                nav = NmeaNavigationSystemEnum.SysSbs;
+                return true;
+            case >= 65 and <= 96:
+                prn = nmeaSatId - 64;
+                nav = NmeaNavigationSystemEnum.SysGlo;
+                return true;
+            case >= 120 and <= 158:
+                prn = nmeaSatId;
+                nav = NmeaNavigationSystemEnum.SysSbs;
+                return true;
+            case >= 193 and <= 199:
+                prn = nmeaSatId - 192;
+                nav = NmeaNavigationSystemEnum.SysQzs;
+                return true;
+            case >= 201 and <= 235:
+                prn = nmeaSatId - 200;
+                nav = NmeaNavigationSystemEnum.SysCmp;
+                return true;
+            case >= 301 and <= 336:
+                prn = nmeaSatId - 300;
+                nav = NmeaNavigationSystemEnum.SysGal;
+                return true;
+            case >= 401 and <= 414:
+                prn = nmeaSatId - 400;
+                nav = NmeaNavigationSystemEnum.SysIrn;
+                return true;
+        }
+
+
+        // 1 - 32	GPS
+        // 33 - 54	Various SBAS systems (EGNOS, WAAS, SDCM, GAGAN, MSAS)
+        // 55 - 64	not used (might be assigned to further SBAS systems)
+        // 65 - 88	GLONASS
+        // 89 - 96	GLONASS (future extensions)
+        // 97 - 119	not used
+        // 120 - 151	not used (SBAS PRNs occupy this range)
+        // 152 - 158	Various SBAS systems (EGNOS, WAAS, SDCM, GAGAN, MSAS)
+        // 159 - 172	not used
+        // 173 - 182	IMES
+        // 193 - 199	QZSS
+        // 201 - 235	BeiDou (u-blox, not NMEA)
+        // 301 - 336	GALILEO
+        // 401 - 414	IRNSS
+        // 415 - 437	IRNSS (future extensions)
+        return false;
+    }
+
+    public static bool GetPrnFromNmeaSatId(NmeaTalkerId talkerId, int nmeaSatId, out int prn,
+        out NmeaNavigationSystemEnum nav)
+    {
+        if (nmeaSatId is >= 120 and <= 158)
+        {
+            prn = nmeaSatId;
+            nav = NmeaNavigationSystemEnum.SysSbs;
+            return true;
+        }
+
+        switch (talkerId.Id)
+        {
+            case "GN":
+                return GetPrnFromNmeaSatId(nmeaSatId, out prn, out nav);
+            case "GP":
+                switch (nmeaSatId)
+                {
+                    case <= 32:
+                        prn = nmeaSatId;
+                        nav = NmeaNavigationSystemEnum.SysGps;
+                        return true;
+                    case <= 64:
+                        prn = nmeaSatId + 87;
+                        nav = NmeaNavigationSystemEnum.SysSbs;
+                        return true;
+                }
+
+                break;
+            case "GL":
+                if (nmeaSatId is >= 65 and <= 96)
+                {
+                    prn = nmeaSatId - 64;
+                    nav = NmeaNavigationSystemEnum.SysGlo;
+                    return true;
+                }
+
+                break;
+            case "GQ":
+                switch (nmeaSatId)
+                {
+                    case >= 1 and <= 7:
+                        prn = nmeaSatId;
+                        nav = NmeaNavigationSystemEnum.SysQzs;
+                        return true;
+                    case >= 193 and <= 199:
+                        prn = nmeaSatId - 192;
+                        nav = NmeaNavigationSystemEnum.SysQzs;
+                        return true;
+                }
+
+                break;
+            case "GB":
+            case "BD":
+                switch (nmeaSatId)
+                {
+                    case >= 1 and <= 35:
+                        prn = nmeaSatId;
+                        nav = NmeaNavigationSystemEnum.SysCmp;
+                        return true;
+                    case >= 201 and <= 235:
+                        prn = nmeaSatId - 200;
+                        nav = NmeaNavigationSystemEnum.SysCmp;
+                        return true;
+                }
+
+                break;
+            case "GA":
+                switch (nmeaSatId)
+                {
+                    case >= 1 and <= 36:
+                        prn = nmeaSatId;
+                        nav = NmeaNavigationSystemEnum.SysGal;
+                        return true;
+                    case >= 301 and <= 336:
+                        prn = nmeaSatId - 300;
+                        nav = NmeaNavigationSystemEnum.SysGal;
+                        return true;
+                }
+
+                break;
+            case "GI":
+                switch (nmeaSatId)
+                {
+                    case >= 1 and <= 14:
+                        prn = nmeaSatId;
+                        nav = NmeaNavigationSystemEnum.SysIrn;
+                        return true;
+                    case >= 401 and <= 414:
+                        prn = nmeaSatId - 400;
+                        nav = NmeaNavigationSystemEnum.SysIrn;
+                        return true;
+                }
+
+                break;
+        }
+
+        prn = -1;
+        nav = NmeaNavigationSystemEnum.SysNone;
+        return false;
+    }
+
+
 }

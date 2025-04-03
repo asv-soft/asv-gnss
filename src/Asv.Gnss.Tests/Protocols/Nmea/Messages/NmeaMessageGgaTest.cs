@@ -1,9 +1,8 @@
 using System;
-using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Tests.Messages;
+namespace Asv.Gnss.Tests;
 
 [TestSubject(typeof(NmeaMessageGga))]
 public class NmeaMessageGgaTest
