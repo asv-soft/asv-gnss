@@ -49,7 +49,10 @@ public static class NmeaProtocol
             .Add<NmeaMessageGga>()
             .Add<NmeaMessageGll>()
             .Add<NmeaMessageGsa>()
-            .Add<NmeaMessageGst>();
+            .Add<NmeaMessageGst>()
+            .Add<NmeaMessageGsv>()
+            .Add<NmeaMessageRmc>()
+            .Add<NmeaMessageVtg>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core,stat) => new NmeaMessageParser(messageFactory, core,stat));
@@ -442,38 +445,38 @@ public static class NmeaProtocol
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int SizeOfGpsQuality(in NmeaGpsQuality? gpsQuality) => SizeOfInt((int?)gpsQuality, NmeaIntFormat.IntD1);
+    public static int SizeOfGpsQuality(in NmeaGpsQuality? value) => SizeOfInt((int?)value, NmeaIntFormat.IntD1);
 
     #endregion
     
     #region Status
 
-    public static void ReadDataStatus(ref ReadOnlySpan<char> buffer, out NmeaDataStatus? value)
+    public static void ReadDataStatus(ReadOnlySpan<char> buffer, out NmeaDataStatus? value)
     {
         if (buffer.IsEmpty)
         {
             value = null;
             return;
         }
-        value = (NmeaDataStatus)buffer[0];
-        buffer = buffer[1..];
+        value = (NmeaDataStatus)(byte)buffer[0];
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void WriteDataStatus(ref Span<byte> buffer, in NmeaDataStatus? value)
     {
         if (value != null)
         {
-            buffer[0] = (byte)value;    
+            buffer[0] = (byte)value;
+            buffer = buffer[1..];
         }
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int SizeOfStatus(NmeaDataStatus? status) => status == null ? 0 : 1;
+    public static int SizeOfStatus(NmeaDataStatus? value) => value == null ? 0 : 1;
 
     #endregion
 
     #region PositioningSystemMode
     
-    public static void ReadPositioningSystemMode(ref ReadOnlySpan<char> buffer, out NmeaPositioningSystemMode? value)
+    public static void ReadPositioningSystemMode(ReadOnlySpan<char> buffer, out NmeaPositioningSystemMode? value)
     {
         if (buffer.IsEmpty)
         {
@@ -481,7 +484,6 @@ public static class NmeaProtocol
             return;
         }
         value = (NmeaPositioningSystemMode)buffer[0];
-        buffer = buffer[1..];
     }
 
     public static void WritePositioningSystemMode(ref Span<byte> buffer, in NmeaPositioningSystemMode? value)
@@ -501,7 +503,7 @@ public static class NmeaProtocol
 
     #region FixMode
 
-    public static void ReadFixMode(ref ReadOnlySpan<char> buffer, out NmeaFixQuality? value)
+    public static void ReadFixMode(ReadOnlySpan<char> buffer, out NmeaFixQuality? value)
     {
         if (buffer.IsEmpty)
         {
@@ -509,7 +511,6 @@ public static class NmeaProtocol
             return;
         }
         value = (NmeaFixQuality)buffer[0];
-        buffer = buffer[1..];
     }
 
     public static void WriteFixMode(ref Span<byte> buffer, in NmeaFixQuality? value)
@@ -528,7 +529,7 @@ public static class NmeaProtocol
 
     #region DopMode
 
-    public static void ReadDopMode(ref ReadOnlySpan<char> buffer, out NmeaDopMode? value)
+    public static void ReadDopMode(ReadOnlySpan<char> buffer, out NmeaDopMode? value)
     {
         if (buffer.IsEmpty)
         {
@@ -536,7 +537,6 @@ public static class NmeaProtocol
             return;
         }
         value = (NmeaDopMode)buffer[0];
-        buffer = buffer[1..];
     }
 
     public static void WriteDopMode(ref Span<byte> buffer, in NmeaDopMode? value)
@@ -614,7 +614,7 @@ public static class NmeaProtocol
         return false;
     }
 
-    public static bool GetPrnFromNmeaSatId(NmeaTalkerId talkerId, int nmeaSatId, out int prn,
+    public static bool GetPrnFromNmeaSatId(in NmeaTalkerId talkerId, int nmeaSatId, out int prn,
         out NmeaNavigationSystemEnum nav)
     {
         if (nmeaSatId is >= 120 and <= 158)
@@ -716,4 +716,279 @@ public static class NmeaProtocol
     }
 
 
+    #region Hex
+
+    public static void ReadHex(ReadOnlySpan<char> value, out int? field)
+    {
+        if (value.IsEmpty || !int.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result))
+        {
+            field = null;
+            return;
+        }
+
+        field = result;
+    }
+
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteHex(ref Span<byte> buffer, int? value, in NmeaHexFormat format)
+    {
+        if (value == null) return;
+        value.Value.TryFormat(buffer, out var written,format.Format, NumberFormatInfo.InvariantInfo);
+        buffer = buffer[written..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfHex(int? value, in NmeaHexFormat format)
+    {
+        return value == null ? 0 : format.GetByteSize(value);
+    }
+
+    #endregion
+    
+    #region GpsQuality
+
+    public static void ReadPositionFixStatus(ReadOnlySpan<char> buffer, out NmeaPositionFixStatus? value)
+    {
+        if (buffer.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaPositionFixStatus)buffer[0];
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WritePositionFixStatus(ref Span<byte> buffer, in NmeaPositionFixStatus? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfPositionFixStatus(in NmeaPositionFixStatus? value) => value == null ? 0 : 1;
+
+    #endregion
+
+    #region Date
+
+    public static void ReadDate(ReadOnlySpan<char> token, out DateTime? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        var trimmed = token.Trim(SpaceChar);
+        if (trimmed.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        if (trimmed.Length != 6)
+        {
+            value = null;
+            return;
+        }
+        var day = int.Parse(trimmed[..2]);
+        var month = int.Parse(trimmed[2..4]);
+        var year = int.Parse(trimmed[4..6]) + 2000;
+        
+        value = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
+    }
+
+    public static void WriteDate(ref Span<byte> buffer, DateTime? date)
+    {
+        if (date == null)
+        {
+            return;
+        }
+        
+        var dt = date.Value;
+        dt.Day.TryFormat(buffer, out var written, NmeaIntFormat.IntD2.Format);
+        Debug.Assert(written == 2, "dd == 2 char" );
+        buffer = buffer[written..];
+        dt.Month.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
+        Debug.Assert(written == 2, "mm == 2 char" );
+        buffer = buffer[written..];
+        var year = dt.Year % 100;
+        year.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
+        Debug.Assert(written == 2, "yy == 2 char" );
+        buffer = buffer[written..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfDate(DateTime? date) => 6 /* ddmmyy */;
+
+    #endregion
+
+    #region MagneticVariationDirection
+
+    public static void ReadMagneticVariationDirection(ReadOnlySpan<char> token, out NmeaMagneticVariationDirection? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaMagneticVariationDirection)token[0];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteMagneticVariationDirection(ref Span<byte> buffer, NmeaMagneticVariationDirection? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+        
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfMagneticVariationDirection(NmeaMagneticVariationDirection? value) => value == null ? 0 : 1;
+
+    #endregion
+
+    #region TrueTrack
+
+    public static void ReadTrueTrackUnit(ReadOnlySpan<char> token, out TrueTrackUnit? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (TrueTrackUnit)token[0];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteTrueTrackUnit(ref Span<byte> buffer,  in TrueTrackUnit? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfTrueTrackUnit(TrueTrackUnit? value) => value == null ? 0 : 1;
+
+    #endregion
+
+    #region MagneticTrackUnit
+
+    public static void ReadMagneticTrackUnit(ReadOnlySpan<char> token, out MagneticTrackUnit? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (MagneticTrackUnit)token[0];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteMagneticTrackUnit(ref Span<byte> buffer, in MagneticTrackUnit? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfMagneticTrackUnit(MagneticTrackUnit? value) => value == null ? 0 : 1;
+
+    #endregion
+
+    #region GroundSpeedKnotsUnit
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ReadGroundSpeedKnotsUnit(ReadOnlySpan<char> token, out GroundSpeedKnotsUnit? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (GroundSpeedKnotsUnit)token[0];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void WriteGroundSpeedKnotsUnit(ref Span<byte> buffer, in GroundSpeedKnotsUnit? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int SizeOfGroundSpeedKnotsUnit(GroundSpeedKnotsUnit? value) => value == null ? 0 : 1;
+
+    #endregion
+
+
+    #region GroundSpeedKmhUnit
+
+    public static void ReadGroundSpeedKmhUnit(ReadOnlySpan<char> token, out GroundSpeedKmhUnit? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (GroundSpeedKmhUnit)token[0];
+    }
+
+    public static void WriteGroundSpeedKmhUnit(ref Span<byte> buffer, in GroundSpeedKmhUnit? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    public static int SizeOfGroundSpeedKmhUnit(GroundSpeedKmhUnit? value) => value == null ? 0 : 1;
+
+    #endregion
+
+    #region NmeaNavigationStatus
+
+    public static void ReadNavigationStatus(ReadOnlySpan<char> token, out NmeaNavigationStatus? value)
+    {
+        if (token.IsEmpty)
+        {
+            value = null;
+            return;
+        }
+        value = (NmeaNavigationStatus)token[0];
+    }
+
+    public static void WriteNavigationStatus(ref Span<byte> buffer, NmeaNavigationStatus? value)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        buffer[0] = (byte)value.Value;
+        buffer = buffer[1..];
+    }
+
+    public static int SizeOfNavigationStatus(NmeaNavigationStatus? value) => value == null ? 0 : 1;
+
+    #endregion
 }

@@ -5,12 +5,13 @@ using Xunit.Abstractions;
 
 namespace Asv.Gnss.Tests;
 
-public class NmeaMessageTestBase<TMessage> where TMessage : NmeaMessageBase, new()
+public class NmeaMessageTestBase<TMessage> 
+    where TMessage : NmeaMessageBase, new()
 {
     private readonly ITestOutputHelper _output;
     private readonly Dictionary<string, string> _testMessages;
 
-    public NmeaMessageTestBase(ITestOutputHelper output, Dictionary<string, string> testMessages)
+    protected NmeaMessageTestBase(ITestOutputHelper output, Dictionary<string, string> testMessages)
     {
         _output = output;
         _testMessages = testMessages;

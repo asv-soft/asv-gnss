@@ -11,7 +11,7 @@ public readonly record struct NmeaIntFormat(string Format, int MinSize)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetByteSize(int? value)
     {
-        return value == null ? 0 : Math.Max(MinSize, value.Value.CountDigits());
+        return value == null ? 0 : Math.Max(MinSize, value.Value.CountDecDigits());
     }
     
     public static NmeaIntFormat IntD1 = new("0", 1);

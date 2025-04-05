@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using Asv.IO;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -10,11 +13,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// The Nmea0183Parser class is responsible for parsing NMEA 0183 messages.
 /// </summary>
-public class NmeaMessageParser(
-    IProtocolMessageFactory<NmeaMessageBase, NmeaMessageId> messageFactory,
-    IProtocolContext context,
-    IStatisticHandler? statisticHandler)
-    : ProtocolParser<NmeaMessageBase, NmeaMessageId>(messageFactory, context, statisticHandler)
+public class NmeaMessageParser : ProtocolParser<NmeaMessageBase, NmeaMessageId>
 {
     
     /// <summary>
@@ -37,7 +36,19 @@ public class NmeaMessageParser(
     /// </summary>
     private int _byteRead;
 
-    private readonly ILogger<NmeaMessageParser> _logger = context.LoggerFactory.CreateLogger<NmeaMessageParser>();
+    private readonly ILogger<NmeaMessageParser> _logger;
+    private readonly ImmutableHashSet<byte> _availableIdChars;
+
+    /// <summary>
+    /// The Nmea0183Parser class is responsible for parsing NMEA 0183 messages.
+    /// </summary>
+    public NmeaMessageParser(IProtocolMessageFactory<NmeaMessageBase, NmeaMessageId> messageFactory,
+        IProtocolContext context,
+        IStatisticHandler? statisticHandler) : base(messageFactory, context, statisticHandler)
+    {
+        _logger = context.LoggerFactory.CreateLogger<NmeaMessageParser>();
+        _availableIdChars = messageFactory.GetSupportedIds().SelectMany(x => NmeaProtocol.Encoding.GetBytes(x.MessageId)).ToImmutableHashSet();
+    }
 
     /// <summary>
     /// Represents the state of the system.
@@ -49,6 +60,7 @@ public class NmeaMessageParser(
         /// </summary>
         Sync,
 
+        Id,
         /// <summary>
         /// Represents the state of the messaging process.
         /// </summary>
@@ -90,9 +102,33 @@ public class NmeaMessageParser(
                     if (data is NmeaProtocol.StartMessageByte1 or NmeaProtocol.StartMessageByte2)
                     {
                         _byteRead = 0;
+                        _state = State.Id;
+                    }
+                    break;
+                case State.Id:
+                    if (_byteRead >= 6)
+                    {
+                        // oversize for message id
+                        _state = State.Sync;
+                    } 
+                    else if (data is NmeaProtocol.ComaByte)
+                    {
+                        // end id
+                        _buffer[_byteRead] = data;
+                        ++_byteRead;
                         _state = State.Msg;
                     }
-
+                    else if (_availableIdChars.Contains(data))
+                    {
+                        _buffer[_byteRead] = data;
+                        ++_byteRead;
+                        _state = State.Id;
+                    }
+                    else
+                    {
+                        // unknown id char => skip
+                        _state = State.Sync;
+                    }
                     break;
                 case State.Msg:
                     switch (data)
@@ -157,11 +193,13 @@ public class NmeaMessageParser(
                         }
                         catch (ProtocolParserException ex)
                         {
+                            _logger.ZLogTrace($"{ex.Message}[{GetMessage()}]");
                             InternalOnError(ex);
                             return false;
                         }
                         catch (Exception ex)
                         {
+                            _logger.ZLogTrace($"{ex.Message}[{GetMessage()}]");
                             InternalOnError(new ProtocolParserException(Info,"Parser ",ex));
                             return false;
                         }
@@ -185,11 +223,13 @@ public class NmeaMessageParser(
                         }
                         catch (ProtocolParserException ex)
                         {
+                            _logger.ZLogTrace($"{ex.Message}[{GetMessage()}]");
                             InternalOnError(ex);
                             return false;
                         }
                         catch (Exception ex)
                         {
+                            _logger.ZLogTrace($"{ex.Message}[{GetMessage()}]");
                             InternalOnError(new ProtocolParserException(Info,"Parser ",ex));
                             return false;
                         }
@@ -212,7 +252,12 @@ public class NmeaMessageParser(
 
     }
 
-    
+    private string GetMessage()
+    {
+        var spanMsg = new ReadOnlySpan<byte>(_buffer, 0, _byteRead);
+        return NmeaProtocol.Encoding.GetString(spanMsg);
+    }
+
 
     /// <summary>
     /// Resets the state of the object to the initial state.

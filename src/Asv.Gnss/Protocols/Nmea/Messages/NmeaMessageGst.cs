@@ -2,6 +2,12 @@ using System;
 
 namespace Asv.Gnss;
 
+
+/// <summary>
+/// [GST] Position error statistics
+/// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GST.html
+/// https://docs.novatel.com/OEM7/Content/Logs/GPGST.htm?tocpath=Commands%20%2526%20Logs%7CLogs%7CGNSS%20Logs%7C_____64
+/// </summary>
 public class NmeaMessageGst : NmeaMessageBase
 {
     

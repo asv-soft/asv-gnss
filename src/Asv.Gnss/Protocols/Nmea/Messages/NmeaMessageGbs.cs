@@ -4,23 +4,9 @@ using System.Buffers;
 namespace Asv.Gnss
 {
     /// <summary>
-    /// GBS - GPS Satellite Fault Detection
-    ///             1      2   3   4   5   6   7   8   9
-    ///             |      |   |   |   |   |   |   |   |
-    /// $--GBS,hhmmss.ss,x.x,x.x,x.x,x.x,x.x,x.x,x.x*hh<CR><LF>
-    /// 
-    /// 1. UTC time of the GGA or GNS fix associated with this sentence
-    /// 2. Expected 1-sigma error in latitude (meters)
-    /// 3. Expected 1-sigma error in longitude (meters)
-    /// 4. Expected 1-sigma error in altitude (meters)
-    /// 5. ID of most likely failed satellite (1 to 138)
-    /// 6. Probability of missed detection for most likely failed satellite
-    /// 7. Estimate of bias in meters on most likely failed satellite
-    /// 8. Standard deviation of bias estimate
-    /// 
-    /// Source: https://gpsd.gitlab.io/gpsd/NMEA.html#MX521
-    /// Example: $GPGBS,015509.00,-0.031,-0.186,0.219,19,0.000,-0.354,6.972*4D
-    /// 
+    /// [GBS] GPS Satellite Fault Detection
+    /// https://gpsd.gitlab.io/gpsd/NMEA.html#MX521
+    /// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GBS.html
     /// </summary>
     public class NmeaMessageGbs : NmeaMessageBase
     {
@@ -143,20 +129,6 @@ namespace Asv.Gnss
             set => _biasEstimateStandardDeviation = value;
         }
 
-        public override string ToString()
-        {
-            var size = GetByteSize();
-            var arr = ArrayPool<byte>.Shared.Rent(size);
-            try
-            {
-                var span = new ReadOnlySpan<byte>(arr,0, size);
-                Deserialize(ref span);
-                return NmeaProtocol.Encoding.GetString(arr, 0, size);
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(arr);
-            }
-        }
+        
     }
 }

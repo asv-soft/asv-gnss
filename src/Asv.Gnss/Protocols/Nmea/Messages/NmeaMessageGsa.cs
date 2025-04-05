@@ -5,17 +5,9 @@ using DotNext.Collections.Generic;
 namespace Asv.Gnss;
 
 /// <summary>
-/// GSA GPS DOP and active satellites. 
-/// 1) Selection mode 
-/// 2) Mode 
-/// 3) ID of 1st satellite used for fix 
-/// 4) ID of 2nd satellite used for fix 
-/// ... 
-/// 14) ID of 12th satellite used for fix 
-/// 15) PDOP in meters 
-/// 16) HDOP in meters 
-/// 17) VDOP in meters 
-/// 18) Checksum
+/// [GSA] GPS DOP and active satellites. 
+/// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GSA.html
+/// https://docs.novatel.com/OEM7/Content/Logs/GPGSA.htm?TocPath=Commands%20%26%20Logs%7CLogs%7CGNSS%20Logs%7C_____63
 /// </summary>
 public class NmeaMessageGsa : NmeaMessageBase
 {
@@ -27,6 +19,7 @@ public class NmeaMessageGsa : NmeaMessageBase
     private double _pdop;
     private double _hdop;
     private double _vdop;
+    private int? _systemId;
     public override string Name => MessageName;
     public override NmeaMessageId Id => MessageId;
     protected override void InternalDeserialize(ref ReadOnlySpan<char> buffer)
@@ -43,7 +36,12 @@ public class NmeaMessageGsa : NmeaMessageBase
         ReadDouble(ref buffer, out _pdop);
         ReadDouble(ref buffer, out _hdop);
         ReadDouble(ref buffer, out _vdop);
+        
+        // This field is only output if the NMEAVERSION is 4.11
+        ReadHex(ref buffer,out _systemId, false);
     }
+
+    
 
     protected override void InternalSerialize(ref Span<byte> buffer)
     {
@@ -63,8 +61,12 @@ public class NmeaMessageGsa : NmeaMessageBase
         WriteDouble(ref buffer, in _pdop, NmeaDoubleFormat.Double1X1);
         WriteDouble(ref buffer, in _hdop, NmeaDoubleFormat.Double1X1);
         WriteDouble(ref buffer, in _vdop, NmeaDoubleFormat.Double1X1);
+        
+        // This field is only output if the NMEAVERSION is 4.11
+        WriteHex(ref buffer, _systemId, NmeaHexFormat.HexX1);
     }
-    
+
+   
     protected override int InternalGetByteSize()
     {
         var summ = 0;
@@ -84,8 +86,11 @@ public class NmeaMessageGsa : NmeaMessageBase
                + summ 
                + SizeOfDouble(in _pdop, NmeaDoubleFormat.Double1X1) 
                + SizeOfDouble(in _hdop, NmeaDoubleFormat.Double1X1) 
-               + SizeOfDouble(in _vdop, NmeaDoubleFormat.Double1X1);
+               + SizeOfDouble(in _vdop, NmeaDoubleFormat.Double1X1)
+               + SizeOfHex(in _systemId, NmeaHexFormat.HexX1);
     }
+
+    
 
     public NmeaDopMode? DopMode
     {
@@ -117,5 +122,14 @@ public class NmeaMessageGsa : NmeaMessageBase
     {
         get => _vdop;
         set => _vdop = value;
+    }
+    
+    /// <summary>
+    /// This field is only output if the NMEAVERSION is 4.11
+    /// </summary>
+    public int? SystemId
+    {
+        get => _systemId;
+        set => _systemId = value;
     }
 }

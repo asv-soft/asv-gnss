@@ -5,17 +5,9 @@ namespace Asv.Gnss;
 
 
 /// <summary>
-/// Geographic Position, Latitude / Longitude and time.
-/// 1) Latitude 
-/// 2) N or S (North or South) 
-/// 3) Longitude 
-/// 4) E or W (East or West) 
-/// 5) Time (UTC) 
-/// 6) Status A - Data Valid, V - Data Invalid 
-/// 7) Checksum
-/// eg1. $GPGLL,3751.65,S,14507.36,E*77
-/// eg2. $GPGLL,4916.45,N,12311.12,W,225444,A
-/// eg3. $GPGLL,5133.81,N,00042.25,W*75
+/// [GLL] Geographic Position, Latitude / Longitude and time.
+/// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GLL.html
+/// https://docs.novatel.com/OEM7/Content/Logs/GPGLL.htm?TocPath=Commands%20%26%20Logs%7CLogs%7CGNSS%20Logs%7C_____61
 /// </summary>
 public class NmeaMessageGll : NmeaMessageBase
 {

@@ -6,8 +6,7 @@ using Xunit.Abstractions;
 
 namespace Asv.Gnss.Tests;
 
-// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GST.html
-// https://docs.novatel.com/OEM7/Content/Logs/GPGST.htm?tocpath=Commands%20%2526%20Logs%7CLogs%7CGNSS%20Logs%7C_____64
+
 [TestSubject(typeof(NmeaMessageGst))]
 public class NmeaMessageGstTest(ITestOutputHelper output) 
     : NmeaMessageTestBase<NmeaMessageGst>(output, TestMessages)
@@ -27,7 +26,7 @@ public class NmeaMessageGstTest(ITestOutputHelper output)
         {
             // 2
             "$GPGST,172814.0,0.006,0.023,0.020,273.6,0.023,0.020,0.031*6A",
-            "$GPGST,172814.000,0.006,0.023,0.020,273.600,0.023,0.020,0.031"
+            "$GPGST,172814.000,0.006,0.023,0.020,273.6000,0.023,0.020,0.031"
         },
         
     };

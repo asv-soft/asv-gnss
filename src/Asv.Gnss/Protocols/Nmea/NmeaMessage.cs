@@ -28,6 +28,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         var trimFromEnd = 0;
         if (crcIndex > 0)
         {
+            HasCrc = true;
             var crcBuffer = buffer[..crcIndex];
             var calcCrc = NmeaProtocol.CalcCrc(crcBuffer);
             var readCrc = NmeaProtocol.Encoding.GetString(buffer.Slice(crcIndex + 1, 2));
@@ -36,6 +37,10 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
                 throw new ProtocolDeserializeMessageException(Protocol, this, $"Invalid crc: want {calcCrc}, got {readCrc}");
             }
             trimFromEnd = buffer.Length - crcIndex;
+        }
+        else
+        {
+            HasCrc = false;
         }
         
         if (NmeaProtocol.TryGetMessageId(ref buffer, out var msgId, out _talkerId))
@@ -66,32 +71,9 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         {
             return;
         }
-        // here /r/n
-        if (buffer[0] == NmeaProtocol.EndMessage1)
-        {
-            buffer = buffer[1..];
-        }
-        else
-        {
-            throw new ProtocolParserException(Protocol, $"Invalid end message byte: want '{NmeaProtocol.EndMessage1}', got '{buffer[0]}'");
-        }
-        if (buffer.IsEmpty)
-        {
-            return;
-        }
-        if (buffer[0] == NmeaProtocol.EndMessage2)
-        {
-            buffer = buffer[1..];
-        }
-        else
-        {
-            throw new ProtocolParserException(Protocol, $"Invalid end message byte: want '{NmeaProtocol.EndMessage2}', got '{buffer[0]}'");
-        }
-        if (buffer.IsEmpty == false)
-        {
-            Debug.Assert(false,"Buffer is not empty");
-        }
+        Debug.Assert(false,"Buffer is not empty. Maybe unexpected data after message. We skip it for Release build.");
     }
+
     protected abstract void InternalDeserialize(ref ReadOnlySpan<char> buffer);
     public void Serialize(ref Span<byte> buffer)
     {
@@ -102,13 +84,16 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         BinSerialize.WriteByte(ref buffer, NmeaProtocol.ComaByte);
         var beforeInternalSerialize = buffer;
         InternalSerialize(ref buffer);
-        // go back for 1 symbol (last coma must be replaced by *)
+        // go back for 1 symbol (last coma must be replaced by * with crc or end bytes)
         buffer = beforeInternalSerialize[(beforeInternalSerialize.Length - buffer.Length - 1)..];
-        var crc = origin[..(buffer.Length - 1)];
-        BinSerialize.WriteByte(ref buffer, NmeaProtocol.StartCrcByte);
-        var crcStr = NmeaProtocol.CalcCrc(crc);
-        NmeaProtocol.Encoding.GetBytes(crcStr, buffer);
-        buffer = buffer[2..];
+        if (HasCrc)
+        {
+            var crc = origin[..(buffer.Length - 1)];
+            BinSerialize.WriteByte(ref buffer, NmeaProtocol.StartCrcByte);
+            var crcStr = NmeaProtocol.CalcCrc(crc);
+            NmeaProtocol.Encoding.GetBytes(crcStr, buffer);
+            buffer = buffer[2..];    
+        }
         BinSerialize.WriteByte(ref buffer, NmeaProtocol.EndMessageByte1);
         BinSerialize.WriteByte(ref buffer, NmeaProtocol.EndMessageByte2);
     }
@@ -120,10 +105,29 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         + _talkerId.GetByteSize() 
         + Id.GetByteSize() 
         + 1 /*coma after message id*/ 
-        + InternalGetByteSize() // there will be an extra last comma here, we'll replace it with star (*)
-        + 2 /*CRC*/
+        + InternalGetByteSize() 
+        + (HasCrc ? 2 : -1) // there will be an extra last comma here after InternalGetByteSize, we'll replace it with star (*) if CRC required
         + 2 /*End1 + End2*/;
     protected abstract int InternalGetByteSize();
+    
+    public override string ToString()
+    {
+        var size = GetByteSize();
+        var arr = ArrayPool<byte>.Shared.Rent(size);
+        try
+        {
+            var wSpan = new Span<byte>(arr, 0, size);
+            Serialize(ref wSpan);
+            var rSpan = new ReadOnlySpan<byte>(arr, 0, size);
+            rSpan = rSpan.TrimEnd(NmeaProtocol.EndMessageByte1);
+            rSpan = rSpan.TrimEnd(NmeaProtocol.EndMessageByte2);
+            return NmeaProtocol.Encoding.GetString(rSpan);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(arr);
+        }
+    }
 
     public ref ProtocolTags Tags => ref _tags;
 
@@ -132,7 +136,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     public ProtocolInfo Protocol => NmeaProtocol.Info;
     public abstract string Name { get; }
     public abstract NmeaMessageId Id { get; }
-
+    public bool HasCrc { get; set; } = true;
     public NmeaTalkerId TalkerId
     {
         get => _talkerId;
@@ -328,14 +332,14 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality? gpsQuality)
+    protected static void WriteGpsQuality(ref Span<byte> buffer, in NmeaGpsQuality? gpsQuality)
     {
         NmeaProtocol.WriteGpsQuality(ref buffer, in gpsQuality);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfGpsQuality(in NmeaGpsQuality? gpsQuality)
+    protected static int SizeOfGpsQuality(in NmeaGpsQuality? gpsQuality)
     {
         return NmeaProtocol.SizeOfGpsQuality(in gpsQuality) + NmeaProtocol.SizeOfSeparator();    
     }
@@ -361,14 +365,14 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteString(ref Span<byte> buffer, string? value)
+    protected static void WriteString(ref Span<byte> buffer, string? value)
     {
         NmeaProtocol.WriteString(ref buffer, value);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfString(string? value)
+    protected static int SizeOfString(string? value)
     {
         return NmeaProtocol.SizeOfString(value) + NmeaProtocol.SizeOfSeparator();
     }
@@ -381,7 +385,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     {
         if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
         {
-            NmeaProtocol.ReadDataStatus(ref token, out status);
+            NmeaProtocol.ReadDataStatus(token, out status);
             return;
         }
 
@@ -393,13 +397,13 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         status = null;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteDataStatus(ref Span<byte> buffer, in NmeaDataStatus? status)
+    protected static void WriteDataStatus(ref Span<byte> buffer, in NmeaDataStatus? status)
     {
         NmeaProtocol.WriteDataStatus(ref buffer, in status);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfStatus(NmeaDataStatus? status) => NmeaProtocol.SizeOfStatus(status) + NmeaProtocol.SizeOfSeparator();
+    protected static int SizeOfStatus(NmeaDataStatus? status) => NmeaProtocol.SizeOfStatus(status) + NmeaProtocol.SizeOfSeparator();
 
     #endregion
     
@@ -409,7 +413,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     {
         if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
         {
-            NmeaProtocol.ReadPositioningSystemMode(ref token, out status);
+            NmeaProtocol.ReadPositioningSystemMode(token, out status);
             return;
         }
 
@@ -421,14 +425,14 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         status = null;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WritePositioningSystemMode(ref Span<byte> buffer, in NmeaPositioningSystemMode? status)
+    protected static void WritePositioningSystemMode(ref Span<byte> buffer, in NmeaPositioningSystemMode? status)
     {
         NmeaProtocol.WritePositioningSystemMode(ref buffer, in status);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfPositioningSystemMode(NmeaPositioningSystemMode? status) 
+    protected static int SizeOfPositioningSystemMode(NmeaPositioningSystemMode? status) 
         => NmeaProtocol.SizeOfPositioningSystemMode(status) + NmeaProtocol.SizeOfSeparator();
 
     #endregion
@@ -440,7 +444,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     {
         if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
         {
-            NmeaProtocol.ReadFixMode(ref token, out value);
+            NmeaProtocol.ReadFixMode(token, out value);
             return;
         }
 
@@ -453,13 +457,13 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteFixMode(ref Span<byte> buffer, in NmeaFixQuality? value)
+    protected static void WriteFixMode(ref Span<byte> buffer, in NmeaFixQuality? value)
     {
         NmeaProtocol.WriteFixMode(ref buffer, in value);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfFixMode(in NmeaFixQuality? fixMode)
+    protected static int SizeOfFixMode(in NmeaFixQuality? fixMode)
     {
         return NmeaProtocol.SizeOfFixMode(fixMode) + NmeaProtocol.SizeOfSeparator();
     }
@@ -472,7 +476,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     {
         if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
         {
-            NmeaProtocol.ReadDopMode(ref token, out value);
+            NmeaProtocol.ReadDopMode(token, out value);
             return;
         }
 
@@ -485,19 +489,334 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void WriteDopMode(ref Span<byte> buffer, in NmeaDopMode? value)
+    protected static void WriteDopMode(ref Span<byte> buffer, in NmeaDopMode? value)
     {
         NmeaProtocol.WriteDopMode(ref buffer, in value);
         NmeaProtocol.WriteSeparator(ref buffer);
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected int SizeOfDopMode(in NmeaDopMode? value)
+    protected static int SizeOfDopMode(in NmeaDopMode? value)
     {
         return NmeaProtocol.SizeOfDopMode(in value) + NmeaProtocol.SizeOfSeparator();
     }
 
     #endregion
+    
+    #region Hex
 
+    protected void ReadHex(ref ReadOnlySpan<char> buffer, out int? value, bool required)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadHex(token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaDopMode)} is required: '...{buffer}'");
+        }
+
+        value = null;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteHex(ref Span<byte> buffer, int? value,in NmeaHexFormat format)
+    {
+        NmeaProtocol.WriteHex(ref buffer, value,in format);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfHex(in int? systemId, in NmeaHexFormat format)
+    {
+        return NmeaProtocol.SizeOfHex(systemId, format) + NmeaProtocol.SizeOfSeparator();  
+    } 
+
+    #endregion
+    
+    #region PositionFixStatus
+
+    protected void ReadPositionFixStatus(ref ReadOnlySpan<char> buffer, out NmeaPositionFixStatus? value, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadPositionFixStatus(token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaPositionFixStatus)} is required: '...{buffer}'");
+        }
+
+        value = null;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WritePositionFixStatus(ref Span<byte> buffer, NmeaPositionFixStatus? value)
+    {
+        NmeaProtocol.WritePositionFixStatus(ref buffer, value);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfPositionFixStatus(NmeaPositionFixStatus? status)
+    {
+        return NmeaProtocol.SizeOfPositionFixStatus(status) + NmeaProtocol.SizeOfSeparator();
+    }
+
+    #endregion
+    
+    #region Date
+
+    protected void ReadDate(ref ReadOnlySpan<char> buffer, out DateTime? value, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token) != false)
+        {
+            NmeaProtocol.ReadDate(token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "Date is required");
+        }
+
+        value = null;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteDate(ref Span<byte> buffer, DateTime? date)
+    {
+        NmeaProtocol.WriteDate(ref buffer, date);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfDate(DateTime? date)
+    {
+        return NmeaProtocol.SizeOfDate(date) + NmeaProtocol.SizeOfSeparator();
+    }
+
+    #endregion
+
+    #region MagneticVariationDirection
+    
+    protected void ReadMagneticVariationDirection(ref ReadOnlySpan<char> buffer, out NmeaMagneticVariationDirection? value, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadMagneticVariationDirection(token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaMagneticVariationDirection)} is required: '...{buffer}'");
+        }
+
+        value = null;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteMagneticVariationDirection(ref Span<byte> buffer, NmeaMagneticVariationDirection? value)
+    {
+        NmeaProtocol.WriteMagneticVariationDirection(ref buffer, value);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfMagneticVariationDirection(NmeaMagneticVariationDirection? value)
+    {
+        return NmeaProtocol.SizeOfMagneticVariationDirection(value) + NmeaProtocol.SizeOfSeparator();
+    }
+    #endregion
+    
+    #region TrueTrack
+
+    protected void ReadTrueTrack(ref ReadOnlySpan<char> buffer, out double value, out TrueTrackUnit? unit, bool required = true)
+    {       
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var valueToken) != false)
+        {
+            if (NmeaProtocol.TryReadNextToken(ref buffer, out var unitToken) == false)
+            {
+                throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "True track unit field is required");
+            }
+            NmeaProtocol.ReadDouble(valueToken, out value);
+            NmeaProtocol.ReadTrueTrackUnit(unitToken, out unit);
+            return;
+        }
+        
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"True track field is required: '...{buffer}'");
+        }
+
+        value = double.NaN;
+        unit = null;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteTrueTrack(ref Span<byte> buffer, in double value, in TrueTrackUnit? unit)
+    {
+        NmeaProtocol.WriteDouble(ref buffer, in value, NmeaDoubleFormat.Double1X3 );
+        NmeaProtocol.WriteSeparator(ref buffer);
+        NmeaProtocol.WriteTrueTrackUnit(ref buffer, unit);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfTrueTrack(in double value, TrueTrackUnit? unit)
+    {
+        return NmeaProtocol.SizeOfDouble(in value, NmeaDoubleFormat.Double1X3) + NmeaProtocol.SizeOfTrueTrackUnit(unit) + NmeaProtocol.SizeOfSeparator() * 2;
+    }
+
+    #endregion
+
+    #region MagneticTrack
+
+    protected void ReadMagneticTrack(ref ReadOnlySpan<char> buffer, out double value, out MagneticTrackUnit? unit, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var valueToken) != false)
+        {
+            if (NmeaProtocol.TryReadNextToken(ref buffer, out var unitToken) == false)
+            {
+                throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(MagneticTrackUnit)} field is required");
+            }
+            NmeaProtocol.ReadDouble(valueToken, out value);
+            NmeaProtocol.ReadMagneticTrackUnit(unitToken, out unit);
+            return;
+        }
+        
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(MagneticTrackUnit)} is required: '...{buffer}'");
+        }
+
+        value = double.NaN;
+        unit = null;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteMagneticTrack(ref Span<byte> buffer, in double value, in MagneticTrackUnit? unit)
+    {
+        NmeaProtocol.WriteDouble(ref buffer, in value, NmeaDoubleFormat.Double1X3 );
+        NmeaProtocol.WriteSeparator(ref buffer);
+        NmeaProtocol.WriteMagneticTrackUnit(ref buffer, unit);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfMagneticTrack(in double value, MagneticTrackUnit? unit)
+    {
+        return NmeaProtocol.SizeOfDouble(in value, NmeaDoubleFormat.Double1X3) + NmeaProtocol.SizeOfMagneticTrackUnit(unit) + NmeaProtocol.SizeOfSeparator() * 2;
+    }
+
+    #endregion
+
+    #region GroundSpeedKnots
+
+    protected void ReadGroundSpeedKnots(ref ReadOnlySpan<char> buffer, out double value, out GroundSpeedKnotsUnit? unit, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var valueToken))
+        {
+            if (NmeaProtocol.TryReadNextToken(ref buffer, out var unitToken) == false)
+            {
+                throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, "Ground speed unit field is required");
+            }
+            NmeaProtocol.ReadDouble(valueToken, out value);
+            NmeaProtocol.ReadGroundSpeedKnotsUnit(unitToken, out unit);
+            return;
+        }
+        
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"Magnetic track field is required: '...{buffer}'");
+        }
+
+        value = double.NaN;
+        unit = null;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static void WriteGroundSpeedKnots(ref Span<byte> buffer, in double value, in GroundSpeedKnotsUnit? unit)
+    {
+        NmeaProtocol.WriteDouble(ref buffer, in value, NmeaDoubleFormat.Double1X7 );
+        NmeaProtocol.WriteSeparator(ref buffer);
+        NmeaProtocol.WriteGroundSpeedKnotsUnit(ref buffer, unit);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static int SizeOfGroundSpeedKnots(in double value, GroundSpeedKnotsUnit? unit)
+    {
+        return NmeaProtocol.SizeOfDouble(in value, NmeaDoubleFormat.Double1X7) + NmeaProtocol.SizeOfGroundSpeedKnotsUnit(unit) + NmeaProtocol.SizeOfSeparator() * 2;
+    }
+
+    #endregion
+    
+    #region GroundSpeedKmh
+
+    protected void ReadGroundSpeedKmh(ref ReadOnlySpan<char> buffer, out double value, out GroundSpeedKmhUnit? unit, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var valueToken) != false)
+        {
+            if (NmeaProtocol.TryReadNextToken(ref buffer, out var unitToken) == false)
+            {
+                throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(GroundSpeedKmhUnit)} field is required");
+            }
+            NmeaProtocol.ReadDouble(valueToken, out value);
+            NmeaProtocol.ReadGroundSpeedKmhUnit(unitToken, out unit);
+            return;
+        }
+        
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(GroundSpeedKmhUnit)} field is required: '...{buffer}'");
+        }
+
+        value = double.NaN;
+        unit = null;
+    }
+
+    protected static void WriteGroundSpeedKmh(ref Span<byte> buffer, in double value, in GroundSpeedKmhUnit? unit)
+    {
+        NmeaProtocol.WriteDouble(ref buffer, in value, NmeaDoubleFormat.Double1X7 );
+        NmeaProtocol.WriteSeparator(ref buffer);
+        NmeaProtocol.WriteGroundSpeedKmhUnit(ref buffer, unit);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+
+    protected static int SizeOfGroundSpeedKmh(in double value, GroundSpeedKmhUnit? unit)
+    {
+        return NmeaProtocol.SizeOfDouble(in value, NmeaDoubleFormat.Double1X7) + NmeaProtocol.SizeOfGroundSpeedKmhUnit(unit) + NmeaProtocol.SizeOfSeparator() * 2;
+    }
+
+    #endregion
+
+    #region NavigationStatus
+
+    protected void ReadNavigationStatus(ref ReadOnlySpan<char> buffer, out NmeaNavigationStatus? value, bool required = true)
+    {
+        if (NmeaProtocol.TryReadNextToken(ref buffer, out var token))
+        {
+            NmeaProtocol.ReadNavigationStatus(token, out value);
+            return;
+        }
+
+        if (required)
+        {
+            throw new ProtocolDeserializeMessageException(NmeaProtocol.Info, this, $"{nameof(NmeaPositionFixStatus)} is required: '...{buffer}'");
+        }
+
+        value = null;
+    }
+
+    protected static void WriteNavigationStatus(ref Span<byte> buffer, NmeaNavigationStatus? value)
+    {
+        NmeaProtocol.WriteNavigationStatus(ref buffer, value);
+        NmeaProtocol.WriteSeparator(ref buffer);
+    }
+
+    protected static int SizeOfNavigationStatus(NmeaNavigationStatus? value)
+    {
+        return NmeaProtocol.SizeOfNavigationStatus(value) + NmeaProtocol.SizeOfSeparator();
+    }
+
+    #endregion
     
 
 }

@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Tests", "Asv.Gnss.Tests\Asv.Gnss.Tests.csproj", "{D14820B6-0529-4DD5-A229-4ADA6B75F45B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Shell", "Asv.Gnss.Shell\Asv.Gnss.Shell.csproj", "{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{D14820B6-0529-4DD5-A229-4ADA6B75F45B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D14820B6-0529-4DD5-A229-4ADA6B75F45B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D14820B6-0529-4DD5-A229-4ADA6B75F45B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
