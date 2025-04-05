@@ -39,14 +39,22 @@ public class NmeaCommand
         {
             builder.SetLog(factory);
             builder.Protocols.RegisterNmeaProtocol();
+            builder.Features.RegisterEndpointIdTagFeature();
         });
+        var logger = factory.CreateLogger<NmeaCommand>();
         var router = protocol.CreateRouter("Router");
         router.AddPort(cs);
 
-        int index = 0;
+        var browser = DeviceExplorer.Create(router, builder =>
+        {
+            builder.SetLog(factory);
+            builder.Factories.RegisterGnssDevice();
+        });
+
+        var index = 0;
         router.OnRxMessage.Subscribe(x =>
         {
-            Console.WriteLine($"{index++}: {x}");
+            logger.ZLogInformation($"{index++:000}: {x} ");
         });
         
         ConsoleAppHelper.WaitCancelPressOrProcessExit();

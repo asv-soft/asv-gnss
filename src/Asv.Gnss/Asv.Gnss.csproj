@@ -25,6 +25,6 @@
     <PackageReference Include="Geodesy" Version="4.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Devices\" />
+    <Folder Include="Devices\Server\" />
   </ItemGroup>
 </Project>
