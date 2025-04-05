@@ -27,17 +27,11 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessageBase, NmeaMessageId>
     private readonly byte[] _buffer = new byte[1024];
 
     /// <summary>
-    /// The cyclic redundancy check (CRC) buffer.
-    /// </summary>
-    private readonly byte[] _crcBuffer = new byte[2];
-
-    /// <summary>
     /// Represents the number of read messages.
     /// </summary>
     private int _byteRead;
 
     private readonly ILogger<NmeaMessageParser> _logger;
-    private readonly ImmutableHashSet<byte> _availableIdChars;
 
     /// <summary>
     /// The Nmea0183Parser class is responsible for parsing NMEA 0183 messages.
@@ -47,7 +41,6 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessageBase, NmeaMessageId>
         IStatisticHandler? statisticHandler) : base(messageFactory, context, statisticHandler)
     {
         _logger = context.LoggerFactory.CreateLogger<NmeaMessageParser>();
-        _availableIdChars = messageFactory.GetSupportedIds().SelectMany(x => NmeaProtocol.Encoding.GetBytes(x.MessageId)).ToImmutableHashSet();
     }
 
     /// <summary>
@@ -110,30 +103,32 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessageBase, NmeaMessageId>
                     {
                         // oversize for message id
                         _state = State.Sync;
-                    } 
-                    else if (data is NmeaProtocol.ComaByte)
-                    {
-                        // end id
-                        _buffer[_byteRead] = data;
-                        ++_byteRead;
-                        _state = State.Msg;
                     }
-                    else if (_availableIdChars.Contains(data))
+                    else switch (data)
                     {
-                        _buffer[_byteRead] = data;
-                        ++_byteRead;
-                        _state = State.Id;
-                    }
-                    else
-                    {
-                        // unknown id char => skip
-                        _state = State.Sync;
+                        case NmeaProtocol.ComaByte:
+                            // end id
+                            _buffer[_byteRead] = data;
+                            ++_byteRead;
+                            _state = State.Msg;
+                            break;
+                        case >= (byte)'A' and <= (byte)'Z': // id is only upper case A-Z
+                            _buffer[_byteRead] = data;
+                            ++_byteRead;
+                            _state = State.Id;
+                            break;
+                        default:
+                            // unknown id char => skip
+                            _state = State.Sync;
+                            break;
                     }
                     break;
                 case State.Msg:
                     switch (data)
                     {
                         case NmeaProtocol.StartCrcByte:
+                            _buffer[_byteRead] = data;
+                            ++_byteRead;
                             _state = State.Crc1;
                             break;
                         case NmeaProtocol.EndMessageByte1:
@@ -158,11 +153,13 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessageBase, NmeaMessageId>
 
                     break;
                 case State.Crc1:
-                    _crcBuffer[0] = data;
+                    _buffer[_byteRead] = data;
+                    ++_byteRead;
                     _state = State.Crc2;
                     break;
                 case State.Crc2:
-                    _crcBuffer[1] = data;
+                    _buffer[_byteRead] = data;
+                    ++_byteRead;
                     _state = State.End1;
                     break;
                 case State.End1:
