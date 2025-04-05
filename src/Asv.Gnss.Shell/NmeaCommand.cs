@@ -39,11 +39,13 @@ public class NmeaCommand
         {
             builder.SetLog(factory);
             builder.Protocols.RegisterNmeaProtocol();
+            builder.Features.RegisterBroadcastAllFeature();
             builder.Features.RegisterEndpointIdTagFeature();
         });
         var logger = factory.CreateLogger<NmeaCommand>();
         var router = protocol.CreateRouter("Router");
         router.AddPort(cs);
+        router.AddPort("tcps://127.0.0.1:7341?enabled=true");
 
         var browser = DeviceExplorer.Create(router, builder =>
         {

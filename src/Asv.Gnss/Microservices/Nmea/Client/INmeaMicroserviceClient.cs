@@ -10,14 +10,14 @@ namespace Asv.Gnss;
 public interface INmeaMicroserviceClient : IMicroserviceClient
 {
     ReadOnlyReactiveProperty<GeoPoint> PositionMsl { get; }
-    ReadOnlyReactiveProperty<GeoPoint> PositionEllipsoid { get; }
+    ReadOnlyReactiveProperty<GeoPoint> PositionGeoid { get; }
 }
 
 public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmeaMicroserviceClient
 {
     private readonly GnssDeviceId _deviceId;
     private readonly ReactiveProperty<GeoPoint> _positionMsl = new();
-    private readonly ReactiveProperty<GeoPoint> _positionEllipsoid = new();
+    private readonly ReactiveProperty<GeoPoint> _positionGeoid = new();
     private readonly IDisposable _sub2;
 
     public NmeaMicroserviceClient(IMicroserviceContext context, GnssDeviceId deviceId) 
@@ -27,7 +27,7 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
         _sub2 = InternalFilter<NmeaMessageGga>().Subscribe(x =>
         {
             _positionMsl.Value = new GeoPoint(x.Latitude,x.Longitude,x.AntennaAltitudeMsl);
-            _positionEllipsoid.Value = new GeoPoint(x.Latitude,x.Longitude,x.GeoidalSeparation);
+            _positionGeoid.Value = new GeoPoint(x.Latitude,x.Longitude,x.AntennaAltitudeMsl + x.GeoidalSeparation);
         });
         
     }
@@ -54,14 +54,14 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
 
     public ReadOnlyReactiveProperty<GeoPoint> PositionMsl => _positionMsl;
 
-    public ReadOnlyReactiveProperty<GeoPoint> PositionEllipsoid => _positionEllipsoid;
+    public ReadOnlyReactiveProperty<GeoPoint> PositionGeoid => _positionGeoid;
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
             _positionMsl.Dispose();
-            _positionEllipsoid.Dispose();
+            _positionGeoid.Dispose();
             _sub2.Dispose();
         }
 
@@ -71,7 +71,7 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
     protected override async ValueTask DisposeAsyncCore()
     {
         await CastAndDispose(_positionMsl);
-        await CastAndDispose(_positionEllipsoid);
+        await CastAndDispose(_positionGeoid);
         await CastAndDispose(_sub2);
 
         await base.DisposeAsyncCore();
