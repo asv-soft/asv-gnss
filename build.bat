@@ -1,7 +1,7 @@
 @echo off
 rem ====== projects ======
 
-set projects=Asv.Gnss Asv.Gnss.Prometheus Asv.Gnss.Shell Asv.Gnss.Test
+set projects=Asv.Gnss Asv.Gnss.Shell Asv.Gnss.Test
 
 rem ====== projects ======
 

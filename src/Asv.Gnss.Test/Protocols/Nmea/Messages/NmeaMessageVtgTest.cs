@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Xunit.Abstractions;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(NmeaMessageVtg))]
 public class NmeaMessageVtgTest(ITestOutputHelper output)

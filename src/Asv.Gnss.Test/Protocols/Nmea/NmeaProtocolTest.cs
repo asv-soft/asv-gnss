@@ -1,10 +1,9 @@
 using System;
 using System.Text;
-using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(NmeaProtocol))]
 public class NmeaProtocolTest

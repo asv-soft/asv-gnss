@@ -1,9 +1,7 @@
-using System;
-using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(NmeaIntFormat))]
 public class NmeaIntFormatTest

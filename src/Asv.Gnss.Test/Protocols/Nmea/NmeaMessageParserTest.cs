@@ -1,9 +1,8 @@
-using Asv.Gnss;
 using Asv.IO;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(NmeaMessageParser))]
 public class NmeaMessageParserTest

@@ -2,15 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <FileVersion>$(ProductVersion)</FileVersion>
-    <Version>$(ProductVersion)</Version>
+    <Version>1.2.5</Version>
     <PackageVersion>$(ProductVersion)</PackageVersion>
-
     <Authors>https://github.com/asv-soft</Authors>
     <Company>https://github.com/asv-soft</Company>
     <Copyright>https://github.com/asv-soft</Copyright>
-    
-    <PackageProjectUrl>https://github.com/asvol/asv-gnss</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/asvol/asv-gnss</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/asv-soft/asv-gnss</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/asv-soft/asv-gnss</RepositoryUrl>
     <PackageTags>.net;gnss;gps;glonass;galileo;ublox;sino-gnss;</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>

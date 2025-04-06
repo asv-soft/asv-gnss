@@ -2,7 +2,7 @@ using System;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(NmeaMessageId))]
 public class NmeaMessageIdTest

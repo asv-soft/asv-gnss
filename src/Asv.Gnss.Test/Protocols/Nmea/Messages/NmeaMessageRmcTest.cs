@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using Asv.Gnss;
 using JetBrains.Annotations;
-using Xunit;
 using Xunit.Abstractions;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
 
 [TestSubject(typeof(NmeaMessageRmc))]

@@ -3,25 +3,16 @@ using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Asv.Gnss.Tests;
+namespace Asv.Gnss.Test;
 
-public class NmeaMessageTestBase<TMessage> 
+public abstract class NmeaMessageTestBase<TMessage>(ITestOutputHelper output, Dictionary<string, string> testMessages)
     where TMessage : NmeaMessageBase, new()
 {
-    private readonly ITestOutputHelper _output;
-    private readonly Dictionary<string, string> _testMessages;
-
-    protected NmeaMessageTestBase(ITestOutputHelper output, Dictionary<string, string> testMessages)
-    {
-        _output = output;
-        _testMessages = testMessages;
-    }
-
     [Fact]
     public void Deserialize_ShouldParseRuntimeCorrectly_WithCompleteData()
     {
-        _output.WriteLine(@"1) Test raw messages");
-        foreach (var dataString in _testMessages.Keys)
+        output.WriteLine(@"1) Test raw messages");
+        foreach (var dataString in testMessages.Keys)
         {
             try
             {
@@ -31,13 +22,13 @@ public class NmeaMessageTestBase<TMessage>
             }
             catch (Exception e)
             {
-                _output.WriteLine($"ERROR:{dataString}");
+                output.WriteLine($"ERROR:{dataString} : {e.Message}");
                 throw;
             }
             
         }
-        _output.WriteLine(@"2) Test append \r\n to end");
-        foreach (var origin in _testMessages.Keys)
+        output.WriteLine(@"2) Test append \r\n to end");
+        foreach (var origin in testMessages.Keys)
         {
             try
             {
@@ -46,16 +37,16 @@ public class NmeaMessageTestBase<TMessage>
                 var msg = new TMessage();
                 msg.Deserialize(ref data);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                _output.WriteLine($"ERROR:{origin}");
+                output.WriteLine($"ERROR:{origin}");
                 throw;
             }
            
         }
         
-        _output.WriteLine(@"3) Test replace $=>!");
-        foreach (var origin in _testMessages.Keys)
+        output.WriteLine(@"3) Test replace $=>!");
+        foreach (var origin in testMessages.Keys)
         {
             try
             {
@@ -64,16 +55,16 @@ public class NmeaMessageTestBase<TMessage>
                 var msg = new TMessage();
                 msg.Deserialize(ref data);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                _output.WriteLine($"ERROR:{origin}");
+                output.WriteLine($"ERROR:{origin}");
                 throw;
             }
             
         }
         
-        _output.WriteLine(@"4) Test remove $");
-        foreach (var origin in _testMessages.Keys)
+        output.WriteLine(@"4) Test remove $");
+        foreach (var origin in testMessages.Keys)
         {
             try
             {
@@ -82,15 +73,15 @@ public class NmeaMessageTestBase<TMessage>
                 var msg = new TMessage();
                 msg.Deserialize(ref data);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                _output.WriteLine($"ERROR:{origin}");
+                output.WriteLine($"ERROR:{origin}");
                 throw;
             }
         }
         
-        _output.WriteLine(@"5) Test Append spaces");
-        foreach (var origin in _testMessages.Keys)
+        output.WriteLine(@"5) Test Append spaces");
+        foreach (var origin in testMessages.Keys)
         {
             try
             {
@@ -99,9 +90,9 @@ public class NmeaMessageTestBase<TMessage>
                 var msg = new TMessage();
                 msg.Deserialize(ref data);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                _output.WriteLine($"ERROR:{origin}");
+                output.WriteLine($"ERROR:{origin}");
                 throw;
             }
         }
@@ -113,7 +104,7 @@ public class NmeaMessageTestBase<TMessage>
     public void Serialize_And_Deserialize_ShouldReturnEqualData()
     {
         int index = 0;
-        foreach (var dataString in _testMessages)
+        foreach (var dataString in testMessages)
         {
             try
             {
@@ -129,9 +120,9 @@ public class NmeaMessageTestBase<TMessage>
                 Assert.Equal(dataString.Value, substring);
                 index++;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                _output.WriteLine($"ERROR {index}:{dataString}");
+                output.WriteLine($"ERROR {index}:{dataString}");
                 throw;
             }
             
