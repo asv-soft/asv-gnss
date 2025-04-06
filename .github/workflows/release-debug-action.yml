@@ -25,7 +25,6 @@ jobs:
         with:
           dotnet-version: |
             8.x.x
-            7.x.x
 
       - name: Get version
         id: version
@@ -38,7 +37,6 @@ jobs:
         run: |
           dotnet tool install -g dotnet-setversion    
           setversion ${{ steps.version.outputs.version-without-v }} ${{ env.PATH_TO_PROJECTS }}\Asv.Gnss\Asv.Gnss.csproj
-          setversion ${{ steps.version.outputs.version-without-v }} ${{ env.PATH_TO_PROJECTS }}\Asv.Gnss.Prometheus\Asv.Gnss.Prometheus.csproj    
 
       - name: Restore dependencies
         run: |
@@ -59,12 +57,8 @@ jobs:
         run: |
           cd src
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.Prometheus.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
-
 
       - name: Push package to github packages
         run: |
           cd src
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.Prometheus.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
-          

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		..\LICENSE = ..\LICENSE
 		..\publish_nuget.bat = ..\publish_nuget.bat
 		..\README.md = ..\README.md
+		..\.github\workflows\release-action.yml = ..\.github\workflows\release-action.yml
+		..\.github\workflows\release-debug-action.yml = ..\.github\workflows\release-debug-action.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Tests", "Asv.Gnss.Tests\Asv.Gnss.Tests.csproj", "{D14820B6-0529-4DD5-A229-4ADA6B75F45B}"
