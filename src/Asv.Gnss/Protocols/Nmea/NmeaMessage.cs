@@ -88,7 +88,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         buffer = beforeInternalSerialize[(beforeInternalSerialize.Length - buffer.Length - 1)..];
         if (HasCrc)
         {
-            var crc = origin[..(buffer.Length - 1)];
+            var crc = origin[..^buffer.Length];
             BinSerialize.WriteByte(ref buffer, NmeaProtocol.StartCrcByte);
             var crcStr = NmeaProtocol.CalcCrc(crc);
             NmeaProtocol.Encoding.GetBytes(crcStr, buffer);

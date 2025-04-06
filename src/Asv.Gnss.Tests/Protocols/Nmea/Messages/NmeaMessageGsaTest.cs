@@ -53,4 +53,20 @@ public class NmeaMessageGsaTest(ITestOutputHelper output)
             "$GNGSA,A,3,65,67,80,81,82,88,66,,,,,,1.2,0.7,1.0,"
         }
     };
+
+    [Fact]
+    public void Test1()
+    {
+        var data = "$GNGSA,A,3,31,06,11,20,05,12,28,29,09,,,,1.28,0.74,1.04,1*04\r\n";
+        var origin = NmeaProtocol.Encoding.GetBytes(data);
+        var originSpan = new ReadOnlySpan<byte>(origin);
+        var message = new NmeaMessageGsa();
+        message.Deserialize(ref originSpan);
+        Assert.Equal(0,originSpan.Length);
+        var serialized = new byte[data.Length];
+        var serializedSpan = new Span<byte>(serialized);
+        message.Serialize(ref serializedSpan);
+        var str = NmeaProtocol.Encoding.GetString(serialized);
+        Assert.Equal(data,str);
+    }
 }

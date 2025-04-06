@@ -58,9 +58,9 @@ public class NmeaMessageGsa : NmeaMessageBase
                 WriteInt(ref buffer, null, NmeaIntFormat.IntD2);
             }
         }
-        WriteDouble(ref buffer, in _pdop, NmeaDoubleFormat.Double1X1);
-        WriteDouble(ref buffer, in _hdop, NmeaDoubleFormat.Double1X1);
-        WriteDouble(ref buffer, in _vdop, NmeaDoubleFormat.Double1X1);
+        WriteDouble(ref buffer, in _pdop, NmeaDoubleFormat.Double1X2);
+        WriteDouble(ref buffer, in _hdop, NmeaDoubleFormat.Double1X2);
+        WriteDouble(ref buffer, in _vdop, NmeaDoubleFormat.Double1X2);
         
         // This field is only output if the NMEAVERSION is 4.11
         WriteHex(ref buffer, _systemId, NmeaHexFormat.HexX1);
@@ -84,9 +84,9 @@ public class NmeaMessageGsa : NmeaMessageBase
         return SizeOfDopMode(in _dopMode) 
                + SizeOfFixMode(in _fixMode) 
                + summ 
-               + SizeOfDouble(in _pdop, NmeaDoubleFormat.Double1X1) 
-               + SizeOfDouble(in _hdop, NmeaDoubleFormat.Double1X1) 
-               + SizeOfDouble(in _vdop, NmeaDoubleFormat.Double1X1)
+               + SizeOfDouble(in _pdop, NmeaDoubleFormat.Double1X2) 
+               + SizeOfDouble(in _hdop, NmeaDoubleFormat.Double1X2) 
+               + SizeOfDouble(in _vdop, NmeaDoubleFormat.Double1X2)
                + SizeOfHex(in _systemId, NmeaHexFormat.HexX1);
     }
 

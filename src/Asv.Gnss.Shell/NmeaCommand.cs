@@ -14,7 +14,7 @@ public class NmeaCommand
     /// <param name="cs">-cs, connection string</param>
     /// <returns></returns>
     [Command("nmea")]
-    public int Run(string cs = "serial:COM54?br=115200&enabled=true")
+    public int Run(string cs = "serial:COM53?br=115200&enabled=true")
     {
         var factory = LoggerFactory.Create(logging =>
         {
