@@ -9,7 +9,7 @@ rem install tool for update project version by git describe
 dotnet tool install -g dotnet-setversion
 
 rem copy version to text file, then in variable
-git describe --abbrev=0 >./version.txt
+git describe --tags >./version.txt
 SET /p VERSION=<version.txt
 DEL version.txt
 
