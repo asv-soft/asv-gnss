@@ -52,7 +52,8 @@ public static class NmeaProtocol
             .Add<NmeaMessageGst>()
             .Add<NmeaMessageGsv>()
             .Add<NmeaMessageRmc>()
-            .Add<NmeaMessageVtg>();
+            .Add<NmeaMessageVtg>()
+            .Add<NmeaMessageZda>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core,stat) => new NmeaMessageParser(messageFactory, core,stat));
