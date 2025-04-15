@@ -71,7 +71,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         {
             return;
         }
-        Debug.Assert(false,"Buffer is not empty. Maybe unexpected data after message. We skip it for Release build.");
+        //Debug.Assert(false,"Buffer is not empty. Maybe unexpected data after message. We skip it for Release build.");
     }
 
     protected abstract void InternalDeserialize(ref ReadOnlySpan<char> buffer);

@@ -20,6 +20,7 @@ namespace Asv.Gnss
         private double _probabilityOfMissedDetection = double.NaN;
         private double _biasEstimate = double.NaN;
         private double _biasEstimateStandardDeviation = double.NaN;
+        private int? _systemId;
         public override string Name => MessageName;
         public override NmeaMessageId Id => MessageId;
         
@@ -33,6 +34,7 @@ namespace Asv.Gnss
             ReadDouble(ref buffer, out _probabilityOfMissedDetection, false);
             ReadDouble(ref buffer, out _biasEstimate, false);
             ReadDouble(ref buffer, out _biasEstimateStandardDeviation, false);
+            ReadHex(ref buffer, out _systemId, false);
         }
 
         protected override void InternalSerialize(ref Span<byte> buffer)
@@ -45,6 +47,7 @@ namespace Asv.Gnss
             WriteDouble(ref buffer, in _probabilityOfMissedDetection,NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _biasEstimate,NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _biasEstimateStandardDeviation, NmeaDoubleFormat.Double1X3);
+            WriteHex(ref buffer, _systemId, NmeaHexFormat.HexX1);
         }
 
         protected override int InternalGetByteSize() =>
@@ -55,7 +58,9 @@ namespace Asv.Gnss
             + SizeOfInt(in _failedSatelliteId,in NmeaIntFormat.IntD1)
             + SizeOfDouble(in _probabilityOfMissedDetection,in NmeaDoubleFormat.Double1X3)
             + SizeOfDouble(in _biasEstimate,in NmeaDoubleFormat.Double1X3)
-            + SizeOfDouble(in _biasEstimateStandardDeviation,in NmeaDoubleFormat.Double1X3);
+            + SizeOfDouble(in _biasEstimateStandardDeviation,in NmeaDoubleFormat.Double1X3)
+            + SizeOfHex(in _systemId,in NmeaHexFormat.HexX1);
+        
 
         /// <summary>
         /// UTC time of the GGA or GNS fix associated with this sentence
@@ -129,6 +134,12 @@ namespace Asv.Gnss
             set => _biasEstimateStandardDeviation = value;
         }
 
+
+        public int? SystemId
+        {
+            get => _systemId;
+            set => _systemId = value;
+        }
         
     }
 }
