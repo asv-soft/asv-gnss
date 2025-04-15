@@ -145,7 +145,7 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 
     #region Time
 
-    protected void ReadTime(ref ReadOnlySpan<char> buffer, out TimeSpan? field, bool required = true)
+    protected void ReadTime(ref ReadOnlySpan<char> buffer, out TimeOnly? field, bool required = true)
     {
         if (NmeaProtocol.TryReadNextToken(ref buffer, out var token) != false)
         {
@@ -162,14 +162,14 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static void WriteTime(ref Span<byte> charBufferSpan,in TimeSpan? value)
+    protected static void WriteTime(ref Span<byte> charBufferSpan,in TimeOnly? value)
     {
         NmeaProtocol.WriteTime(ref charBufferSpan, value);   
         NmeaProtocol.WriteSeparator(ref charBufferSpan);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static int SizeOfTime(in TimeSpan? value)
+    protected static int SizeOfTime(in TimeOnly? value)
     {
         return NmeaProtocol.SizeOfTime(in value) + NmeaProtocol.SizeOfSeparator();    
     }

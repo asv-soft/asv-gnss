@@ -169,7 +169,7 @@ public static class NmeaProtocol
     /// </summary>
     /// <param name="value">Input time as a span of characters (e.g., "123519.123").</param>
     /// <param name="field">Output nullable TimeSpan, or null if empty or invalid.</param>
-    public static void ReadTime(ReadOnlySpan<char> value, out TimeSpan? field)
+    public static void ReadTime(ReadOnlySpan<char> value, out TimeOnly? field)
     {
         field = null;
         if (value.IsEmpty)
@@ -213,33 +213,33 @@ public static class NmeaProtocol
         if ((hours is < 0 or > 23) || minutes is < 0 or > 59 || seconds is < 0 or > 59)
             return;
 
-        field = new TimeSpan(0, hours, minutes, seconds, milliseconds);
+        field = new TimeOnly(hours, minutes, seconds, milliseconds);
     }
 
     
 
-    public static void WriteTime(ref Span<byte> buffer, TimeSpan? value)
+    public static void WriteTime(ref Span<byte> buffer, TimeOnly? value)
     {
         if (value == null) return;
         var time = value.Value;
-        time.Hours.TryFormat(buffer, out var written, NmeaIntFormat.IntD2.Format);
+        time.Hour.TryFormat(buffer, out var written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "hh == 2 char" );
         buffer = buffer[written..];
-        time.Minutes.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
+        time.Minute.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "mm == 2 char" );
         buffer = buffer[written..];
-        time.Seconds.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
+        time.Second.TryFormat(buffer, out written, NmeaIntFormat.IntD2.Format);
         Debug.Assert(written == 2, "ss == 2 char" );
         buffer = buffer[written..];
         buffer[0] = DigitSeparatorByte;
         buffer = buffer[1..];
-        time.Milliseconds.TryFormat(buffer, out written, NmeaIntFormat.IntD3.Format);
+        time.Millisecond.TryFormat(buffer, out written, NmeaIntFormat.IntD3.Format);
         Debug.Assert(written == 3, "sss == 3 char" );
         buffer = buffer[written..];
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int SizeOfTime(in TimeSpan? value)
+    public static int SizeOfTime(in TimeOnly? value)
     {
         return value == null ? 0 : 10 /* hhmmss.sss */;
     }

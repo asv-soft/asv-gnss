@@ -8,7 +8,7 @@ public class NmeaMessageZda : NmeaMessageBase
     private int? _zoneHours;
     private int? _zoneMinutes;
     private DateOnly? _date;
-    private TimeSpan? _time;
+    private TimeOnly? _time;
     public const string MessageName = "ZDA";
     public static readonly NmeaMessageId MessageId = new(MessageName);
     
@@ -50,5 +50,16 @@ public class NmeaMessageZda : NmeaMessageBase
             + SizeOfInt(_zoneMinutes, NmeaIntFormat.IntD2);
     }
 
-    
+    public DateOnly? Date
+    {
+        get => _date;
+        set => _date = value;
+    }
+
+    public TimeOnly? Time
+    {
+        get => _time;
+        set => _time = value;
+    }
+
 }

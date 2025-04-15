@@ -12,7 +12,7 @@ namespace Asv.Gnss
     {
         public const string MessageName = "GBS";
         public static readonly NmeaMessageId MessageId = new(MessageName);
-        private TimeSpan? _timeUtc;
+        private TimeOnly? _timeUtc;
         private double _latitudeError;
         private double _longitudeError;
         private double _altitudeError;
@@ -37,7 +37,7 @@ namespace Asv.Gnss
 
         protected override void InternalSerialize(ref Span<byte> buffer)
         {
-            WriteTime(ref buffer, TimeUtc);
+            WriteTime(ref buffer, _timeUtc);
             WriteDouble(ref buffer, in _latitudeError, NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _longitudeError, NmeaDoubleFormat.Double1X3);
             WriteDouble(ref buffer, in _altitudeError, NmeaDoubleFormat.Double1X3);
@@ -60,7 +60,7 @@ namespace Asv.Gnss
         /// <summary>
         /// UTC time of the GGA or GNS fix associated with this sentence
         /// </summary>
-        public TimeSpan? TimeUtc
+        public TimeOnly? TimeUtc
         {
             get => _timeUtc;
             init => _timeUtc = value;

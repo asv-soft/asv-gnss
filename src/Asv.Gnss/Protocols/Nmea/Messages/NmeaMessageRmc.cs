@@ -11,7 +11,7 @@ public class NmeaMessageRmc : NmeaMessageBase
 {
     public const string MessageName = "RMC";
     public static readonly NmeaMessageId MessageId = new(MessageName);
-    private TimeSpan? _time;
+    private TimeOnly? _time;
     private NmeaPositionFixStatus? _status;
     private double _latitude;
     private double _longitude;
@@ -72,7 +72,7 @@ public class NmeaMessageRmc : NmeaMessageBase
 
     
 
-    public TimeSpan? Time
+    public TimeOnly? Time
     {
         get => _time;
         set => _time = value;

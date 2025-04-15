@@ -15,7 +15,7 @@ public class NmeaMessageGll : NmeaMessageBase
     public static readonly NmeaMessageId MessageId = new(MessageName);
     private double _longitude;
     private double _latitude;
-    private TimeSpan? _time;
+    private TimeOnly? _time;
     private NmeaDataStatus? _status;
     private NmeaPositioningSystemMode? _positioningMode;
     public override string Name => MessageName;
@@ -72,7 +72,7 @@ public class NmeaMessageGll : NmeaMessageBase
     /// <summary>
     /// Time (UTC)
     /// </summary>
-    public TimeSpan? Time
+    public TimeOnly? Time
     {
         get => _time;
         set => _time = value;

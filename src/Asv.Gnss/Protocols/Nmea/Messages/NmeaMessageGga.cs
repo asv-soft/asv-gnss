@@ -21,7 +21,7 @@ public class NmeaMessageGga : NmeaMessageBase
     private double _horizontalDilutionPrecision;
     private int? _numberOfSatellites;
     private NmeaGpsQuality? _gpsQuality;
-    private TimeSpan? _time;
+    private TimeOnly? _time;
     private double _latitude;
     private double _longitude;
 
@@ -184,7 +184,7 @@ public class NmeaMessageGga : NmeaMessageBase
     /// <summary>
     /// Time (UTC)
     /// </summary>
-    public TimeSpan? Time
+    public TimeOnly? Time
     {
         get => _time;
         set => _time = value;

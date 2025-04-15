@@ -14,7 +14,7 @@ public class NmeaMessageGst : NmeaMessageBase
     public const string MessageName = "GST";
     public static readonly NmeaMessageId MessageId = new(MessageName);
 
-    private TimeSpan? _time;
+    private TimeOnly? _time;
     private double _rms;
     private double _majorAxis;
     private double _minorAxis;
@@ -65,7 +65,7 @@ public class NmeaMessageGst : NmeaMessageBase
     /// UTC time status of position
     /// (hours/minutes/seconds/ decimal seconds)
     /// </summary>
-    public TimeSpan? Time
+    public TimeOnly? Time
     {
         get => _time;
         set => _time = value;

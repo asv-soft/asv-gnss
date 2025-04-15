@@ -9,7 +9,7 @@ namespace Asv.Gnss;
 
 public interface INmeaMicroserviceClient : IMicroserviceClient
 {
-    ReadOnlyReactiveProperty<TimeSpan?> PositionTimeUtc { get; }
+    ReadOnlyReactiveProperty<TimeOnly?> PositionTimeUtc { get; }
     ReadOnlyReactiveProperty<GeoPoint> PositionMsl { get; }
     ReadOnlyReactiveProperty<GeoPoint> PositionGeoid { get; }
     ReadOnlyReactiveProperty<NmeaGpsQuality?> GpsQuality { get; }
@@ -27,7 +27,7 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
     private readonly ReactiveProperty<GeoPoint> _positionMsl = new();
     private readonly ReactiveProperty<GeoPoint> _positionGeoid = new();
     private readonly ReactiveProperty<NmeaGpsQuality?> _gpsQuality = new();
-    private readonly ReactiveProperty<TimeSpan?> _positionTimeUtc = new();
+    private readonly ReactiveProperty<TimeOnly?> _positionTimeUtc = new();
     private readonly ReactiveProperty<int?> _navSatCount = new();
     private readonly ReactiveProperty<double> _positionHdop = new();
     private readonly IDisposable _sub2;
@@ -59,7 +59,7 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
 
     }
 
-    public ReadOnlyReactiveProperty<TimeSpan?> PositionTimeUtc => _positionTimeUtc;
+    public ReadOnlyReactiveProperty<TimeOnly?> PositionTimeUtc => _positionTimeUtc;
     public ReadOnlyReactiveProperty<GeoPoint> PositionMsl => _positionMsl;
     public ReadOnlyReactiveProperty<GeoPoint> PositionGeoid => _positionGeoid;
     public ReadOnlyReactiveProperty<NmeaGpsQuality?> GpsQuality => _gpsQuality;
