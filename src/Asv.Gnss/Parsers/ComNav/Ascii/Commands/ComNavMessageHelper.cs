@@ -333,8 +333,8 @@ namespace Asv.Gnss
                 case ComNavMessageEnum.ZZ11AREADAUTOSEND:
                     return "ZZ11AREADAUTOSEND";
                 case ComNavMessageEnum.RAWGPSWORD:
-					return "RAWGPSWORD";
-				default:
+                    return "RAWGPSWORD";
+                default:
                     throw new Exception($"Unknown ComNav message type {src:G}");
             }
         }

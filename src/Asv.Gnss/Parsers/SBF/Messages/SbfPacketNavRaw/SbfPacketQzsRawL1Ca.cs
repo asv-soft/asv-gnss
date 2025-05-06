@@ -1,10 +1,11 @@
 ﻿namespace Asv.Gnss
 {
     /// <summary>
-    /// This block contains the 300 bits of a QZSS C/A subframe.
-    /// 
+    /// <para>This block contains the 300 bits of a QZSS C/A subframe.</para>
+    /// <para>
     /// NAVBits contains the 300 bits of a QZSS C/A subframe.
-    /// Encoding: Same as GPSRawCA block
+    /// Encoding: Same as GPSRawCA block.
+    /// </para>
     /// </summary>
     public class SbfPacketQzsRawL1Ca : SbfPacketGnssRawNavMsgBase
     {
@@ -13,6 +14,5 @@
         public override string Name => "RawL1Ca";
 
         protected override int NavBitsU32Length => 10;
-
     }
 }

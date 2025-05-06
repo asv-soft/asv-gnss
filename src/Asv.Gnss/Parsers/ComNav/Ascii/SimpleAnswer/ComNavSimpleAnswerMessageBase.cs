@@ -11,24 +11,33 @@ namespace Asv.Gnss
         private const char Separator = ' ';
         private const byte CarriageReturn = 0xD;
         private const byte LineFeed = 0xA;
+
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
 #if NETFRAMEWORK
             var message = Encoding.ASCII.GetString(buffer.ToArray()).Split(Separator);
 #else
-			var message = Encoding.ASCII.GetString(buffer).Split(Separator);
+            var message = Encoding.ASCII.GetString(buffer).Split(Separator);
 #endif
             var msgIdLength = MessageId.Split(Separator).Length;
             var msgId = string.Join(Separator.ToString(), message, 0, msgIdLength);
 
-            if (!string.Equals(MessageId, msgId, StringComparison.InvariantCultureIgnoreCase)) throw new GnssParserException(ProtocolId, $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{msgId}])");
+            if (!string.Equals(MessageId, msgId, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new GnssParserException(
+                    ProtocolId,
+                    $"Error to deserialize {ProtocolId} packet: message id not equal (want [{MessageId}] got [{msgId}])"
+                );
+            }
 
             var bodyBuilder = new StringBuilder();
 
             for (var i = msgIdLength; i < message.Length; i++)
             {
                 if (!string.IsNullOrWhiteSpace(message[i]))
+                {
                     bodyBuilder.Append($"{message[i]} ");
+                }
             }
 
             Body = bodyBuilder.ToString().Trim();

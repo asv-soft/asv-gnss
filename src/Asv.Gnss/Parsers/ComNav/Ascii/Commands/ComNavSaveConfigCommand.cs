@@ -27,7 +27,7 @@
         protected override string SerializeToAsciiString() => MessageContent;
 
         /// <summary>
-        /// Gets or sets the unique identifier of the message.
+        /// Gets the unique identifier of the message.
         /// </summary>
         /// <remarks>
         /// This property represents the unique identifier associated with the message.

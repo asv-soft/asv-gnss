@@ -4,7 +4,6 @@ using Xunit.Abstractions;
 
 namespace Asv.Gnss.Test
 {
-
     public class AsvMessageV2Test
     {
         private readonly ITestOutputHelper _output;
@@ -35,14 +34,32 @@ namespace Asv.Gnss.Test
         public void Heartbeat_message_testing()
         {
             var parser = new AsvMessageParser().RegisterDefaultMessages();
-            var buffer = new byte[] { 0xAA, 0x44, 0x07, 0x00, 0x00, 0x00, 0x02, 0x01, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xF7, 0x1B };
+            var buffer = new byte[]
+            {
+                0xAA,
+                0x44,
+                0x07,
+                0x00,
+                0x00,
+                0x00,
+                0x02,
+                0x01,
+                0x00,
+                0x00,
+                0x02,
+                0x00,
+                0x01,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0xF7,
+                0x1B,
+            };
             foreach (var b in buffer)
             {
                 parser.Read(b);
             }
-
         }
-
-
     }
 }

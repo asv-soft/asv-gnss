@@ -14,6 +14,5 @@
         public override byte Class => 0x05;
         public override byte SubClass => 0x01;
         public override string Name => "UBX-ACK-ACK";
-
     }
 }

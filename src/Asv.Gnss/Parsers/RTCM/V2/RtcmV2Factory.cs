@@ -9,7 +9,7 @@ namespace Asv.Gnss
     public static class RtcmV2Factory
     {
         /// <summary>
-        /// A property that returns a collection of default messages.
+        /// Gets a property that returns a collection of default messages.
         /// </summary>
         /// <remarks>
         /// The DefaultMessages property is a static property that returns an IEnumerable
@@ -17,7 +17,7 @@ namespace Asv.Gnss
         /// These message types are derived from the RtcmV2MessageBase class.
         /// </remarks>
         /// <returns>
-        /// An IEnumerable of Func<RtcmV2MessageBase> objects that can be used to create instances
+        /// An IEnumerable of Func.<RtcmV2MessageBase> objects that can be used to create instances
         /// of default messages.
         /// </returns>
         public static IEnumerable<Func<RtcmV2MessageBase>> DefaultMessages
@@ -44,6 +44,7 @@ namespace Asv.Gnss
             {
                 src.Register(func);
             }
+
             return src;
         }
     }

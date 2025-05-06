@@ -50,7 +50,7 @@ namespace Asv.Gnss
             {
                 4 => new UbxCfgPrtConfigSpi(),
                 3 => new UbxCfgPrtConfigUsb(),
-                _ => new UbxCfgPrtConfigUart()
+                _ => new UbxCfgPrtConfigUart(),
             };
             Config.Deserialize(ref buffer);
         }
@@ -62,18 +62,13 @@ namespace Asv.Gnss
             Config = new UbxCfgPrtConfigUart();
             Config.Randomize(random);
         }
-
-
-
-
     }
-
 
     public enum UbxCfgPrtType
     {
         Uart,
         Usb,
-        Spi
+        Spi,
     }
 
     public abstract class UbxCfgPrtConfig : ISizedSpanSerializable
@@ -110,17 +105,14 @@ namespace Asv.Gnss
         public StopBits StopBits { get; set; } = StopBits.One;
         public int BoundRate { get; set; } = 115200;
 
-        
-
         #region Classes
 
         public enum PortPolarity
         {
             HighActive = 0,
-            LowActive = 1
+            LowActive = 1,
         }
 
-       
         private static class SerialPortHelper
         {
             public static int GetCharLength(uint value)
@@ -131,7 +123,7 @@ namespace Asv.Gnss
                     0x01 => 6,
                     0x02 => 7,
                     0x03 => 8,
-                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
                 };
             }
 
@@ -143,7 +135,7 @@ namespace Asv.Gnss
                     6 => 0x01,
                     7 => 0x02,
                     8 => 0x03,
-                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
                 };
             }
 
@@ -153,7 +145,7 @@ namespace Asv.Gnss
                 {
                     0 => Parity.Even,
                     1 => Parity.Odd,
-                    _ => (value & 0x6) == 4 ? Parity.None : Parity.Space
+                    _ => (value & 0x6) == 4 ? Parity.None : Parity.Space,
                 };
             }
 
@@ -166,7 +158,7 @@ namespace Asv.Gnss
                     Parity.Even => 0x00,
                     Parity.Mark => 0x02,
                     Parity.Space => 0x02,
-                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
                 };
             }
 
@@ -178,7 +170,7 @@ namespace Asv.Gnss
                     0x01 => StopBits.OnePointFive,
                     0x02 => StopBits.Two,
                     0x03 => StopBits.None,
-                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
                 };
             }
 
@@ -190,11 +182,9 @@ namespace Asv.Gnss
                     StopBits.One => 0x00,
                     StopBits.Two => 0x02,
                     StopBits.OnePointFive => 0x01,
-                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+                    _ => throw new ArgumentOutOfRangeException(nameof(value), value, null),
                 };
             }
-
-            
         }
         #endregion
 
@@ -203,7 +193,7 @@ namespace Asv.Gnss
         public override void Deserialize(ref ReadOnlySpan<byte> buffer)
         {
             PortId = BinSerialize.ReadByte(ref buffer);
-            var reserved  = BinSerialize.ReadByte(ref buffer);
+            var reserved = BinSerialize.ReadByte(ref buffer);
             var txReady = BinSerialize.ReadUShort(ref buffer);
             IsEnable = (txReady & 0x01) != 0;
             Polarity = (PortPolarity)((txReady & 0x02) >> 1);
@@ -215,7 +205,6 @@ namespace Asv.Gnss
             Parity = SerialPortHelper.GetParity((byte)((uartMode & 0xE00) >> 9));
             StopBits = SerialPortHelper.GetStopBit((byte)((uartMode & 0x3000) >> 12));
             BoundRate = (int)BinSerialize.ReadUInt(ref buffer);
-
 
             var inProtocol = BinSerialize.ReadUShort(ref buffer);
             IsInUbxProtocol = (inProtocol & 0x01) != 0;
@@ -234,15 +223,14 @@ namespace Asv.Gnss
             var reserved2 = BinSerialize.ReadByte(ref buffer);
         }
 
-        
-
-
         public override void Serialize(ref Span<byte> buffer)
         {
             BinSerialize.WriteByte(ref buffer, PortId);
             BinSerialize.WriteByte(ref buffer, 0);
-            var txReady = (ushort)((IsEnable ? 1 : 0) | ((byte)Polarity << 1) | (Pin << 2) | (Threshold << 7));
-            BinSerialize.WriteUShort(ref buffer,txReady);
+            var txReady = (ushort)(
+                (IsEnable ? 1 : 0) | ((byte)Polarity << 1) | (Pin << 2) | (Threshold << 7)
+            );
+            BinSerialize.WriteUShort(ref buffer, txReady);
 
             var dataBits = (uint)(SerialPortHelper.GetByteFromCharLength(DataBits) << 6);
             var parity = (uint)(SerialPortHelper.GetByteFromParity(Parity) << 9);
@@ -251,10 +239,19 @@ namespace Asv.Gnss
             BinSerialize.WriteUInt(ref buffer, uartMode);
             BinSerialize.WriteUInt(ref buffer, (uint)BoundRate);
 
-            var inProtocol = (ushort)((IsInUbxProtocol ? 1 : 0) | ((IsInNmeaProtocol ? 1 : 0) << 1) | ((IsInRtcm2Protocol ? 1 : 0) << 2) | ((IsInRtcm3Protocol ? 1 : 0) << 5));
-            BinSerialize.WriteUShort(ref buffer,inProtocol);
+            var inProtocol = (ushort)(
+                (IsInUbxProtocol ? 1 : 0)
+                | ((IsInNmeaProtocol ? 1 : 0) << 1)
+                | ((IsInRtcm2Protocol ? 1 : 0) << 2)
+                | ((IsInRtcm3Protocol ? 1 : 0) << 5)
+            );
+            BinSerialize.WriteUShort(ref buffer, inProtocol);
 
-            var outProtocol = (ushort)((IsOutUbxProtocol ? 1 : 0) | ((IsOutNmeaProtocol ? 1 : 0) << 1) | ((IsOutRtcm3Protocol ? 1 : 0) << 5));
+            var outProtocol = (ushort)(
+                (IsOutUbxProtocol ? 1 : 0)
+                | ((IsOutNmeaProtocol ? 1 : 0) << 1)
+                | ((IsOutRtcm3Protocol ? 1 : 0) << 5)
+            );
             BinSerialize.WriteUShort(ref buffer, outProtocol);
 
             var isExtendedTxTimeout = (ushort)((IsExtendedTxTimeout ? 1 : 0) << 1);
@@ -274,7 +271,7 @@ namespace Asv.Gnss
         }
     }
 
-    public class UbxCfgPrtConfigUsb: UbxCfgPrtConfig
+    public class UbxCfgPrtConfigUsb : UbxCfgPrtConfig
     {
         public override UbxCfgPrtType PortType => UbxCfgPrtType.Usb;
 
@@ -285,16 +282,13 @@ namespace Asv.Gnss
 
         public override void Serialize(ref Span<byte> buffer)
         {
-            BinSerialize.WriteByte(ref buffer,3); /*PortID USB = 3*/
-            buffer = buffer.Slice(GetByteSize() - 3); // TODO: implement 
+            BinSerialize.WriteByte(ref buffer, 3); /*PortID USB = 3*/
+            buffer = buffer.Slice(GetByteSize() - 3); // TODO: implement
         }
 
         public override int GetByteSize() => 20;
 
-        public override void Randomize(Random random)
-        {
-
-        }
+        public override void Randomize(Random random) { }
     }
 
     public class UbxCfgPrtConfigSpi : UbxCfgPrtConfig
@@ -309,14 +303,11 @@ namespace Asv.Gnss
         public override void Serialize(ref Span<byte> buffer)
         {
             BinSerialize.WriteByte(ref buffer, 3); /*PortID USB = 4*/
-            buffer = buffer.Slice(GetByteSize() - 3); // TODO: implement 
+            buffer = buffer.Slice(GetByteSize() - 3); // TODO: implement
         }
 
         public override int GetByteSize() => 20;
 
-        public override void Randomize(Random random)
-        {
-            
-        }
+        public override void Randomize(Random random) { }
     }
 }

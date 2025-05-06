@@ -13,14 +13,18 @@ namespace Asv.Gnss
         /// </summary>
         /// <param name="week">The GPS week number to be adjusted.</param>
         /// <returns>The adjusted GPS week number.</returns>
-        private int adjgpsweek(int week)
+        private static int Adjgpsweek(int week)
         {
             var now = DateTime.UtcNow;
             var w = 0;
             double sec = 0;
             RtcmV3Helper.GetFromTime(RtcmV3Helper.Utc2Gps(now), ref w, ref sec);
-            if (w < 1560) w = 1560; /* use 2009/12/1 if time is earlier than 2009/12/1 */
-            return week + (w - week + 1) / 1024 * 1024;
+            if (w < 1560)
+            {
+                w = 1560; /* use 2009/12/1 if time is earlier than 2009/12/1 */
+            }
+
+            return week + ((w - week + 1) / 1024 * 1024);
         }
 
         /// <summary>
@@ -67,7 +71,7 @@ namespace Asv.Gnss
         public int WeekNumber { get; set; }
 
         /// <summary>
-        /// Speed of change of inclination angle.
+        /// Gets or sets speed of change of inclination angle.
         /// </summary>
         public double Idot { get; set; }
 
@@ -95,8 +99,8 @@ namespace Asv.Gnss
         /// </value>
         public double AF1 { get; set; }
 
-        /// Gets or sets the value of AF2.
-        /// /
+        // Gets or sets the value of AF2.
+        // /
         public double AF2 { get; set; }
 
         /// <summary>
@@ -113,7 +117,7 @@ namespace Asv.Gnss
         public double DeltaN { get; set; }
 
         /// <summary>
-        /// Amplitude of the cosine harmonic correction to the argument of latitude.
+        /// Gets or sets amplitude of the cosine harmonic correction to the argument of latitude.
         /// </summary>
         /// <value>
         /// The amplitude of the cosine harmonic correction to the argument of latitude.
@@ -129,7 +133,7 @@ namespace Asv.Gnss
         public double E { get; set; }
 
         /// <summary>
-        /// The amplitude of the sinusoidal harmonic correction to the latitude argument
+        /// Gets or sets the amplitude of the sinusoidal harmonic correction to the latitude argument.
         /// </summary>
         /// <remarks>
         /// This property represents the amplitude of the sinusoidal harmonic correction to the latitude argument.
@@ -146,7 +150,7 @@ namespace Asv.Gnss
         public double A { get; set; }
 
         /// <summary>
-        /// The time of ephemeris binding (Toes).
+        /// Gets or sets the time of ephemeris binding (Toes).
         /// </summary>
         /// <value>
         /// The time of ephemeris binding.
@@ -157,7 +161,7 @@ namespace Asv.Gnss
         public ushort Toes { get; set; }
 
         /// <summary>
-        /// Reference time of binding (ephemeris)
+        /// Gets or sets reference time of binding (ephemeris).
         /// </summary>
         /// <value>
         /// Returns or sets the reference time of the binding.
@@ -180,7 +184,7 @@ namespace Asv.Gnss
         public double Omega0 { get; set; }
 
         /// <summary>
-        /// Represents the amplitude of the cosine harmonic correction to the inclination angle.
+        /// Gets or sets represents the amplitude of the cosine harmonic correction to the inclination angle.
         /// </summary>
         public double Cic { get; set; }
 
@@ -193,7 +197,7 @@ namespace Asv.Gnss
         public double I0 { get; set; }
 
         /// <summary>
-        /// Amplitude of sine harmonic correction to the inclination angle
+        /// Gets or sets amplitude of sine harmonic correction to the inclination angle.
         /// </summary>
         public double Cis { get; set; }
 
@@ -247,12 +251,12 @@ namespace Asv.Gnss
         /// </value>
         public double Tgd { get; set; }
 
-        /// Gets or sets the value of the CodeOnL2 property.
-        /// </summary>
-        /// <remarks>
-        /// This property represents a byte value that specifies the code on level 2.
-        /// The CodeOnL2 property can be used to store and retrieve information regarding the code on level 2.
-        /// </remarks>
+        // Gets or sets the value of the CodeOnL2 property.
+        // </summary>
+        // <remarks>
+        // This property represents a byte value that specifies the code on level 2.
+        // The CodeOnL2 property can be used to store and retrieve information regarding the code on level 2.
+        // </remarks>
         public byte CodeOnL2 { get; set; }
 
         /// <summary>
@@ -279,49 +283,84 @@ namespace Asv.Gnss
         public byte L2PDataFlag { get; set; }
 
         /// <summary>
-        /// Deserialize the content of the buffer into the object properties
+        /// Deserialize the content of the buffer into the object properties.
         /// </summary>
-        /// <param name="buffer">The buffer containing the serialized data</param>
-        /// <param name="bitIndex">The starting bit index within the buffer</param>
-        /// <param name="payloadLength">The length of the payload</param>
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
+        /// <param name="buffer">The buffer containing the serialized data.</param>
+        /// <param name="bitIndex">The starting bit index within the buffer.</param>
+        /// <param name="payloadLength">The length of the payload.</param>
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            byte payloadLength
+        )
         {
-            var week = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10); bitIndex += 10;
+            var week = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
+            bitIndex += 10;
             WeekNumberRaw = week;
-            Idot = SpanBitHelper.GetBitS(buffer, ref bitIndex, 14) * RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD;
+            Idot =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 14)
+                * RtcmV3Helper.P2_43
+                * RtcmV3Helper.SC2RAD;
             Iode = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
             var toc = SpanBitHelper.GetBitU(buffer, ref bitIndex, 16) * 16.0;
             AF1 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_43;
             AF2 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 8) * RtcmV3Helper.P2_55;
             Crs = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_5;
-            DeltaN = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD;
+            DeltaN =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 16)
+                * RtcmV3Helper.P2_43
+                * RtcmV3Helper.SC2RAD;
             Cuc = (short)SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_29;
             E = SpanBitHelper.GetBitU(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_33;
             Cus = (short)SpanBitHelper.GetBitS(buffer, ref bitIndex, 16);
             var sqrtA = SpanBitHelper.GetBitU(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_19;
             Toes = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 16);
-            Omega0 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD;
+            Omega0 =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 32)
+                * RtcmV3Helper.P2_31
+                * RtcmV3Helper.SC2RAD;
             Cic = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_29;
-            I0 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD;
+            I0 =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 32)
+                * RtcmV3Helper.P2_31
+                * RtcmV3Helper.SC2RAD;
             Cis = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_29;
-            Omega = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD;
+            Omega =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 32)
+                * RtcmV3Helper.P2_31
+                * RtcmV3Helper.SC2RAD;
             Crc = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_5;
-            OmegaDot = SpanBitHelper.GetBitS(buffer, ref bitIndex, 24) * RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD;
-            M0 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD;
+            OmegaDot =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 24)
+                * RtcmV3Helper.P2_43
+                * RtcmV3Helper.SC2RAD;
+            M0 =
+                SpanBitHelper.GetBitS(buffer, ref bitIndex, 32)
+                * RtcmV3Helper.P2_31
+                * RtcmV3Helper.SC2RAD;
             Iodc = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
             AF0 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 22) * RtcmV3Helper.P2_31;
             var prn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
             bitIndex += 3; // FILL
-            Tgd = SpanBitHelper.GetBitS(buffer, ref bitIndex, 8) * RtcmV3Helper.P2_31; bitIndex += 8;
-            CodeOnL2 = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 2); bitIndex += 2;
-            SVAccuracy = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4); bitIndex += 4;
-            SVHealth = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6); bitIndex += 6;
-            L2PDataFlag = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1); bitIndex += 1;
+            Tgd = SpanBitHelper.GetBitS(buffer, ref bitIndex, 8) * RtcmV3Helper.P2_31;
+            bitIndex += 8;
+            CodeOnL2 = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
+            bitIndex += 2;
+            SVAccuracy = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4);
+            bitIndex += 4;
+            SVHealth = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
+            bitIndex += 6;
+            L2PDataFlag = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+            bitIndex++;
 
-            if (prn == 0) prn = 32;
-            Satellite = RtcmV3Helper.satno(NavigationSystemEnum.SYS_GPS, (int)prn);
+            if (prn == 0)
+            {
+                prn = 32;
+            }
 
-            WeekNumber = adjgpsweek((int)week);
+            Satellite = RtcmV3Helper.Satno(NavigationSystemEnum.SYS_GPS, (int)prn);
+
+            WeekNumber = RtcmV2Message17.Adjgpsweek((int)week);
             Toe = RtcmV3Helper.GetFromGps(WeekNumber, Toes);
             Toc = RtcmV3Helper.GetFromGps(WeekNumber, toc);
             A = sqrtA * sqrtA;

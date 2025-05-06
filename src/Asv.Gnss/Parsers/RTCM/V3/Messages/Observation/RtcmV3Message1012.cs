@@ -1,18 +1,23 @@
-﻿using Asv.IO;
-using System;
+﻿using System;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
     /// <summary>
-    /// Table 3.5-14 Contents of the Satellite-Specific Portion of a Type 1012 Message, Each Satellite – GLONASS Extended RTK, L1 & L2
-    ///
+    /// <para>Table 3.5-14 Contents of the Satellite-Specific Portion of a Type 1012 Message, Each Satellite – GLONASS Extended RTK, L1 & L2.</para>
+    /// <para>
     /// The Type 1012 Message supports dual-frequency RTK operation, and includes an indication of the satellite carrier-to-noise (CNR) as
     /// measured by the reference station.Since the CNR does not usually change from measurement to measurement, this message type can
     /// be mixed with the Type 1011, and used only when a satellite CNR changes, thus saving broadcast link throughput.
+    /// </para>
     /// </summary>
     public class RtcmV3Message1012 : RtcmV3RTKObservableMessagesBase
     {
-        protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
+        protected override void DeserializeContent(
+            ReadOnlySpan<byte> buffer,
+            ref int bitIndex,
+            int messageLength
+        )
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
             Satellites = new GLONASSSatellite[SatelliteCount];
@@ -33,13 +38,18 @@ namespace Asv.Gnss
 
     public class GLONASSSatellite
     {
-       public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
+        public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
-            var sys = NavigationSystemEnum.SYS_GLO;
+            const NavigationSystemEnum sys = NavigationSystemEnum.SYS_GLO;
 
             var prn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
             var code1 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
-            var fcn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5) /* fcn+7 */;
+            var fcn = SpanBitHelper.GetBitU(
+                buffer,
+                ref bitIndex,
+                5
+            ) /* fcn+7 */
+            ;
             double pr1 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 25);
             var ppr1 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 20);
             var lock1 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
@@ -51,7 +61,7 @@ namespace Asv.Gnss
             var lock2 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
             double cnr2 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
 
-            var sat = RtcmV3Helper.satno(sys, (int)prn);
+            var sat = RtcmV3Helper.Satno(sys, (int)prn);
 
             if (sat == 0)
             {
@@ -61,8 +71,7 @@ namespace Asv.Gnss
             SatelliteNumber = sat;
             SatelliteCode = RtcmV3Helper.Sat2Code(SatelliteNumber, (int)prn);
 
-
-            pr1 = pr1 * 0.02 + amb * RtcmV3Helper.PRUNIT_GLO;
+            pr1 = (pr1 * 0.02) + (amb * RtcmV3Helper.PRUNIT_GLO);
             L1PseudoRange = pr1;
             L1Frequency = RtcmV3Helper.Code2Freq(sys, RtcmV3Helper.CODE_L1C, (int)fcn - 7);
 
@@ -76,14 +85,13 @@ namespace Asv.Gnss
             }
 
             L1LockTime = (byte)lock1;
-            L1CNR = RtcmV3Helper.snratio(cnr1 * 0.25);
+            L1CNR = RtcmV3Helper.Snratio(cnr1 * 0.25);
             L1Code = code1 != 0 ? RtcmV3Helper.CODE_L1P : RtcmV3Helper.CODE_L1C;
 
             if (pr21 != -8192) // 0xFFFFE000
             {
-                L2PseudoRange = pr1 + pr21 * 0.02;
+                L2PseudoRange = pr1 + (pr21 * 0.02);
             }
-
 
             L2Frequency = RtcmV3Helper.Code2Freq(sys, RtcmV3Helper.CODE_L2C, (int)fcn - 7);
 
@@ -97,7 +105,7 @@ namespace Asv.Gnss
             }
 
             L2LockTime = (byte)lock2;
-            L2CNR = RtcmV3Helper.snratio(cnr2 * 0.25);
+            L2CNR = RtcmV3Helper.Snratio(cnr2 * 0.25);
             L2Code = code2 != 0 ? RtcmV3Helper.CODE_L2P : RtcmV3Helper.CODE_L2C;
         }
 
@@ -106,7 +114,7 @@ namespace Asv.Gnss
         public string SatelliteCode { get; set; }
 
         public byte L1Code { get; set; }
-        
+
         public double L1Frequency { get; set; }
         public double L1PseudoRange { get; set; }
 

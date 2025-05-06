@@ -37,7 +37,7 @@ namespace Asv.Gnss
         /// <param name="data">The data to read.</param>
         /// <returns>A boolean indicating the success of the read operation.</returns>
         public abstract bool Read(byte data);
-        
+
         /// <summary>
         /// Resets the parser.
         /// </summary>
@@ -57,7 +57,12 @@ namespace Asv.Gnss
         /// <param name="messageIdOrName">The message ID or name.</param>
         protected void PublishWhenReadNotAllDataWhenDeserializePacket(string messageIdOrName)
         {
-            InternalOnError(new GnssReadNotAllDataWhenDeserializePacketErrorException(ProtocolId,messageIdOrName));
+            InternalOnError(
+                new GnssReadNotAllDataWhenDeserializePacketErrorException(
+                    ProtocolId,
+                    messageIdOrName
+                )
+            );
         }
 
         /// <summary>
@@ -83,7 +88,7 @@ namespace Asv.Gnss
         {
             OnErrorSubject.OnCompleted();
             OnErrorSubject.Dispose();
-            
+
             OnMessageSubject.OnCompleted();
             OnMessageSubject.Dispose();
         }
@@ -109,7 +114,7 @@ namespace Asv.Gnss
             var pkt = factory();
             _factory.Add(pkt.MessageId, factory);
         }
-        
+
         /// <summary>
         /// Gets the statistic input bytes.
         /// </summary>
@@ -130,14 +135,18 @@ namespace Asv.Gnss
         /// <param name="id">The ID of the packet.</param>
         /// <param name="data">The data of the packet.</param>
         /// <param name="ignoreReadNotAllData">Optional boolean that defaults to false. If true, does not check if all data was read.</param>
-        protected void ParsePacket(TMsgId id, ref ReadOnlySpan<byte> data, bool ignoreReadNotAllData = false)
+        protected void ParsePacket(
+            TMsgId id,
+            ref ReadOnlySpan<byte> data,
+            bool ignoreReadNotAllData = false
+        )
         {
             if (!_factory.TryGetValue(id, out var factory))
             {
-                InternalOnError(new GnssUnknownMessageException(ProtocolId,id.ToString()));
+                InternalOnError(new GnssUnknownMessageException(ProtocolId, id.ToString()));
                 return;
             }
-            
+
             var message = factory();
             try
             {
@@ -147,17 +156,21 @@ namespace Asv.Gnss
             }
             catch (Exception e)
             {
-                InternalOnError(new GnssDeserializeMessageException(ProtocolId, id.ToString(), message.Name, e));
+                InternalOnError(
+                    new GnssDeserializeMessageException(ProtocolId, id.ToString(), message.Name, e)
+                );
                 return;
             }
-            
+
             try
             {
                 InternalOnMessage(message);
             }
             catch (Exception e)
             {
-                InternalOnError(new GnssPublishMessageException(ProtocolId, id.ToString(),message.Name, e));
+                InternalOnError(
+                    new GnssPublishMessageException(ProtocolId, id.ToString(), message.Name, e)
+                );
             }
 
             if (!ignoreReadNotAllData && !data.IsEmpty)
@@ -169,7 +182,7 @@ namespace Asv.Gnss
         protected override void InternalDisposeOnce()
         {
             base.InternalDisposeOnce();
-            
+
             _factory.Clear();
         }
     }
