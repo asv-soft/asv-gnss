@@ -5,11 +5,21 @@ VisualStudioVersion = 16.0.32228.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asv.Gnss", "Asv.Gnss\Asv.Gnss.csproj", "{420F8708-C8DA-4A94-A995-91AD701EBEC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Prometheus", "Asv.Gnss.Prometheus\Asv.Gnss.Prometheus.csproj", "{05983FA2-816E-4EC7-83D7-92C4C7DDF364}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{6D12E677-B726-43DC-B38C-AE51483DDDCB}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		..\.gitignore = ..\.gitignore
+		..\build.bat = ..\build.bat
+		..\LICENSE = ..\LICENSE
+		..\publish_nuget.bat = ..\publish_nuget.bat
+		..\README.md = ..\README.md
+		..\.github\workflows\release-action.yml = ..\.github\workflows\release-action.yml
+		..\.github\workflows\release-debug-action.yml = ..\.github\workflows\release-debug-action.yml
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Shell", "Asv.Gnss.Shell\Asv.Gnss.Shell.csproj", "{FD48B35E-72E7-4409-8F24-4CA244D8FD65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Shell", "Asv.Gnss.Shell\Asv.Gnss.Shell.csproj", "{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Test", "Asv.Gnss.Test\Asv.Gnss.Test.csproj", "{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Test", "Asv.Gnss.Test\Asv.Gnss.Test.csproj", "{C2994C9F-74A8-4C29-A6C3-DE03A3DD013E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +31,14 @@ Global
 		{420F8708-C8DA-4A94-A995-91AD701EBEC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{420F8708-C8DA-4A94-A995-91AD701EBEC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{420F8708-C8DA-4A94-A995-91AD701EBEC7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05983FA2-816E-4EC7-83D7-92C4C7DDF364}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05983FA2-816E-4EC7-83D7-92C4C7DDF364}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05983FA2-816E-4EC7-83D7-92C4C7DDF364}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05983FA2-816E-4EC7-83D7-92C4C7DDF364}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD48B35E-72E7-4409-8F24-4CA244D8FD65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD48B35E-72E7-4409-8F24-4CA244D8FD65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD48B35E-72E7-4409-8F24-4CA244D8FD65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD48B35E-72E7-4409-8F24-4CA244D8FD65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BED5BA2C-6EF9-4517-AB6E-1756553EFBFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2994C9F-74A8-4C29-A6C3-DE03A3DD013E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2994C9F-74A8-4C29-A6C3-DE03A3DD013E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2994C9F-74A8-4C29-A6C3-DE03A3DD013E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2994C9F-74A8-4C29-A6C3-DE03A3DD013E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

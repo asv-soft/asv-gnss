@@ -1,4 +1,4 @@
-name: Deploy release Nuget for Windows
+name: Build and Publish Release Version
 
 on:
   push:
@@ -6,12 +6,13 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-rc'
-    
+
 env:
   PATH_TO_PROJECTS: ${{ github.workspace }}\src
-  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace}}\output\
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output\
   NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
   GITHUB_PACKAGES_URL: 'https://nuget.pkg.github.com/asv-soft/index.json'
+  PROJECT_NAME: 'Asv.Gnss'
 
 jobs:
   deploy:
@@ -19,58 +20,60 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v4
       - name: Setup .Net
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-            dotnet-version: |
-              8.x.x
-              7.x.x
+          dotnet-version: |
+            8.x.x
 
-      - name: Get version
-        id: version
-        uses: battila7/get-version-action@v2
-              
-      - name: Check version
-        run: echo ${{ steps.version.outputs.version-without-v }}
+      - name: Set version variable
+        env:
+          TAG: ${{ github.ref_name }}
+        shell: pwsh
+        run: |
+          $newTag = $env:TAG
+          $newTag = $newTag.TrimStart("v")
+          echo "VERSION=$newTag" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Set project version   
-        run: |    
+      - name: Checking version
+        run: echo ${{ env.VERSION }}
+
+      - name: Setting the project version
+        run: |
           dotnet tool install -g dotnet-setversion    
-          setversion ${{ steps.version.outputs.version-without-v }} ${{ env.PATH_TO_PROJECTS }}\Asv.Gnss\Asv.Gnss.csproj
-          setversion ${{ steps.version.outputs.version-without-v }} ${{ env.PATH_TO_PROJECTS }}\Asv.Gnss.Prometheus\Asv.Gnss.Prometheus.csproj    
-    
-      - name: Restore dependencies
+          setversion ${{ env.VERSION }} ${{ env.PATH_TO_PROJECTS }}\${{ PROJECT_NAME }}\${{ PROJECT_NAME }}.csproj
+
+      - name: Add NuGet source
+        run: |
+          dotnet nuget add source ${{ env.GITHUB_PACKAGES_URL }} --username '${{ secrets.USER_NAME }}' --password '${{ secrets.GIHUB_NUGET_AUTH_TOKEN }}' --store-password-in-clear-text
+
+      - name: Restoring dependencies
+        run: |
+          cd src    
+          dotnet restore    
+
+      - name: Building projects
+        run: |
+          cd src    
+          dotnet build -c Release --no-restore    
+
+      - name: Test projects
         run: |
           cd src
-          dotnet restore
+          dotnet test 
 
-      - name: Build projects
+      - name: Packing projects to Nuget
         run: |
-          cd src
-          dotnet build -c Release 
+          cd src    
+          dotnet pack -c Release --no-build --no-restore -p:PackageVersion=${{ env.VERSION }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}    
 
-      - name: Running all tests
-        run:  |    
-          cd src   
-          dotnet test --framework .net8.0 --verbosity normal
-
-      - name: Pack projects to Nuget 
+      - name: Pushing packages to Nuget
         run: |
-          cd src
-          dotnet pack -c Release --no-build -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+          cd src    
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.NUGET_SOURCE_URL }}
 
-      - name: Push package to Nuget 
+      - name: Pushing packages to Github
         run: |
-          cd src
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.Prometheus.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
-          
-
-      - name: Push package to Github packages
-        run: |
-          cd src
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}Asv.Gnss.Prometheus.${{ steps.version.outputs.version-without-v }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} -s ${{ env.GITHUB_PACKAGES_URL }}
-          
+          cd src    
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}

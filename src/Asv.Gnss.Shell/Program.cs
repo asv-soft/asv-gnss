@@ -1,25 +1,14 @@
-﻿using System;
-using Spectre.Console.Cli;
+﻿// See https://aka.ms/new-console-template for more information
 
+using System.Text;
+using Asv.Gnss.Shell;
+using ConsoleAppFramework;
 
-namespace Asv.Gnss.Shell
-{
-    class Program
-    {
-        static int Main(string[] args)
-        {
-            var app = new CommandApp();
-            app.Configure(config =>
-            {
-                config.AddCommand<PrintBytesCommand>("print");
-                config.AddCommand<UbxCommand>("ubx");
-                config.AddCommand<UbxTrackCommand>("pvt");
-#if DEBUG
-                config.PropagateExceptions();
-                config.ValidateExamples();
-#endif
-            });
-            return app.Run(args);
-        }
-    }
-}
+Console.InputEncoding = Encoding.UTF8;
+Console.OutputEncoding = Encoding.UTF8;
+Console.BackgroundColor = ConsoleColor.Black;
+        
+var app = ConsoleApp.Create();
+
+app.Add<NmeaCommand>();
+await app.RunAsync(args);
