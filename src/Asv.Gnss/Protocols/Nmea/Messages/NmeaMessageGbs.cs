@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using Asv.IO;
 
 namespace Asv.Gnss
 {
@@ -60,7 +61,6 @@ namespace Asv.Gnss
             + SizeOfDouble(in _biasEstimate,in NmeaDoubleFormat.Double1X3)
             + SizeOfDouble(in _biasEstimateStandardDeviation,in NmeaDoubleFormat.Double1X3)
             + SizeOfHex(in _systemId,in NmeaHexFormat.HexX1);
-        
 
         /// <summary>
         /// UTC time of the GGA or GNS fix associated with this sentence

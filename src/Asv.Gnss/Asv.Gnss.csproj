@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <FileVersion>$(ProductVersion)</FileVersion>
-    <Version>$(ProductVersion)</Version>
+    <Version>2.0.0-dev.3</Version>
     <PackageVersion>$(ProductVersion)</PackageVersion>
     <Authors>https://github.com/asv-soft</Authors>
     <Company>https://github.com/asv-soft</Company>

@@ -128,11 +128,8 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
             ArrayPool<byte>.Shared.Return(arr);
         }
     }
-
     public ref ProtocolTags Tags => ref _tags;
-
     public string GetIdAsString() => Id.ToString();
-
     public ProtocolInfo Protocol => NmeaProtocol.Info;
     public abstract string Name { get; }
     public abstract NmeaMessageId Id { get; }
@@ -436,7 +433,6 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
         => NmeaProtocol.SizeOfPositioningSystemMode(status) + NmeaProtocol.SizeOfSeparator();
 
     #endregion
-
 
     #region FixMode
 
@@ -817,6 +813,4 @@ public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
     }
 
     #endregion
-    
-
 }
