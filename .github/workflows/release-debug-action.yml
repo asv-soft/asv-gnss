@@ -41,7 +41,7 @@ jobs:
       - name: Setting the project version
         run: |
           dotnet tool install -g dotnet-setversion    
-          setversion ${{ env.VERSION }} ${{ env.PATH_TO_PROJECTS }}\${{ PROJECT_NAME }}\${{ PROJECT_NAME }}.csproj    
+          setversion ${{ env.VERSION }} ${{ env.PATH_TO_PROJECTS }}\${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj    
 
       - name: Add NuGet source
         run: |
@@ -70,4 +70,4 @@ jobs:
       - name: Pushing packages to Github
         run: |
           cd src    
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
