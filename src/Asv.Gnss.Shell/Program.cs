@@ -13,6 +13,7 @@ namespace Asv.Gnss.Shell
             {
                 config.AddCommand<PrintBytesCommand>("print");
                 config.AddCommand<UbxCommand>("ubx");
+                config.AddCommand<AsvCommand>("asv");
                 config.AddCommand<UbxTrackCommand>("pvt");
 #if DEBUG
                 config.PropagateExceptions();
