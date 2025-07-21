@@ -36,7 +36,7 @@ public static class NmeaProtocol
     private const string LongitudeEastChars = "Ee";
     private const string LongitudeWestChars = "Ww";
     
-    public static ProtocolInfo Info { get; } = new("NAME", "NMEA 0183");
+    public static ProtocolInfo Info { get; } = new("NMEA", "NMEA 0183");
     public static Encoding Encoding => Encoding.ASCII;
     
     

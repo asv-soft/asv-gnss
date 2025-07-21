@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <FileVersion>$(ProductVersion)</FileVersion>
-    <Version>2.0.0-dev.3</Version>
+    <Version>$(ProductVersion)</Version>
     <PackageVersion>$(ProductVersion)</PackageVersion>
     <Authors>https://github.com/asv-soft</Authors>
     <Company>https://github.com/asv-soft</Company>
@@ -24,5 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Devices\Server\" />
+    <Folder Include="Protocols\Asterix\Messages\I020\Fields\" />
   </ItemGroup>
 </Project>
