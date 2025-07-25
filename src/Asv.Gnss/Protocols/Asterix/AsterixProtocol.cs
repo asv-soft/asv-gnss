@@ -37,11 +37,11 @@ public static class AsterixProtocol
         buffer = buffer[2..];
     }
     
-    public static BitArray ReadFspec(ref ReadOnlySpan<byte> buffer)
+    public static BitArray ReadVariableLengthFieldAsBitArray(ref ReadOnlySpan<byte> buffer)
     {
         var length = 0;
 
-        // Определяем длину FSPEC (пока установлен FX-бит в младшем бите)
+        // Определяем длину (пока установлен 1 в младшем бите)
         while ((buffer[length] & 0x01) != 0)
         {
             length++;
@@ -65,11 +65,10 @@ public static class AsterixProtocol
             }
         }
 
-        // Сдвигаем буфер на остаток после FSPEC
+        // Сдвигаем буфер на остаток
         buffer = buffer[length..];
 
         return arr;
     }
 
-    
 }

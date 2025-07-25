@@ -24,6 +24,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Devices\Server\" />
-    <Folder Include="Protocols\Asterix\Messages\I020\Fields\" />
   </ItemGroup>
 </Project>
