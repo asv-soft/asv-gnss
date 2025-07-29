@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Text;
 using Asv.IO;
 
 namespace Asv.Gnss;
@@ -8,6 +9,7 @@ namespace Asv.Gnss;
 public class VariableLengthValue : ISizedSpanSerializable
 {
     private byte[] _rawData = [0x00];
+    public int DataBitsCount => _rawData.Length * 7;
 
     public void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
@@ -38,127 +40,52 @@ public class VariableLengthValue : ISizedSpanSerializable
 
     public int GetByteSize() => _rawData.Length;
 
-    public bool? this[int octet, int bitNumber2To8]
+    public bool? this[int dataBitIndex]
     {
         get
         {
+            var octet = dataBitIndex / 7;
             if (_rawData.Length <= octet)
-            {
                 return null;
-            }
-            if (bitNumber2To8 is < 2 or > 8)
-            {
-                throw new ArgumentOutOfRangeException(nameof(bitNumber2To8), "Bit number must be between 2 and 8.");
-            }
-            return (_rawData[octet] & (1 << (bitNumber2To8 - 1))) != 0;
+
+            var bitIndex = 6 - (dataBitIndex % 7); // 0..6 → позиция битов 7..1
+            return (_rawData[octet] & (1 << (bitIndex + 1))) != 0;
         }
         set
         {
+            var octet = dataBitIndex / 7;
             if (_rawData.Length <= octet)
             {
                 Array.Resize(ref _rawData, octet + 1);
             }
-        
-            if (bitNumber2To8 is < 2 or > 8)
-            {
-                throw new ArgumentOutOfRangeException(nameof(bitNumber2To8), "Bit number must be between 2 and 8.");
-            }
 
-            if (value.HasValue)
-            {
-                if (value.Value)
-                {
-                    _rawData[octet] |= (byte)(1 << (bitNumber2To8 - 1));
-                }
-                else
-                {
-                    _rawData[octet] &= (byte)~(1 << (bitNumber2To8 - 1));
-                }
-            }
-            else
-            {
-                
-            }
-        }
-    }
+            var bitIndex = 6 - (dataBitIndex % 7);
+            var mask = (byte)(1 << (bitIndex + 1));
 
-    public bool GetBoolFromFirstOctet(int bitNumberFrom2To8)
-    {
-        if (bitNumberFrom2To8 is < 2 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bitNumberFrom2To8), "Bit number must be between 2 and 8.");
-        }
-        
-        return (_rawData[0] & (1 << (bitNumberFrom2To8 - 1))) != 0;
-    }
-    
-    public void SetBoolToFirstOctet(int bitNumberFrom2To8, bool value)
-    {
-        if (bitNumberFrom2To8 is < 2 or > 8)
-            throw new ArgumentOutOfRangeException(nameof(bitNumberFrom2To8), "Bit number must be between 2 and 8.");
+            if (value is null)
+                throw new ArgumentNullException(nameof(value), "Value cannot be null.");
 
-        if (value)
-        {
-            _rawData[0] |= (byte)(1 << (bitNumberFrom2To8 - 1));
-        }
-        else
-        {
-            _rawData[0] &= (byte)~(1 << (bitNumberFrom2To8 - 1));
-        }
-    }
-
-    public bool? GetBoolFromExtend(int octetFrom1, int bitNumberFrom2To8)
-    {
-        if (octetFrom1 < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(octetFrom1), "Octet number for extended field must be greater than or equal to 1.");
-        }
-
-        if (_rawData.Length <= octetFrom1)
-        {
-            return null;
-        }
-        
-        if (bitNumberFrom2To8 is < 2 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bitNumberFrom2To8), "Bit number must be between 2 and 8.");
-        }
-        
-        return (_rawData[octetFrom1] & (1 << (bitNumberFrom2To8 - 1))) != 0;
-        
-    }
-
-    public void SetBoolToExtend(int octedFrom1, int bitNumber2To8, bool? value)
-    {
-        if (octedFrom1 < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(octedFrom1), "Octet number for extended field must be greater than or equal to 1.");
-        }
-
-        if (_rawData.Length <= octedFrom1)
-        {
-            Array.Resize(ref _rawData, octedFrom1 + 1);
-            for (var i = 0; i < _rawData.Length - 1; i++)
-            {
-                _rawData[i] |= 0b0000_0001; 
-            }
-        }
-        
-        if (bitNumber2To8 is < 2 or > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bitNumber2To8), "Bit number must be between 2 and 8.");
-        }
-
-        if (value.HasValue)
-        {
             if (value.Value)
-            {
-                _rawData[octedFrom1] |= (byte)(1 << (bitNumber2To8 - 1));
-            }
+                _rawData[octet] |= mask;
             else
+                _rawData[octet] &= (byte)~mask;
+        }
+    }
+
+    public override string ToString()
+    {
+        // byte to string conversion
+        var sb = new StringBuilder();
+        sb.Append('[');
+        for (var i = 0; i < DataBitsCount; i++)
+        {
+            sb.Append(this[i]);
+            if (i < DataBitsCount - 1)
             {
-                _rawData[octedFrom1] &= (byte)~(1 << (bitNumber2To8 - 1));
+                sb.Append(", ");
             }
         }
+        sb.Append(']');
+        return sb.ToString();
     }
 }

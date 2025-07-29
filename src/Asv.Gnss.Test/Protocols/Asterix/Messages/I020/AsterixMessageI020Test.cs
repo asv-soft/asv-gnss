@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Asv.Gnss;
+using DeepEqual.Syntax;
 using JetBrains.Annotations;
 using Xunit;
 
@@ -32,15 +33,134 @@ public class AsterixMessageI020Test
             0x35, 0x00, 0x53, 0xFF, 0xC1
         ];
 
-        var message = new AsterixMessageI020();
+        var deserialized = new AsterixMessageI020();
+
+        var origin = new AsterixMessageI020
+        {
+            new AsterixRecordI020
+            {
+                DataSourceIdentifier = new()
+                {
+                    Sac = SystemAreaCode.LocalAirport,
+                    Sic = 2
+                },
+                TargetReportDescriptor = new()
+                {
+                    Ot = false,
+                    Dme = false,
+                    Uat = false,
+                    Vdl4 = false,
+                    Hf = false,
+                    Ms = true,
+                    Ssr = false,
+                    Tst = false,
+                    Sim = false,
+                    Crt = false,
+                    Gbs = false,
+                    Chn = false,
+                    Spi = false,
+                    Rab = false,
+                },
+                TimeOfDay = new AsterixFieldI020Frn003Type140
+                {
+                    Time = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(33502.7109375))
+                },
+                PositionWgs84 = new AsterixFieldI020Frn004Type041
+                {
+                    Latitude = 47.88232132925,
+                    Longitude = 16.32056296698,
+                },
+                PositionCartesian = new AsterixFieldI020Frn005Type042
+                {
+                    X = 173529.5,
+                    Y = 45109.0,
+                },
+                TrackNumber = new AsterixFieldI020Frn006Type161
+                {
+                    TrackNumber = 3528,
+                },
+                TrackStatus = new AsterixFieldI020Frn007Type170
+                {
+                    Cdm = CdmEnum.Invalid,
+                    Cnf = false,
+                    Cst = false,
+                    Mah = false,
+                    Sth = false,
+                    Tre = false
+                },
+                Mode3ACode = new AsterixFieldI020Frn008Type070
+                {
+                    G = false,
+                    L = true,
+                    Mode3ACode = 7000,
+                    V = false,
+                },
+                TrackVelocityCartesian = new AsterixFieldI020Frn009Type202
+                {
+                    Vx = -13.75,
+                    Vy = -9.25,
+                },
+                FlightLevel = new AsterixFieldI020Frn010Type090
+                {
+                    FlightLevelFt = 11.25,
+                    G = false,
+                    V = false,
+                },
+                ModeCCode = null,
+                TargetAddress = new AsterixFieldI020Frn012Type220()
+                {
+                    TargetAddress = 148527,
+                },
+                TargetIdentification = null,
+                MeasuredHeightCartesian = null,
+                GeometricHeightWgs84 = null,
+                CalculatedAcceleration = new AsterixFieldI020Frn016Type210()
+                {
+                    Ax = 0.0,
+                    Ay = 0.0,
+                },
+                VehicleFleetId = null,
+                PreProgrammedMessage = null,
+                PositionAccuracy = null,
+                ContributingDevices = new AsterixFieldI020Frn020Type400
+                {
+
+                },
+                ModeSMbData = new AsterixFieldI020Frn021Type250
+                {
+
+                },
+                CommsAcasCapabilityStatus = new AsterixFieldI020Frn022Type230
+                {
+                    AIC = false,
+                    ARC = true,
+                    B1A = false,
+                    B1B = false,
+                    COM = true,
+                    MSSC = false,
+                    STAT = false
+                },
+                AcasResolutionAdvisoryReport = null,
+                WarningErrorConditions = null,
+                Mode1Code = null,
+                Mode2Code = null,
+                ReservedExpansionField = new AsterixFieldI020Frn027TypeRe()
+                {
+
+                },
+
+            }
+        };
         
         var buffer = new ReadOnlySpan<byte>(data);
-        message.Deserialize(ref buffer);
+        deserialized.Deserialize(ref buffer);
 
-        var rec = (AsterixRecordI020)message.First() ;
-        Assert.Equal(rec.Category, AsterixMessageI020.Category);
-        Assert.Equal(SystemAreaCode.LocalAirport, rec.DataSourceIdentifier!.Sac);
-        Assert.Equal(2, rec.DataSourceIdentifier.Sic);
+        var a = origin.First().Select(x => x.FieldReferenceNumber).ToArray();
+        var b = deserialized.First().Select(x => x.FieldReferenceNumber).ToArray();
+        
+        origin.ShouldDeepEqual(deserialized);
+        
+        
 
     }
 }

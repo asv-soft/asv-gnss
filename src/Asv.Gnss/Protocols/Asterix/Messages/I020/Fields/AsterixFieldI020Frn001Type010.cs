@@ -22,7 +22,15 @@ namespace Asv.Gnss;
 public class AsterixFieldI020Frn001Type010 : AsterixField
 {
     public const byte StaticFrn = 1;
-    public override string Name => "Data Source Identifier";
+    
+    private static StructType? type;
+    public static StructType StructType => type ??= new StructType([
+        SacField,
+        SicField
+    ]);
+    
+    public const string StaticName = "Data Source Identifier";
+    public override string Name => StaticName;
     public override int Category => AsterixMessageI020.Category;
     public override byte FieldReferenceNumber => StaticFrn;
 
