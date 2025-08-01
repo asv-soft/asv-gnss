@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Asv.IO;
 
 namespace Asv.Gnss;
@@ -71,6 +72,52 @@ public static class AsterixProtocol
                         (b2 << 3) | (d2 << 2) | (b4 << 1) | d4);
     }
     
+    
+    public static string GetAircraftId(ReadOnlySpan<byte> data)
+    {
+        var stringLen = (data.Length * 8) / 6;
+        var src = new byte[stringLen];
+        var bitIndex = 0;
+        for (var i = 0; i < stringLen; i++)
+        {
+            src[i] = (byte)SpanBitHelper.GetBitU(data, ref bitIndex, 6);
+            if (src[i] <= 0x1A) src[i] |= 0x40;
+        }
+
+        return Encoding.ASCII.GetString(src);
+    }
+    
+    public static void SetAircraftId(string id, ref Span<byte> data)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return;
+        }
+
+        var bytes = Encoding.ASCII.GetBytes(id);
+        var requiredDataLength = (bytes.Length * 6 + 7) / 8; // Round up to nearest byte
+        
+        if (data.Length < requiredDataLength)
+        {
+            throw new ArgumentException($"Data span is too small. Required: {requiredDataLength}, Available: {data.Length}");
+        }
+
+        // Clear the data first
+        data[..requiredDataLength].Clear();
+        
+        var bitIndex = 0;
+        for (var i = 0; i < bytes.Length; i++)
+        {
+            var value = bytes[i];
+            // Reverse the transformation from GetAircraftId
+            if ((value & 0x40) != 0 && value <= 0x5A) // If it's a letter (A-Z)
+            {
+                value &= 0x1F; // Remove the 0x40 bit to get original 6-bit value
+            }
+        
+        SpanBitHelper.SetBitU(data, ref bitIndex, 6, value);
+    }
+}
     
     
 
