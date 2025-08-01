@@ -21,6 +21,7 @@ public class AsterixFieldI020Frn010Type090 : AsterixField
         .Description("0 Code validated, 1 Code not validated")
         .DataType(BoolType.Default)
         .Build();
+
     public bool V
     {
         get => (_rawValue & (1 << 15)) != 0;
@@ -43,6 +44,8 @@ public class AsterixFieldI020Frn010Type090 : AsterixField
         .Description("0 Default, 1 Garbled code")
         .DataType(BoolType.Default)
         .Build();
+
+    
     public bool G
     {
         get => (_rawValue & (1 << 14)) != 0;
@@ -65,12 +68,18 @@ public class AsterixFieldI020Frn010Type090 : AsterixField
         .Description("Flight Level in feet (positive or negative)")
         .DataType(DoubleType.Default)
         .Build();
-    public double FlightLevelFt
-    {
+
+   /// <summary>
+   /// Gets or sets the Flight Level in feet.
+   /// Represents the flight level as a positive or negative value, calculated from
+   /// a 14-bit two’s complement format and scaled by 25 feet.
+   /// </summary>
+   public double FlightLevelFt
+   {
         get
         {
             // Извлекаем 14-битное значение
-            int raw = _rawValue & 0x3FFF;
+            var raw = _rawValue & 0x3FFF;
 
             // Преобразование из two's complement
             if ((raw & 0x2000) != 0) // если установлен бит знака (бит 13)
@@ -98,8 +107,13 @@ public class AsterixFieldI020Frn010Type090 : AsterixField
         }
     }
 
-    public double FlightLevelMsl
-    {
+   /// <summary>
+   /// Gets or sets the "FlightLevelMsl" property, representing the flight level
+   /// above mean sea level (MSL) in meters.
+   /// Conversion between feet and meters is handled internally, where 1 foot equals 0.3048 meters.
+   /// </summary>
+   public double FlightLevelMsl
+   {
         get => FlightLevelFt * 0.3048; // Convert feet to meters
         set => FlightLevelFt = value / 0.3048; // Convert meters to feet
     }

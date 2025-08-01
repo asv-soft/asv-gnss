@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 
 public class AsterixFieldI020Frn008Type070 : AsterixField
 {
-    private ushort _code;
+    private ushort _rawValue;
     public const byte StaticFrn = 8;
     
     private static StructType? type;
@@ -30,16 +30,16 @@ public class AsterixFieldI020Frn008Type070 : AsterixField
         .Build();
     public bool V
     {
-        get => (_code & (1 << 15)) != 0;
+        get => (_rawValue & (1 << 15)) != 0;
         set
         {
             if (value)
             {
-                _code |= (1 << 15);
+                _rawValue |= (1 << 15);
             }
             else
             {
-                _code &= unchecked((ushort)~(1 << 15));
+                _rawValue &= unchecked((ushort)~(1 << 15));
             }
         }
     }
@@ -52,16 +52,16 @@ public class AsterixFieldI020Frn008Type070 : AsterixField
         .Build();
     public bool G
     {
-        get => (_code & (1 << 14)) != 0;
+        get => (_rawValue & (1 << 14)) != 0;
         set
         {
             if (value)
             {
-                _code |= (1 << 14);
+                _rawValue |= (1 << 14);
             }
             else
             {
-                _code &= unchecked((ushort)~(1 << 14));
+                _rawValue &= unchecked((ushort)~(1 << 14));
             }
         }
     }
@@ -74,16 +74,16 @@ public class AsterixFieldI020Frn008Type070 : AsterixField
         .Build();
     public bool L 
     {
-        get => (_code & (1 << 13)) != 0;
+        get => (_rawValue & (1 << 13)) != 0;
         set
         {
             if (value)
             {
-                _code |= (1 << 13);
+                _rawValue |= (1 << 13);
             }
             else
             {
-                _code &= unchecked((ushort)~(1 << 13));
+                _rawValue &= unchecked((ushort)~(1 << 13));
             }
         }
     }
@@ -95,20 +95,38 @@ public class AsterixFieldI020Frn008Type070 : AsterixField
         .Build();
     public ushort Mode3ACode
     {
-        get => (ushort)((_code >> 0) & 0x0FFF);
-        set => _code = (ushort)((_code & 0xF000) | (value & 0x0FFF));
+        get
+        {
+            var d = (_rawValue & 0x7);
+            var c = ((_rawValue >> 3) & 0x7);
+            var b = ((_rawValue >> 6) & 0x7);
+            var a = ((_rawValue >> 9) & 0x7);
+
+            return (ushort)(a * 1000 + b * 100 + c * 10 + d);
+        }
+        set
+        {
+            // Convert decimal Mode 3/A code to octal digits
+            var a = (value / 1000) % 10;  // Thousands digit
+            var b = (value / 100) % 10;   // Hundreds digit  
+            var c = (value / 10) % 10;    // Tens digit
+            var d = value % 10;           // Units digit
+            
+            // Clear the lower 12 bits (Mode 3/A code area) and preserve upper bits
+            _rawValue = (ushort)((_rawValue & 0xF000) | ((a & 0x7) << 9) | ((b & 0x7) << 6) | ((c & 0x7) << 3) | (d & 0x7));
+        }
     }
-    
+
 
     public override void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
-        _code = BinaryPrimitives.ReadUInt16BigEndian(buffer);
+        _rawValue = BinaryPrimitives.ReadUInt16BigEndian(buffer);
         buffer = buffer[2..];
     }
 
     public override void Serialize(ref Span<byte> buffer)
     {
-        BinaryPrimitives.WriteUInt16BigEndian(buffer, _code);
+        BinaryPrimitives.WriteUInt16BigEndian(buffer, _rawValue);
         buffer = buffer[2..];
     }
 

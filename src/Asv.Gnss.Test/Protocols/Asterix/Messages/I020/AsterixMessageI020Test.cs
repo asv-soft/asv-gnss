@@ -12,7 +12,7 @@ public class AsterixMessageI020Test
 {
 
     [Fact]
-    public void METHOD()
+    public void Deserialize_ShouldPreserveAllProperties()
     {
         // https://github.com/OpenATSGmbH/jASTERIX/blob/master/src/test/cat020ed1.5.bin
         // https://github.com/OpenATSGmbH/jASTERIX/blob/master/src/test/test_cat020_1.5.cpp
@@ -67,8 +67,8 @@ public class AsterixMessageI020Test
                 },
                 PositionWgs84 = new AsterixFieldI020Frn004Type041
                 {
-                    Latitude = 47.88232132925,
-                    Longitude = 16.32056296698,
+                    Latitude = 47.88239300251007,
+                    Longitude = 16.320587396621704,
                 },
                 PositionCartesian = new AsterixFieldI020Frn005Type042
                 {
@@ -81,7 +81,7 @@ public class AsterixMessageI020Test
                 },
                 TrackStatus = new AsterixFieldI020Frn007Type170
                 {
-                    Cdm = CdmEnum.Invalid,
+                    Cdm = CdmEnum.Maintaining,
                     Cnf = false,
                     Cst = false,
                     Mah = false,
@@ -102,7 +102,7 @@ public class AsterixMessageI020Test
                 },
                 FlightLevel = new AsterixFieldI020Frn010Type090
                 {
-                    FlightLevelFt = 11.25,
+                    FlightLevelFt = 11.25 * 100.0, // 1125 feet
                     G = false,
                     V = false,
                 },

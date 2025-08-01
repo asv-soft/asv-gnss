@@ -20,12 +20,11 @@ public class AsterixFieldI020Frn006Type161Test
             TrackNumber = expected
         };
 
-        Span<byte> buffer = stackalloc byte[field.GetByteSize()];
-        field.Serialize(ref buffer);
+        var buffer = new byte[field.GetByteSize()];
+        var span = new Span<byte>(buffer);
+        field.Serialize(ref span);
 
-        var bytes = buffer.ToArray();
-
-        var readBuffer = new ReadOnlySpan<byte>(bytes);
+        var readBuffer = new ReadOnlySpan<byte>(buffer);
         var deserializedField = new AsterixFieldI020Frn006Type161();
         deserializedField.Deserialize(ref readBuffer);
 

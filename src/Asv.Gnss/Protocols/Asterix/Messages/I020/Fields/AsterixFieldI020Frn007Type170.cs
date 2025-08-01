@@ -85,12 +85,20 @@ public class AsterixFieldI020Frn007Type170 : AsterixField
         set => RawValue[0] = value;
     }
 
+    
     private static readonly Field TreField = new Field.Builder()
         .Name(nameof(Tre))
         .Title("TRE")
         .Description("0 Default, 1 Last report for a track")
         .DataType(BoolType.Default)
         .Build();
+
+    /// <summary>
+    /// Indicates the Track Termination Report (TRE) status:
+    /// = 0 Default (not the last report for a track)
+    /// = 1 Last report for a track
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the value of Tre is not initialized.</exception
     public bool Tre
     {
         get => RawValue[1] ?? throw new InvalidOperationException("Tre is not initialized");
