@@ -16,7 +16,7 @@ env:
 jobs:
   deploy:
     name: 'Deploy'
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
-            8.x.x
+            9.x.x
 
       - name: Set version variable
         env:
