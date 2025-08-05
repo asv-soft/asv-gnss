@@ -124,21 +124,28 @@ public class AsterixMessageI020Test
                 PositionAccuracy = null,
                 ContributingDevices = new AsterixFieldI020Frn020Type400
                 {
-
+                    10,13,15
                 },
                 ModeSMbData = new AsterixFieldI020Frn021Type250
                 {
+                    Data =
+                    {
+                        new ModeSData
+                        {
+                            
+                        }
+                    }
 
                 },
                 CommsAcasCapabilityStatus = new AsterixFieldI020Frn022Type230
                 {
-                    AIC = false,
-                    ARC = true,
+                    Aic = false,
+                    Arc = true,
                     B1A = false,
-                    B1B = false,
-                    COM = true,
-                    MSSC = false,
-                    STAT = false
+                    B1B = 0,
+                    Com = CommunicationsCapability.CommAAndB,
+                    Mssc = false,
+                    Stat = FlightStatus.NoAlertNoSpiAirborne
                 },
                 AcasResolutionAdvisoryReport = null,
                 WarningErrorConditions = null,

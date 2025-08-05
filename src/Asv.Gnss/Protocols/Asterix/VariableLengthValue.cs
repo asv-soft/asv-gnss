@@ -88,4 +88,9 @@ public class VariableLengthValue : ISizedSpanSerializable
         sb.Append(']');
         return sb.ToString();
     }
+
+    public void Clear()
+    {
+        _rawData = [0x00];
+    }
 }

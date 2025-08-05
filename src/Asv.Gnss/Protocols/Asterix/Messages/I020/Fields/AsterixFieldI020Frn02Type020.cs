@@ -59,81 +59,61 @@ public class AsterixFieldI020Frn002Type020 : AsterixField
     {
         
         var temp = Ot;
-        BoolType.Accept(visitor, OtField, OtField.DataType, ref temp);
+        BoolType.Accept(visitor, OtField, ref temp);
         Ot = temp;
         
         temp = Dme;
-        BoolType.Accept(visitor, DmeField, DmeField.DataType, ref temp);
+        BoolType.Accept(visitor, DmeField, ref temp);
         Dme = temp;
         
         temp = Uat;
-        BoolType.Accept(visitor, UatField, UatField.DataType, ref temp);
+        BoolType.Accept(visitor, UatField, ref temp);
         Uat = temp;
         
         temp = Vdl4;
-        BoolType.Accept(visitor, Vdl4Field, Vdl4Field.DataType, ref temp);
+        BoolType.Accept(visitor, Vdl4Field, ref temp);
         Vdl4 = temp;
         
         temp = Hf;
-        BoolType.Accept(visitor, HfField, HfField.DataType, ref temp);
+        BoolType.Accept(visitor, HfField, ref temp);
         Hf = temp;
         
         temp = Ms;
-        BoolType.Accept(visitor, MsField, MsField.DataType, ref temp);
+        BoolType.Accept(visitor, MsField, ref temp);
         Ms = temp;
         
         temp = Ssr;
-        BoolType.Accept(visitor, SsrField, SsrField.DataType, ref temp);
+        BoolType.Accept(visitor, SsrField, ref temp);
         Ssr = temp;
 
-        if (Tst.HasValue)
-        {
-            temp = Tst.Value;
-            BoolType.Accept(visitor, TstField, TstField.DataType, ref temp);
-            Tst = temp;
-        }
+        var nullableTemp = Tst;
+        BoolOptionalType.Accept(visitor, TstField,ref nullableTemp);
+        Tst = nullableTemp;
         
-        if (Sim.HasValue)
-        {
-            temp = Sim.Value;
-            BoolType.Accept(visitor, SimField, SimField.DataType, ref temp);
-            Sim = temp;
-        }
+        nullableTemp = Sim;
+        BoolOptionalType.Accept(visitor, SimField, ref nullableTemp);
+        Sim = nullableTemp;
         
-        if (Crt.HasValue)
-        {
-            temp = Crt.Value;
-            BoolType.Accept(visitor, CrtField, CrtField.DataType, ref temp);
-            Crt = temp;
-        }
+        nullableTemp = Crt;
+        BoolOptionalType.Accept(visitor, CrtField, ref nullableTemp);
+        Crt = nullableTemp;
         
-        if (Gbs.HasValue)
-        {
-            temp = Gbs.Value;
-            BoolType.Accept(visitor, GbsField, GbsField.DataType, ref temp);
-            Gbs = temp;
-        }
+        nullableTemp = Gbs;
+        BoolOptionalType.Accept(visitor, GbsField, ref nullableTemp);
+        Gbs = nullableTemp;
         
-        if (Chn.HasValue)
-        {
-            temp = Chn.Value;
-            BoolType.Accept(visitor, ChnField, ChnField.DataType, ref temp);
-            Chn = temp;
-        }
+        nullableTemp = Chn;
+        BoolOptionalType.Accept(visitor, ChnField, ref nullableTemp);
+        Chn = nullableTemp;
         
-        if (Spi.HasValue)
-        {
-            temp = Spi.Value;
-            BoolType.Accept(visitor, SpiField, SpiField.DataType, ref temp);
-            Spi = temp;
-        }
+        nullableTemp = Spi;
+        BoolOptionalType.Accept(visitor, SpiField, ref nullableTemp);
+        Spi = nullableTemp;
         
-        if (Rab.HasValue)
-        {
-            temp = Rab.Value;
-            BoolType.Accept(visitor, RabField, RabField.DataType, ref temp);
-            Rab = temp;
-        }
+        nullableTemp = Rab;
+        BoolOptionalType.Accept(visitor, RabField, ref nullableTemp);
+        Rab = nullableTemp;
+        
     }
 
     public VariableLengthValue RawValue { get; } = new();

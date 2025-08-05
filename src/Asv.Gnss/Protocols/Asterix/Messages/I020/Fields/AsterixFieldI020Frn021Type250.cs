@@ -7,7 +7,8 @@ namespace Asv.Gnss;
 public class AsterixFieldI020Frn021Type250 : AsterixField
 {
     public const byte StaticFrn = 21;
-    public override string Name => "Mode S MB Data";
+    public const string StaticName = "Mode S MB Data";
+    public override string Name => StaticName;
     public override int Category => AsterixMessageI020.Category;
     public override byte FieldReferenceNumber => StaticFrn;
     public override void Deserialize(ref ReadOnlySpan<byte> buffer)
@@ -62,8 +63,6 @@ public class ModeSData : ISizedSpanSerializable, IVisitable
         RawDataField
     ]);
     
-    
-    
     public void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
         buffer[..ByteSize].CopyTo(RawData);
@@ -81,7 +80,7 @@ public class ModeSData : ISizedSpanSerializable, IVisitable
     public int GetByteSize() => ByteSize;
     public void Accept(IVisitor visitor)
     {
-        ArrayType.Accept(visitor, RawDataField, RawDataField.DataType, RawData.Length, (index, v, f, t) =>
+        ArrayType.Accept(visitor, RawDataField, (index, v, f, t) =>
         {
             var temp = RawData[index];
             UInt8Type.Accept(v,f,t, ref temp);

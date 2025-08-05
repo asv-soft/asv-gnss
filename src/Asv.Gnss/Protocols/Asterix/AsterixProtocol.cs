@@ -86,8 +86,8 @@ public static class AsterixProtocol
 
         return Encoding.ASCII.GetString(src);
     }
-    
-    public static void SetAircraftId(string id, ref Span<byte> data)
+
+    public static void SetAircraftId(string? id, ref Span<byte> data)
     {
         if (string.IsNullOrEmpty(id))
         {
@@ -96,29 +96,38 @@ public static class AsterixProtocol
 
         var bytes = Encoding.ASCII.GetBytes(id);
         var requiredDataLength = (bytes.Length * 6 + 7) / 8; // Round up to nearest byte
-        
+
         if (data.Length < requiredDataLength)
         {
-            throw new ArgumentException($"Data span is too small. Required: {requiredDataLength}, Available: {data.Length}");
+            throw new ArgumentException(
+                $"Data span is too small. Required: {requiredDataLength}, Available: {data.Length}");
         }
 
         // Clear the data first
         data[..requiredDataLength].Clear();
-        
+
         var bitIndex = 0;
-        for (var i = 0; i < bytes.Length; i++)
+        foreach (var t in bytes)
         {
-            var value = bytes[i];
+            var value = t;
             // Reverse the transformation from GetAircraftId
             if ((value & 0x40) != 0 && value <= 0x5A) // If it's a letter (A-Z)
             {
                 value &= 0x1F; // Remove the 0x40 bit to get original 6-bit value
             }
-        
-        SpanBitHelper.SetBitU(data, ref bitIndex, 6, value);
+
+            SpanBitHelper.SetBitU(data, ref bitIndex, 6, value);
+        }
     }
-}
-    
-    
+
+
+    /// <summary>
+    /// Valid characters for aircraft identification according to ICAO Annex 10 Volume IV section 3.1.2.9
+    /// Includes uppercase letters A-Z, digits 0-9, and space character
+    /// </summary>
+    public const string ValidIcaoCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+
+
+
 
 }
