@@ -1,23 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
-    <Version>1.1.7</Version>
-    <LangVersion>9.0</LangVersion>
-    <Authors>https://github.com/asvol</Authors>
-    <Company>https://github.com/asvol</Company>
-    <Copyright>https://github.com/asvol</Copyright>
-    <PackageProjectUrl>https://github.com/asvol/asv-gnss</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/asvol/asv-gnss</RepositoryUrl>
-    <PackageTags />
+    <TargetFramework>net9.0</TargetFramework>
+    <FileVersion>$(ProductVersion)</FileVersion>
+    <Version>2.0.0-dev.3</Version>
+    <PackageVersion>$(ProductVersion)</PackageVersion>
+    <Authors>https://github.com/asv-soft</Authors>
+    <Company>https://github.com/asv-soft</Company>
+    <Copyright>https://github.com/asv-soft</Copyright>
+    <PackageProjectUrl>https://github.com/asv-soft/asv-gnss</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/asv-soft/asv-gnss</RepositoryUrl>
+    <PackageTags>.net;gnss;gps;glonass;galileo;ublox;sino-gnss;</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\Asv.Gnss.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Asv.Common" Version="2.0.0" />
-    <PackageReference Include="Asv.IO" Version="2.0.0" />
+    <PackageReference Include="Asv.Common" Version="$(AsvCommonVersion)" />
+    <PackageReference Include="Asv.IO" Version="$(AsvCommonVersion)" />
     <PackageReference Include="Geodesy" Version="4.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Devices\Server\" />
   </ItemGroup>
 </Project>
