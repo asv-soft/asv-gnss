@@ -1399,16 +1399,16 @@ public static class RtcmV3Protocol
 
     public static double GetBits38(ReadOnlySpan<byte> buff, ref int pos)
     {
-        return SpanBitHelper.GetBitS(buff, ref pos, 32) * 64.0 + SpanBitHelper.GetBitU(buff, ref pos, 6);
+        var intPart = SpanBitHelper.GetBitS(buff, ref pos, 32);
+        var fracPart = SpanBitHelper.GetBitU(buff, ref pos, 6);
+        return intPart * 64.0 + fracPart;
     }
     
     public static void SetBits38(Span<byte> buff, ref int pos, double value)
     {
         var raw = (long)Math.Round(value);
-
         var intPart = (int)(raw >> 6); // старшие 32 бита (signed)
         var fracPart = (uint)(raw & 0x3F); // младшие 6 бит
-
         SpanBitHelper.SetBitS(buff, ref pos, 32, intPart);
         SpanBitHelper.SetBitU(buff, ref pos, 6, fracPart);
     }

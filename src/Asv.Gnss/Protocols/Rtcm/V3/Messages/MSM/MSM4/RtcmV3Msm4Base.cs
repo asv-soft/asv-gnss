@@ -106,24 +106,21 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
                 nCell++;
         
         // ---------- rough range: целые миллисекунды (8 бит) ----------
-        for (int j = 0; j < SatelliteIds.Length; j++)
+        for (var j = 0; j < SatelliteIds.Length; j++)
         {
-            uint int_ms;
-            if (RoughRangesRaw[j] == 0.0)
+            uint intMs;
+            if (RoughRangesRaw[j] == 0.0 || RoughRangesRaw[j] < 0.0 || RoughRangesRaw[j] > RtcmV3Protocol.RANGE_MS * 255.0)
             {
-                int_ms = 255;
-            }
-            else if (RoughRangesRaw[j] < 0.0 || RoughRangesRaw[j] > RtcmV3Protocol.RANGE_MS * 255.0)
-            {
-                int_ms = 255;
+                intMs = 255;
             }
             else
             {
                 // ROUND_U(rrng/RANGE_MS/P2_10) >> 10
-                uint q = RoundU(RoughRangesRaw[j] / RtcmV3Protocol.RANGE_MS / RtcmV3Protocol.P2_10);
-                int_ms = q >> 10;
+                var q = RoundU(RoughRangesRaw[j] / RtcmV3Protocol.RANGE_MS / RtcmV3Protocol.P2_10);
+                intMs = q >> 10;
             }
-            SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, int_ms);
+
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, intMs);
         }
         
         // ---------- rough range: дробь 1/1024 мс (10 бит) ----------
@@ -207,7 +204,7 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
         var sig = new SignalRaw[SignalIds.Length];
         var sys = RtcmV3Protocol.GetNavigationSystem(Id);
 
-        Satellites = Array.Empty<Satellite>();
+        Satellites = [];
         if (SatelliteIds.Length == 0) return;
         Satellites = new Satellite[SatelliteIds.Length];
 
@@ -216,15 +213,14 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
         {
             sig[i] = new SignalRaw
             {
-                RinexCode = RtcmV3Protocol.GetRinexCodeFromMsm(sys, SignalIds[i] - 1)
+                RinexCode = RtcmV3Protocol.GetRinexCodeFromMsm(sys, SignalIds[i] - 1),
             };
-
             /* signal to rinex obs type */
             sig[i].ObservationCode = RtcmV3Protocol.Obs2Code(sig[i].RinexCode);
             sig[i].ObservationIndex = RtcmV3Protocol.Code2Idx(sys, sig[i].ObservationCode);
         }
 
-
+        
         var k = 0;
         for (var i = 0; i < SatelliteIds.Length; i++)
         {
@@ -240,7 +236,6 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
 
 
             var fcn = 0;
-            
             var index = 0;
             Satellites[i].Signals = new Signal[CellMask[i].Count(_ => _ != 0)];
 

@@ -16,20 +16,16 @@ public abstract class RtcmV3MessageBase : IProtocolMessage<ushort>
     /// length too small, or incorrect message number.
     /// </exception>
     
-    public byte[] RawData { get; set; }
-    
     public void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
-        RawData = new byte[buffer.Length];
-        buffer.CopyTo(RawData);
-        
         var bitIndex = 0;
         var preamble = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 8);
         if (preamble != RtcmV3Protocol.SyncByte)
         {
             throw new Exception($"Deserialization RTCMv3 message failed: want {RtcmV3Protocol.SyncByte:X}. Read {preamble:X}");
         }
-        var reserved = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6); 
+
+        bitIndex += 6; // reserved
         var messageLength = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 10);
         if (messageLength > (buffer.Length - 3 /* preamble-8bit + reserved-6bit + length-10bit  */ - 3 /* crc 24 bit */))
         {

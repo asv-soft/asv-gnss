@@ -14,7 +14,7 @@ public class RtcmV3Command
     /// <param name="cs">-cs, connection string</param>
     /// <returns></returns>
     [Command("rtcm")]
-    public int Run(string cs = "tcp://192.168.137.71:30")
+    public int Run(string cs = "tcp://172.16.0.1:30")
     {
         var factory = LoggerFactory.Create(logging =>
         {
@@ -54,18 +54,11 @@ public class RtcmV3Command
         });
 
         var index = 0;
-        // router.OnRxMessage.Subscribe(x =>
-        // {
-        //     logger.ZLogInformation($"{index++:000}: {x} ");
-        // });
-
-        var rtcmV3Factory = new RtcmV3MessageFactory();
-        router.OnRxMessage.FilterByType<RtcmV3MessageBase>().Subscribe(x =>
+        router.OnRxMessage.Subscribe(x =>
         {
-            var newBuffer = new byte[x.GetByteSize()];
-            var buffer = new Span<byte>(newBuffer);
-            x.Serialize(ref buffer);
+            logger.ZLogInformation($"{index++:000}: {x} ");
         });
+
         
         ConsoleAppHelper.WaitCancelPressOrProcessExit();
         return 0;

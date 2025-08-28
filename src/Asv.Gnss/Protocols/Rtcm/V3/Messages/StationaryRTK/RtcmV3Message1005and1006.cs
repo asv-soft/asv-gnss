@@ -14,9 +14,12 @@ public abstract class RtcmV3Message1005and1006 : RtcmV3MessageBase
         ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
 
         ITRF = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
-        bitIndex += 4;
+        GpsIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
+        GlonassIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
+        GalileoIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
+        RefStationIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
         rr[0] = RtcmV3Protocol.GetBits38(buffer, ref bitIndex);
-        SingleReceiverOscillatorIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+        SingleReceiverOscillatorIndicator = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1) != 0;
         bitIndex += 1; // Reserved
         rr[1] = RtcmV3Protocol.GetBits38(buffer, ref bitIndex);
         QuarterCycleIndicator = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
@@ -38,6 +41,14 @@ public abstract class RtcmV3Message1005and1006 : RtcmV3MessageBase
         Height = 0.0;
     }
 
+    public bool GpsIndicator { get; set; }
+
+    public bool GlonassIndicator { get; set; }
+
+    public bool GalileoIndicator { get; set; }
+
+    public bool RefStationIndicator { get; set; }
+
     protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
     {
         SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, ReferenceStationID);
@@ -47,9 +58,12 @@ public abstract class RtcmV3Message1005and1006 : RtcmV3MessageBase
         rr[1] = Y * 10000;
         rr[2] = Z * 10000;
 
-        bitIndex += 4;
+        SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, GpsIndicator ? 1 : 0);
+        SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, GlonassIndicator ? 1 : 0);
+        SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, GalileoIndicator ? 1 : 0);
+        SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, RefStationIndicator ? 1 : 0);
         RtcmV3Protocol.SetBits38(buffer, ref bitIndex, rr[0]);
-        SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, SingleReceiverOscillatorIndicator);
+        SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, SingleReceiverOscillatorIndicator ? 1 : 0);
         bitIndex += 1; // Reserved
         RtcmV3Protocol.SetBits38(buffer, ref bitIndex, rr[1]);
         SpanBitHelper.SetBitU(buffer, ref bitIndex, 2, QuarterCycleIndicator);
@@ -64,13 +78,13 @@ public abstract class RtcmV3Message1005and1006 : RtcmV3MessageBase
     public byte QuarterCycleIndicator { get; set; }
 
     /// <summary>
-    /// 0 - All raw data observations in messages 1001-1004 and 1009-1012
+    /// False - All raw data observations in messages 1001-1004 and 1009-1012
     /// may be measured at different instants.This indicator should be set
     /// to “0” unless all the conditions for “1” are clearly met.
-    /// 1 - All raw data observations in messages 1001-1004 and 1009-1012
+    /// True - All raw data observations in messages 1001-1004 and 1009-1012
     /// are measured at the same instant, as described in Section 3.1.4.
     /// </summary>
-    public byte SingleReceiverOscillatorIndicator { get; set; }
+    public bool SingleReceiverOscillatorIndicator { get; set; }
 
 
     /// <summary>

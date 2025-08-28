@@ -322,7 +322,7 @@ public abstract class RtcmV3MsmBase : RtcmV3MessageBase
         if (SatelliteIds is null) SatelliteIds = [];
         foreach (var sv in SatelliteIds)
         {
-            if (sv < 1 || sv > 64)
+            if (sv is < 1 or > 64)
                 throw new ArgumentOutOfRangeException(nameof(SatelliteIds), $"SatelliteId {sv} out of [1..64]");
         }
 
