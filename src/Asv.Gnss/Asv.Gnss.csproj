@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksValue)</TargetFrameworks>
     <FileVersion>$(ProductVersion)</FileVersion>
-    <Version>2.0.0-dev.3</Version>
+    <Version>$(ProductVersion)</Version>
     <PackageVersion>$(ProductVersion)</PackageVersion>
     <Authors>https://github.com/asv-soft</Authors>
     <Company>https://github.com/asv-soft</Company>
@@ -20,8 +20,5 @@
   <ItemGroup>
     <PackageReference Include="Asv.Common" Version="$(AsvCommonVersion)" />
     <PackageReference Include="Asv.IO" Version="$(AsvCommonVersion)" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Devices\Server\" />
   </ItemGroup>
 </Project>
