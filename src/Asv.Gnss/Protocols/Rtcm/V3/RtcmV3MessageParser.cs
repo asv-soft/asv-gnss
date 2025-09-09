@@ -46,83 +46,90 @@ public class RtcmV3MessageParser : ProtocolParser<RtcmV3MessageBase, ushort>
     public override bool Push(byte data)
     {
         switch (_state)
-            {
-                case State.Sync:
-                    if (data == RtcmV3Protocol.SyncByte)
-                    {
-                        _state = State.Preamb1;
-                        _buffer[0] = data;
-                    }
-                    break;
-                case State.Preamb1:
-                    _buffer[1] = data;
-                    _state = State.Preamb2;
-                    break;
-                case State.Preamb2:
-                    _buffer[2] = data;
-                    _state = State.Payload;
-                    _payloadLength = (ushort)BitHelper.GetBitU(_buffer, 14 /* preamble-8bit + reserved-6bit */, 10 /* length-10bit */);
-                    _payloadReadedBytes = 0;
-                    if (_payloadLength > _buffer.Length)
-                    {
-                        // buffer oversize
-                        Reset();
-                    }
-                    break;
-                case State.Payload:
-                    // read payload
-                    if (_payloadReadedBytes < _payloadLength)
-                    {
-                        _buffer[_payloadReadedBytes + 3] = data;
-                        ++_payloadReadedBytes;
-                    }
-                    else
-                    {
-                        _state = State.Crc1;
-                        goto case State.Crc1;
-                    }
-                    break;
-                case State.Crc1:
-                    _buffer[_payloadLength + 3] = data;
-                    _state = State.Crc2;
-                    break;
-                case State.Crc2:
-                    _buffer[_payloadLength + 3 + 1] = data;
-                    _state = State.Crc3;
-                    break;
-                case State.Crc3:
-                    _buffer[_payloadLength + 3 + 2] = data;
-                    var msgId = RtcmV3Protocol.GetMessageId(_buffer);
-                    var spanMsg = new ReadOnlySpan<byte>(_buffer, 0, 3 /* preamble-8bit + reserved-6bit + length-10bit */ + _payloadLength + 3 /* CRC24 */);
-                    try
-                    {
-                        InternalParsePacket(msgId, ref spanMsg);
-                        Reset();
-                        return true;
-                    }
-                    catch (ProtocolParserException ex)
-                    {
-                        _logger.ZLogTrace($"{ex.Message}[RtcmV3Message{msgId}]");
-                        InternalOnError(ex);
-                        return false;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.ZLogTrace($"{ex.Message}[RtcmV3Message{msgId}]");
-                        InternalOnError(new ProtocolParserException(Info,"Parser ",ex));
-                        return false;
-                    }
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            return false;
+        {
+            case State.Sync:
+                if (data == RtcmV3Protocol.SyncByte)
+                {
+                    _state = State.Preamb1;
+                    _buffer[0] = data;
+                }
+
+                break;
+            case State.Preamb1:
+                _buffer[1] = data;
+                _state = State.Preamb2;
+                break;
+            case State.Preamb2:
+                _buffer[2] = data;
+                _state = State.Payload;
+                _payloadLength = (ushort)BitHelper.GetBitU(_buffer, 14 /* preamble-8bit + reserved-6bit */,
+                    10 /* length-10bit */);
+                _payloadReadedBytes = 0;
+                if (_payloadLength > _buffer.Length)
+                {
+                    // buffer oversize
+                    Reset();
+                }
+
+                break;
+            case State.Payload:
+                // read payload
+                if (_payloadReadedBytes < _payloadLength)
+                {
+                    _buffer[_payloadReadedBytes + 3] = data;
+                    ++_payloadReadedBytes;
+                }
+                else
+                {
+                    _state = State.Crc1;
+                    goto case State.Crc1;
+                }
+
+                break;
+            case State.Crc1:
+                _buffer[_payloadLength + 3] = data;
+                _state = State.Crc2;
+                break;
+            case State.Crc2:
+                _buffer[_payloadLength + 3 + 1] = data;
+                _state = State.Crc3;
+                break;
+            case State.Crc3:
+                _buffer[_payloadLength + 3 + 2] = data;
+                var msgId = RtcmV3Protocol.GetMessageId(_buffer);
+                var spanMsg = new ReadOnlySpan<byte>(_buffer, 0,
+                    3 /* preamble-8bit + reserved-6bit + length-10bit */ + _payloadLength + 3 /* CRC24 */);
+                try
+                {
+                    InternalParsePacket(msgId, ref spanMsg);
+                    Reset();
+                    return true;
+                }
+                catch (ProtocolParserException ex)
+                {
+                    _logger.ZLogTrace($"{ex.Message}[RtcmV3Message{msgId}]");
+                    InternalOnError(ex);
+                    Reset();
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    _logger.ZLogTrace($"{ex.Message}[RtcmV3Message{msgId}]");
+                    InternalOnError(new ProtocolParserException(Info, "Parser ", ex));
+                    Reset();
+                    return false;
+                }
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        return false;
     }
 
     public override void Reset()
     {
         _state = State.Sync;
     }
-    
+
     /// <summary>
     /// Represents the state of a system.
     /// </summary>
