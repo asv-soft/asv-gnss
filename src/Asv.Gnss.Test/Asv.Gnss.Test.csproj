@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksValue)</TargetFrameworks>
     <IsPackable>false</IsPackable>
-    <Version>2.0.0-dev.3</Version>
+    <Version>$(ProductVersion)</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" />
