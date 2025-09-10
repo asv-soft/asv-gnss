@@ -24,6 +24,8 @@ public class GnssDevice : ClientDevice<GnssDeviceId>
     protected override async IAsyncEnumerable<IMicroserviceClient> InternalCreateMicroservices([EnumeratorCancellation]CancellationToken cancel)
     {
         yield return new NmeaMicroserviceClient(_context, _id);
+        yield return new RtcmV3MicroserviceClient(_context, _id);
+        yield return new UbxMicroserviceClient(_context, _id);
     }
 
     public override ILinkIndicator Link => ManualLinkIndicator;
