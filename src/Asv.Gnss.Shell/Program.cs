@@ -10,5 +10,6 @@ Console.BackgroundColor = ConsoleColor.Black;
         
 var app = ConsoleApp.Create();
 
-app.Add<NmeaCommand>();
+// app.Add<NmeaCommand>();
+app.Add<RtcmV3Command>();
 await app.RunAsync(args);

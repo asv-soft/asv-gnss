@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>$(TargetFrameworksValue)</TargetFrameworks>
     <FileVersion>$(ProductVersion)</FileVersion>
     <Version>$(ProductVersion)</Version>
     <PackageVersion>$(ProductVersion)</PackageVersion>
@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/asv-soft/asv-gnss</RepositoryUrl>
     <PackageTags>.net;gnss;gps;glonass;galileo;ublox;sino-gnss;</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
+    <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA, Asterix and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -20,9 +20,5 @@
   <ItemGroup>
     <PackageReference Include="Asv.Common" Version="$(AsvCommonVersion)" />
     <PackageReference Include="Asv.IO" Version="$(AsvCommonVersion)" />
-    <PackageReference Include="Geodesy" Version="4.1.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Devices\Server\" />
   </ItemGroup>
 </Project>

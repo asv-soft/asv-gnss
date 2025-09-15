@@ -7,7 +7,7 @@ public class GnssDeviceFactory : IClientDeviceFactory
 {
     public bool TryIdentify(IProtocolMessage message, out DeviceId? deviceId)
     {
-        if (message is not NmeaMessageBase nmeaMessage) // TODO: add support for other protocols
+        if ((message is not NmeaMessageBase) && (message is not RtcmV3MessageBase) && (message is not UbxMessageBase)) // TODO: add support for other protocols
         {
             deviceId = null;
             return false;
