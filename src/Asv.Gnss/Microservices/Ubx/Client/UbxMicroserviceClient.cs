@@ -11,10 +11,10 @@ namespace Asv.Gnss;
 
 public interface IUbxMicroserviceClient : IMicroserviceClient
 {
-    Task Push<T>(T packet, int timeoutMs = 1000, int attemptCount = 5, CancellationToken cancel = default)
+    Task Push<T>(T packet, int timeoutMs = 3000, int attemptCount = 5, CancellationToken cancel = default)
         where T : UbxMessageBase, new();
 
-    Task<TPacket?> Pool<TPacket, TPoolPacket>(TPoolPacket packet, int timeoutMs = 1000, int attemptCount = 5,
+    Task<TPacket?> Pool<TPacket, TPoolPacket>(TPoolPacket packet, int timeoutMs = 3000, int attemptCount = 5,
         CancellationToken cancel = default)
         where TPacket : UbxMessageBase
         where TPoolPacket : UbxMessageBase, new();
@@ -70,7 +70,7 @@ public class UbxMicroserviceClient : MicroserviceClient<UbxMessageBase>, IUbxMic
     }
 
     
-    public async Task Push<TPoolPacket>(TPoolPacket packet, int timeoutMs = 1000, int attemptCount = 5, CancellationToken cancel = default)
+    public async Task Push<TPoolPacket>(TPoolPacket packet, int timeoutMs = 3000, int attemptCount = 5, CancellationToken cancel = default)
         where TPoolPacket : UbxMessageBase, new()
     {
         FilterDelegate<(UbxAckAck?, UbxAckNak?), UbxMessageBase> filter = Filter;
@@ -101,7 +101,7 @@ public class UbxMicroserviceClient : MicroserviceClient<UbxMessageBase>, IUbxMic
         }
     }
 
-    public async Task<TPacket?> Pool<TPacket, TPoolPacket>(TPoolPacket packet, int timeoutMs = 1000, int attemptCount = 5, CancellationToken cancel = default) 
+    public async Task<TPacket?> Pool<TPacket, TPoolPacket>(TPoolPacket packet, int timeoutMs = 3000, int attemptCount = 5, CancellationToken cancel = default) 
         where TPacket : UbxMessageBase
         where TPoolPacket : UbxMessageBase, new()
     {
