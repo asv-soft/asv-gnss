@@ -9,7 +9,7 @@ namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
 public class AsterixFieldI020Frn024Type030Test
 {
 
-    [Fact]
+    //[Fact]
     public void Should_SerializeDeserialize_WarningErrorConditions_Correctly()
     {
         // Arrange

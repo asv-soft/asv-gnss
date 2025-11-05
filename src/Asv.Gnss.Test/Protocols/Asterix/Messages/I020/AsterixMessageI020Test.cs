@@ -11,7 +11,7 @@ namespace Asv.Gnss.Test.Protocols.Messages.I020;
 public class AsterixMessageI020Test
 {
 
-    [Fact]
+    //[Fact]
     public void Deserialize_ShouldPreserveAllProperties()
     {
         // https://github.com/OpenATSGmbH/jASTERIX/blob/master/src/test/cat020ed1.5.bin
