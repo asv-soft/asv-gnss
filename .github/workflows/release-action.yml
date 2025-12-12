@@ -26,6 +26,7 @@ jobs:
         with:
           dotnet-version: |
             9.x.x
+            10.x.x
 
       - name: Set version variable
         env:
