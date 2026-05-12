@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		..\README.md = ..\README.md
 		..\.github\workflows\release-action.yml = ..\.github\workflows\release-action.yml
 		..\.github\workflows\release-debug-action.yml = ..\.github\workflows\release-debug-action.yml
+		.aiassistant\rules\comments.md = .aiassistant\rules\comments.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Gnss.Shell", "Asv.Gnss.Shell\Asv.Gnss.Shell.csproj", "{793E5961-4CC0-4BCB-8DD4-ABE40240E49E}"

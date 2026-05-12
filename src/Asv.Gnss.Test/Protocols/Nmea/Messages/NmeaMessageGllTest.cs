@@ -25,6 +25,11 @@ public class NmeaMessageGllTest(ITestOutputHelper output)
             "$GPGLL,5133.81,N,00042.25,W*75",
             "$GPGLL,5133.8100000,N,0042.2500000,W,,,"
         },
+        {
+            // v1.0.0 NmeaTests.TestGGLL
+            "$GPGLL,5508.7020098,N,06124.3378698,E,130521.00,A,M*64",
+            "$GPGLL,5508.7020098,N,6124.3378698,E,130521.000,A,M"
+        },
     };
 
 }
