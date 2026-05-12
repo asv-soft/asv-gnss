@@ -11,7 +11,7 @@ namespace Asv.Gnss.Test.Protocols.Messages.I020;
 public class AsterixMessageI020Test
 {
 
-    //[Fact]
+    [Fact]
     public void Deserialize_ShouldPreserveAllProperties()
     {
         // https://github.com/OpenATSGmbH/jASTERIX/blob/master/src/test/cat020ed1.5.bin
@@ -124,16 +124,14 @@ public class AsterixMessageI020Test
                 PositionAccuracy = null,
                 ContributingDevices = new AsterixFieldI020Frn020Type400
                 {
-                    10,13,15
+                    84, 107, 123, 127
                 },
                 ModeSMbData = new AsterixFieldI020Frn021Type250
                 {
                     Data =
                     {
-                        new ModeSData
-                        {
-                            
-                        }
+                        CreateModeSData(0x10, 0x00, 0x00, 0x00, 0xA0, 0x00, 0x00, 0x10),
+                        CreateModeSData(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x17),
                     }
 
                 },
@@ -153,7 +151,11 @@ public class AsterixMessageI020Test
                 Mode2Code = null,
                 ReservedExpansionField = new AsterixFieldI020Frn027TypeRe()
                 {
-
+                    Data =
+                    [
+                        0x80, 0xD0, 0x00, 0x12, 0x00, 0x0F, 0xFF, 0xF1, 0x00, 0x89,
+                        0x00, 0x7C, 0xFF, 0x86, 0x00, 0x35, 0x00, 0x53, 0xFF, 0xC1
+                    ]
                 },
 
             }
@@ -169,5 +171,12 @@ public class AsterixMessageI020Test
         
         
 
+    }
+
+    private static ModeSData CreateModeSData(params byte[] data)
+    {
+        var result = new ModeSData();
+        data.CopyTo(result.RawData, 0);
+        return result;
     }
 }

@@ -17,4 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Asv.Gnss\Asv.Gnss.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Resources\testglo.rtcm2" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

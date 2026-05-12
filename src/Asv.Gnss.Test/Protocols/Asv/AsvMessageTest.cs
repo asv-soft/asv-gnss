@@ -149,6 +149,219 @@ public class AsvMessageTest
         Assert.Equal(origin.Data, copy.Data);
     }
 
+    [Fact]
+    public void GbasMonDevSendV2_SerializeAndDeserialize_ShouldRoundTrip()
+    {
+        var origin = new AsvMessageGbasMonDevSendV2
+        {
+            Sequence = 13,
+            SenderId = 4,
+            TargetId = 11,
+            Slot = AsvGbasSlotMsg.SlotF,
+            IsLastSlotInFrame = true,
+            LifeTime = 6,
+            MsgLength = 213,
+            MsgCrc = 0xBEEF,
+        };
+
+        var copy = RoundTrip<AsvMessageGbasMonDevSendV2>(origin);
+
+        Assert.Equal(origin.Sequence, copy.Sequence);
+        Assert.Equal(origin.SenderId, copy.SenderId);
+        Assert.Equal(origin.TargetId, copy.TargetId);
+        Assert.Equal(origin.Slot, copy.Slot);
+        Assert.Equal(origin.IsLastSlotInFrame, copy.IsLastSlotInFrame);
+        Assert.Equal(origin.LifeTime, copy.LifeTime);
+        Assert.Equal(origin.MsgLength, copy.MsgLength);
+        Assert.Equal(origin.MsgCrc, copy.MsgCrc);
+    }
+
+    [Fact]
+    public void PvtGeo_SerializeAndDeserialize_ShouldRoundTrip()
+    {
+        var origin = new AsvMessagePvtGeo
+        {
+            Sequence = 14,
+            SenderId = 5,
+            TargetId = 12,
+            Tow = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc),
+            PosType = AsvPosTypeEnum.DifferentialPvt,
+            Error = 2,
+            Latitude = 56.835,
+            Longitude = 60.612,
+            Height = 250.25,
+            Undulation = -12.5,
+            RxClkBias = 32 * GpsRawHelper.P2_30,
+            RxClkDrift = -8 * GpsRawHelper.P2_30,
+            TimeSystem = AsvTimeSystemEnum.Gps,
+            Datum = AsvDatumEnum.WGS84,
+            NrSv = 18,
+            MeanCorrAge = 1.25,
+            HAccuracy = 0.45,
+            VAccuracy = 0.67,
+        };
+
+        var copy = RoundTrip<AsvMessagePvtGeo>(origin);
+
+        Assert.Equal(origin.Sequence, copy.Sequence);
+        Assert.Equal(origin.Tow, copy.Tow);
+        Assert.Equal(origin.PosType, copy.PosType);
+        Assert.Equal(origin.Error, copy.Error);
+        Assert.Equal(origin.Latitude, copy.Latitude, 7);
+        Assert.Equal(origin.Longitude, copy.Longitude, 7);
+        Assert.Equal(origin.Height, copy.Height, 2);
+        Assert.Equal(origin.Undulation, copy.Undulation, 2);
+        Assert.Equal(origin.RxClkBias, copy.RxClkBias, 12);
+        Assert.Equal(origin.RxClkDrift, copy.RxClkDrift, 12);
+        Assert.Equal(origin.TimeSystem, copy.TimeSystem);
+        Assert.Equal(origin.Datum, copy.Datum);
+        Assert.Equal(origin.NrSv, copy.NrSv);
+        Assert.Equal(origin.MeanCorrAge, copy.MeanCorrAge, 2);
+        Assert.Equal(origin.HAccuracy, copy.HAccuracy, 2);
+        Assert.Equal(origin.VAccuracy, copy.VAccuracy, 2);
+    }
+
+    [Fact]
+    public void GpsObservations_SerializeAndDeserialize_ShouldRoundTrip()
+    {
+        var origin = new AsvMessageGpsObservations
+        {
+            Sequence = 15,
+            SenderId = 6,
+            TargetId = 13,
+            Tow = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc),
+            TimeOffset = 5 * GpsRawHelper.P2_30,
+            Observations =
+            [
+                new AsvGpsObservation
+                {
+                    Prn = 3,
+                    L1Code = AsvHelper.CODE_L1C,
+                    L1PseudoRange = 12 * AsvHelper.PRUNIT_GPS + 1234.56,
+                    L1CarrierPhase = 20.5,
+                    L1LockTime = 937,
+                    ParticipationIndicator = true,
+                    ReasonForException = ReasonForException.Raim,
+                    Elevation = 35.4,
+                    Azimuth = -124.8,
+                    L1CNR = 42.25,
+                }
+            ],
+        };
+
+        var copy = RoundTrip<AsvMessageGpsObservations>(origin);
+
+        Assert.Equal(origin.Sequence, copy.Sequence);
+        Assert.Equal(origin.Tow, copy.Tow);
+        Assert.Equal(origin.TimeOffset, copy.TimeOffset, 12);
+        Assert.Single(copy.Observations);
+        AssertGpsObservation(origin.Observations[0], copy.Observations[0]);
+    }
+
+    [Fact]
+    public void GloObservations_SerializeAndDeserialize_ShouldRoundTrip()
+    {
+        var origin = new AsvMessageGloObservations
+        {
+            Sequence = 16,
+            SenderId = 7,
+            TargetId = 14,
+            Tod = new DateTime(2014, 08, 20, 15, 0, 0, DateTimeKind.Utc),
+            TimeOffset = -7 * GpsRawHelper.P2_30,
+            Observations =
+            [
+                new AsvGloObservation
+                {
+                    Prn = 5,
+                    L1Code = AsvHelper.CODE_L1C,
+                    Frequency = 1602000000 + 2 * 562500,
+                    L1PseudoRange = 3 * AsvHelper.PRUNIT_GLO + 2468.02,
+                    L1CarrierPhase = 18.25,
+                    L1LockTime = 937,
+                    ParticipationIndicator = true,
+                    ReasonForException = ReasonForException.Health,
+                    Elevation = 41.2,
+                    Azimuth = 87.6,
+                    L1CNR = 38.5,
+                }
+            ],
+        };
+
+        var copy = RoundTrip<AsvMessageGloObservations>(origin);
+
+        Assert.Equal(origin.Sequence, copy.Sequence);
+        Assert.Equal(origin.Tod, copy.Tod);
+        Assert.Equal(origin.TimeOffset, copy.TimeOffset, 12);
+        Assert.Single(copy.Observations);
+        AssertGloObservation(origin.Observations[0], copy.Observations[0]);
+    }
+
+    [Fact]
+    public void GpsRawCa_SerializeAndDeserialize_ShouldRoundTrip()
+    {
+        var origin = new AsvMessageGpsRawCa();
+        origin.Randomize(new Random(112));
+        origin.Sequence = 17;
+        origin.SenderId = 8;
+        origin.TargetId = 15;
+        origin.CrcPassed = true;
+
+        var copy = RoundTrip<AsvMessageGpsRawCa>(origin);
+
+        Assert.Equal(origin.Sequence, copy.Sequence);
+        Assert.Equal(origin.UtcTime, copy.UtcTime);
+        Assert.Equal(origin.Prn, copy.Prn);
+        Assert.Equal(origin.SatelliteId, copy.SatelliteId);
+        Assert.Equal(origin.CrcPassed, copy.CrcPassed);
+        Assert.Equal(origin.L1Code, copy.L1Code);
+        Assert.Equal(origin.RinexSatCode, copy.RinexSatCode);
+        Assert.Equal(origin.SignalType, copy.SignalType);
+        Assert.Equal(origin.RindexSignalCode, copy.RindexSignalCode);
+        Assert.Equal(origin.NAVBitsU32, copy.NAVBitsU32);
+
+        var raw = copy.GetGnssRawNavMsg();
+        Assert.Equal(NavSysEnum.GPS, raw.NavSystem);
+        Assert.Equal(copy.Prn, raw.SatPrn);
+        Assert.Equal(copy.NAVBitsU32, raw.RawData);
+    }
+
+    [Fact]
+    public void GloRawCa_SerializeAndDeserialize_ShouldRoundTrip()
+    {
+        var origin = new AsvMessageGloRawCa();
+        origin.Randomize(new Random(113));
+        origin.Sequence = 18;
+        origin.SenderId = 9;
+        origin.TargetId = 16;
+        origin.CrcPassed = true;
+
+        var copy = RoundTrip<AsvMessageGloRawCa>(origin);
+
+        Assert.Equal(origin.Sequence, copy.Sequence);
+        Assert.Equal(origin.EpochTime, copy.EpochTime);
+        Assert.Equal(origin.Prn, copy.Prn);
+        Assert.Equal(origin.SatelliteId, copy.SatelliteId);
+        Assert.Equal(origin.CrcPassed, copy.CrcPassed);
+        Assert.Equal(origin.L1Code, copy.L1Code);
+        Assert.Equal(origin.Frequency, copy.Frequency);
+        Assert.Equal(origin.RinexSatCode, copy.RinexSatCode);
+        Assert.Equal(origin.SignalType, copy.SignalType);
+        Assert.Equal(origin.RindexSignalCode, copy.RindexSignalCode);
+        Assert.Equal(origin.NAVBitsU32.Length, copy.NAVBitsU32.Length);
+        for (var i = 0; i < origin.NAVBitsU32.Length; i++)
+        {
+            Assert.Equal(origin.NAVBitsU32[i], copy.NAVBitsU32[i]);
+        }
+
+        var raw = copy.GetGnssRawNavMsg();
+        Assert.Equal(copy.NAVBitsU32.Length, raw.Length);
+        Assert.All(raw, item =>
+        {
+            Assert.Equal(NavSysEnum.GLONASS, item.NavSystem);
+            Assert.Equal(copy.Prn, item.SatPrn);
+        });
+    }
+
     private static T RoundTrip<T>(T origin)
         where T : AsvMessageBase, new()
     {
@@ -161,5 +374,36 @@ public class AsvMessageTest
         copy.Deserialize(ref read);
         Assert.Equal(0, read.Length);
         return copy;
+    }
+
+    private static void AssertGpsObservation(AsvGpsObservation origin, AsvGpsObservation copy)
+    {
+        Assert.Equal(origin.Prn, copy.Prn);
+        Assert.Equal(AsvHelper.satno(NavigationSystemEnum.SYS_GPS, origin.Prn), copy.SatelliteId);
+        Assert.Equal(origin.L1Code, copy.L1Code);
+        Assert.Equal(origin.L1PseudoRange, copy.L1PseudoRange, 2);
+        Assert.Equal(origin.L1CarrierPhase * 10, copy.L1CarrierPhase, 2);
+        Assert.Equal(origin.L1LockTime, copy.L1LockTime);
+        Assert.Equal(origin.ParticipationIndicator, copy.ParticipationIndicator);
+        Assert.Equal(origin.ReasonForException, copy.ReasonForException);
+        Assert.Equal(origin.Elevation, copy.Elevation, 1);
+        Assert.Equal(origin.Azimuth, copy.Azimuth, 1);
+        Assert.Equal(origin.L1CNR, copy.L1CNR, 2);
+    }
+
+    private static void AssertGloObservation(AsvGloObservation origin, AsvGloObservation copy)
+    {
+        Assert.Equal(origin.Prn, copy.Prn);
+        Assert.Equal(AsvHelper.satno(NavigationSystemEnum.SYS_GLO, origin.Prn), copy.SatelliteId);
+        Assert.Equal(origin.L1Code, copy.L1Code);
+        Assert.Equal(origin.Frequency, copy.Frequency);
+        Assert.Equal(origin.L1PseudoRange, copy.L1PseudoRange, 2);
+        Assert.Equal(origin.L1CarrierPhase * 10, copy.L1CarrierPhase, 3);
+        Assert.Equal(origin.L1LockTime, copy.L1LockTime);
+        Assert.Equal(origin.ParticipationIndicator, copy.ParticipationIndicator);
+        Assert.Equal(origin.ReasonForException, copy.ReasonForException);
+        Assert.Equal(origin.Elevation, copy.Elevation, 1);
+        Assert.Equal(origin.Azimuth, copy.Azimuth, 1);
+        Assert.Equal(origin.L1CNR, copy.L1CNR, 2);
     }
 }
