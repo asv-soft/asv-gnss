@@ -3,7 +3,7 @@ using Xunit;
 using System;
 using System.Linq;
 
-namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixFieldI020Frn021Type250))]
 public class AsterixFieldI020Frn021Type250Test

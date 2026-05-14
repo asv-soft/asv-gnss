@@ -5,7 +5,7 @@ using Xunit;
 
 
 
-namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixFieldI020Frn012Type220))]
 public class AsterixFieldI020Frn012Type220Test

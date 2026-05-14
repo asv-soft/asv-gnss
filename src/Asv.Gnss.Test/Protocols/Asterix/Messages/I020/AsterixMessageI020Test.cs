@@ -6,7 +6,7 @@ using DeepEqual.Syntax;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test.Protocols.Messages.I020;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixMessageI020))]
 public class AsterixMessageI020Test

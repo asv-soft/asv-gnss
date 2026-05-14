@@ -5,7 +5,7 @@ using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test.Protocols.Asterix.Messages.I021;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixMessageI021))]
 public class AsterixMessageI021Test

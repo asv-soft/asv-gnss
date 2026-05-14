@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using Xunit;
-namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixFieldI020Frn025Type055))]
 public class AsterixFieldI020Frn025Type055Test

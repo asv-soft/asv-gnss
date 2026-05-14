@@ -3,7 +3,7 @@ using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixFieldI020Frn024Type030))]
 public class AsterixFieldI020Frn024Type030Test

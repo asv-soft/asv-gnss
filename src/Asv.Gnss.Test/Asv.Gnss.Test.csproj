@@ -44,5 +44,6 @@
     <None Update="Resources\Asterix\cat247ed1.2.bin" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Asterix\cat252ed7.0.bin" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Asterix\2025-07-09-06.stream" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\2025-07-09-07.stream" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

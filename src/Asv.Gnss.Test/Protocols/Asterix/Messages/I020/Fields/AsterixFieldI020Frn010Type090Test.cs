@@ -5,7 +5,7 @@ using Field = Asv.IO.Field;
 using IFieldType = Asv.IO.IFieldType;
 using IVisitor = Asv.IO.IVisitor;
 
-namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
+namespace Asv.Gnss.Test;
 
 [TestSubject(typeof(AsterixFieldI020Frn010Type090))]
 public class AsterixFieldI020Frn010Type090Test

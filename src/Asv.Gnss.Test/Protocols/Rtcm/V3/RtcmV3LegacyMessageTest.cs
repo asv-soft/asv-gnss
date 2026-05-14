@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace Asv.Gnss.Test.Protocols.Rtcm.V3;
+namespace Asv.Gnss.Test;
 
 public class RtcmV3LegacyMessageTest
 {
