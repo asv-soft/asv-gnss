@@ -12,4 +12,5 @@ var app = ConsoleApp.Create();
 
 // app.Add<NmeaCommand>();
 app.Add<RtcmV3Command>();
+app.Add<AsterixStreamCommand>();
 await app.RunAsync(args);
