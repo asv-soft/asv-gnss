@@ -17,8 +17,13 @@ public static class AsterixProtocol
         var factory = new ProtocolMessageFactoryBuilder<AsterixMessage, byte>(Info);
         // register default messages
         factory
-            .Add<AsterixMessageI020>();
-            //.Add<AsterixMessageI021>();
+            .Add<AsterixMessageI002>()
+            .Add<AsterixMessageI004>()
+            .Add<AsterixMessageI001>()
+            .Add<AsterixMessageI010>()
+            .Add<AsterixMessageI020>()
+            .Add<AsterixMessageI021>()
+            .Add<AsterixMessageI247>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core,stat) => new AsterixMessageParser(messageFactory, core, stat));

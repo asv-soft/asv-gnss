@@ -25,6 +25,24 @@
     <None Update="Resources\gpsd-sample.rtcm2.chk" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\imu_rtcm" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\testglo.rtcm3" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat001ed1.1.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat002ed1.0.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat004ed1.4.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat010ed0.24_sensis.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat010ed0.31.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat019ed1.3.bin" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Asterix\cat020ed1.5.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat021ed2.1.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat030ed7.0.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat034ed1.26.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat048ed1.15.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat048ed1.23.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat062ed1.12.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat062ed1.16.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat063ed1.0.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat065ed1.3.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat247ed1.2.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat252ed7.0.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\2025-07-09-06.stream" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

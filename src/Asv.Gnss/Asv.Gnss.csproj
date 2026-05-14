@@ -21,4 +21,7 @@
     <PackageReference Include="Asv.Common" Version="$(AsvCommonVersion)" />
     <PackageReference Include="Asv.IO" Version="$(AsvCommonVersion)" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Protocols\Asterix\Messages\AsterixRawMessages.cs" />
+  </ItemGroup>
 </Project>
