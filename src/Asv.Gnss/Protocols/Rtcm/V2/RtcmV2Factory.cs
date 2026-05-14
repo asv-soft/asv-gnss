@@ -10,6 +10,7 @@ public static class RtcmV2Factory
         get
         {
             yield return () => new RtcmV2Message1();
+            yield return () => new RtcmV2Message9();
             yield return () => new RtcmV2Message14();
             yield return () => new RtcmV2Message15();
             yield return () => new RtcmV2Message17();

@@ -26,7 +26,7 @@ public class AsterixFieldI020Frn027TypeRe : AsterixField
 
     public override void Serialize(ref Span<byte> buffer)
     {
-        buffer[0] = (byte)Data.Length;
+        buffer[0] = checked((byte)(Data.Length + 1));
         Data.CopyTo(buffer[1..]);
         buffer = buffer[(1 + Data.Length)..];
     }

@@ -9,7 +9,7 @@ namespace Asv.Gnss.Test.Protocols.Messages.I020.Fields;
 public class AsterixFieldI020Frn021Type250Test
 {
     //[Fact]
-    public void SerializeDeserialize_ShouldPreserveData()
+    private void SerializeDeserialize_ShouldPreserveData()
     {
         // Arrange
         var field = new AsterixFieldI020Frn021Type250();
@@ -112,7 +112,7 @@ public class AsterixFieldI020Frn021Type250Test
         deserializedField.Deserialize(ref readSpan);
         
         // Assert
-        Assert.Equal(0, deserializedField.Data.Count);
+        Assert.Empty(deserializedField.Data);
         Assert.Equal(0, buffer[0]); // Size should be 0
     }
     

@@ -60,7 +60,6 @@ public class AsterixFieldI020Frn023Type260Test
         Assert.True(deserializedField.HasData());
         
         // Test UInt64 conversion
-        var expectedUInt64 = 0x123456789ABCDE00UL >> 8; // Shift right 8 bits since we only have 7 bytes
         Assert.Equal(0x123456789ABCDEUL, deserializedField.GetMbDataAsUInt64());
         
         // Test setting from UInt64

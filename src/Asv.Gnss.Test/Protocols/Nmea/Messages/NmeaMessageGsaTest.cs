@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Asv.Gnss.Test;
 

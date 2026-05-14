@@ -8,8 +8,8 @@
     <PackageReference Include="DeepEqual" Version="5.1.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.3">
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -19,5 +19,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="Resources\testglo.rtcm2" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\GMSD7_20121014.rtcm3" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\fw206mrtk_rtcm" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\gpsd-sample.rtcm2" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\gpsd-sample.rtcm2.chk" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\imu_rtcm" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\testglo.rtcm3" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Asterix\cat020ed1.5.bin" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

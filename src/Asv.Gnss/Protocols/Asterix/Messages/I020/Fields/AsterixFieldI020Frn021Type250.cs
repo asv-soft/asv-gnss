@@ -35,7 +35,7 @@ public class AsterixFieldI020Frn021Type250 : AsterixField
         
     }
 
-    public override int GetByteSize() => 1 + ModeSData.ByteSize;
+    public override int GetByteSize() => 1 + ModeSData.ByteSize * Data.Count;
 
     public override void Accept(IVisitor visitor)
     {

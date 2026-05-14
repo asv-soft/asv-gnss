@@ -19,15 +19,44 @@ public static class RtcmV3Protocol
         var factory = new ProtocolMessageFactoryBuilder<RtcmV3MessageBase, ushort>(Info);
         // register default messages
         factory
+            .Add<RtcmV3Message1004>()
             .Add<RtcmV3Message1005>()
             .Add<RtcmV3Message1006>()
+            .Add<RtcmV3Message1007>()
+            .Add<RtcmV3Message1008>()
+            .Add<RtcmV3Message1012>()
+            .Add<RtcmV3Message1013>()
+            .Add<RtcmV3Message1019>()
+            .Add<RtcmV3Message1020>()
+            .Add<RtcmV3Message1029>()
+            .Add<RtcmV3Message1030>()
+            .Add<RtcmV3Message1031>()
+            .Add<RtcmV3Message1032>()
+            .Add<RtcmV3Message1033>()
+            .Add<RtcmV3Message1042>()
+            .Add<RtcmV3Message1046>()
             .Add<RtcmV3Message1230>()
+            .Add<RtcmV3Msm3Msg1073>()
+            .Add<RtcmV3Msm3Msg1083>()
+            .Add<RtcmV3Msm3Msg1093>()
+            .Add<RtcmV3Msm3Msg1123>()
             .Add<RtcmV3Msm4Msg1074>()
             .Add<RtcmV3Msm4Msg1084>()
             .Add<RtcmV3Msm4Msg1094>()
             .Add<RtcmV3Msm4Msg1104>()
             .Add<RtcmV3Msm4Msg1114>()
-            .Add<RtcmV3Msm4Msg1124>();
+            .Add<RtcmV3Msm4Msg1124>()
+            .Add<RtcmV3Msm5Msg1075>()
+            .Add<RtcmV3Msm5Msg1085>()
+            .Add<RtcmV3Msm5Msg1095>()
+            .Add<RtcmV3Msm5Msg1125>()
+            .Add<RtcmV3Msm7Msg1077>()
+            .Add<RtcmV3Msm7Msg1087>()
+            .Add<RtcmV3Msm7Msg1097>()
+            .Add<RtcmV3Msm7Msg1107>()
+            .Add<RtcmV3Msm7Msg1117>()
+            .Add<RtcmV3Msm7Msg1127>()
+            .Add<RtcmV3Msg4094>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core,stat) => new RtcmV3MessageParser(messageFactory, core,stat));

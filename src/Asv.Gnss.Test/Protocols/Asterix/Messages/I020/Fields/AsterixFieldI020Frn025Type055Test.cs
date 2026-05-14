@@ -55,7 +55,7 @@ public class AsterixFieldI020Frn025Type055Test
     }
 
     //[Fact]
-    public void Mode1CodeOctalConversion_ShouldWorkCorrectly()
+    private void Mode1CodeOctalConversion_ShouldWorkCorrectly()
     {
         // Arrange
         var field = new AsterixFieldI020Frn025Type055();

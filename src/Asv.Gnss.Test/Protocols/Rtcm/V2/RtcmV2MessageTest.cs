@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xunit;
 
 namespace Asv.Gnss.Test;
@@ -13,7 +15,7 @@ public class RtcmV2MessageTest
     {
         var ids = RtcmV2Factory.DefaultMessages.Select(_ => _().MessageId).OrderBy(_ => _).ToArray();
 
-        Assert.Equal([1, 14, 15, 17, 21, 31], ids);
+        Assert.Equal([1, 9, 14, 15, 17, 21, 31], ids);
     }
 
     [Fact]
@@ -56,7 +58,7 @@ public class RtcmV2MessageTest
             var message = create();
             ReadOnlySpan<byte> payload = frame.Payload;
             message.Deserialize(ref payload);
-            Assert.InRange(payload.Length, 0, 1);
+            Assert.InRange(payload.Length, 0, 2);
             parsed.Add(message);
         }
 
@@ -67,6 +69,31 @@ public class RtcmV2MessageTest
         var gpsCorrections = parsed.OfType<RtcmV2Message1>().ToArray();
         Assert.NotEmpty(gpsCorrections);
         Assert.Contains(gpsCorrections, _ => _.ObservationItems.Length > 0);
+    }
+
+    [Fact]
+    public void GpsdSampleRtcm2_ShouldMatchGpsdGoldenResult()
+    {
+        var data = File.ReadAllBytes(GetResourcePath("gpsd-sample.rtcm2"));
+        var expected = File.ReadAllLines(GetResourcePath("gpsd-sample.rtcm2.chk"))
+            .Where(_ => !string.IsNullOrWhiteSpace(_))
+            .Select(_ => JsonSerializer.Deserialize<GpsdRtcm2Message>(_))
+            .Select(_ => Assert.IsType<GpsdRtcm2Message>(_))
+            .ToArray();
+
+        var frames = DecodeRtcm2Frames(data).ToArray();
+
+        Assert.Equal(expected.Length, frames.Length);
+
+        for (var i = 0; i < expected.Length; i++)
+        {
+            var actual = new RtcmV2Message9();
+            ReadOnlySpan<byte> payload = frames[i].Payload;
+            actual.Deserialize(ref payload);
+
+            Assert.InRange(payload.Length, 0, 2);
+            AssertGpsdMessage(expected[i], frames[i], actual);
+        }
     }
 
     private static string GetResourcePath(string fileName)
@@ -194,5 +221,76 @@ public class RtcmV2MessageTest
         return true;
     }
 
-    private readonly record struct RtcmV2Frame(ushort MessageId, byte[] Payload);
+    private static void AssertGpsdMessage(GpsdRtcm2Message expected, RtcmV2Frame frame, RtcmV2Message9 actual)
+    {
+        Assert.Equal("RTCM2", expected.Class);
+        Assert.Equal(RtcmV2Message9.RtcmMessageId, expected.Type);
+        Assert.Equal(expected.Type, actual.MessageId);
+        Assert.Equal(expected.Type, frame.MessageId);
+        Assert.Equal(expected.StationId, actual.ReferenceStationId);
+        Assert.Equal(expected.ZCount, actual.ZCount, 1);
+        Assert.Equal(expected.SequenceNumber, actual.SequenceNumber);
+        Assert.Equal(expected.Length, frame.PayloadWordLength);
+        Assert.Equal(1.0, actual.Udre, 1);
+
+        Assert.Equal(expected.Satellites.Length, actual.ObservationItems.Length);
+        for (var i = 0; i < expected.Satellites.Length; i++)
+        {
+            var expectedSatellite = expected.Satellites[i];
+            var actualSatellite = actual.ObservationItems[i];
+
+            Assert.Equal(expectedSatellite.Ident, actualSatellite.Prn);
+            Assert.Equal((SatUdreEnum)expectedSatellite.Udre, actualSatellite.Udre);
+            Assert.Equal(expectedSatellite.Iod, actualSatellite.Iod);
+            Assert.Equal(expectedSatellite.Prc, actualSatellite.Prc, 3);
+            Assert.Equal(expectedSatellite.Rrc, actualSatellite.Rrc, 3);
+        }
+    }
+
+    private readonly record struct RtcmV2Frame(ushort MessageId, byte[] Payload)
+    {
+        public int PayloadWordLength => (Payload.Length - 6) / 3;
+    }
+
+    private sealed class GpsdRtcm2Message
+    {
+        [JsonPropertyName("class")]
+        public string Class { get; set; } = string.Empty;
+
+        [JsonPropertyName("type")]
+        public ushort Type { get; set; }
+
+        [JsonPropertyName("station_id")]
+        public ushort StationId { get; set; }
+
+        [JsonPropertyName("zcount")]
+        public double ZCount { get; set; }
+
+        [JsonPropertyName("seqnum")]
+        public byte SequenceNumber { get; set; }
+
+        [JsonPropertyName("length")]
+        public int Length { get; set; }
+
+        [JsonPropertyName("satellites")]
+        public GpsdRtcm2Satellite[] Satellites { get; set; } = [];
+    }
+
+    private sealed class GpsdRtcm2Satellite
+    {
+        [JsonPropertyName("ident")]
+        public byte Ident { get; set; }
+
+        [JsonPropertyName("udre")]
+        public byte Udre { get; set; }
+
+        [JsonPropertyName("iod")]
+        public byte Iod { get; set; }
+
+        [JsonPropertyName("prc")]
+        public double Prc { get; set; }
+
+        [JsonPropertyName("rrc")]
+        public double Rrc { get; set; }
+    }
 }

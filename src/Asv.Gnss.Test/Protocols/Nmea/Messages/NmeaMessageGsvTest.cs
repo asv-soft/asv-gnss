@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Asv.Gnss.Test;
 

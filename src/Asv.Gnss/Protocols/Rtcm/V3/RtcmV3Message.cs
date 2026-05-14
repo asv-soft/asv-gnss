@@ -26,7 +26,7 @@ public abstract class RtcmV3MessageBase : IProtocolMessage<ushort>
         }
 
         bitIndex += 6; // reserved
-        var messageLength = (byte)SpanBitHelper.GetBitU(buffer,ref bitIndex, 10);
+        var messageLength = (int)SpanBitHelper.GetBitU(buffer,ref bitIndex, 10);
         if (messageLength > (buffer.Length - 3 /* preamble-8bit + reserved-6bit + length-10bit  */ - 3 /* crc 24 bit */))
         {
             throw new Exception($"Deserialization RTCMv3 message failed: length too small. Want '{messageLength}'. Read = '{buffer.Length - 6}'");

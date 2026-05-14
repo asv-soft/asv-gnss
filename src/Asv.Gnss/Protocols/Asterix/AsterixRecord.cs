@@ -30,7 +30,7 @@ public abstract class AsterixRecord : ISizedSpanSerializable, IEnumerable<Asteri
         var lastFrn = 0;
         foreach (var field in this)
         {
-            fspec[field.FieldReferenceNumber] = true;
+            fspec[field.FieldReferenceNumber - 1] = true;
             Debug.Assert(field.FieldReferenceNumber > lastFrn, "Fields must be sorted by field reference number");
             lastFrn = field.FieldReferenceNumber;
         }
@@ -47,7 +47,7 @@ public abstract class AsterixRecord : ISizedSpanSerializable, IEnumerable<Asteri
         var fspec = new VariableLengthValue();
         foreach (var field in this)
         {
-            fspec[field.FieldReferenceNumber] = true;
+            fspec[field.FieldReferenceNumber - 1] = true;
         }
         return fspec.GetByteSize() + this.Sum(field => field.GetByteSize());
     }

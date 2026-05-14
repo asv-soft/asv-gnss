@@ -180,6 +180,9 @@ public static class RtcmMsm
 
 public abstract class RtcmV3MsmBase : RtcmV3MessageBase
 {
+    public virtual ushort MessageId => Id;
+    public override ushort Id => MessageId;
+
     protected override void InternalDeserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
     {
         var utc = DateTime.UtcNow;
