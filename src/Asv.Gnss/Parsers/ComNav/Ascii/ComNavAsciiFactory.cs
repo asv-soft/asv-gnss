@@ -12,6 +12,7 @@ namespace Asv.Gnss
             {
                 yield return () => new ComNavLogListAMessage();
                 yield return () => new ComNavComConfigAMessage();
+                yield return () => new ComNavPsrPosAMessage();
             }
         }
 
@@ -19,7 +20,8 @@ namespace Asv.Gnss
         {
             src
                 .Add<ComNavLogListAMessage>()
-                .Add<ComNavComConfigAMessage>();
+                .Add<ComNavComConfigAMessage>()
+                .Add<ComNavPsrPosAMessage>();
             return src;
         }
     }

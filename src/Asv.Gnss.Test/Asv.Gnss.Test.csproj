@@ -45,5 +45,7 @@
     <None Update="Resources\Asterix\cat252ed7.0.bin" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Asterix\2025-07-09-06.stream" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Asterix\2025-07-09-07.stream" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\ComNav\novatel-bestposb.hex" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\ComNav\novatel-oem7-psrposa.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

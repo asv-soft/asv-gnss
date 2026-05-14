@@ -27,47 +27,47 @@ namespace Asv.Gnss
 		/// <summary>
 		///  Time validity is unknown
 		/// </summary>
-		UNKNOWN,
+		UNKNOWN = 20,
 		/// <summary>
 		///  Time is set approximately
 		/// </summary>
-		APPROXIMATE,
+		APPROXIMATE = 60,
 		/// <summary>
 		///  Time is approaching coarse precision
 		/// </summary>
-		COARSEADJUSTING,
+		COARSEADJUSTING = 80,
 		/// <summary>
 		///  This time is valid to coarse precision
 		/// </summary>
-		COARSE,
+		COARSE = 100,
 		/// <summary>
 		///  Time is coarse set and is being steered
 		/// </summary>
-		COARSESTEERING,
+		COARSESTEERING = 120,
 		/// <summary>
 		///  Position is lost and the range bias cannot be calculated
 		/// </summary>
-		FREEWHEELING,
+		FREEWHEELING = 130,
 		/// <summary>
 		///  Time is adjusting to fine precision
 		/// </summary>
-		FINEADJUSTING,
+		FINEADJUSTING = 140,
 		/// <summary>
 		///  Time has fine precision
 		/// </summary>
-		FINE,
+		FINE = 160,
 		/// <summary>
 		///  Time is fine set and is being steered by the backup system
 		/// </summary>
-		FINEBACKUPSTEERING,
+		FINEBACKUPSTEERING = 170,
 		/// <summary>
 		///  Time is fine set and is being steered
 		/// </summary>
-		FINESTEERING,
+		FINESTEERING = 180,
 		/// <summary>
 		///  Time from satellite. Only used in logs containing satellite data such as ephemeris and almanac
 		/// </summary>
-		SATTIME
+		SATTIME = 200
 	}
     public abstract class ComNavAsciiMessageBase : ComNavStringMessageBase
     {

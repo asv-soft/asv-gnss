@@ -12,6 +12,7 @@ namespace Asv.Gnss
             {
                 yield return () => new ComNavBinaryPsrPosPacket();
                 yield return () => new ComNavBinaryPsrDopPacket();
+                yield return () => new ComNavBinaryBestPosPacket();
                 yield return () => new ComNavBinaryRawGpsSubFramePacket();
                 yield return () => new ComNavBinaryRawGloEphemPacket();
                 yield return () => new ComNavBinaryObservationInfo();
@@ -28,6 +29,7 @@ namespace Asv.Gnss
              src
                  .Add<ComNavBinaryPsrPosPacket>()
                  .Add<ComNavBinaryPsrDopPacket>()
+                 .Add<ComNavBinaryBestPosPacket>()
                  .Add<ComNavBinaryRawGpsSubFramePacket>()
                  .Add<ComNavBinaryRawGloEphemPacket>()
                  .Add<ComNavBinaryObservationInfo>();

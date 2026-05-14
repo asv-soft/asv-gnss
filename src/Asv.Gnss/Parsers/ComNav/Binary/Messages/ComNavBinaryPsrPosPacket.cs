@@ -220,6 +220,10 @@ namespace Asv.Gnss
         /// </summary>
         Single = 16,
         /// <summary>
+        /// Floating L1 ambiguity solution
+        /// </summary>
+        L1Float = 32,
+        /// <summary>
         /// Solution calculated using corrections from an SBAS 
         /// </summary>
         Sbas = 18,
