@@ -1,0 +1,40 @@
+using System;
+
+namespace Asv.Gnss;
+
+/// <summary>
+/// I048/140 Time of Day.
+/// </summary>
+public sealed class AsterixFieldI048Frn002Type140 : AsterixFieldI048
+{
+    /// <summary>
+    /// Field reference number.
+    /// </summary>
+    public const byte StaticFrn = 2;
+
+    /// <inheritdoc />
+    public override string Name => "Time of Day";
+
+    /// <inheritdoc />
+    public override byte FieldReferenceNumber => StaticFrn;
+
+    /// <summary>
+    /// Time of day in seconds since midnight UTC.
+    /// </summary>
+    public double Seconds { get; set; }
+
+    /// <inheritdoc />
+    public override void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        Seconds = AsterixI048Binary.ReadUInt24(ref buffer) / 128.0;
+    }
+
+    /// <inheritdoc />
+    public override void Serialize(ref Span<byte> buffer)
+    {
+        AsterixI048Binary.WriteUInt24(ref buffer, (uint)Math.Round(Seconds * 128.0));
+    }
+
+    /// <inheritdoc />
+    public override int GetByteSize() => 3;
+}

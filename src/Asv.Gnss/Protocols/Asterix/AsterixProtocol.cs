@@ -19,10 +19,12 @@ public static class AsterixProtocol
         factory
             .Add<AsterixMessageI002>()
             .Add<AsterixMessageI004>()
+            .Add<AsterixMessageI034>()
             .Add<AsterixMessageI001>()
             .Add<AsterixMessageI010>()
             .Add<AsterixMessageI020>()
             .Add<AsterixMessageI021>()
+            .Add<AsterixMessageI048>()
             .Add<AsterixMessageI247>();
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
