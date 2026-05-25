@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
+<vars>
+    <var name="product" value="Asv.Gnss"/>
+    <var name="package" value="Asv.Gnss"/>
+    <var name="shell" value="Asv.Gnss.Shell"/>
+    <var name="dotnet" value=".NET SDK 10.0"/>
+</vars>

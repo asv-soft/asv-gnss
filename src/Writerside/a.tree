@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="a"
+                 name="Asv.Gnss"
+                 start-page="overview.md">
+
+    <toc-element topic="overview.md"/>
+    <toc-element topic="installation.md"/>
+    <toc-element topic="quick-start.md"/>
+    <toc-element topic="supported-protocols.md"/>
+    <toc-element topic="console-tools.md"/>
+    <toc-element topic="architecture.md"/>
+    <toc-element topic="build-and-test.md"/>
+    <toc-element topic="publishing.md"/>
+</instance-profile>
