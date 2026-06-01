@@ -1,18 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksValue)</TargetFrameworks>
-    <FileVersion>$(ProductVersion)</FileVersion>
-    <Version>$(ProductVersion)</Version>
-    <PackageVersion>$(ProductVersion)</PackageVersion>
-    <Authors>https://github.com/asv-soft</Authors>
-    <Company>https://github.com/asv-soft</Company>
-    <Copyright>https://github.com/asv-soft</Copyright>
-    <PackageProjectUrl>https://github.com/asv-soft/asv-gnss</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/asv-soft/asv-gnss</RepositoryUrl>
     <PackageTags>.net;gnss;gps;glonass;galileo;ublox;sino-gnss;</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA, Asterix and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\Asv.Gnss.xml</DocumentationFile>

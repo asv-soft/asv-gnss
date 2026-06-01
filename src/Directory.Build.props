@@ -1,11 +1,20 @@
 <Project>
   <PropertyGroup>
-    <ProductVersion>2.2.0-dev.1</ProductVersion>
-    <TargetFrameworksValue>net10.0</TargetFrameworksValue>
-    <DotNetVersion>10.0.0</DotNetVersion>
-    <AsvCommonVersion>3.6.0-dev.18</AsvCommonVersion>
-    <ZLoggerVersion>2.5.10</ZLoggerVersion>
-    <ConsoleAppFrameworkVersion>5.5.0</ConsoleAppFrameworkVersion>
-    <SpectreConsoleVersion>0.50.0</SpectreConsoleVersion>
+    <ProductVersion>2.2.0-dev.2</ProductVersion>
+    <TargetFramework>net10.0</TargetFramework>
+    <FileVersion>2.2.0.1</FileVersion>
+    <Version>$(ProductVersion)</Version>
+    <PackageVersion>$(ProductVersion)</PackageVersion>
+    <Authors>https://github.com/asv-soft</Authors>
+    <Company>https://github.com/asv-soft</Company>
+    <Copyright>https://github.com/asv-soft</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/asv-soft/asv-gnss</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/asv-soft/asv-gnss</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AsvCommonVersion>3.6.0-dev.21</AsvCommonVersion>
   </PropertyGroup>
 </Project>
