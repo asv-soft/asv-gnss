@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <ProductVersion>2.2.0-dev.5</ProductVersion>
+    <ProductVersion>2.2.0-dev.6</ProductVersion>
     <TargetFramework>net10.0</TargetFramework>
     <FileVersion>2.2.0.1</FileVersion>
     <Version>$(ProductVersion)</Version>
@@ -15,6 +15,6 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AsvCommonVersion>3.6.0-dev.26</AsvCommonVersion>
+    <AsvCommonVersion>3.6.0-dev.27</AsvCommonVersion>
   </PropertyGroup>
 </Project>
