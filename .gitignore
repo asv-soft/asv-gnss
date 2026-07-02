@@ -351,3 +351,6 @@ MigrationBackup/
 
 # JetBrains Rider
 .idea/
+
+# Graphify generated output
+graphify-out/
