@@ -1,9 +1,18 @@
 # Asv.Gnss
 
+[![NuGet version](https://img.shields.io/nuget/v/Asv.Gnss)](https://www.nuget.org/packages/Asv.Gnss)
+[![Build and tests](https://github.com/asv-soft/asv-gnss/actions/workflows/code-quality.yml/badge.svg?branch=main)](https://github.com/asv-soft/asv-gnss/actions/workflows/code-quality.yml)
+[![Documentation](https://github.com/asv-soft/asv-gnss/actions/workflows/docs.yml/badge.svg?branch=main)](https://asv.me/asv-gnss/)
+[![GitHub Packages](https://img.shields.io/badge/GitHub-Packages-blue?logo=github)](https://github.com/asv-soft/asv-gnss/pkgs/nuget/Asv.Gnss)
+
 [![Build and Publish Release Version](https://github.com/asv-soft/asv-gnss/actions/workflows/release-action.yml/badge.svg)](https://github.com/asv-soft/asv-gnss/actions/workflows/release-action.yml)
 [![Deploy debug Nuget for Windows](https://github.com/asv-soft/asv-gnss/actions/workflows/release-debug-action.yml/badge.svg)](https://github.com/asv-soft/asv-gnss/actions/workflows/release-debug-action.yml)
 
 `Asv.Gnss` is a .NET library for parsing GNSS, aviation, and receiver-control protocols. The project is distributed as the `Asv.Gnss` NuGet package and also includes console tools for RTCM v3 and ASTERIX stream diagnostics.
+
+## Documentation
+
+Read the [Asv.Gnss documentation](https://asv.me/asv-gnss/) for installation, quick-start examples, supported protocols, architecture, console tools, and publishing instructions.
 
 ## Features
 
@@ -212,5 +221,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 - Repository: <https://github.com/asv-soft/asv-gnss>
 - Issues: <https://github.com/asv-soft/asv-gnss/issues>
+- Asv.Gnss documentation: [asv.me/asv-gnss](https://asv.me/asv-gnss/)
 - ASV documentation: <https://docs.asv.me/>
 - Telegram: <https://t.me/asvsoft>

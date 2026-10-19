@@ -15,6 +15,6 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AsvCommonVersion>3.6.0</AsvCommonVersion>
+    <AsvCommonVersion>3.6.1</AsvCommonVersion>
   </PropertyGroup>
 </Project>

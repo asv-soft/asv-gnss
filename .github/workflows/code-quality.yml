@@ -1,0 +1,29 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore src/Asv.Gnss.sln
+      - name: Build Release
+        run: dotnet build src/Asv.Gnss.sln -c Release --no-restore -p:GeneratePackageOnBuild=false
+      - name: Test Release
+        run: dotnet test src/Asv.Gnss.sln -c Release --no-build --no-restore
