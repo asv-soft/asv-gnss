@@ -354,3 +354,6 @@ MigrationBackup/
 
 # Graphify generated output
 graphify-out/
+
+# Local test-agent artifacts
+.testagent/

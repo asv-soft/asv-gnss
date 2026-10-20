@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Asv.IO;
 using Microsoft.Extensions.Logging;
 
@@ -323,6 +324,11 @@ public abstract class RtcmV3MsmBase : RtcmV3MessageBase
         // 3) Satellite mask (64 бита: индексы 1..64)
         //    Проверим входные данные.
         if (SatelliteIds is null) SatelliteIds = [];
+        for (var i = 1; i < SatelliteIds.Length; i++)
+        {
+            if (SatelliteIds[i] <= SatelliteIds[i - 1])
+                throw new ArgumentException("MSM mask IDs must be unique and increasing.", nameof(SatelliteIds));
+        }
         foreach (var sv in SatelliteIds)
         {
             if (sv is < 1 or > 64)
@@ -340,6 +346,11 @@ public abstract class RtcmV3MsmBase : RtcmV3MessageBase
 
         // 4) Signal mask (32 бита: индексы 1..32)
         if (SignalIds is null) SignalIds = [];
+        for (var i = 1; i < SignalIds.Length; i++)
+        {
+            if (SignalIds[i] <= SignalIds[i - 1])
+                throw new ArgumentException("MSM mask IDs must be unique and increasing.", nameof(SignalIds));
+        }
         foreach (var sg in SignalIds)
         {
             if (sg is < 1 or > 32)
@@ -397,11 +408,13 @@ public abstract class RtcmV3MsmBase : RtcmV3MessageBase
     public DateTime EpochTime { get; set; }
 
     // protected byte[] CellMask { get; set; }
-    protected byte[][] CellMask { get; set; }
+    public byte[][] CellMask { get; set; } = [];
 
-    protected byte[] SatelliteIds { get; set; }
+    protected int CellCount => CellMask.Sum(row => row.Count(value => value != 0));
 
-    protected byte[] SignalIds { get; set; }
+    public byte[] SatelliteIds { get; set; } = [];
+
+    public byte[] SignalIds { get; set; } = [];
 
 
     /// <summary>

@@ -39,40 +39,91 @@ public class UbxCfgTMode3Pool : UbxMessageBase
     }
 }
 
-public class UbxCfgTMode3 : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.37. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+/// <remarks>For ZED-F9P survey-in operation, see UBX-18010802 R08, section 3.1.5.5.1: both duration and accuracy requirements must be met. Do not feed RTCM corrections during survey-in.</remarks>
+public partial class UbxCfgTMode3 : UbxMessageBase
 {
     public override string Name => "UBX-CFG-TMODE3";
     public override byte Class => 0x06;
     public override byte SubClass => 0x71;
 
-    public byte Version { get; set; }
+    private byte _version;
+
+    /// <summary>
+    /// Payload format version; the documented CFG-TMODE3 format uses version 0.
+    /// </summary>
+    public byte Version
+    {
+        get => _version;
+        set => _version = value;
+    }
+
+    private bool _isGivenInLLA;
 
     /// <summary>
     /// Position is given in LAT/LON/ALT (default is ECEF)
     /// </summary>
-    public bool IsGivenInLLA { get; set; }
+    public bool IsGivenInLLA
+    {
+        get => _isGivenInLLA;
+        set => _isGivenInLLA = value;
+    }
+
+    private TMode3Enum _mode;
 
     /// <summary>
     /// Receiver Mode
     /// </summary>
-    public TMode3Enum Mode { get; set; }
+    public TMode3Enum Mode
+    {
+        get => _mode;
+        set => _mode = value;
+    }
+
+    private double _surveyInPositionAccuracyLimit;
 
     /// <summary>
-    /// Survey-in position accuracy limit
+    /// Survey-in mean-position accuracy limit in meters; wire resolution is 0.1 mm. Survey-in completes only after this limit and the minimum duration are both satisfied.
     /// </summary>
-    public double SurveyInPositionAccuracyLimit { get; set; }
+    public double SurveyInPositionAccuracyLimit
+    {
+        get => _surveyInPositionAccuracyLimit;
+        set => _surveyInPositionAccuracyLimit = value;
+    }
+
+    private uint _surveyInMinDuration;
 
     /// <summary>
-    /// Survey-in minimum duration
+    /// Minimum survey-in observation duration in seconds; completion also requires the configured position accuracy.
     /// </summary>
-    public uint SurveyInMinDuration { get; set; }
+    public uint SurveyInMinDuration
+    {
+        get => _surveyInMinDuration;
+        set => _surveyInMinDuration = value;
+    }
+
+    private double _fixedPosition3DAccuracy;
 
     /// <summary>
-    /// Fixed position 3D accuracy
+    /// Accuracy assigned to the fixed reference position, in meters; wire resolution is 0.1 mm.
     /// </summary>
-    public double FixedPosition3DAccuracy { get; set; }
+    public double FixedPosition3DAccuracy
+    {
+        get => _fixedPosition3DAccuracy;
+        set => _fixedPosition3DAccuracy = value;
+    }
 
-    public GeoPoint? Location { get; set; }
+    private GeoPoint? _location;
+
+    /// <summary>
+    /// Fixed reference position: latitude and longitude in degrees and ellipsoidal height in meters. Required in FixedMode. The wire coordinates are geodetic or WGS84 ECEF according to IsGivenInLLA.
+    /// </summary>
+    public GeoPoint? Location
+    {
+        get => _location;
+        set => _location = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -89,23 +140,38 @@ public class UbxCfgTMode3 : UbxMessageBase
                     $"{nameof(Location)} must be not null, when {nameof(Mode)} == {nameof(TMode3Enum.FixedMode)}");
             }
 
-            var lat = (int)Math.Round(Location.Value.Latitude * 1e7);
-            var lon = (int)Math.Round(Location.Value.Longitude * 1e7);
-            var alt = (int)Math.Round(Location.Value.Altitude * 100.0);
-            var xpX = (long)Math.Round(Location.Value.Latitude * 1e9);
-            var xpY = (long)Math.Round(Location.Value.Longitude * 1e9);
-            var xpZ = (long)Math.Round(Location.Value.Altitude * 10000.0);
-            var latHp = (byte)(xpX - (long)lat * 100);
-            var lonHp = (byte)(xpY - (long)lon * 100);
-            var altHp = (byte)(xpZ - (long)alt * 100);
+            var location = Location.Value;
+            var x = location.Latitude * 1e7;
+            var y = location.Longitude * 1e7;
+            var z = location.Altitude * 100.0;
+            if (!IsGivenInLLA)
+            {
+                const double semiMajorAxis = 6378137.0;
+                const double flattening = 1.0 / 298.257223563;
+                const double eccentricitySquared = flattening * (2.0 - flattening);
+                var latitude = location.Latitude * Math.PI / 180.0;
+                var longitude = location.Longitude * Math.PI / 180.0;
+                var sinLatitude = Math.Sin(latitude);
+                var radius = semiMajorAxis / Math.Sqrt(1.0 - eccentricitySquared * sinLatitude * sinLatitude);
+                x = (radius + location.Altitude) * Math.Cos(latitude) * Math.Cos(longitude) * 100.0;
+                y = (radius + location.Altitude) * Math.Cos(latitude) * Math.Sin(longitude) * 100.0;
+                z = (radius * (1.0 - eccentricitySquared) + location.Altitude) * sinLatitude * 100.0;
+            }
 
-            BinSerialize.WriteInt(ref buffer, lat);
-            BinSerialize.WriteInt(ref buffer, lon);
-            BinSerialize.WriteInt(ref buffer, alt);
+            var coarseX = checked((int)Math.Round(x));
+            var coarseY = checked((int)Math.Round(y));
+            var coarseZ = checked((int)Math.Round(z));
+            var highPrecisionX = checked((sbyte)(Math.Round(x * 100.0) - (long)coarseX * 100));
+            var highPrecisionY = checked((sbyte)(Math.Round(y * 100.0) - (long)coarseY * 100));
+            var highPrecisionZ = checked((sbyte)(Math.Round(z * 100.0) - (long)coarseZ * 100));
 
-            BinSerialize.WriteByte(ref buffer, latHp);
-            BinSerialize.WriteByte(ref buffer, lonHp);
-            BinSerialize.WriteByte(ref buffer, altHp);
+            BinSerialize.WriteInt(ref buffer, coarseX);
+            BinSerialize.WriteInt(ref buffer, coarseY);
+            BinSerialize.WriteInt(ref buffer, coarseZ);
+
+            BinSerialize.WriteByte(ref buffer, unchecked((byte)highPrecisionX));
+            BinSerialize.WriteByte(ref buffer, unchecked((byte)highPrecisionY));
+            BinSerialize.WriteByte(ref buffer, unchecked((byte)highPrecisionZ));
         }
         else
         {
@@ -170,6 +236,7 @@ public class UbxCfgTMode3 : UbxMessageBase
         else
         {
             buffer = buffer.Slice(16);
+            Location = null;
         }
 
         FixedPosition3DAccuracy = BinSerialize.ReadUInt(ref buffer) * 0.0001;

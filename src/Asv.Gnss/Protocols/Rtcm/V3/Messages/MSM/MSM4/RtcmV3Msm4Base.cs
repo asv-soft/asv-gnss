@@ -143,7 +143,7 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
         for (var j = 0; j < nCell; j++)
         {
             int val;
-            if (PseudoRangeRaw[j] == 0.0)
+            if (!double.IsFinite(PseudoRangeRaw[j]) || PseudoRangeRaw[j] < -1E12)
                 val = -16384; // no data
             else if (Math.Abs(PseudoRangeRaw[j]) > 292.7)
                 val = -16384; // overflow -> no data
@@ -156,7 +156,7 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
         for (var j = 0; j < nCell; j++)
         {
             int val;
-            if (PhaseRangeRaw[j] == 0.0)
+            if (!double.IsFinite(PhaseRangeRaw[j]) || PhaseRangeRaw[j] < -1E12)
                 val = -2097152; // no data
             else if (Math.Abs(PhaseRangeRaw[j]) > 1171.0)
                 val = -2097152;

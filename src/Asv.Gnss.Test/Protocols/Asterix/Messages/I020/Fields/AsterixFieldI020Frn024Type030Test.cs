@@ -1,15 +1,16 @@
 using System;
 using Asv.Gnss;
+using Asv.IO;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(AsterixFieldI020Frn024Type030))]
 public class AsterixFieldI020Frn024Type030Test
 {
 
-    //[Fact]
+    [Fact]
     public void Should_SerializeDeserialize_WarningErrorConditions_Correctly()
     {
         // Arrange
@@ -25,11 +26,14 @@ public class AsterixFieldI020Frn024Type030Test
         var buffer = new byte[field.GetByteSize()];
         var span = buffer.AsSpan();
         field.Serialize(ref span);
+        Assert.True(span.IsEmpty);
+        Assert.Equal(new byte[] { 0x03, 0x07, 0x15, 0x1E }, buffer);
         
         // Create new field for deserialization
         var deserializedField = new AsterixFieldI020Frn024Type030();
         var readOnlySpan = new ReadOnlySpan<byte>(buffer);
         deserializedField.Deserialize(ref readOnlySpan);
+        Assert.True(readOnlySpan.IsEmpty);
         
         // Assert
         Assert.Equal(4, deserializedField.WarningErrorConditions.Count);
@@ -56,5 +60,62 @@ public class AsterixFieldI020Frn024Type030Test
         deserializedField.AddWarningErrorCondition(WarningErrorCode.MultipathReply);
         deserializedField.AddWarningErrorCondition(WarningErrorCode.MultipathReply); // Should not add duplicate
         Assert.Single(deserializedField.WarningErrorConditions);
+    }
+
+    [Fact]
+    public void Deserialize_ShouldReplacePreviousWarningConditionsAndPreserveFollowingBytes()
+    {
+        var field = new AsterixFieldI020Frn024Type030();
+        field.AddWarningErrorCondition(WarningErrorCode.TransponderAnomaly);
+        var buffer = new ReadOnlySpan<byte>(new byte[] { 0x03, 0x06, 0xA5 });
+
+        field.Deserialize(ref buffer);
+
+        Assert.Equal(new[] { WarningErrorCode.MultipathReply, WarningErrorCode.SplitPlot }, field.WarningErrorConditions);
+        Assert.Equal(new byte[] { 0xA5 }, buffer.ToArray());
+    }
+
+    [Fact]
+    public void Accept_ShouldKeepChangedWarningsAndSerializedDataConsistent()
+    {
+        var field = new AsterixFieldI020Frn024Type030();
+        field.AddWarningErrorCondition(WarningErrorCode.MultipathReply);
+
+        field.Accept(new ReplaceWarningErrorVisitor((byte)WarningErrorCode.PhantomSSRPlot, (byte)WarningErrorCode.TransponderAnomaly));
+
+        Assert.Equal(new[] { WarningErrorCode.PhantomSSRPlot, WarningErrorCode.TransponderAnomaly }, field.WarningErrorConditions);
+        var buffer = new byte[field.GetByteSize()];
+        var span = buffer.AsSpan();
+        field.Serialize(ref span);
+        Assert.True(span.IsEmpty);
+        Assert.Equal(new byte[] { 0x15, 0x1E }, buffer);
+        var decoded = new AsterixFieldI020Frn024Type030();
+        var remaining = new ReadOnlySpan<byte>(buffer);
+        decoded.Deserialize(ref remaining);
+        Assert.Equal(field.WarningErrorConditions, decoded.WarningErrorConditions);
+    }
+
+    private sealed class ReplaceWarningErrorVisitor(params byte[] values) : ListType.IVisitor, UInt8Type.IVisitor
+    {
+        private int _index;
+
+        public void BeginList(Field field, ListType type, ref uint size)
+        {
+            size = (uint)values.Length;
+        }
+
+        public void EndList()
+        {
+        }
+
+        public void Visit(Field field, UInt8Type type, ref byte value)
+        {
+            value = values[_index++];
+        }
+
+        public void VisitUnknown(Field field, IFieldType type)
+        {
+            throw new InvalidOperationException($"Unexpected field type: {type.Name}");
+        }
     }
 }

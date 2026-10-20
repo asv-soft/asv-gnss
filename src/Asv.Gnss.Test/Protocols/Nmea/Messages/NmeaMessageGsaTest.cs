@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 // https://receiverhelp.trimble.com/alloy-gnss/en-us/nmea0183-messages-gsa.html?TocPath=Output%20Messages%7CNMEA-0183%20messages%7C_____8
 // https://docs.novatel.com/OEM7/Content/Logs/GPGSA.htm?tocpath=Commands%20%2526%20Logs%7CLogs%7CGNSS%20Logs%7C_____63

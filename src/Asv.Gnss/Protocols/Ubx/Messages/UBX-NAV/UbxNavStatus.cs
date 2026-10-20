@@ -27,8 +27,27 @@ public class UbxNavStatusPool : UbxMessageBase
     }
 }
 
-public class UbxNavStatus : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.17.24. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxNavStatus : UbxMessageBase
 {
+    private uint _iTOW;
+    private byte _gpsFix;
+    private byte _flags;
+    private bool _isGpsFixOk;
+    private bool _isDiffSoln;
+    private bool _isWknSet;
+    private bool _isTowSet;
+    private byte _fixStat;
+    private bool _isDiffCorr;
+    private bool _isCarrSolnValid;
+    private MapMatchingStatus _mapMatching = MapMatchingStatus.None;
+    private byte _flags2;
+    private PowerSaveModeState _psmState = PowerSaveModeState.Acquisition;
+    private SpoofingDetectionState _spoofDetState = SpoofingDetectionState.UnknownOrDeactivated;
+    private CPRSolutionStatus _carrSoln = CPRSolutionStatus.NoCPRSolution;
+    private uint _ttff;
+    private uint _msss;
+
     public override string Name => "UBX-NAV-STATUS";
     public override byte Class => 0x01;
     public override byte SubClass => 0x03;
@@ -36,7 +55,11 @@ public class UbxNavStatus : UbxMessageBase
     /// <summary>
     /// GPS time of week of the navigation epoch.
     /// </summary>
-    public uint iTOW { get; set; }
+    public uint iTOW
+    {
+        get => _iTOW;
+        set => _iTOW = value;
+    }
 
     /// <summary>
     /// GPSfix Type, this value does not qualify a
@@ -50,89 +73,158 @@ public class UbxNavStatus : UbxMessageBase
     /// 0x05 = Time only fix
     /// 0x06..0xff = reserved
     /// </summary>
-    public byte GpsFix { get; set; }
+    public byte GpsFix
+    {
+        get => _gpsFix;
+        set => _gpsFix = value;
+    }
 
     /// <summary>
     /// Navigation Status Flags (see graphic below)
     /// </summary>
-    public byte Flags { get; set; }
+    public byte Flags
+    {
+        get => _flags;
+        set => _flags = value;
+    }
 
     #region Flags bits
 
     /// <summary>
     /// Position and velocity valid and within DOP and ACC Masks.
     /// </summary>
-    public bool IsGpsFixOk { get; set; }
+    public bool IsGpsFixOk
+    {
+        get => _isGpsFixOk;
+        set => _isGpsFixOk = value;
+    }
 
     /// <summary>
     /// Differential corrections were applied.
     /// </summary>
-    public bool IsDiffSoln { get; set; }
+    public bool IsDiffSoln
+    {
+        get => _isDiffSoln;
+        set => _isDiffSoln = value;
+    }
 
     /// <summary>
     /// Week Number valid.
     /// </summary>
-    public bool IsWknSet { get; set; }
+    public bool IsWknSet
+    {
+        get => _isWknSet;
+        set => _isWknSet = value;
+    }
 
     /// <summary>
     /// Time of Week valid.
     /// </summary>
-    public bool IsTowSet { get; set; }
+    public bool IsTowSet
+    {
+        get => _isTowSet;
+        set => _isTowSet = value;
+    }
 
     #endregion
 
     /// <summary>
     /// Fix Status Information (see graphic below)
     /// </summary>
-    public byte FixStat { get; set; }
+    public byte FixStat
+    {
+        get => _fixStat;
+        set => _fixStat = value;
+    }
 
     #region FixStat bits
 
     /// <summary>
     /// Differential corrections available.
     /// </summary>
-    public bool IsDiffCorr { get; set; }
+    public bool IsDiffCorr
+    {
+        get => _isDiffCorr;
+        set => _isDiffCorr = value;
+    }
 
     /// <summary>
     /// Valid carrSoln.
     /// </summary>
-    public bool IsCarrSolnValid { get; set; }
+    public bool IsCarrSolnValid
+    {
+        get => _isCarrSolnValid;
+        set => _isCarrSolnValid = value;
+    }
 
     /// <summary>
     /// Map matching status.
     /// </summary>
-    public MapMatchingStatus MapMatching { get; set; } =
-        MapMatchingStatus.None;
+    public MapMatchingStatus MapMatching
+    {
+        get => _mapMatching;
+        set => _mapMatching = value;
+    }
 
     #endregion
 
     /// <summary>
     /// further information about navigation output (see graphic below)
     /// </summary>
-    public byte Flags2 { get; set; }
+    public byte Flags2
+    {
+        get => _flags2;
+        set => _flags2 = value;
+    }
 
     #region Flags2 bits
 
-    public PowerSaveModeState PsmState { get; set; } =
-        PowerSaveModeState.Acquisition;
+    /// <summary>
+    /// Power-save operating state decoded from flags2 bits 0 and 1.
+    /// </summary>
+    public PowerSaveModeState PsmState
+    {
+        get => _psmState;
+        set => _psmState = value;
+    }
 
-    public SpoofingDetectionState SpoofDetState { get; set; } =
-        SpoofingDetectionState.UnknownOrDeactivated;
+    /// <summary>
+    /// Spoofing detector status decoded from flags2 bits 3 and 4; an unknown state does not establish absence of spoofing.
+    /// </summary>
+    public SpoofingDetectionState SpoofDetState
+    {
+        get => _spoofDetState;
+        set => _spoofDetState = value;
+    }
 
-    public CPRSolutionStatus CarrSoln { get; set; } =
-        CPRSolutionStatus.NoCPRSolution;
+    /// <summary>
+    /// Carrier-phase solution state decoded from flags2 bits 6 and 7; interpret together with the carrier-solution validity flag.
+    /// </summary>
+    public CPRSolutionStatus CarrSoln
+    {
+        get => _carrSoln;
+        set => _carrSoln = value;
+    }
 
     #endregion
 
     /// <summary>
     /// Time to first fix (millisecond time tag)
     /// </summary>
-    public uint TTFF { get; set; }
+    public uint TTFF
+    {
+        get => _ttff;
+        set => _ttff = value;
+    }
 
     /// <summary>
     /// Milliseconds since Startup / Reset
     /// </summary>
-    public uint MSSS { get; set; }
+    public uint MSSS
+    {
+        get => _msss;
+        set => _msss = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -156,18 +248,7 @@ public class UbxNavStatus : UbxMessageBase
 
         IsDiffCorr = (FixStat & 0b0000_0001) != 0;
 
-        if ((FixStat & 0b1100_0000) != 0)
-        {
-            MapMatching = MapMatchingStatus.ValidAndUsedSensor;
-        }
-        else if ((FixStat & 0b1000_0000) != 0)
-        {
-            MapMatching = MapMatchingStatus.ValidAndUsed;
-        }
-        else if ((FixStat & 0b0100_0000) != 0)
-        {
-            MapMatching = MapMatchingStatus.ValidButNotUsed;
-        }
+        MapMatching = (MapMatchingStatus)((FixStat >> 6) & 0b11);
 
         IsTowSet = (Flags & 0b00001000) != 0;
         IsWknSet = (Flags & 0b00000100) != 0;
@@ -176,40 +257,9 @@ public class UbxNavStatus : UbxMessageBase
 
         Flags2 = BinSerialize.ReadByte(ref buffer);
 
-        if ((Flags2 & 0b0100_0000) != 0)
-        {
-            CarrSoln = CPRSolutionStatus.CPRWithFloatingAmbiguities;
-        }
-        else if ((Flags2 & 0b1000_0000) != 0)
-        {
-            CarrSoln = CPRSolutionStatus.CPRWithFixedAmbiguities;
-        }
-
-        if ((Flags2 & 0b0001_1000) != 0)
-        {
-            SpoofDetState = SpoofingDetectionState.MultipleSpoofingIndications;
-        }
-        else if ((Flags2 & 0b0000_1000) != 0)
-        {
-            SpoofDetState = SpoofingDetectionState.NoSpoofingIndicated;
-        }
-        else if ((Flags2 & 0b0001_0000) != 0)
-        {
-            SpoofDetState = SpoofingDetectionState.SpoofingIndicated;
-        }
-
-        if ((Flags2 & 0b0000_0011) != 0)
-        {
-            PsmState = PowerSaveModeState.Inactive;
-        }
-        else if ((Flags2 & 0b0000_0001) != 0)
-        {
-            PsmState = PowerSaveModeState.Tracking;
-        }
-        else if ((Flags2 & 0b0000_0010) != 0)
-        {
-            PsmState = PowerSaveModeState.PowerOptimizedTracking;
-        }
+        CarrSoln = (CPRSolutionStatus)((Flags2 >> 6) & 0b11);
+        SpoofDetState = (SpoofingDetectionState)((Flags2 >> 3) & 0b11);
+        PsmState = (PowerSaveModeState)(Flags2 & 0b11);
 
         TTFF = BinSerialize.ReadUInt(ref buffer);
         MSSS = BinSerialize.ReadUInt(ref buffer);
@@ -278,4 +328,3 @@ public enum MapMatchingStatus
     /// </summary>
     ValidAndUsedSensor = 3,
 }
-    

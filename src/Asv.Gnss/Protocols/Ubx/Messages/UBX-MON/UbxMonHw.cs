@@ -31,33 +31,195 @@ public class UbxMonHwPool : UbxMessageBase
 }
 
 // [SerializationNotSupported]
-public class UbxMonHw : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.16.4. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxMonHw : UbxMessageBase
 {
+    private int _pinSel;
+    private int _pinBank;
+    private int _pinDir;
+    private int _pinVal;
+    private ushort _noise;
+    private ushort _agcCnt;
+    private AntennaSupervisorStateMachineStatus _aStatus;
+    private AntennaPowerStatus _aPower;
+    private bool _rtcCalib;
+    private bool _safeBoot;
+    private bool _xTalAbsent;
+    private int _usedMask;
+    private byte[]? _vp;
+    private byte _jamInd;
+    private int _pinIrq;
+    private int _pullH;
+    private int _pullL;
+    private JammingStateEnum _jammingState;
+    private double _cwJammingIndicator;
+    private double _agcMonitor;
+
     public override byte Class => 0x0A;
     public override byte SubClass => 0x09;
     public override string Name => "UBX-MON-HW";
 
-    public int PinSel { get; set; }
-    public int PinBank { get; set; }
-    public int PinDir { get; set; }
-    public int PinVal { get; set; }
-    public ushort Noise { get; set; }
-    public ushort AgcCnt { get; set; }
-    public AntennaSupervisorStateMachineStatus AStatus { get; set; }
-    public AntennaPowerStatus APower { get; set; }
-    public bool RtcCalib { get; set; }
-    public bool SafeBoot { get; set; }
-    public bool XTalAbsent { get; set; }
-    public int UsedMask { get; set; }
-    public byte[] VP { get; set; }
-    public byte JamInd { get; set; }
-    public int PinIrq { get; set; }
-    public int PullH { get; set; }
-    public int PullL { get; set; }
+    /// <summary>
+    /// Pin-selection bit mask: each bit distinguishes peripheral selection from GPIO selection.
+    /// </summary>
+    public int PinSel
+    {
+        get => _pinSel;
+        set => _pinSel = value;
+    }
+    /// <summary>
+    /// Pin-bank bit mask reported by the receiver hardware.
+    /// </summary>
+    public int PinBank
+    {
+        get => _pinBank;
+        set => _pinBank = value;
+    }
+    /// <summary>
+    /// GPIO direction bit mask; a set bit denotes an output.
+    /// </summary>
+    public int PinDir
+    {
+        get => _pinDir;
+        set => _pinDir = value;
+    }
+    /// <summary>
+    /// GPIO logic-level bit mask; a set bit denotes a high level.
+    /// </summary>
+    public int PinVal
+    {
+        get => _pinVal;
+        set => _pinVal = value;
+    }
+    /// <summary>
+    /// Receiver noise measurement per millisecond (noisePerMS); this is a hardware-dependent diagnostic count.
+    /// </summary>
+    public ushort Noise
+    {
+        get => _noise;
+        set => _noise = value;
+    }
+    /// <summary>
+    /// Automatic gain control count, with a documented range of 0 to 8191.
+    /// </summary>
+    public ushort AgcCnt
+    {
+        get => _agcCnt;
+        set => _agcCnt = value;
+    }
+    /// <summary>
+    /// Antenna supervisor state; interpret only when antenna supervision is supported and enabled.
+    /// </summary>
+    public AntennaSupervisorStateMachineStatus AStatus
+    {
+        get => _aStatus;
+        set => _aStatus = value;
+    }
+    /// <summary>
+    /// Reported antenna power state: off, on, or unknown.
+    /// </summary>
+    public AntennaPowerStatus APower
+    {
+        get => _aPower;
+        set => _aPower = value;
+    }
+    /// <summary>
+    /// Whether the real-time clock has been calibrated.
+    /// </summary>
+    public bool RtcCalib
+    {
+        get => _rtcCalib;
+        set => _rtcCalib = value;
+    }
+    /// <summary>
+    /// Whether the receiver is running in safe-boot mode.
+    /// </summary>
+    public bool SafeBoot
+    {
+        get => _safeBoot;
+        set => _safeBoot = value;
+    }
+    /// <summary>
+    /// Whether the RTC crystal is absent.
+    /// </summary>
+    public bool XTalAbsent
+    {
+        get => _xTalAbsent;
+        set => _xTalAbsent = value;
+    }
+    /// <summary>
+    /// Bit mask identifying pins assigned to virtual-pin functions.
+    /// </summary>
+    public int UsedMask
+    {
+        get => _usedMask;
+        set => _usedMask = value;
+    }
+    /// <summary>
+    /// Seventeen virtual-pin mapping bytes; entries are hardware-dependent pin assignments.
+    /// </summary>
+    public byte[] VP
+    {
+        get => _vp!;
+        set => _vp = value;
+    }
+    /// <summary>
+    /// Continuous-wave interference indicator, from 0 to 255; larger values indicate stronger interference.
+    /// </summary>
+    public byte JamInd
+    {
+        get => _jamInd;
+        set => _jamInd = value;
+    }
+    /// <summary>
+    /// Bit mask identifying pins with an enabled interrupt.
+    /// </summary>
+    public int PinIrq
+    {
+        get => _pinIrq;
+        set => _pinIrq = value;
+    }
+    /// <summary>
+    /// Bit mask identifying pins with a high pull resistor enabled.
+    /// </summary>
+    public int PullH
+    {
+        get => _pullH;
+        set => _pullH = value;
+    }
+    /// <summary>
+    /// Bit mask identifying pins with a low pull resistor enabled.
+    /// </summary>
+    public int PullL
+    {
+        get => _pullL;
+        set => _pullL = value;
+    }
 
-    public JammingStateEnum JammingState { get; set; }
-    public double CwJammingIndicator { get; set; }
-    public double AgcMonitor { get; set; }
+    /// <summary>
+    /// Interference monitor state: unknown or disabled, normal, warning, or critical.
+    /// </summary>
+    public JammingStateEnum JammingState
+    {
+        get => _jammingState;
+        set => _jammingState = value;
+    }
+    /// <summary>
+    /// Library-normalized continuous-wave interference indicator, equal to JamInd divided by 255.
+    /// </summary>
+    public double CwJammingIndicator
+    {
+        get => _cwJammingIndicator;
+        set => _cwJammingIndicator = value;
+    }
+    /// <summary>
+    /// Library-normalized automatic gain control count, equal to AgcCnt divided by 8191.
+    /// </summary>
+    public double AgcMonitor
+    {
+        get => _agcMonitor;
+        set => _agcMonitor = value;
+    }
 
 
 

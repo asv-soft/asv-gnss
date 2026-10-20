@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Asv.IO;
 
@@ -9,11 +9,28 @@ namespace Asv.Gnss
         public const int RtcmMessageId = 1029;
         public override ushort MessageId => RtcmMessageId;
         public override string Name => "Unicode Text String";
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            var bytes = Encoding.UTF8.GetBytes(Message ?? string.Empty);
+            var characterCount = 0;
+            foreach (var rune in (Message ?? string.Empty).EnumerateRunes()) characterCount++;
+            if (characterCount > 127 || bytes.Length > 255)
+                throw new ArgumentOutOfRangeException(nameof(Message));
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, ReferenceStationID);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 16, ModifiedJulianDay);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 17, SecondsOfDay);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 7, characterCount);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, bytes.Length);
+            foreach (var value in bytes) SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, value);
+        }
+
+        protected override int InternalGetBitSize() => 60 + Encoding.UTF8.GetByteCount(Message ?? string.Empty) * 8;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 12); 
             ModifiedJulianDay = (ushort)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 16);
-            var secondsOfDDay = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 17);
+            var secondsOfDDay = SecondsOfDay = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 17);
             NumberOfCharactersFollow = SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
             var dateTime = RtcmV3Helper.GetUtc(DateTime.UtcNow, secondsOfDDay);
             EpochTime = RtcmV3Helper.Utc2Gps(dateTime);
@@ -38,6 +55,8 @@ namespace Asv.Gnss
         /// units
         /// </summary>
         public uint NumberOfCharactersFollow { get; set; }
+
+        public uint SecondsOfDay { get; set; }
 
         public ushort ModifiedJulianDay { get; set; }
 

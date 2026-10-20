@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 public class AsvMessageTest
 {

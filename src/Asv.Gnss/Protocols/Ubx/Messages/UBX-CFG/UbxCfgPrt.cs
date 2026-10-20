@@ -4,13 +4,22 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class UbxCfgPrtPool : UbxMessageBase
+public partial class UbxCfgPrtPool : UbxMessageBase
 {
     public override string Name => "UBX-CFG-PRT-POOL";
     public override byte Class => 0x06;
     public override byte SubClass => 0x00;
 
-    public byte PortId { get; set; }
+    private byte _portId;
+
+    /// <summary>
+    /// Receiver port identifier: 0 for DDC, 1 for UART1, 2 for UART2, 3 for USB, or 4 for SPI, subject to receiver support.
+    /// </summary>
+    public byte PortId
+    {
+        get => _portId;
+        set => _portId = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -30,13 +39,22 @@ public class UbxCfgPrtPool : UbxMessageBase
     }
 }
 
-public class UbxCfgPrt : UbxMessageBase
+public partial class UbxCfgPrt : UbxMessageBase
 {
     public override string Name => "UBX-CFG-PRT";
     public override byte Class => 0x06;
     public override byte SubClass => 0x00;
 
-    public UbxCfgPrtConfig Config { get; set; }
+    private UbxCfgPrtConfig? _config;
+
+    /// <summary>
+    /// Port-specific configuration, including protocol masks and transport parameters.
+    /// </summary>
+    public UbxCfgPrtConfig Config
+    {
+        get => _config!;
+        set => _config = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -76,20 +94,95 @@ public enum UbxCfgPrtType
     Spi
 }
 
-public abstract class UbxCfgPrtConfig : ISizedSpanSerializable
+public abstract partial class UbxCfgPrtConfig : ISizedSpanSerializable, IVisitable
 {
+    /// <summary>
+    /// Transport type selecting the port-specific CFG-PRT payload layout.
+    /// </summary>
     public abstract UbxCfgPrtType PortType { get; }
 
-    public bool IsInUbxProtocol { get; set; } = true;
-    public bool IsInNmeaProtocol { get; set; } = true;
-    public bool IsInRtcm2Protocol { get; set; }
-    public bool IsInRtcm3Protocol { get; set; } = true;
+    private bool _isInUbxProtocol = true;
 
-    public bool IsOutUbxProtocol { get; set; } = true;
-    public bool IsOutNmeaProtocol { get; set; } = true;
-    public bool IsOutRtcm3Protocol { get; set; } = true;
+    /// <summary>
+    /// Whether UBX is enabled in the input protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsInUbxProtocol
+    {
+        get => _isInUbxProtocol;
+        set => _isInUbxProtocol = value;
+    }
+    private bool _isInNmeaProtocol = true;
 
-    public bool IsExtendedTxTimeout { get; set; }
+    /// <summary>
+    /// Whether NMEA is enabled in the input protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsInNmeaProtocol
+    {
+        get => _isInNmeaProtocol;
+        set => _isInNmeaProtocol = value;
+    }
+    private bool _isInRtcm2Protocol;
+
+    /// <summary>
+    /// Whether RTCM2 is enabled in the input protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsInRtcm2Protocol
+    {
+        get => _isInRtcm2Protocol;
+        set => _isInRtcm2Protocol = value;
+    }
+    private bool _isInRtcm3Protocol = true;
+
+    /// <summary>
+    /// Whether RTCM3 is enabled in the input protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsInRtcm3Protocol
+    {
+        get => _isInRtcm3Protocol;
+        set => _isInRtcm3Protocol = value;
+    }
+
+    private bool _isOutUbxProtocol = true;
+
+    /// <summary>
+    /// Whether UBX is enabled in the output protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsOutUbxProtocol
+    {
+        get => _isOutUbxProtocol;
+        set => _isOutUbxProtocol = value;
+    }
+    private bool _isOutNmeaProtocol = true;
+
+    /// <summary>
+    /// Whether NMEA is enabled in the output protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsOutNmeaProtocol
+    {
+        get => _isOutNmeaProtocol;
+        set => _isOutNmeaProtocol = value;
+    }
+    private bool _isOutRtcm3Protocol = true;
+
+    /// <summary>
+    /// Whether RTCM3 is enabled in the output protocol mask; availability depends on receiver firmware.
+    /// </summary>
+    public bool IsOutRtcm3Protocol
+    {
+        get => _isOutRtcm3Protocol;
+        set => _isOutRtcm3Protocol = value;
+    }
+
+    private bool _isExtendedTxTimeout;
+
+    /// <summary>
+    /// Whether the extended transmitter timeout is enabled (flags bit 1).
+    /// </summary>
+    public bool IsExtendedTxTimeout
+    {
+        get => _isExtendedTxTimeout;
+        set => _isExtendedTxTimeout = value;
+    }
 
     public abstract void Deserialize(ref ReadOnlySpan<byte> buffer);
     public abstract void Serialize(ref Span<byte> buffer);
@@ -97,18 +190,99 @@ public abstract class UbxCfgPrtConfig : ISizedSpanSerializable
     public abstract void Randomize(Random random);
 }
 
-public class UbxCfgPrtConfigUart : UbxCfgPrtConfig
+public partial class UbxCfgPrtConfigUart : UbxCfgPrtConfig
 {
-    public byte PortId { get; set; }
-    public bool IsEnable { get; set; }
-    public PortPolarity Polarity { get; set; }
-    public byte Pin { get; set; }
-    public ushort Threshold { get; set; }
+    private byte _portId;
 
-    public int DataBits { get; set; } = 8;
-    public Parity Parity { get; set; } = Parity.None;
-    public StopBits StopBits { get; set; } = StopBits.One;
-    public int BoundRate { get; set; } = 115200;
+    /// <summary>
+    /// Receiver port identifier: 0 for DDC, 1 for UART1, 2 for UART2, 3 for USB, or 4 for SPI, subject to receiver support.
+    /// </summary>
+    public byte PortId
+    {
+        get => _portId;
+        set => _portId = value;
+    }
+    private bool _isEnable;
+
+    /// <summary>
+    /// Whether the transmit-ready pin function is enabled (txReady bit 0).
+    /// </summary>
+    public bool IsEnable
+    {
+        get => _isEnable;
+        set => _isEnable = value;
+    }
+    private PortPolarity _polarity;
+
+    /// <summary>
+    /// Active polarity of the transmit-ready signal (txReady bit 1).
+    /// </summary>
+    public PortPolarity Polarity
+    {
+        get => _polarity;
+        set => _polarity = value;
+    }
+    private byte _pin;
+
+    /// <summary>
+    /// PIO number for the transmit-ready signal, encoded in txReady bits 2 through 6.
+    /// </summary>
+    public byte Pin
+    {
+        get => _pin;
+        set => _pin = value;
+    }
+    private ushort _threshold;
+
+    /// <summary>
+    /// Transmit-ready threshold in units of eight bytes, encoded in txReady bits 7 through 15.
+    /// </summary>
+    public ushort Threshold
+    {
+        get => _threshold;
+        set => _threshold = value;
+    }
+
+    private int _dataBits = 8;
+
+    /// <summary>
+    /// UART character length in bits; the documented receiver modes support 7 or 8 data bits.
+    /// </summary>
+    public int DataBits
+    {
+        get => _dataBits;
+        set => _dataBits = value;
+    }
+    private Parity _parity = Parity.None;
+
+    /// <summary>
+    /// UART parity selection encoded in the port mode.
+    /// </summary>
+    public Parity Parity
+    {
+        get => _parity;
+        set => _parity = value;
+    }
+    private StopBits _stopBits = StopBits.One;
+
+    /// <summary>
+    /// UART stop-bit selection encoded in the port mode.
+    /// </summary>
+    public StopBits StopBits
+    {
+        get => _stopBits;
+        set => _stopBits = value;
+    }
+    private int _boundRate = 115200;
+
+    /// <summary>
+    /// UART baud rate in bits per second; supported rates depend on the receiver.
+    /// </summary>
+    public int BoundRate
+    {
+        get => _boundRate;
+        set => _boundRate = value;
+    }
 
 
 

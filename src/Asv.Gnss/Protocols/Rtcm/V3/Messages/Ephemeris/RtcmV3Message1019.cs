@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -7,6 +7,42 @@ namespace Asv.Gnss
     {
         public const int RtcmMessageId = 1019;
 
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, SatellitePrn >= 120 ? SatellitePrn - 80 : SatellitePrn, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 10, WeekRaw ?? (uint)(Week % 1024), 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 4, SvAccuracy, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 2, CodeL2, 1);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 14, Idot, RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 8, Iode, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 16, RtcmV3Serialization.SecondsOfWeek(Toc), 16.0);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 8, Af2, RtcmV3Helper.P2_55);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Af1, RtcmV3Helper.P2_43);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 22, Af0, RtcmV3Helper.P2_31);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 10, Iodc, 1);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Crs, RtcmV3Helper.P2_5);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Deln, RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, M0, RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cuc, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 32, E, RtcmV3Helper.P2_33);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cus, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 32, Math.Sqrt(A), RtcmV3Helper.P2_19);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 16, Toes, 16.0);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cic, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, Omg0, RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cis, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, I0, RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Crc, RtcmV3Helper.P2_5);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, Omg, RtcmV3Helper.P2_31 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 24, OmgD, RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 8, Tgd[0], RtcmV3Helper.P2_31);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, SvHealth, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, FlagL2PData, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, Fit == 0 ? 1 : 0, 1);
+        }
+
+        protected override int InternalGetBitSize() => 476;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             var utc = DateTime.UtcNow;
@@ -14,6 +50,7 @@ namespace Asv.Gnss
 
             var prn = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 6);
             var week = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 10);
+            WeekRaw = week;
             SvAccuracy = (int)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 4);
             CodeL2 = (int)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 2);
             Idot = SpanBitHelper.GetBitS(buffer,ref bitIndex, 14) * RtcmV3Helper.P2_43 * RtcmV3Helper.SC2RAD;
@@ -107,6 +144,7 @@ namespace Asv.Gnss
         /// <summary>
         /// /* GPS/QZS: gps week, GAL: galileo week */
         /// </summary>
+        public uint? WeekRaw { get; set; }
         public int Week { get; set; }
         /// <summary>
         /// GPS/QZS: code on L2.

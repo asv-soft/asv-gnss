@@ -1,4 +1,4 @@
-﻿using Asv.IO;
+using Asv.IO;
 using System;
 
 namespace Asv.Gnss
@@ -34,6 +34,16 @@ namespace Asv.Gnss
         /// Receiver Serial Number 
         /// </summary>
         public string ReceiverSerialNumber { get; set; }
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            base.InternalSerialize(buffer, ref bitIndex);
+            RtcmV3Serialization.WriteString(buffer, ref bitIndex, ReceiverTypeDescriptor);
+            RtcmV3Serialization.WriteString(buffer, ref bitIndex, ReceiverFirmwareVersion);
+            RtcmV3Serialization.WriteString(buffer, ref bitIndex, ReceiverSerialNumber);
+        }
+
+        protected override int InternalGetBitSize() => base.InternalGetBitSize() + RtcmV3Serialization.StringBitSize(ReceiverTypeDescriptor) + RtcmV3Serialization.StringBitSize(ReceiverFirmwareVersion) + RtcmV3Serialization.StringBitSize(ReceiverSerialNumber);
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);

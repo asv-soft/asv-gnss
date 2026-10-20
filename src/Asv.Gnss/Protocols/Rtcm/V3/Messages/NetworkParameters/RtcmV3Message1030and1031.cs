@@ -1,4 +1,4 @@
-﻿using Asv.IO;
+using Asv.IO;
 using System;
 using static System.Collections.Specialized.BitVector32;
 
@@ -6,29 +6,62 @@ namespace Asv.Gnss
 {
     public abstract class RtcmV3Message1030and1031 : RtcmV3LegacyMessageBase
     {
+        public RtcmV3NetworkResidual[] SatelliteResiduals { get; set; } = Array.Empty<RtcmV3NetworkResidual>();
+
+        private RtcmV3NetworkResidual _firstResidual = new();
+        private RtcmV3NetworkResidual FirstResidual => SatelliteResiduals.Length == 0 ? _firstResidual : SatelliteResiduals[0];
+
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            var count = GetResidualCount();
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, ResidualEpochBitLen, ResidualsEpoch);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, ReferenceStationID);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 7, NRefs);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 5, count);
+            for (var i = 0; i < count; i++)
+            {
+                var residual = SatelliteResiduals.Length == 0 ? _firstResidual : SatelliteResiduals[i];
+                SpanBitHelper.SetBitU(buffer, ref bitIndex, 6, residual.SatelliteId);
+                RtcmV3Serialization.WriteU(buffer, ref bitIndex, 8, residual.SOc, 0.5);
+                RtcmV3Serialization.WriteU(buffer, ref bitIndex, 9, residual.SOd, 0.01);
+                RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, residual.SOh, 0.1);
+                RtcmV3Serialization.WriteU(buffer, ref bitIndex, 10, residual.SIc, 0.5);
+                RtcmV3Serialization.WriteU(buffer, ref bitIndex, 10, residual.SId, 0.01);
+            }
+        }
+
+        private int GetResidualCount()
+        {
+            var count = SatelliteResiduals.Length == 0 ? NumberSatelliteSignals : SatelliteResiduals.Length;
+            if (count > 31 || (SatelliteResiduals.Length == 0 && count > 1))
+                throw new InvalidOperationException("Satellite residual count does not match the supplied records.");
+            return count;
+        }
+
+        protected override int InternalGetBitSize() => ResidualEpochBitLen + 24 + 49 * GetResidualCount();
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             ResidualsEpoch = SpanBitHelper.GetBitU(buffer, ref bitIndex, ResidualEpochBitLen);
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref bitIndex, 12);
             NRefs = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 7);
             NumberSatelliteSignals = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
-            SatelliteId = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
-            _sOcDf = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
-            _sOdDf = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 9);
-            _sOhDf = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
-            _sIcDf = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
-            _sIdDf = (ushort)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
+            SatelliteResiduals = new RtcmV3NetworkResidual[NumberSatelliteSignals];
+            _firstResidual = new RtcmV3NetworkResidual();
+            for (var i = 0; i < SatelliteResiduals.Length; i++)
+            {
+                SatelliteResiduals[i] = new RtcmV3NetworkResidual
+                {
+                    SatelliteId = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6),
+                    SOc = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8) * 0.5,
+                    SOd = SpanBitHelper.GetBitU(buffer, ref bitIndex, 9) * 0.01,
+                    SOh = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6) * 0.1,
+                    SIc = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10) * 0.5,
+                    SId = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10) * 0.01,
+                };
+            }
         }
         protected abstract int ResidualEpochBitLen { get; }
-
-        private const double mm05Res = 0.5;
-        private const double ppm001Res = 0.01;
-        private const double ppm01Res = 0.1;
-        private byte _sOcDf; // 0 - 127 mm 
-        private ushort _sOdDf; // 0 - 5.11 ppm
-        private byte _sOhDf; // 0 - 5.11 ppm
-        private ushort _sIcDf; // 0 - 511 mm 
-        private ushort _sIdDf; // 0 - 10.23 ppm
 
         /// <summary>
         /// GPS Residuals Epoch Time(TOW) - 0 – 604800 s
@@ -99,18 +132,18 @@ namespace Asv.Gnss
         /// GLONASS-M word “n”, thus the Satellite Slot Number is always
         /// known(cannot be equal to zero) for GLONASS-M satellites.
         /// </summary>
-        public byte SatelliteId { get; set; }
+        public byte SatelliteId { get => FirstResidual.SatelliteId; set => FirstResidual.SatelliteId = value; }
 
         /// <summary>
         /// Constant term of standard deviation (1 sigma)
         /// for non-dispersive interpolation residuals, mm.
         /// </summary>
-        public double SOc => _sOcDf * mm05Res;
+        public double SOc => FirstResidual.SOc;
         /// <summary>
         /// Distance dependent term of standard deviation(1 sigma)
         /// for non- dispersive interpolation residuals, ppm.
         /// </summary>
-        public double SOd => _sOdDf * ppm001Res;
+        public double SOd => FirstResidual.SOd;
 
         /// <summary>
         /// Height dependent term of standard deviation (1 sigma) for nondispersive interpolation residuals, ppm.
@@ -118,13 +151,13 @@ namespace Asv.Gnss
         /// interpolation residual is computed from DF218,DF219 and DF220
         /// using the formula.
         /// </summary>
-        public double SOh => _sOhDf * ppm01Res;
+        public double SOh => FirstResidual.SOh;
 
         /// <summary>
         ///  Constant term of standard deviation (1 sigma)
         ///  for dispersive interpolation residuals (as affecting GPS L1 frequency) 
         /// </summary>
-        public double SIc => _sIcDf * mm05Res;
+        public double SIc => FirstResidual.SIc;
 
         /// <summary>
         /// Distance dependent term of standard deviation (1 sigma) for dispersive
@@ -133,7 +166,16 @@ namespace Asv.Gnss
         /// interpolation residual is computed from DF221 and DF222 using the
         /// formula.
         /// </summary>
-        public double SId => _sIdDf * ppm001Res;
+        public double SId => FirstResidual.SId;
 
+    }
+    public class RtcmV3NetworkResidual
+    {
+        public byte SatelliteId { get; set; }
+        public double SOc { get; set; }
+        public double SOd { get; set; }
+        public double SOh { get; set; }
+        public double SIc { get; set; }
+        public double SId { get; set; }
     }
 }

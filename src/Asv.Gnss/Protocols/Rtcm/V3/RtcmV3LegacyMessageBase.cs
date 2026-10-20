@@ -16,14 +16,4 @@ public abstract class RtcmV3LegacyMessageBase : RtcmV3MessageBase
     }
 
     protected abstract void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength);
-
-    protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override int InternalGetBitSize()
-    {
-        throw new NotImplementedException();
-    }
 }

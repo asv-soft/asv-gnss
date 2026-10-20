@@ -27,8 +27,18 @@ public class UbxNavDopPool : UbxMessageBase
     }
 }
 
-public class UbxNavDop : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.17.6. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxNavDop : UbxMessageBase
 {
+    private ulong _iTOW;
+    private double _gDOP;
+    private double _pDOP;
+    private double _tDOP;
+    private double _vDOP;
+    private double _hDOP;
+    private double _nDOP;
+    private double _eDOP;
+
     public override string Name => "UBX-NAV-DOP";
     public override byte Class => 0x01;
     public override byte SubClass => 0x04;
@@ -36,42 +46,74 @@ public class UbxNavDop : UbxMessageBase
     /// <summary>
     /// GPS time of week of the navigation epoch.
     /// </summary>
-    public ulong iTOW { get; set; }
+    public ulong iTOW
+    {
+        get => _iTOW;
+        set => _iTOW = value;
+    }
 
     /// <summary>
     /// Geometric DOP
     /// </summary>
-    public double gDOP { get; set; }
+    public double gDOP
+    {
+        get => _gDOP;
+        set => _gDOP = value;
+    }
 
     /// <summary>
     /// Position DOP
     /// </summary>
-    public double pDOP { get; set; }
+    public double pDOP
+    {
+        get => _pDOP;
+        set => _pDOP = value;
+    }
 
     /// <summary>
     /// Time DOP
     /// </summary>
-    public double tDOP { get; set; }
+    public double tDOP
+    {
+        get => _tDOP;
+        set => _tDOP = value;
+    }
 
     /// <summary>
     /// Vertical DOP
     /// </summary>
-    public double vDOP { get; set; }
+    public double vDOP
+    {
+        get => _vDOP;
+        set => _vDOP = value;
+    }
 
     /// <summary>
     /// Horizontal DOP
     /// </summary>
-    public double hDOP { get; set; }
+    public double hDOP
+    {
+        get => _hDOP;
+        set => _hDOP = value;
+    }
 
     /// <summary>
     /// Northing DOP
     /// </summary>
-    public double nDOP { get; set; }
+    public double nDOP
+    {
+        get => _nDOP;
+        set => _nDOP = value;
+    }
 
     /// <summary>
     /// Easting DOP
     /// </summary>
-    public double eDOP { get; set; }
+    public double eDOP
+    {
+        get => _eDOP;
+        set => _eDOP = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {

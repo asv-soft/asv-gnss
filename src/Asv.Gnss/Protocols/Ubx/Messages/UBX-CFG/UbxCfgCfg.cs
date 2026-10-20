@@ -69,16 +69,54 @@ public enum UbxCfgSection : uint
     FtsConf = 0b0001_0000_0000_0000,
 }
 
-public class UbxCfgCfg : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.3. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+public partial class UbxCfgCfg : UbxMessageBase
 {
     public override string Name => "UBX-CFG-CFG";
     public override byte Class => 0x06;
     public override byte SubClass => 0x09;
 
-    public UbxCfgDeviceMask? DeviceMask { get; set; }
-    public UbxCfgSection ClearMask { get; set; }
-    public UbxCfgSection SaveMask { get; set; }
-    public UbxCfgSection LoadMask { get; set; }
+    private UbxCfgDeviceMask? _deviceMask;
+
+    /// <summary>
+    /// Optional storage-device mask. Null selects the 12-byte form without a device selector; otherwise the 13-byte form is used.
+    /// </summary>
+    public UbxCfgDeviceMask? DeviceMask
+    {
+        get => _deviceMask;
+        set => _deviceMask = value;
+    }
+    private UbxCfgSection _clearMask;
+
+    /// <summary>
+    /// Configuration groups whose stored values are to be replaced with factory defaults. Combined operations execute in clear, save, load order.
+    /// </summary>
+    public UbxCfgSection ClearMask
+    {
+        get => _clearMask;
+        set => _clearMask = value;
+    }
+    private UbxCfgSection _saveMask;
+
+    /// <summary>
+    /// Configuration groups to save to the selected nonvolatile storage.
+    /// </summary>
+    public UbxCfgSection SaveMask
+    {
+        get => _saveMask;
+        set => _saveMask = value;
+    }
+    private UbxCfgSection _loadMask;
+
+    /// <summary>
+    /// Configuration groups to load from the selected storage into the active configuration.
+    /// </summary>
+    public UbxCfgSection LoadMask
+    {
+        get => _loadMask;
+        set => _loadMask = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {

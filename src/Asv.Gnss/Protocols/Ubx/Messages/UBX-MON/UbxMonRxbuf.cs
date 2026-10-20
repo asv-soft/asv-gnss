@@ -27,8 +27,13 @@ public class UbxMonRxbufPool : UbxMessageBase
     }
 }
 
-public class UbxMonRxbuf : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.16.8. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxMonRxbuf : UbxMessageBase
 {
+    private readonly ushort[] _pending = new ushort[6];
+    private readonly byte[] _usage = new byte[6];
+    private readonly byte[] _peakUsage = new byte[6];
+
     public override string Name => "UBX-MON-RXBUF";
     public override byte Class => 0x0A;
     public override byte SubClass => 0x07;
@@ -37,18 +42,18 @@ public class UbxMonRxbuf : UbxMessageBase
     /// Number of bytes pending in transmitter
     /// buffer for each target
     /// </summary>
-    public ushort[] Pending { get; } = new ushort[6];
+    public ushort[] Pending => _pending;
 
     /// <summary>
     /// Maximum usage transmitter buffer during
     /// the last sysmon period for each target
     /// </summary>
-    public byte[] Usage { get; } = new byte[6];
+    public byte[] Usage => _usage;
 
     /// <summary>
     /// Maximum usage transmitter buffer for each target
     /// </summary>
-    public byte[] PeakUsage { get; } = new byte[6];
+    public byte[] PeakUsage => _peakUsage;
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {

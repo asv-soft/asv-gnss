@@ -20,6 +20,9 @@ namespace Asv.Gnss
         /// The maximum size of a packet.
         /// </summary>
         public const int MaxPacketSize = 1024 * 10;
+
+        // ComNav OEM Reference Manual v1.8, section 4.1.2: future headers may append fields.
+        private const int MinimumHeaderLength = 28;
         
         /// <summary>
         /// The byte value representing the first synchronization byte.
@@ -168,6 +171,11 @@ namespace Asv.Gnss
                     break;
                 case State.HeaderLength:
                     _headerLength = data;
+                    if (_headerLength < MinimumHeaderLength)
+                    {
+                        Reset();
+                        return false;
+                    }
                     _buffer[_bufferIndex++] = data;
                     _state = State.Header;
                     break;
@@ -177,6 +185,11 @@ namespace Asv.Gnss
                     {
                         _messageLength = BitConverter.ToUInt16(_buffer, 8);
                         _stopMessageIndex = _headerLength + _messageLength + 4 /* CRC 32 bit*/;
+                        if (_stopMessageIndex > _buffer.Length)
+                        {
+                            Reset();
+                            return false;
+                        }
                         _state = State.Message;
                     }
                     break;

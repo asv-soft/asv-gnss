@@ -118,10 +118,10 @@ public class UbxMessageParser : ProtocolParser<UbxMessageBase, ushort>
                 if (_bufferIndex == 6)
                 {
                     _payloadLength = UbxProtocol.ReadMessageLength(_buffer);
-                    _state = State.Payload;
+                    _state = _payloadLength == 0 ? State.Crc1 : State.Payload;
                     _payloadReadBytes = 0;
                     // reset on oversize packet
-                    if (_payloadLength > _buffer.Length)
+                    if (_payloadLength > _buffer.Length - UbxProtocol.HeaderOffset - 2)
                     {
                         // buffer oversize
                         Reset();

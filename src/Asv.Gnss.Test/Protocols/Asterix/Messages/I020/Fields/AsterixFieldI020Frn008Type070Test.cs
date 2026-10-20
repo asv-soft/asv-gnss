@@ -3,14 +3,14 @@ using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(AsterixFieldI020Frn008Type070))]
 public class AsterixFieldI020Frn008Type070Test
 {
 
     
-    //[Fact]
+    [Fact]
     public void DeserializeAndSerialize_ShouldWorkCorrectly()
     {
         // Arrange
@@ -25,7 +25,7 @@ public class AsterixFieldI020Frn008Type070Test
         Assert.False(field.V); // V bit (15) should be 0
         Assert.True(field.G);  // G bit (14) should be 1
         Assert.False(field.L); // L bit (13) should be 0
-        Assert.Equal(0x058, field.Mode3ACode); // Mode-3/A code should be 0x058 (88 decimal)
+        Assert.Equal(130, field.Mode3ACode); // A/B/C/D digits are 0/1/3/0, encoded in bits 12-1.
         
         // Test serialization
         var outputBuffer = new byte[2];

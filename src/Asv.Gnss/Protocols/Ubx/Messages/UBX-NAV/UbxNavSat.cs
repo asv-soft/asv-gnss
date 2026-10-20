@@ -28,8 +28,14 @@ public class UbxNavSatPool : UbxMessageBase
 }
 
 // [SerializationNotSupported]
-public class UbxNavSat : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.17.20. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxNavSat : UbxMessageBase
 {
+    private ulong _iTOW;
+    private byte _version;
+    private byte _numSvs;
+    private UbxNavSatelliteItem[]? _items;
+
     public override string Name => "UBX-NAV-SAT";
     public override byte Class => 0x01;
     public override byte SubClass => 0x35;
@@ -37,19 +43,38 @@ public class UbxNavSat : UbxMessageBase
     /// <summary>
     /// GPS time of week of the navigation epoch. See the description of iTOW for details.
     /// </summary>
-    public ulong iTOW { get; set; }
+    public ulong iTOW
+    {
+        get => _iTOW;
+        set => _iTOW = value;
+    }
 
     /// <summary>
     /// Message version (0x01 for this version)
     /// </summary>
-    public byte Version { get; set; }
+    public byte Version
+    {
+        get => _version;
+        set => _version = value;
+    }
 
     /// <summary>
     /// Number of satellites
     /// </summary>
-    public byte NumSvs { get; set; }
+    public byte NumSvs
+    {
+        get => _numSvs;
+        set => _numSvs = value;
+    }
 
-    public UbxNavSatelliteItem[] Items { get; set; }
+    /// <summary>
+    /// Satellite records for this navigation epoch; one entry per satellite reported in numSvs.
+    /// </summary>
+    public UbxNavSatelliteItem[] Items
+    {
+        get => _items!;
+        set => _items = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -83,118 +108,248 @@ public class UbxNavSat : UbxMessageBase
 
 
 
-public class UbxNavSatelliteItem : ISizedSpanSerializable
+public partial class UbxNavSatelliteItem : ISizedSpanSerializable
 {
-    public UbxNavSatGnssId GnssType { get; set; }
+    private UbxNavSatGnssId _gnssType;
+    private byte _gnssId;
+    private byte _svId;
+    private byte _cnobBHz;
+    private sbyte _elevDeg;
+    private short _azimDeg;
+    private double _prResM;
+    private UbxQualityIndEnum _qualityInd;
+    private bool _svUsed;
+    private UbxHealthInd _health;
+    private bool _diffCorr;
+    private bool _smoothed;
+    private UbxOrbitSource _orbitSource;
+    private bool _isephAvail;
+    private bool _isalmAvail;
+    private bool _isanoAvail;
+    private bool _isaopAvail;
+    private bool _issbasCorrUsed;
+    private bool _isrtcmCorrUsed;
+    private bool _isslasCorrUsed;
+    private bool _isspartnCorrUsed;
+    private bool _isprCorrUsed;
+    private bool _iscrCorrUsed;
+    private bool _isdoCorrUsed;
+
+    /// <summary>
+    /// GNSS constellation identifier associated with this satellite.
+    /// </summary>
+    public UbxNavSatGnssId GnssType
+    {
+        get => _gnssType;
+        set => _gnssType = value;
+    }
 
     /// <summary>
     /// GNSS identifier (see Satellite Numbering) for assignment
     /// </summary>
-    public byte GnssId { get; set; }
+    public byte GnssId
+    {
+        get => _gnssId;
+        set => _gnssId = value;
+    }
 
     /// <summary>
     /// Satellite identifier (see Satellite Numbering) for assignment
     /// </summary>
-    public byte SvId { get; set; }
+    public byte SvId
+    {
+        get => _svId;
+        set => _svId = value;
+    }
 
     /// <summary>
     /// Carrier to noise ratio (signal strength)
     /// </summary>
-    public byte CnobBHz { get; set; }
+    public byte CnobBHz
+    {
+        get => _cnobBHz;
+        set => _cnobBHz = value;
+    }
 
     /// <summary>
     /// Elevation (range: +/-90), unknown if out of range
     /// </summary>
-    public sbyte ElevDeg { get; set; }
+    public sbyte ElevDeg
+    {
+        get => _elevDeg;
+        set => _elevDeg = value;
+    }
 
     /// <summary>
     /// Azimuth (range 0-360), unknown if elevation is out of range
     /// </summary>
-    public short AzimDeg { get; set; }
+    public short AzimDeg
+    {
+        get => _azimDeg;
+        set => _azimDeg = value;
+    }
 
     /// <summary>
     /// Pseudorange residual
     /// </summary>
-    public double PrResM { get; set; }
+    public double PrResM
+    {
+        get => _prResM;
+        set => _prResM = value;
+    }
 
-    public UbxQualityIndEnum QualityInd { get; set; }
+    /// <summary>
+    /// Signal acquisition and tracking quality decoded from bits 0 through 2 of the satellite flags.
+    /// </summary>
+    public UbxQualityIndEnum QualityInd
+    {
+        get => _qualityInd;
+        set => _qualityInd = value;
+    }
 
     /// <summary>
     /// Signal in the subset specified in Signal Identifiers is currently being used for navigation
     /// </summary>
-    public bool SvUsed { get; set; }
+    public bool SvUsed
+    {
+        get => _svUsed;
+        set => _svUsed = value;
+    }
 
-    public UbxHealthInd Health { get; set; }
+    /// <summary>
+    /// Satellite health decoded from bits 4 and 5 of the satellite flags; unknown health is distinct from healthy.
+    /// </summary>
+    public UbxHealthInd Health
+    {
+        get => _health;
+        set => _health = value;
+    }
 
     /// <summary>
     /// differential correction data is available for this SV
     /// </summary>
-    public bool DiffCorr { get; set; }
+    public bool DiffCorr
+    {
+        get => _diffCorr;
+        set => _diffCorr = value;
+    }
 
     /// <summary>
     /// Carrier smoothed pseudorange used
     /// </summary>
-    public bool Smoothed { get; set; }
+    public bool Smoothed
+    {
+        get => _smoothed;
+        set => _smoothed = value;
+    }
 
     /// <summary>
     /// Orbit source
     /// </summary>
-    public UbxOrbitSource OrbitSource { get; set; }
+    public UbxOrbitSource OrbitSource
+    {
+        get => _orbitSource;
+        set => _orbitSource = value;
+    }
 
     /// <summary>
     ///  ephemeris is available for this SV
     /// </summary>
-    public bool IsephAvail { get; set; }
+    public bool IsephAvail
+    {
+        get => _isephAvail;
+        set => _isephAvail = value;
+    }
 
     /// <summary>
     ///  almanac is available for this SV
     /// </summary>
-    public bool IsalmAvail { get; set; }
+    public bool IsalmAvail
+    {
+        get => _isalmAvail;
+        set => _isalmAvail = value;
+    }
 
     /// <summary>
     ///  AssistNow Offline data is available for this SV
     /// </summary>
-    public bool IsanoAvail { get; set; }
+    public bool IsanoAvail
+    {
+        get => _isanoAvail;
+        set => _isanoAvail = value;
+    }
 
     /// <summary>
     ///  AssistNow Autonomous data is available for this SV
     /// </summary>
-    public bool IsaopAvail { get; set; }
+    public bool IsaopAvail
+    {
+        get => _isaopAvail;
+        set => _isaopAvail = value;
+    }
 
     /// <summary>
     ///  SBAS corrections have been used for a signal in the subset specified in Signal Identifiers
     /// </summary>
-    public bool IssbasCorrUsed { get; set; }
+    public bool IssbasCorrUsed
+    {
+        get => _issbasCorrUsed;
+        set => _issbasCorrUsed = value;
+    }
 
     /// <summary>
     ///  RTCM corrections have been used for a signal in the subset specified in Signal Identifiers
     /// </summary>
-    public bool IsrtcmCorrUsed { get; set; }
+    public bool IsrtcmCorrUsed
+    {
+        get => _isrtcmCorrUsed;
+        set => _isrtcmCorrUsed = value;
+    }
 
     /// <summary>
     ///  QZSS SLAS corrections have been used for a signal in the subset specified in Signal Identifiers
     /// </summary>
-    public bool IsslasCorrUsed { get; set; }
+    public bool IsslasCorrUsed
+    {
+        get => _isslasCorrUsed;
+        set => _isslasCorrUsed = value;
+    }
 
     /// <summary>
     ///  SPARTN corrections have been used for a signal in the subset specified in Signal Identifiers
     /// </summary>
-    public bool IsspartnCorrUsed { get; set; }
+    public bool IsspartnCorrUsed
+    {
+        get => _isspartnCorrUsed;
+        set => _isspartnCorrUsed = value;
+    }
 
     /// <summary>
     ///  Pseudorange corrections have been used for a signal in the subset specified in Signal Identifiers
     /// </summary>
-    public bool IsprCorrUsed { get; set; }
+    public bool IsprCorrUsed
+    {
+        get => _isprCorrUsed;
+        set => _isprCorrUsed = value;
+    }
 
     /// <summary>
     ///  Carrier range corrections have been used for a signal in the subset specified in Signal Identifiers
     /// </summary>
-    public bool IscrCorrUsed { get; set; }
+    public bool IscrCorrUsed
+    {
+        get => _iscrCorrUsed;
+        set => _iscrCorrUsed = value;
+    }
 
     /// <summary>
     ///  Range rate (Doppler) corrections have been used for a signal in the subset specified in Signal
     /// </summary>
-    public bool IsdoCorrUsed { get; set; }
+    public bool IsdoCorrUsed
+    {
+        get => _isdoCorrUsed;
+        set => _isdoCorrUsed = value;
+    }
 
     public void Deserialize(ref ReadOnlySpan<byte> buffer)
     {

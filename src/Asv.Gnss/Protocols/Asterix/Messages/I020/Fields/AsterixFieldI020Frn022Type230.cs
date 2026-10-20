@@ -73,13 +73,13 @@ public class AsterixFieldI020Frn022Type230 : AsterixField
     /// </summary>
     public bool Mssc
     {
-        get => (_rawValue & 0x0100) != 0;
+        get => (_rawValue & 0x0080) != 0;
         set
         {
             if (value)
-                _rawValue |= 0x0100;
+                _rawValue |= 0x0080;
             else
-                _rawValue &= 0xFEFF;
+                _rawValue &= 0xFF7F;
         }
     }
 
@@ -141,13 +141,13 @@ public class AsterixFieldI020Frn022Type230 : AsterixField
     /// </summary>
     public bool B1A
     {
-        get => (_rawValue & 0x0020) != 0;
+        get => (_rawValue & 0x0010) != 0;
         set
         {
             if (value)
-                _rawValue |= 0x0020;
+                _rawValue |= 0x0010;
             else
-                _rawValue &= 0xFFDF;
+                _rawValue &= 0xFFEF;
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -12,6 +12,16 @@ namespace Asv.Gnss
     /// </summary>
     public class RtcmV3Message1004 : RtcmV3RTKObservableMessagesBase
     {
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            if (Satellites.Length > 31) throw new ArgumentOutOfRangeException(nameof(Satellites));
+            SatelliteCount = (byte)Satellites.Length;
+            base.InternalSerialize(buffer, ref bitIndex);
+            foreach (var satellite in Satellites) satellite.Serialize(buffer, ref bitIndex);
+        }
+
+        protected override int InternalGetBitSize() => base.InternalGetBitSize() + Satellites.Length * 125;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);
@@ -28,7 +38,7 @@ namespace Asv.Gnss
         public override ushort MessageId => 1004;
         public override string Name => "Extended L1&L2 GPS RTK Observables";
 
-        public GPSSatellite[] Satellites { get; set; }
+        public GPSSatellite[] Satellites { get; set; } = Array.Empty<GPSSatellite>();
 
     }
 
@@ -38,6 +48,26 @@ namespace Asv.Gnss
 
         private static readonly double[] Freq = { RtcmV3Helper.FREQ1, RtcmV3Helper.FREQ2 };
 
+
+         public void Serialize(Span<byte> buffer, ref int bitIndex)
+        {
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, SatellitePrn >= 120 ? SatellitePrn - 80 : SatellitePrn, 1);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, L1Code == RtcmV3Helper.CODE_L1P ? 1 : 0);
+            var ambiguity = (uint)Math.Floor(L1PseudoRange / RtcmV3Helper.PRUNIT_GPS);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 24, L1PseudoRange - ambiguity * RtcmV3Helper.PRUNIT_GPS, 0.02);
+            SpanBitHelper.SetBitS(buffer, ref bitIndex, 20, double.IsFinite(L1CarrierPhase)
+                ? (int)Math.Round(L1CarrierPhase * RtcmV3Helper.CLIGHT / Freq[0] / 0.0005) : -524288);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 7, L1LockTime);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, ambiguity);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 8, L1CNR * RtcmV3Protocol.SNR_UNIT, 0.25);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 2, Array.IndexOf(L2Codes, (int)L2Code));
+            SpanBitHelper.SetBitS(buffer, ref bitIndex, 14, double.IsFinite(L2PseudoRange) && L2PseudoRange != 0
+                ? (int)Math.Round((L2PseudoRange - L1PseudoRange) / 0.02) : -8192);
+            SpanBitHelper.SetBitS(buffer, ref bitIndex, 20, double.IsFinite(L2CarrierPhase)
+                ? (int)Math.Round(L2CarrierPhase * RtcmV3Helper.CLIGHT / Freq[1] / 0.0005) : -524288);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 7, L2LockTime);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 8, L2CNR * RtcmV3Protocol.SNR_UNIT, 0.25);
+        }
 
         public void Deserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
@@ -70,6 +100,7 @@ namespace Asv.Gnss
                 throw new Exception($"Rtcm3 1004 satellite number error: prn={prn}");
             }
 
+            SatellitePrn = (int)prn;
             SatelliteNumber = sat;
             SatelliteCode = RtcmV3Helper.Sat2Code(SatelliteNumber, (int)prn);
 
@@ -118,6 +149,8 @@ namespace Asv.Gnss
         /// satellites are 40-58, so that the SBAS PRN codes are derived from the
         /// Version 3 Satellite ID codes by adding 80.
         /// </summary>
+        public int SatellitePrn { get; set; }
+
         public int SatelliteNumber { get; set; }
 
         public string SatelliteCode { get; set; }

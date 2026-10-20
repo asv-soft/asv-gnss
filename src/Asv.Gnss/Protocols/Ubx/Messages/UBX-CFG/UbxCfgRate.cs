@@ -50,16 +50,45 @@ public class UbxCfgRatePool : UbxMessageBase
 /// from the values configured here.
 /// • See Measurement and navigation rate with power save mode for details
 /// </summary>
-public class UbxCfgRate : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.27. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+public partial class UbxCfgRate : UbxMessageBase
 {
     public override string Name => "UBX-CFG-RATE";
     public override byte Class => 0x06;
     public override byte SubClass => 0x08;
 
 
-    public double RateHz { get; set; } = 1.0;
-    public ushort NavRate { get; set; } = 1;
-    public TimeSystemEnum TimeSystem { get; set; } = TimeSystemEnum.Gps;
+    private double _rateHz = 1.0;
+
+    /// <summary>
+    /// GNSS measurement frequency in hertz, represented on the wire by its period in milliseconds. This implementation rounds the period to multiples of 25 ms; supported rates depend on receiver firmware.
+    /// </summary>
+    public double RateHz
+    {
+        get => _rateHz;
+        set => _rateHz = value;
+    }
+    private ushort _navRate = 1;
+
+    /// <summary>
+    /// Number of measurement cycles per navigation solution, up to 127. Protocol versions below 18 use a fixed ratio of 1.
+    /// </summary>
+    public ushort NavRate
+    {
+        get => _navRate;
+        set => _navRate = value;
+    }
+    private TimeSystemEnum _timeSystem = TimeSystemEnum.Gps;
+
+    /// <summary>
+    /// Time reference used to align measurement epochs; GLONASS, BeiDou and Galileo references require protocol version 18 or later.
+    /// </summary>
+    public TimeSystemEnum TimeSystem
+    {
+        get => _timeSystem;
+        set => _timeSystem = value;
+    }
 
     public enum TimeSystemEnum
     {

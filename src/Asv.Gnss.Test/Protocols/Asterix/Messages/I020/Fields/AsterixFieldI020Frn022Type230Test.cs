@@ -3,12 +3,12 @@ using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(AsterixFieldI020Frn022Type230))]
 public class AsterixFieldI020Frn022Type230Test
 {
-    //[Fact]
+    [Fact]
     public void SerializeDeserialize_ShouldPreserveAllFieldValues()
     {
         // Arrange
@@ -49,6 +49,54 @@ public class AsterixFieldI020Frn022Type230Test
         Assert.Equal(22, deserializedField.FieldReferenceNumber);
         Assert.Equal(20, deserializedField.Category);
         Assert.Equal(2, deserializedField.GetByteSize());
+    }
+
+    [Theory]
+    [InlineData(false, false, false, 0x00)]
+    [InlineData(false, false, true, 0x10)]
+    [InlineData(false, true, false, 0x20)]
+    [InlineData(false, true, true, 0x30)]
+    [InlineData(true, false, false, 0x80)]
+    [InlineData(true, false, true, 0x90)]
+    [InlineData(true, true, false, 0xA0)]
+    [InlineData(true, true, true, 0xB0)]
+    public void CapabilityFlags_ShouldUseIndependentSpecifiedBits(bool mssc, bool aic, bool b1A, int expectedBits)
+    {
+        var field = new AsterixFieldI020Frn022Type230
+        {
+            Com = CommunicationsCapability.CommAbUplinkDownlinkElm,
+            Stat = FlightStatus.AlertSpiAirborneOrGround,
+            Mssc = mssc,
+            Arc = true,
+            Aic = aic,
+            B1A = b1A,
+            B1B = 0x0A
+        };
+        var buffer = new byte[field.GetByteSize()];
+        var span = buffer.AsSpan();
+
+        field.Serialize(ref span);
+
+        Assert.True(span.IsEmpty);
+        Assert.Equal(new byte[] { 0x70, (byte)(expectedBits | 0x4A) }, buffer);
+        var decoded = new AsterixFieldI020Frn022Type230();
+        var remaining = new ReadOnlySpan<byte>(buffer);
+        decoded.Deserialize(ref remaining);
+        Assert.True(remaining.IsEmpty);
+        Assert.Equal(mssc, decoded.Mssc);
+        Assert.Equal(aic, decoded.Aic);
+        Assert.Equal(b1A, decoded.B1A);
+        Assert.True(decoded.Arc);
+        Assert.Equal(0x0A, decoded.B1B);
+        Assert.Equal(field.Com, decoded.Com);
+        Assert.Equal(field.Stat, decoded.Stat);
+
+        decoded.Mssc = !mssc;
+        decoded.Aic = !aic;
+        decoded.B1A = !b1A;
+        span = buffer.AsSpan();
+        decoded.Serialize(ref span);
+        Assert.Equal(new byte[] { 0x70, (byte)((expectedBits ^ 0xB0) | 0x4A) }, buffer);
     }
 
 }

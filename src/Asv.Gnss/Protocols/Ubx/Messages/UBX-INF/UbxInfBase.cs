@@ -4,8 +4,11 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class UbxInfBase : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.13. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public abstract partial class UbxInfBase : UbxMessageBase
 {
+    private string? _message;
+
     protected override void SerializeContent(ref Span<byte> buffer)
     {
         BinSerialize.WriteBlock(ref buffer, Encoding.ASCII.GetBytes(Message+"\0"));
@@ -20,7 +23,14 @@ public abstract class UbxInfBase : UbxMessageBase
         buffer = buffer.Slice(buffer.Length);
     }
 
-    public string Message { get; set; }
+    /// <summary>
+    /// Receiver diagnostic text from the variable-length INF payload.
+    /// </summary>
+    public string Message
+    {
+        get => _message!;
+        set => _message = value;
+    }
 
     public override void Randomize(Random random)
     {

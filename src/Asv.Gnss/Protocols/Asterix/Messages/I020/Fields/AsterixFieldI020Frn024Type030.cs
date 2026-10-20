@@ -25,7 +25,11 @@ public class AsterixFieldI020Frn024Type030 : AsterixField
         .DataType(new ListType(UInt8Type.Default, 0, 255))
         .Build();
     
-    public override void Deserialize(ref ReadOnlySpan<byte> buffer) => RawValue.Deserialize(ref buffer);
+    public override void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        RawValue.Deserialize(ref buffer);
+        UpdateFromRawValue();
+    }
 
     public override void Serialize(ref Span<byte> buffer) => RawValue.Serialize(ref buffer);
 
@@ -46,6 +50,7 @@ public class AsterixFieldI020Frn024Type030 : AsterixField
         // Update the internal collection
         _warningErrorConditions.Clear();
         _warningErrorConditions.AddRange(warningErrorList);
+        UpdateRawValue();
     }
     
     private readonly List<WarningErrorCode> _warningErrorConditions = new();
@@ -122,26 +127,12 @@ public class AsterixFieldI020Frn024Type030 : AsterixField
         
         for (int i = 0; i < _warningErrorConditions.Count; i++)
         {
-            var condition = _warningErrorConditions[i];
-            var octetValue = (byte)condition;
-            
-            // Set FX bit (bit 1) if this is not the last octet
-            if (i < _warningErrorConditions.Count - 1)
+            var condition = (byte)_warningErrorConditions[i];
+            // VariableLengthValue indexes seven data bits per octet and manages FX itself.
+            for (var bitIndex = 0; bitIndex < 7; bitIndex++)
             {
-                octetValue |= 0x01; // Set FX bit
+                RawValue[i * 7 + bitIndex] = (condition & (1 << (6 - bitIndex))) != 0;
             }
-            
-            // The condition value occupies bits 8-2, so shift left by 1
-            var shiftedValue = (byte)(((byte)condition << 1) | (octetValue & 0x01));
-            
-            RawValue[i * 8] = (shiftedValue & 0x80) != 0; // bit 8
-            RawValue[i * 8 + 1] = (shiftedValue & 0x40) != 0; // bit 7
-            RawValue[i * 8 + 2] = (shiftedValue & 0x20) != 0; // bit 6
-            RawValue[i * 8 + 3] = (shiftedValue & 0x10) != 0; // bit 5
-            RawValue[i * 8 + 4] = (shiftedValue & 0x08) != 0; // bit 4
-            RawValue[i * 8 + 5] = (shiftedValue & 0x04) != 0; // bit 3
-            RawValue[i * 8 + 6] = (shiftedValue & 0x02) != 0; // bit 2
-            RawValue[i * 8 + 7] = (shiftedValue & 0x01) != 0; // bit 1 (FX)
         }
     }
     
@@ -153,16 +144,14 @@ public class AsterixFieldI020Frn024Type030 : AsterixField
         _warningErrorConditions.Clear();
         
         var octetIndex = 0;
-        bool hasExtension = true;
-        
-        while (hasExtension && octetIndex * 8 < RawValue.DataBitsCount)
+        while (octetIndex * 7 < RawValue.DataBitsCount)
         {
             // Extract the 7-bit value (bits 8-2)
             byte conditionValue = 0;
             
             for (int bitIndex = 0; bitIndex < 7; bitIndex++)
             {
-                var bit = RawValue[octetIndex * 8 + bitIndex];
+                var bit = RawValue[octetIndex * 7 + bitIndex];
                 if (bit.HasValue && bit.Value)
                 {
                     conditionValue |= (byte)(1 << (6 - bitIndex));
@@ -173,10 +162,6 @@ public class AsterixFieldI020Frn024Type030 : AsterixField
             {
                 _warningErrorConditions.Add((WarningErrorCode)conditionValue);
             }
-            
-            // Check FX bit (bit 1)
-            var fxBit = RawValue[octetIndex * 8 + 7];
-            hasExtension = fxBit.HasValue && fxBit.Value;
             
             octetIndex++;
         }

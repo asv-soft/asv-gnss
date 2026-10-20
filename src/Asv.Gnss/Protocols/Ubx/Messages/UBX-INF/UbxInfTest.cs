@@ -7,6 +7,7 @@ namespace Asv.Gnss;
 /// 20.1, 20.2, 20.3, 22, 22.01, 23 and 23.01
 /// 
 /// </summary>
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.13.4. Receiver and firmware support must be checked against the applicable interface description.</remarks>
 public class UbxInfTest : UbxInfBase
 {
     public override string Name => "UBX-INF-TEST";

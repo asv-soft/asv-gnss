@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -9,13 +9,34 @@ namespace Asv.Gnss
 
         public override string Name => "System Parameters";
 
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, ReferenceStationID);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 16, ModifiedJulianDay);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 17, SecondsOfDay);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 5, SystemMessages.Length);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, LeapSeconds);
+            foreach (var message in SystemMessages)
+            {
+                SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, message.Id);
+                SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, message.SyncFlag);
+                RtcmV3Serialization.WriteU(buffer, ref bitIndex, 16, message.TransmissionInterval, 0.1);
+            }
+        }
+
+        protected override int InternalGetBitSize()
+        {
+            if (SystemMessages.Length > 31) throw new ArgumentOutOfRangeException(nameof(SystemMessages));
+            return 58 + SystemMessages.Length * 29;
+        }
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             ReferenceStationID = SpanBitHelper.GetBitU(buffer, ref  bitIndex, 12);
             ModifiedJulianDay = (ushort)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 16);
-            var secondsOfDDay = (uint)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 17);
+            var secondsOfDDay = SecondsOfDay = (uint)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 17);
             var msgCount = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 5);
-            var leapSeconds = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 8);
+            var leapSeconds = LeapSeconds = (byte)SpanBitHelper.GetBitU(buffer, ref  bitIndex, 8);
             var dateTime = RtcmV3Helper.GetUtc(DateTime.UtcNow, secondsOfDDay);
             EpochTime = dateTime.AddSeconds(leapSeconds);
             RtcmV3Helper.AdjustWeekly(DateTime.UtcNow, secondsOfDDay);
@@ -27,6 +48,9 @@ namespace Asv.Gnss
                 SystemMessages[i] = message;
             }
         }
+
+        public uint SecondsOfDay { get; set; }
+        public byte LeapSeconds { get; set; }
 
         public ushort ModifiedJulianDay { get; set; }
 
@@ -57,7 +81,7 @@ namespace Asv.Gnss
         /// </summary>
         public uint ReferenceStationID { get; set; }
 
-        public SystemMessage[] SystemMessages { get; set; }
+        public SystemMessage[] SystemMessages { get; set; } = Array.Empty<SystemMessage>();
         
     }
 

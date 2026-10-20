@@ -2,7 +2,7 @@ using System.Globalization;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(NmeaDoubleFormat))]
 public class NmeaDoubleFormatTest

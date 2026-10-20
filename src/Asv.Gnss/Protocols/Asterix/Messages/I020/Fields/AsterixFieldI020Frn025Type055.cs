@@ -129,7 +129,7 @@ public class AsterixFieldI020Frn025Type055 : AsterixField
     /// <summary>
     /// Sets the Mode-1 code from an octal string representation
     /// </summary>
-    /// <param name="octalCode">Two-digit octal code (e.g., "17", "05")</param>
+    /// <param name="octalCode">Two-digit Mode-1 code: first digit 0-7, second digit 0-3 (e.g., "13", "73").</param>
     public void SetMode1CodeFromOctal(string octalCode)
     {
         if (string.IsNullOrEmpty(octalCode) || octalCode.Length != 2)
@@ -138,8 +138,8 @@ public class AsterixFieldI020Frn025Type055 : AsterixField
         if (!byte.TryParse(octalCode.Substring(0, 1), out var aDigit) || aDigit > 7)
             throw new ArgumentException("First octal digit must be 0-7", nameof(octalCode));
 
-        if (!byte.TryParse(octalCode.Substring(1, 1), out var bDigit) || bDigit > 7)
-            throw new ArgumentException("Second octal digit must be 0-7", nameof(octalCode));
+        if (!byte.TryParse(octalCode.Substring(1, 1), out var bDigit) || bDigit > 3)
+            throw new ArgumentException("Second Mode-1 digit must be 0-3", nameof(octalCode));
 
         // Convert octal digits to binary
         var a4 = (aDigit >> 2) & 1;

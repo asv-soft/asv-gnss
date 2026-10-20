@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using Xunit;
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(AsterixFieldI020Frn025Type055))]
 public class AsterixFieldI020Frn025Type055Test
@@ -54,8 +54,8 @@ public class AsterixFieldI020Frn025Type055Test
         Assert.Equal(0x80, buffer[0] & 0x80); // Bit 7 should be 1
     }
 
-    //[Fact]
-    private void Mode1CodeOctalConversion_ShouldWorkCorrectly()
+    [Fact]
+    public void Mode1CodeOctalConversion_ShouldWorkCorrectly()
     {
         // Arrange
         var field = new AsterixFieldI020Frn025Type055();
@@ -64,9 +64,10 @@ public class AsterixFieldI020Frn025Type055Test
         var testCases = new[]
         {
             ("00", (byte)0x00),
-            ("17", (byte)0x1F), // Max value
-            ("07", (byte)0x07),
-            ("10", (byte)0x08)
+            ("73", (byte)0x1F), // A4/A2/A1 and B2/B1 all set
+            ("03", (byte)0x03),
+            ("13", (byte)0x07),
+            ("10", (byte)0x04)
         };
 
         foreach (var (octalCode, expectedBinary) in testCases)
@@ -92,6 +93,8 @@ public class AsterixFieldI020Frn025Type055Test
         Assert.Throws<ArgumentException>(() => field.SetMode1CodeFromOctal("123"));
         Assert.Throws<ArgumentException>(() => field.SetMode1CodeFromOctal("88"));
         Assert.Throws<ArgumentException>(() => field.SetMode1CodeFromOctal("1A"));
+        Assert.Throws<ArgumentException>(() => field.SetMode1CodeFromOctal("17"));
+        Assert.Throws<ArgumentException>(() => field.SetMode1CodeFromOctal("07"));
     }
 
     [Fact]

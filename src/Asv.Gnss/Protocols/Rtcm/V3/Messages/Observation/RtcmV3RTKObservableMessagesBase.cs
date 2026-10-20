@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -9,6 +9,22 @@ namespace Asv.Gnss
     /// </summary>
     public abstract class RtcmV3RTKObservableMessagesBase : RtcmV3LegacyMessageBase
     {
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, ReferenceStationID);
+            var gps = MessageId is >= 1001 and <= 1004;
+            var seconds = gps
+                ? RtcmV3Serialization.SecondsOfWeek(EpochTime)
+                : RtcmV3Protocol.Gps2Utc(EpochTime).AddHours(3).TimeOfDay.TotalSeconds;
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, gps ? 30 : 27, seconds, 0.001);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, SynchronousGNSSFlag);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 5, SatelliteCount);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 1, SmoothingIndicator);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 3, SmoothingInterval);
+        }
+
+        protected override int InternalGetBitSize() => 12 + (MessageId is >= 1001 and <= 1004 ? 30 : 27) + 10;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             var utc = DateTime.UtcNow;

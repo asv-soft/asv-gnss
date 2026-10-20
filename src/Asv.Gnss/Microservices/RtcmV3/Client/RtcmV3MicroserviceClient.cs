@@ -34,17 +34,17 @@ public class RtcmV3MicroserviceClient : MicroserviceClient<RtcmV3MessageBase>, I
     {
         _deviceId = deviceId;
 
-        _sub2 = context.Connection.RxFilterByType<RtcmV3Msm4Base>().Subscribe(msg =>
+        _sub2 = InternalFilter<RtcmV3Msm4Base>().Subscribe(msg =>
         {
             _utcTime.Value = RtcmV3Protocol.Gps2Utc(msg.EpochTime);
             _msm4.Value = msg;
         });
-        _sub3 = context.Connection.RxFilterByType<RtcmV3Message1005and1006>().Subscribe(msg =>
+        _sub3 = InternalFilter<RtcmV3Message1005and1006>().Subscribe(msg =>
         {
             _referenceStationPosition.Value = new GeoPoint(msg.Latitude, msg.Longitude, msg.Altitude);
             _referenceStationArp.Value = msg;
         });
-        _sub4 = context.Connection.RxFilterByType<RtcmV3Message1230>().Subscribe(msg => _glonassBias.Value = msg);
+        _sub4 = InternalFilter<RtcmV3Message1230>().Subscribe(msg => _glonassBias.Value = msg);
     }
 
     protected override void FillMessageBeforeSent(RtcmV3MessageBase message)

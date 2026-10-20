@@ -1,4 +1,4 @@
-﻿using Asv.IO;
+using Asv.IO;
 using System;
 
 namespace Asv.Gnss
@@ -8,6 +8,18 @@ namespace Asv.Gnss
         public const int RtcmMessageRecAntId = 1032;
         public override ushort MessageId => RtcmMessageRecAntId;
         public override string Name => "Physical Reference Station Position";
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, NonPhysicalReferenceStationID);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, PhysicalReferenceStationID);
+            SpanBitHelper.SetBitU(buffer, ref bitIndex, 6, ITRFEpochYear);
+            RtcmV3Protocol.SetBits38(buffer, ref bitIndex, Math.Round(X * 10000));
+            RtcmV3Protocol.SetBits38(buffer, ref bitIndex, Math.Round(Y * 10000));
+            RtcmV3Protocol.SetBits38(buffer, ref bitIndex, Math.Round(Z * 10000));
+        }
+
+        protected override int InternalGetBitSize() => 144;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             var rr = new double[3];

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(NmeaMessageGbs))]
 public class NmeaMessageGbsTest(ITestOutputHelper output) 

@@ -8,7 +8,7 @@ using Asv.Gnss;
 using Asv.IO;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 public class ComNavProtocolTest
 {

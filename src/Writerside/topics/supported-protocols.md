@@ -1,55 +1,58 @@
 # Supported Protocols
 
-%product% contains protocol modules under `src/Asv.Gnss/Protocols` and parser modules under `src/Asv.Gnss/Parsers`.
+The pages below describe the current source implementation, its default registrations, and known limitations. A registered message is not necessarily writable; encoding support is documented separately where incomplete.
 
-## GNSS and receiver protocols
+## Stream protocols
 
-| Protocol | Notes |
-|----------|-------|
-| NMEA 0183 | Message parsing and serialization for common navigation sentences. |
-| RTCM v2 | Legacy RTCM messages and stream parsing. |
-| RTCM v3 | Modern RTCM messages, ephemeris, RTK, GLONASS bias, and MSM families. |
-| UBX | u-blox binary messages and receiver microservice helpers. |
-| Raw GPS | Raw GPS parser support. |
-| Raw GLONASS | Raw GLONASS parser support. |
-| SBF | Septentrio Binary Format parser support. |
-| ComNav | ComNav ASCII and binary parser support. |
-| Javad | Receiver-control parser support. |
+| Protocol | Registration | Documentation |
+|----------|--------------|---------------|
+| NMEA 0183 | `RegisterNmeaProtocol` | [Coverage and usage](protocol-nmea.md) |
+| RTCM v2 | `RegisterRtcmV2Protocol` | [Coverage and usage](protocol-rtcm-v2.md) |
+| RTCM v3 | `RegisterRtcmV3Protocol` | [Coverage and usage](protocol-rtcm-v3.md) |
+| UBX | `RegisterUbxProtocol` | [Coverage and usage](protocol-ubx.md) |
+| ASTERIX | `RegisterAsterixProtocol` | [Coverage and usage](protocol-asterix.md) |
+| ASV | `RegisterAsvProtocol` | [Coverage and usage](protocol-asv.md) |
+| GBAS | `RegisterGbasProtocol` | [Coverage and usage](protocol-gbas.md) |
+| Septentrio Binary Format (SBF) | `RegisterSbfProtocol` | [Coverage and usage](protocol-sbf.md) |
+| ComNav | `RegisterComNavProtocol` | [Coverage and usage](protocol-comnav.md) |
 
-## Aviation and surveillance protocols
+All registration methods are extensions on `IProtocolParserBuilder` in the `Asv.Gnss` namespace. Use them through `builder.Protocols` inside `Protocol.Create`; see [Quick Start](quick-start.md). Where a registration accepts a `configure` callback, it runs after the default messages are added and before the factory is built.
 
-| Protocol | Notes |
-|----------|-------|
-| ASTERIX | Category message parsing for surveillance data. |
-| ADS-B | ADS-B protocol support. |
-| ASV | ASV-specific protocol support. |
+## Embedded navigation decoders
 
-## NMEA sentences
+| Module | Entry point | Documentation |
+|--------|-------------|---------------|
+| Raw GPS | `GpsSubFrameFactory.Create(uint[])` | [GPS navigation subframes](protocol-raw-gps.md) |
+| Raw GLONASS | `GlonassWordFactory.Create(uint[])` | [GLONASS navigation strings](protocol-raw-glonass.md) |
 
-The library includes support for commonly used NMEA 0183 sentences:
+These decode navigation words carried by receiver messages and do not have independent stream registrations.
 
-- `GBS`
-- `GGA`
-- `GLL`
-- `GSA`
-- `GST`
-- `GSV`
-- `RMC`
-- `VTG`
-- `ZDA`
+## Incomplete or reference-only modules
 
-## ASTERIX categories
+| Module | Current status |
+|--------|----------------|
+| [ADS-B](protocol-ads-b.md) | Parser and message scaffolding; runtime methods are unimplemented. |
+| [Javad / GREIS](protocol-javad.md) | Reference PDF only; no parser implementation. |
 
-The test resources and implementation cover a broad set of ASTERIX categories, including:
+## Specification coverage tables
 
-- `001`
-- `002`
-- `004`
-- `010`
-- `020`
-- `021`
-- `034`
-- `048`
-- `247`
+Each protocol page includes a specification catalog with message IDs, implementation status, C# model names, default registration, and PDF references where available. The catalogs use these local specification baselines:
 
-Additional categories exist in the test resources and codebase. Check `src/Asv.Gnss/Protocols/Asterix` when you need exact category coverage for a release.
+| Protocol | Catalog baseline |
+|----------|------------------|
+| [NMEA](protocol-nmea.md) | Historical sentence guide plus u-blox 6 and M8 NMEA additions. |
+| [RTCM v2](protocol-rtcm-v2.md) | RTCM 10402.3 with Amendment 1. |
+| [RTCM v3](protocol-rtcm-v3.md) | RTCM 10403.3 with Amendment 1; older local editions are superseded for the catalog. |
+| [UBX](protocol-ubx.md) | UBX-13003221 R23 message overview. |
+| [SBF](protocol-sbf.md) | SBF guide v1.11.0 and AsteRx-U firmware v4.6.1 block catalogs. |
+| [ComNav](protocol-comnav.md) | OEM Board Reference Manual v1.8 native logs and commands. |
+| [Javad / GREIS](protocol-javad.md) | GREIS v4.2.01 native receiver messages, including enumerated measurement families. |
+| [ASTERIX](protocol-asterix.md) | Implemented category list; CAT020 edition 1.9 and CAT021 editions 2.1/2.7 item lists. |
+| [Raw GPS](protocol-raw-gps.md) | Legacy GPS SPS subframes from the 1995 signal specification. |
+| [Raw GLONASS](protocol-raw-glonass.md) | Legacy navigation strings from ICD edition 5.1 (2008). |
+| [ASV](protocol-asv.md) | Source inventory; no local protocol PDF. |
+| [ADS-B](protocol-ads-b.md) | Implementation status only; no local native ADS-B message-catalog PDF. |
+
+**Model present** records a concrete model in source, while **Default** separately records registration by the standard builder. Neither means that every payload revision or optional field is supported. Known incomplete decoders are marked **Partial**. Reserved identifiers and proprietary ranges retain their specification designation.
+
+The catalogs describe the named local editions, not every future revision or every message mentioned in integration examples. Receiver integration manuals, port maps, and the NovAtel OEM7 manual are not treated as additional ComNav wire specifications. For ASTERIX categories without a local category PDF, only source coverage is reported. Check concrete payload methods before relying on encoding or a particular field.

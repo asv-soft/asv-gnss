@@ -3,7 +3,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(NmeaProtocol))]
 public class NmeaProtocolTest

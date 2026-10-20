@@ -3,13 +3,13 @@ using Xunit;
 using System;
 using System.Linq;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(AsterixFieldI020Frn021Type250))]
 public class AsterixFieldI020Frn021Type250Test
 {
-    //[Fact]
-    private void SerializeDeserialize_ShouldPreserveData()
+    [Fact]
+    public void SerializeDeserialize_ShouldPreserveData()
     {
         // Arrange
         var field = new AsterixFieldI020Frn021Type250();

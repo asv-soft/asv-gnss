@@ -65,3 +65,40 @@ await ubx.SetupRtcmMSM4Rate(msgRate: 1, cancel: cancel);
 await ubx.TurnOffNmea(cancel);
 await ubx.RebootReceiver(cancel);
 ```
+
+## Visit UBX payload fields
+
+All existing UBX messages implement `Asv.IO.IVisitable`. Their `Accept` methods expose typed payload properties with field names, English descriptions, units where applicable, and numeric enum metadata. Satellite records, port configurations, coordinates, arrays, and lists are visited through the corresponding nested Asv.IO types.
+
+```csharp
+using Asv.Gnss;
+using Asv.IO;
+
+var message = new UbxCfgRate { RateHz = 1, NavRate = 1 };
+IVisitable payload = message;
+
+Console.WriteLine(payload.PrintValues());
+payload.Accept(new MeasurementRateVisitor());
+Console.WriteLine(message.RateHz); // 5
+
+sealed class MeasurementRateVisitor : DoubleType.IVisitor
+{
+    public void Visit(Field field, DoubleType type, ref double value)
+    {
+        if (field.Name == nameof(UbxCfgRate.RateHz))
+        {
+            value = 5;
+        }
+    }
+
+    public void VisitUnknown(Field field, IFieldType type)
+    {
+    }
+}
+```
+
+A read-only visitor preserves values, absent properties, collection references, and existing serialized packets. Empty poll messages expose no payload fields; poll messages with parameters expose those parameters. An external `UbxMessageBase` subclass can override the virtual `Accept` method to describe its own payload.
+
+Native scalar values and collection elements are passed by `ref` to their backing storage, so edits are visible during the visitor callback. Repeated traversal of initialized collections reuses their storage; changing a variable array's size allocates a replacement array. List sizes must be changed through `BeginList` before visiting elements; callbacks must keep the collection structure stable during element traversal. Enum values and converted coordinate models use typed conversion steps.
+
+Traversal reflects the existing object model and converted property units. It is separate from UBX binary serialization and does not automatically recompute related count fields, flags, or derived values after an edit. In `UbxRxmSfrbx`, the visitor exposes the payload identifiers, channel, version, reserved fields, and `RawData` words; the separately decoded `GpsSubFrame` and `GlonassWord` models are not traversed.

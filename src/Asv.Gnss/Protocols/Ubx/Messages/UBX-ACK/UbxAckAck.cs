@@ -9,6 +9,7 @@ namespace Asv.Gnss;
 /// Output upon processing of an input message. A UBX-ACK-ACK is sent as soon
 /// as possible but at least within one second.
 /// </summary>
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.8.1. Receiver and firmware support must be checked against the applicable interface description.</remarks>
 public class UbxAckAck : UbxAckBase
 {
     public override byte Class => 0x05;

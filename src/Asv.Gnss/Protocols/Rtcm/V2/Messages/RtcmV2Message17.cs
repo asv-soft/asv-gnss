@@ -42,10 +42,74 @@ public class RtcmV2Message17 : RtcmV2MessageBase
     public byte SVHealth { get; set; }
     public byte L2PDataFlag { get; set; }
 
+    /// <inheritdoc />
+    protected override int GetContentBitSize() => 480;
+
+    /// <inheritdoc />
+    protected override void SerializeContent(Span<byte> buffer, ref int bitIndex)
+    {
+        if (Satellite is < 1 or > 32)
+        {
+            throw new ArgumentOutOfRangeException(nameof(Satellite), "A GPS satellite PRN must be between 1 and 32.");
+        }
+        if (!double.IsFinite(A) || A < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(A), "The semi-major axis must be finite and nonnegative.");
+        }
+        if (Toc < new DateTime(1980, 1, 6, 0, 0, 0, DateTimeKind.Utc))
+        {
+            throw new ArgumentOutOfRangeException(nameof(Toc), "GPS time must not precede the GPS epoch.");
+        }
+
+        var tocWeek = 0;
+        var tocSeconds = 0.0;
+        RtcmV3Protocol.GetFromTime(Toc, ref tocWeek, ref tocSeconds);
+        if (tocSeconds > 604784.0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(Toc), "The clock reference time must not exceed 604784 seconds of the GPS week.");
+        }
+
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 10, WeekNumberRaw);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 14, Idot, RtcmV3Protocol.P2_43 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 8, Iode);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 16, tocSeconds, 16.0);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, AF1, RtcmV3Protocol.P2_43);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 8, AF2, RtcmV3Protocol.P2_55);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, Crs, RtcmV3Protocol.P2_5);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, DeltaN, RtcmV3Protocol.P2_43 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, Cuc, RtcmV3Protocol.P2_29);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 32, E, RtcmV3Protocol.P2_33);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, Cus);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 32, Math.Sqrt(A), RtcmV3Protocol.P2_19);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 16, Toes);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 32, Omega0, RtcmV3Protocol.P2_31 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, Cic, RtcmV3Protocol.P2_29);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 32, I0, RtcmV3Protocol.P2_31 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, Cis, RtcmV3Protocol.P2_29);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 32, Omega, RtcmV3Protocol.P2_31 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 16, Crc, RtcmV3Protocol.P2_5);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 24, OmegaDot, RtcmV3Protocol.P2_43 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 32, M0, RtcmV3Protocol.P2_31 * RtcmV3Protocol.SC2RAD);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 10, Iodc);
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 22, AF0, RtcmV3Protocol.P2_31);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 5, Satellite == 32 ? 0 : Satellite);
+        bitIndex += 3;
+        RtcmV2Serialization.WriteSigned(buffer, ref bitIndex, 8, Tgd, RtcmV3Protocol.P2_31);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 2, CodeOnL2);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 4, SVAccuracy);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 6, SVHealth);
+        RtcmV2Serialization.WriteUnsigned(buffer, ref bitIndex, 1, L2PDataFlag);
+        bitIndex += 3;
+    }
+
     protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
     {
+        if (payloadLength != 60)
+        {
+            throw new ArgumentException("A type 17 ephemeris payload must contain exactly 20 data words.", nameof(payloadLength));
+        }
+
         var week = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
-        bitIndex += 10;
         WeekNumberRaw = week;
         Idot = SpanBitHelper.GetBitS(buffer, ref bitIndex, 14) * RtcmV3Protocol.P2_43 * RtcmV3Protocol.SC2RAD;
         Iode = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
@@ -72,15 +136,11 @@ public class RtcmV2Message17 : RtcmV2MessageBase
         var prn = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
         bitIndex += 3;
         Tgd = SpanBitHelper.GetBitS(buffer, ref bitIndex, 8) * RtcmV3Protocol.P2_31;
-        bitIndex += 8;
         CodeOnL2 = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
-        bitIndex += 2;
         SVAccuracy = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4);
-        bitIndex += 4;
         SVHealth = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6);
-        bitIndex += 6;
         L2PDataFlag = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
-        bitIndex += 1;
+        bitIndex += 3;
 
         if (prn == 0)
         {

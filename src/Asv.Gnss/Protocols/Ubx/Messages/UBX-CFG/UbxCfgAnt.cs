@@ -45,7 +45,9 @@ public class UbxCfgAntPool : UbxMessageBase
 /// recommended that you use the default pins, consult the Integration manual if
 /// you need to use other pins.
 /// </summary>
-public class UbxCfgAnt : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.1. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+public partial class UbxCfgAnt : UbxMessageBase
 {
 
     public override string Name => "UBX-CFG-ANT";
@@ -73,12 +75,57 @@ public class UbxCfgAnt : UbxMessageBase
         Reconfig = bitfield[15];
     }
 
-    public bool Reconfig { get; set; }
-    public byte PinOCD { get; set; }
-    public byte PinSCD { get; set; }
-    public byte PinSwitch { get; set; }
+    private bool _reconfig;
 
-    public UbxCfgAntFlags Flags { get; set; }
+    /// <summary>
+    /// Whether to apply the antenna pin assignment in this message.
+    /// </summary>
+    public bool Reconfig
+    {
+        get => _reconfig;
+        set => _reconfig = value;
+    }
+    private byte _pinOCD;
+
+    /// <summary>
+    /// PIO number used for antenna open-circuit detection.
+    /// </summary>
+    public byte PinOCD
+    {
+        get => _pinOCD;
+        set => _pinOCD = value;
+    }
+    private byte _pinSCD;
+
+    /// <summary>
+    /// PIO number used for antenna short-circuit detection.
+    /// </summary>
+    public byte PinSCD
+    {
+        get => _pinSCD;
+        set => _pinSCD = value;
+    }
+    private byte _pinSwitch;
+
+    /// <summary>
+    /// PIO number used to switch antenna power.
+    /// </summary>
+    public byte PinSwitch
+    {
+        get => _pinSwitch;
+        set => _pinSwitch = value;
+    }
+
+    private UbxCfgAntFlags _flags;
+
+    /// <summary>
+    /// Antenna supervision options for power control, fault detection and recovery.
+    /// </summary>
+    public UbxCfgAntFlags Flags
+    {
+        get => _flags;
+        set => _flags = value;
+    }
 
     protected override int GetContentByteSize() => 4;
 

@@ -5,7 +5,7 @@ using System.Xml;
 using ConsoleAppFramework;
 using Spectre.Console;
 
-namespace Asv.Gnss.Shell;
+namespace Asv.Gnss;
 
 public class AsterixStreamCommand
 {

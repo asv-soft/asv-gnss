@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using R3;
 using ZLogger;
 
-namespace Asv.Gnss.Shell;
+namespace Asv.Gnss;
 
 public class NmeaCommand
 {

@@ -1,4 +1,4 @@
-﻿using Asv.IO;
+using Asv.IO;
 using System;
 
 namespace Asv.Gnss
@@ -21,6 +21,43 @@ namespace Asv.Gnss
 
 
         /// <inheritdoc/>
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, SatellitePrn, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 12, WeekRaw, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 10, IoDnav, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 8, SvSisa, 1);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 14, IdotRaw, RtcmV3Helper.P2_43);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 14, TocRaw, 60);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 6, Af2, RtcmV3EphemerisHelper.P2_59);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 21, Af1, RtcmV3Helper.P2_46);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 31, Af0, RtcmV3EphemerisHelper.P2_34);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Crs, RtcmV3Helper.P2_5);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, DeltaN, RtcmV3Helper.P2_43);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, M0, RtcmV3Helper.P2_31);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cuc, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 32, e, RtcmV3Helper.P2_33);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cus, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 32, Apow1_2, RtcmV3Helper.P2_19);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 14, ToeRaw, 60);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cic, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, OmegaBig0, RtcmV3Helper.P2_31);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Cis, RtcmV3Helper.P2_29);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, I0, RtcmV3Helper.P2_31);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 16, Crc, RtcmV3Helper.P2_5);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 32, Omega, RtcmV3Helper.P2_31);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 24, OmegaDot, RtcmV3Helper.P2_43);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 10, BGdE1E5a, RtcmV3Helper.P2_32);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 10, BGdE5bE1, RtcmV3Helper.P2_32);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 2, E5bSignalHealthFlag, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, E5bDataValidity, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 2, E1BSignalHealthFlag, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, E1BDataValidity, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, Reserved, 1);
+        }
+
+        protected override int InternalGetBitSize() => 491;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             var sys = NavigationSystemEnum.SYS_GAL;
@@ -47,7 +84,7 @@ namespace Asv.Gnss
             DeltaN = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_43;
             M0 = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_31;
             Cuc = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_29;
-            e = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_33;
+            e = SpanBitHelper.GetBitU(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_33;
             Cus = SpanBitHelper.GetBitS(buffer, ref bitIndex, 16) * RtcmV3Helper.P2_29;
             Apow1_2 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 32) * RtcmV3Helper.P2_19;
             ToeRaw = SpanBitHelper.GetBitU(buffer, ref bitIndex, 14) * 60;
@@ -102,128 +139,128 @@ namespace Asv.Gnss
         /// IDOT. Effective range attainable with the indicated bit allocation and scale factor. Resolution ^-43
         /// Rate of inclination angle. Unit: semi-circles/s
         /// </summary>
-        public double IdotRaw { get; private set; }
+        public double IdotRaw { get; set; }
         /// <summary>
         /// The reference time of clock parameters. Unit: s.
         /// Range 0 - 604.792. Resolution: 60.
         /// </summary>
-        public uint TocRaw { get; private set; }
+        public uint TocRaw { get; set; }
         /// <summary>
         /// Clock correcton parameter Unit: s/s^2.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-59.
         /// </summary>
-        public double Af2 { get; private set; }
+        public double Af2 { get; set; }
         /// <summary>
         /// Clock correcton parameter Unit:s/s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-46
         /// </summary>
-        public double Af1 { get; private set; }
+        public double Af1 { get; set; }
         /// <summary>
         /// Clock correcton parameter Unit:s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-34
         /// </summary>
-        public double Af0 { get; private set; }
+        public double Af0 { get; set; }
         /// <summary>
         /// Amplitude of sine harmonic correction term to the orbit radius. Unit: m.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-5 m.
         /// </summary>
-        public double Crs { get; private set; }
+        public double Crs { get; set; }
 
         /// <summary>
         /// Mean moution difference from computed value. Unit: pi/s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-43 pi/s
         /// </summary>
-        public double DeltaN { get; private set; }
+        public double DeltaN { get; set; }
 
         /// <summary>
         /// Mean anomaly at reference time. Unit: pi.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
         /// </summary>
-        public double M0 { get; private set; }
+        public double M0 { get; set; }
 
         /// <summary>
         /// Amplitude of cusine harmonic correction term to the argument of latitude. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
-        public double Cuc { get; private set; }
+        public double Cuc { get; set; }
 
         /// <summary>
         /// Eccentricity.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-33.
         /// </summary>
-        public double e { get; private set; }
+        public double e { get; set; }
 
         /// <summary>
         /// Amplitude of sine harmonic correction term to the argument of latitude. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
-        public double Cus { get; private set; }
+        public double Cus { get; set; }
 
         /// <summary>
         /// Square root of semi-major axis. Unit: m^1/2.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-19 m^1/2.
         /// </summary>
-        public double Apow1_2 { get; private set; }
+        public double Apow1_2 { get; set; }
 
         /// <summary>
         /// Ephemeris reference time. Unit: s.
         /// Range 0 - 604.792. Resolution: 60.
         /// </summary>
-        public uint ToeRaw { get; private set; }
+        public uint ToeRaw { get; set; }
 
         /// <summary>
         /// Amplitude of cusine harmonic correction term to the argument of angle of inclination. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
-        public double Cic { get; private set; }
+        public double Cic { get; set; }
 
         /// <summary>
         /// Longitude of ascending node of orbital plane at weekly epoch. Unit: pi.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
         /// </summary>
-        public double OmegaBig0 { get; private set; }
+        public double OmegaBig0 { get; set; }
 
         /// <summary>
         /// Amplitude of sine harmonic correction term to the angle of inclination. Unit: rad.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-29 rad.
         /// </summary>
-        public double Cis { get; private set; }
+        public double Cis { get; set; }
 
         /// <summary>
         /// Inclination angle at reference time. Unit: pi.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
         /// </summary>
-        public double I0 { get; private set; }
+        public double I0 { get; set; }
 
         /// <summary>
         /// Amplitude of cosine harmonic correction term to the orbit radius. Unit: m.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-5 m.
         /// </summary>
-        public double Crc { get; private set; }
+        public double Crc { get; set; }
 
         /// <summary>
         /// Argument of Perigree. Unit: pi.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution 2^-31 pi
         /// </summary>
-        public double Omega { get; private set; }
+        public double Omega { get; set; }
 
         /// <summary>
         /// Rate of right ascension. Unit: pi/s.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-43 pi/s.
         /// </summary>
-        public double OmegaDot { get; private set; }
+        public double OmegaDot { get; set; }
 
         /// <summary>
         /// E1/E5a Broadcast Group Delay.
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-32.
         /// </summary>
-        public double BGdE1E5a { get; private set; }
+        public double BGdE1E5a { get; set; }
 
         /// <summary>
         /// E5b/E1 Broadcast Group Delay (reserved).
         /// Effective range attainable with the indicated bit allocation and scale factor. Resolution: 2^-32.
         /// </summary>
-        public double BGdE5bE1 { get; private set; }
+        public double BGdE5bE1 { get; set; }
 
         /// <summary>
         /// E5a Signal Health Status. Bit Values are:
@@ -232,12 +269,12 @@ namespace Asv.Gnss
         /// 2 - Signal will be out of service
         /// 3 - Signal Component currently in Test
         /// </summary>
-        public byte E5bSignalHealthFlag { get; private set; }
+        public byte E5bSignalHealthFlag { get; set; }
 
         /// <summary>
         /// The navigation data validity status transmitted on E5a.
         /// </summary>
-        public byte E5bDataValidity { get; private set; }
+        public byte E5bDataValidity { get; set; }
 
         /// <summary>
         /// The E5b Signal Health Status. Bit Values are:
@@ -246,17 +283,17 @@ namespace Asv.Gnss
         /// 2 - Signal will be out of service
         /// 3 - Signal Component currently in Test
         /// </summary>
-        public byte E1BSignalHealthFlag { get; private set; }
+        public byte E1BSignalHealthFlag { get; set; }
 
         /// <summary>
         /// The navigation data validity status transmitted on E5b.
         /// </summary>
-        public byte E1BDataValidity { get; private set; }
+        public byte E1BDataValidity { get; set; }
 
         /// <summary>
         /// Reserved bit.
         /// </summary>
-        public byte Reserved { get; private set; }
+        public byte Reserved { get; set; }
 
         /// <summary>
         /// Galileo Week number.

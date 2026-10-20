@@ -27,8 +27,25 @@ public class UbxNavSbasPool : UbxMessageBase
     }
 }
 
-public class UbxNavSbas : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.17.21. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxNavSbas : UbxMessageBase
 {
+    private uint _iTOW;
+    private byte _geo;
+    private UbxSbasMode _mode;
+    private UbxSbasSystem _sys;
+    private byte _service;
+    private bool _isRanging;
+    private bool _isCorrections;
+    private bool _isIntegrity;
+    private bool _isTestmode;
+    private bool _isBad;
+    private byte _cnt;
+    private byte _statusFlags;
+    private UbxStatusFlags _integrityUsed = UbxStatusFlags.Unknown;
+    private ushort _reserved1;
+    private SvData[]? _svDatas;
+
     public override string Name => "UBX-NAV-SBAS";
     public override byte Class => 0x01;
     public override byte SubClass => 0x32;
@@ -36,12 +53,20 @@ public class UbxNavSbas : UbxMessageBase
     /// <summary>
     /// GPS time of week of the navigation epoch.
     /// </summary>
-    public uint iTOW { get; set; }
+    public uint iTOW
+    {
+        get => _iTOW;
+        set => _iTOW = value;
+    }
 
     /// <summary>
     /// PRN Number of the GEO where correction and integrity data is used from
     /// </summary>
-    public byte Geo { get; set; }
+    public byte Geo
+    {
+        get => _geo;
+        set => _geo = value;
+    }
 
     /// <summary>
     /// SBAS Mode
@@ -49,7 +74,11 @@ public class UbxNavSbas : UbxMessageBase
     /// 1 Enabled integrity
     /// 3 Enabled test mode
     /// </summary>
-    public UbxSbasMode Mode { get; set; }
+    public UbxSbasMode Mode
+    {
+        get => _mode;
+        set => _mode = value;
+    }
 
     /// <summary>
     /// SBAS System (WAAS/EGNOS/...)
@@ -60,46 +89,78 @@ public class UbxNavSbas : UbxMessageBase
     /// 3 GAGAN
     /// 16 GPS
     /// </summary>
-    public UbxSbasSystem Sys { get; set; }
+    public UbxSbasSystem Sys
+    {
+        get => _sys;
+        set => _sys = value;
+    }
 
     /// <summary>
     /// SBAS Services available (see graphic below)
     /// </summary>
-    public byte Service { get; set; }
+    public byte Service
+    {
+        get => _service;
+        set => _service = value;
+    }
 
     #region Service bits
 
     /// <summary>
     /// GEO may be used as ranging source
     /// </summary>
-    public bool IsRanging { get; set; }
+    public bool IsRanging
+    {
+        get => _isRanging;
+        set => _isRanging = value;
+    }
 
     /// <summary>
     /// GEO is providing correction data
     /// </summary>
-    public bool IsCorrections { get; set; }
+    public bool IsCorrections
+    {
+        get => _isCorrections;
+        set => _isCorrections = value;
+    }
 
     /// <summary>
     /// GEO is providing integrity
     /// </summary>
-    public bool IsIntegrity { get; set; }
+    public bool IsIntegrity
+    {
+        get => _isIntegrity;
+        set => _isIntegrity = value;
+    }
 
     /// <summary>
     /// GEO is in test mode
     /// </summary>
-    public bool IsTestmode { get; set; }
+    public bool IsTestmode
+    {
+        get => _isTestmode;
+        set => _isTestmode = value;
+    }
 
     /// <summary>
     /// Problem with signal or broadcast data indicated
     /// </summary>
-    public bool IsBad { get; set; }
+    public bool IsBad
+    {
+        get => _isBad;
+        set => _isBad = value;
+    }
 
     #endregion
 
     /// <summary>
     /// Number of SV data following
     /// </summary>
-    public byte Cnt { get; set; }
+    public byte Cnt
+    {
+        get => _cnt;
+        set => _cnt = value;
+    }
 
     /// <summary>
     /// SBAS status flags
@@ -107,21 +168,42 @@ public class UbxNavSbas : UbxMessageBase
     /// 1 = Integrity information is not available or SBAS integrity is not enabled
     /// 2 = Receiver uses only GPS satellites for which integrity information is available
     /// </summary>
-    public byte StatusFlags { get; set; }
+    public byte StatusFlags
+    {
+        get => _statusFlags;
+        set => _statusFlags = value;
+    }
 
     #region StatusFlags bits
 
-    public UbxStatusFlags IntegrityUsed { get; set; } =
-        UbxStatusFlags.Unknown;
+    /// <summary>
+    /// SBAS integrity-use state: 0 unknown, 1 unavailable or disabled, 2 only GPS satellites with integrity information are used.
+    /// </summary>
+    public UbxStatusFlags IntegrityUsed
+    {
+        get => _integrityUsed;
+        set => _integrityUsed = value;
+    }
 
     #endregion
 
     /// <summary>
     /// Reserved 1
     /// </summary>
-    public ushort Reserved1 { get; set; }
+    public ushort Reserved1
+    {
+        get => _reserved1;
+        set => _reserved1 = value;
+    }
 
-    public SvData[] SvDatas { get; set; }
+    /// <summary>
+    /// Per-satellite SBAS correction and integrity records; the wire count determines the number of entries.
+    /// </summary>
+    public SvData[] SvDatas
+    {
+        get => _svDatas!;
+        set => _svDatas = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -160,6 +242,7 @@ public class UbxNavSbas : UbxMessageBase
 
         for (int i = 0; i < Cnt; i++)
         {
+            SvDatas[i] = new SvData();
             SvDatas[i].SvId = BinSerialize.ReadByte(ref buffer);
             SvDatas[i].Flags = BinSerialize.ReadByte(ref buffer);
             SvDatas[i].Udre = BinSerialize.ReadByte(ref buffer);
@@ -174,7 +257,6 @@ public class UbxNavSbas : UbxMessageBase
 
             SvDatas[i].Reserved2 = BinSerialize.ReadByte(ref buffer);
             SvDatas[i].Prc = BinSerialize.ReadShort(ref buffer);
-            SvDatas[i].SvId = BinSerialize.ReadByte(ref buffer);
             SvDatas[i].Reserved3 = BinSerialize.ReadUShort(ref buffer);
             SvDatas[i].Ic = BinSerialize.ReadShort(ref buffer);
         }
@@ -223,82 +305,152 @@ public enum UbxStatusFlags
     GpsOnly = 2
 }
 
-public class SvData
+public partial class SvData
 {
+    private byte _svId;
+    private byte _flags;
+    private byte _udre;
+    private byte _svSys;
+    private byte _svService;
+    private bool _isRanging;
+    private bool _isCorrections;
+    private bool _isIntegrity;
+    private bool _isTestmode;
+    private bool _isBad;
+    private byte _reserved2;
+    private short _prc;
+    private ushort _reserved3;
+    private short _ic;
+
     /// <summary>
     /// SV ID
     /// </summary>
-    public byte SvId { get; set; }
+    public byte SvId
+    {
+        get => _svId;
+        set => _svId = value;
+    }
 
     /// <summary>
     /// Flags for this SV
     /// </summary>
-    public byte Flags { get; set; }
+    public byte Flags
+    {
+        get => _flags;
+        set => _flags = value;
+    }
 
     /// <summary>
     /// Monitoring status
     /// </summary>
-    public byte Udre { get; set; }
+    public byte Udre
+    {
+        get => _udre;
+        set => _udre = value;
+    }
 
     /// <summary>
     /// System (WAAS/EGNOS/...)
     /// same as SYS
     /// </summary>
-    public byte SvSys { get; set; }
+    public byte SvSys
+    {
+        get => _svSys;
+        set => _svSys = value;
+    }
 
     /// <summary>
     /// Services available
     /// same as SERVICE
     /// </summary>
-    public byte SvService { get; set; }
+    public byte SvService
+    {
+        get => _svService;
+        set => _svService = value;
+    }
 
     #region SvService bits
 
     /// <summary>
     /// GEO may be used as ranging source
     /// </summary>
-    public bool IsRanging { get; set; }
+    public bool IsRanging
+    {
+        get => _isRanging;
+        set => _isRanging = value;
+    }
 
     /// <summary>
     /// GEO is providing correction data
     /// </summary>
-    public bool IsCorrections { get; set; }
+    public bool IsCorrections
+    {
+        get => _isCorrections;
+        set => _isCorrections = value;
+    }
 
     /// <summary>
     /// GEO is providing integrity
     /// </summary>
-    public bool IsIntegrity { get; set; }
+    public bool IsIntegrity
+    {
+        get => _isIntegrity;
+        set => _isIntegrity = value;
+    }
 
     /// <summary>
     /// GEO is in test mode
     /// </summary>
-    public bool IsTestmode { get; set; }
+    public bool IsTestmode
+    {
+        get => _isTestmode;
+        set => _isTestmode = value;
+    }
 
     /// <summary>
     /// Problem with signal or broadcast data indicated
     /// </summary>
-    public bool IsBad { get; set; }
+    public bool IsBad
+    {
+        get => _isBad;
+        set => _isBad = value;
+    }
 
     #endregion
 
     /// <summary>
     /// Reserved 2
     /// </summary>
-    public byte Reserved2 { get; set; }
+    public byte Reserved2
+    {
+        get => _reserved2;
+        set => _reserved2 = value;
+    }
 
     /// <summary>
     /// Pseudo Range correction in [cm]
     /// </summary>
-    public short Prc { get; set; }
+    public short Prc
+    {
+        get => _prc;
+        set => _prc = value;
+    }
 
     /// <summary>
     /// Reserved 3
     /// </summary>
-    public ushort Reserved3 { get; set; }
+    public ushort Reserved3
+    {
+        get => _reserved3;
+        set => _reserved3 = value;
+    }
 
     /// <summary>
     /// Ionosphere correction in [cm]
     /// </summary>
-    public short Ic { get; set; }
+    public short Ic
+    {
+        get => _ic;
+        set => _ic = value;
+    }
 }
-    

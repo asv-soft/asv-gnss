@@ -27,8 +27,20 @@ public class UbxMonTxbufPool : UbxMessageBase
     }
 }
 
-public class UbxMonTxbuf : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.16.12. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxMonTxbuf : UbxMessageBase
 {
+    private readonly ushort[] _pending = new ushort[6];
+    private readonly byte[] _usage = new byte[6];
+    private readonly byte[] _peakUsage = new byte[6];
+    private byte _tUsage;
+    private byte _tPeakUsage;
+    private byte _errors;
+    private bool _isAlloc;
+    private bool _isMem;
+    private bool _isLimit;
+    private byte _reserved1;
+
     public override string Name => "UBX-MON-TXBUF";
     public override byte Class => 0x0A;
     public override byte SubClass => 0x08;
@@ -37,59 +49,87 @@ public class UbxMonTxbuf : UbxMessageBase
     /// Number of bytes pending in transmitter
     /// buffer for each target
     /// </summary>
-    public ushort[] Pending { get; } = new ushort[6];
+    public ushort[] Pending => _pending;
 
     /// <summary>
     /// Maximum usage transmitter buffer during
     /// the last sysmon period for each target
     /// </summary>
-    public byte[] Usage { get; } = new byte[6];
+    public byte[] Usage => _usage;
 
     /// <summary>
     /// Maximum usage transmitter buffer for each target
     /// </summary>
-    public byte[] PeakUsage { get; } = new byte[6];
+    public byte[] PeakUsage => _peakUsage;
 
     /// <summary>
     /// Maximum usage of transmitter buffer
     /// during the last sysmon period for all targets
     /// </summary>
-    public byte TUsage { get; set; }
+    public byte TUsage
+    {
+        get => _tUsage;
+        set => _tUsage = value;
+    }
 
     /// <summary>
     /// Maximum usage of transmitter buffer for
     /// all targets
     /// </summary>
-    public byte TPeakUsage { get; set; }
+    public byte TPeakUsage
+    {
+        get => _tPeakUsage;
+        set => _tPeakUsage = value;
+    }
 
     /// <summary>
     /// Error bitmask (error bits in region below)
     /// </summary>
-    public byte Errors { get; set; }
+    public byte Errors
+    {
+        get => _errors;
+        set => _errors = value;
+    }
 
     #region Errors bits
 
     /// <summary>
     /// Allocation error (TX buffer full)
     /// </summary>
-    public bool IsAlloc { get; set; }
+    public bool IsAlloc
+    {
+        get => _isAlloc;
+        set => _isAlloc = value;
+    }
 
     /// <summary>
     /// Memory Allocation error
     /// </summary>
-    public bool IsMem { get; set; }
+    public bool IsMem
+    {
+        get => _isMem;
+        set => _isMem = value;
+    }
 
     /// <summary>
     /// Buffer limit of corresponding target reached
     /// </summary>
-    public bool IsLimit { get; set; }
+    public bool IsLimit
+    {
+        get => _isLimit;
+        set => _isLimit = value;
+    }
 
     #endregion
 
     /// <summary>
     /// Reserved
     /// </summary>
-    public byte Reserved1 { get; set; }
+    public byte Reserved1
+    {
+        get => _reserved1;
+        set => _reserved1 = value;
+    }
 
 
     protected override void SerializeContent(ref Span<byte> buffer)

@@ -53,11 +53,13 @@ public abstract class RtcmV3MessageBase : IProtocolMessage<ushort>
     
     public void Serialize(ref Span<byte> buffer)
     {
+        var msgBitSize = 12 + InternalGetBitSize();
+        var msgByteSize = (msgBitSize + 7) / 8;
+        if (msgByteSize > 1023) throw new InvalidOperationException("RTCM3 payload exceeds 1023 bytes.");
+        buffer[..(msgByteSize + 6)].Clear();
         var bitIndex = 0;
         SpanBitHelper.SetBitU(buffer, ref bitIndex, 8, RtcmV3Protocol.SyncByte);
         bitIndex += 6; // Reserved
-        var msgBitSize = 12 /* message Id 12 bits */ + InternalGetBitSize();
-        var msgByteSize = msgBitSize % 8.0 == 0 ? msgBitSize / 8 : msgBitSize / 8 + 1;
         SpanBitHelper.SetBitU(buffer, ref bitIndex, 10, msgByteSize);
         SpanBitHelper.SetBitU(buffer, ref bitIndex, 12, Id);
         InternalSerialize(buffer, ref bitIndex);

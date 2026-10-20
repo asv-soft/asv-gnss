@@ -38,8 +38,19 @@ public class UbxRxmSfrbxPool : UbxMessageBase
     }
 }
 
-public class UbxRxmSfrbx : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.18.7. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxRxmSfrbx : UbxMessageBase
 {
+    private UbxGnssTypeEnum _ubxGnssId;
+    private byte _svId;
+    private byte _reserved1;
+    private sbyte _freqId;
+    private byte _numWords;
+    private byte _chn;
+    private byte _version;
+    private byte _reserved2;
+    private uint[]? _rawData;
+
     public override string Name => "UBX-RXM-SFRBX";
     public override byte Class => 0x02;
     public override byte SubClass => 0x13;
@@ -47,48 +58,84 @@ public class UbxRxmSfrbx : UbxMessageBase
     /// <summary>
     /// GNSS identifier
     /// </summary>
-    public UbxGnssTypeEnum UbxGnssId { get; set; }
+    public UbxGnssTypeEnum UbxGnssId
+    {
+        get => _ubxGnssId;
+        set => _ubxGnssId = value;
+    }
 
     /// <summary>
     /// Satellite identifier
     /// </summary>
-    public byte SvId { get; set; }
+    public byte SvId
+    {
+        get => _svId;
+        set => _svId = value;
+    }
+
+    /// <summary>
+    /// Reserved in legacy layouts; carries the signal identifier (sigId) in newer interfaces,
+    /// including F9 HPG 1.50. The original property name is retained for API compatibility.
+    /// </summary>
+    public byte Reserved1
+    {
+        get => _reserved1;
+        set => _reserved1 = value;
+    }
+
+    /// <summary>
+    /// GLONASS frequency slot from -7 to 6; this library subtracts 7 from the encoded freqId value. Meaningful only for GLONASS.
+    /// </summary>
+    public sbyte FreqId
+    {
+        get => _freqId;
+        set => _freqId = value;
+    }
+
+    /// <summary>
+    /// Number of 32-bit navigation words: version 1 permits 0 to 16; the R23 version-2 description lists up to 10 for supported signals.
+    /// </summary>
+    public byte NumWords
+    {
+        get => _numWords;
+        set => _numWords = value;
+    }
+
+    /// <summary>
+    /// Tracking channel number for payload version 2; reserved in version 1 and exposed as zero by this deserializer.
+    /// </summary>
+    public byte Chn
+    {
+        get => _chn;
+        set => _chn = value;
+    }
+
+    /// <summary>
+    /// Payload version: 1 for the protocol-17 layout, or 2 for the protocol-18-and-later layout described in R23.
+    /// </summary>
+    public byte Version
+    {
+        get => _version;
+        set => _version = value;
+    }
 
     /// <summary>
     /// Reserved
     /// </summary>
-    public byte Reserved1 { get; set; }
-
-    /// Only used for GLONASS: This is the
-    /// frequency slot (range from -7 to 6)
-    /// </summary>
-    public sbyte FreqId { get; set; }
-
-    /// <summary>
-    /// The number of data words contained in
-    /// this message (0..16)
-    /// </summary>
-    public byte NumWords { get; set; }
+    public byte Reserved2
+    {
+        get => _reserved2;
+        set => _reserved2 = value;
+    }
 
     /// <summary>
-    /// Reserved
+    /// Broadcast navigation words in constellation-specific layout; includes NumWords unsigned 32-bit values.
     /// </summary>
-    public byte Chn { get; set; }
-
-    /// <summary>
-    /// Message version (0x01 for this version)
-    /// </summary>
-    public byte Version { get; set; }
-
-    /// <summary>
-    /// Reserved
-    /// </summary>
-    public byte Reserved2 { get; set; }
-
-    /// <summary>
-    /// The data words
-    /// </summary>
-    public uint[] RawData { get; set; }
+    public uint[] RawData
+    {
+        get => _rawData!;
+        set => _rawData = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -118,13 +165,18 @@ public class UbxRxmSfrbx : UbxMessageBase
             RawData[i] = BinSerialize.ReadUInt(ref buffer);
         }
 
-        if (UbxGnssId == UbxGnssTypeEnum.GPS)
+        GpsSubFrame = null!;
+        GlonassWord = null!;
+
+        // UBX-18010802 R08, section 3.13.1.2: GPS L2C uses CNAV, not the L1C/A subframe layout.
+        if (UbxGnssId == UbxGnssTypeEnum.GPS && (Version < 2 || Reserved1 == 0))
         {
             GpsSubFrame = GpsSubFrameFactory.Create(RawData);
         }
         else if (UbxGnssId == UbxGnssTypeEnum.GLONASS)
         {
-            GlonassWord = GlonassWordFactory.Create(RawData);
+            // Section 3.13.1.3: the fourth word is receiver frame metadata, outside the 85-bit string.
+            GlonassWord = GlonassWordFactory.Create(RawData.Length == 4 ? RawData[..3] : RawData);
         }
     }
 
@@ -135,8 +187,14 @@ public class UbxRxmSfrbx : UbxMessageBase
 
     }
 
+    /// <summary>
+    /// Library-decoded GLONASS navigation string. The optional fourth receiver-metadata word
+    /// remains in RawData and is not passed to the 85-bit string decoder.
+    /// </summary>
     public GlonassWordBase GlonassWord { get; set; }
 
+    /// <summary>
+    /// Library-decoded GPS L1C/A navigation subframe; remains null for other GPS signals.
+    /// </summary>
     public GpsSubframeBase GpsSubFrame { get; set; }
 }
-    

@@ -16,6 +16,18 @@
     <ProjectReference Include="..\Asv.Gnss\Asv.Gnss.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="AsterixData.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AsterixData.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Asv.Gnss</CustomToolNamespace>
+    </EmbeddedResource>
+    <Compile Update="AsterixData.Designer.cs">
+      <AutoGen>true</AutoGen>
+      <DesignTime>true</DesignTime>
+      <DependentUpon>AsterixData.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Resources\testglo.rtcm2" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\GMSD7_20121014.rtcm3" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\fw206mrtk_rtcm" CopyToOutputDirectory="PreserveNewest" />
@@ -45,5 +57,8 @@
     <None Update="Resources\Asterix\2025-07-09-07.stream" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\ComNav\novatel-bestposb.hex" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\ComNav\novatel-oem7-psrposa.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Ubx\*.ubx" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\Ubx\*.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Remove="Resources\Ubx\Licenses\GPSD-COPYING.txt" />
   </ItemGroup>
 </Project>

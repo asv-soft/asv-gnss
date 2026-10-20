@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 public class RtcmV3LegacyMessageTest
 {
@@ -50,6 +50,43 @@ public class RtcmV3LegacyMessageTest
             [1230] = () => new RtcmV3Message1230(),
             [4094] = () => new RtcmV3Msg4094(),
         };
+
+    [Theory]
+    [MemberData(nameof(LegacyResourceData))]
+    public void Serialize_RecordedFrames_PreservesPayload(string resourceName, IReadOnlyDictionary<ushort, int> expectedCounts)
+    {
+        var data = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Resources", resourceName));
+        var checkedCount = 0;
+        foreach (var frame in EnumerateRtcm3Frames(data))
+        {
+            var message = DeserializeFrame(frame);
+            var serialized = new byte[message.GetByteSize()];
+            Array.Fill(serialized, (byte)0xFF);
+            Span<byte> output = serialized;
+            message.Serialize(ref output);
+            Assert.Empty(output.ToArray());
+            Assert.True(frame.SequenceEqual(serialized), $"Message {message.Id}, frame {checkedCount}: expected {Convert.ToHexString(frame)}, actual {Convert.ToHexString(serialized)}");
+            DeserializeFrame(serialized);
+            checkedCount++;
+        }
+        Assert.Equal(expectedCounts.Values.Sum(), checkedCount);
+    }
+
+    [Theory]
+    [InlineData(1073, Msm1073Frame)]
+    [InlineData(1083, Msm1083Frame)]
+    [InlineData(1093, Msm1093Frame)]
+    [InlineData(1123, Msm1123Frame)]
+    public void Serialize_Msm3Frame_PreservesPayload(ushort expectedId, string hexFrame)
+    {
+        var frame = Hex(hexFrame);
+        var message = DeserializeFrame(frame);
+        var serialized = new byte[message.GetByteSize()];
+        Span<byte> output = serialized;
+        message.Serialize(ref output);
+        Assert.Equal(expectedId, message.Id);
+        Assert.Equal(frame, serialized);
+    }
 
     [Fact]
     public void MessageFactory_ShouldContainV163Rtcm3Messages()
@@ -162,6 +199,185 @@ public class RtcmV3LegacyMessageTest
                 [1127] = 257,
             }
         ];
+    }
+
+    [Theory]
+    [InlineData(1030, 20)]
+    [InlineData(1031, 17)]
+    public void Serialize_NetworkResiduals_WritesEverySatellite(ushort id, int epochBits)
+    {
+        var message = (RtcmV3Message1030and1031)MessageFactory[id]();
+        message.ResidualsEpoch = 43210;
+        message.ReferenceStationID = 123;
+        message.NRefs = 3;
+        message.SatelliteResiduals =
+        [
+            new() { SatelliteId = 4, SOc = 1.5, SOd = 0.04, SOh = 0.5, SIc = 3, SId = 0.07 },
+            new() { SatelliteId = 17, SOc = 127.5, SOd = 5.11, SOh = 6.3, SIc = 511.5, SId = 10.23 },
+        ];
+
+        var frame = SerializeFrame(message);
+        Assert.Equal(6 + (12 + epochBits + 24 + 98 + 7) / 8, frame.Length);
+        var bit = 36 + epochBits + 12 + 7;
+        Assert.Equal(2u, Asv.IO.SpanBitHelper.GetBitU(frame, ref bit, 5));
+        var decoded = (RtcmV3Message1030and1031)DeserializeFrame(frame);
+        Assert.Equal(2, decoded.NumberSatelliteSignals);
+        Assert.Equal(4, decoded.SatelliteId);
+        Assert.Equal(17, decoded.SatelliteResiduals[1].SatelliteId);
+        Assert.Equal(10.23, decoded.SatelliteResiduals[1].SId, 8);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    [Fact]
+    public void Serialize_SystemParameters_PreservesTimeAndAnnouncements()
+    {
+        var message = new RtcmV3Message1013
+        {
+            ReferenceStationID = 37, ModifiedJulianDay = 61000, SecondsOfDay = 86399, LeapSeconds = 18,
+            SystemMessages = [new() { Id = 1004, SyncFlag = 1, TransmissionInterval = 1.5 }, new() { Id = 1019, TransmissionInterval = 60 }],
+        };
+        var frame = SerializeFrame(message);
+        var decoded = Assert.IsType<RtcmV3Message1013>(DeserializeFrame(frame));
+        Assert.Equal(86399u, decoded.SecondsOfDay);
+        Assert.Equal(18, decoded.LeapSeconds);
+        Assert.Equal(61000, decoded.ModifiedJulianDay);
+        Assert.Equal(2, decoded.SystemMessages.Length);
+        Assert.Equal(1.5, decoded.SystemMessages[0].TransmissionInterval);
+        Assert.Equal(1019, decoded.SystemMessages[1].Id);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    [Fact]
+    public void Serialize_UnicodeText_CountsCodePointsAndUtf8Bytes()
+    {
+        var message = new RtcmV3Message1029
+        {
+            ReferenceStationID = 42, ModifiedJulianDay = 61000, SecondsOfDay = 45678, Message = "AЯ😀",
+        };
+        var frame = SerializeFrame(message);
+        var bit = 36 + 12 + 16 + 17;
+        Assert.Equal(3u, Asv.IO.SpanBitHelper.GetBitU(frame, ref bit, 7));
+        Assert.Equal(7u, Asv.IO.SpanBitHelper.GetBitU(frame, ref bit, 8));
+        var decoded = Assert.IsType<RtcmV3Message1029>(DeserializeFrame(frame));
+        Assert.Equal(message.Message, decoded.Message);
+        Assert.Equal(message.SecondsOfDay, decoded.SecondsOfDay);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    [Theory]
+    [InlineData("A", 128)]
+    [InlineData("😀", 64)]
+    public void Serialize_UnicodeText_RejectsFieldOverflow(string character, int count)
+    {
+        var message = new RtcmV3Message1029 { Message = string.Concat(Enumerable.Repeat(character, count)) };
+        Assert.Throws<ArgumentOutOfRangeException>(() => SerializeFrame(message));
+    }
+
+    [Fact]
+    public void Serialize_ReceiverDescription_DerivesLengthsFromStrings()
+    {
+        var message = new RtcmV3Message1033
+        {
+            ReferenceStationID = 55, AntennaDescriptor = "ANT", AntennaSetupID = 9,
+            AntennaSerialNumber = "1234", ReceiverTypeDescriptor = "RX", ReceiverFirmwareVersion = "1.2", ReceiverSerialNumber = "56789",
+        };
+        var frame = SerializeFrame(message);
+        var decoded = Assert.IsType<RtcmV3Message1033>(DeserializeFrame(frame));
+        Assert.Equal("ANT", decoded.AntennaDescriptor);
+        Assert.Equal(3u, decoded.DescriptorCounterN);
+        Assert.Equal(4u, decoded.SerialNumberCounterM);
+        Assert.Equal(2u, decoded.ReceiverTypeDescriptorCounterI);
+        Assert.Equal(3u, decoded.ReceiverFirmwareVersionCounterJ);
+        Assert.Equal("56789", decoded.ReceiverSerialNumber);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    [Fact]
+    public void Serialize_PhysicalStation_PreservesSigned38BitCoordinates()
+    {
+        var message = new RtcmV3Message1032
+        {
+            NonPhysicalReferenceStationID = 4095, PhysicalReferenceStationID = 7, ITRFEpochYear = 20,
+            X = -1234567.8912, Y = 2345678.9123, Z = -3456789.1234,
+        };
+        var frame = SerializeFrame(message);
+        Assert.Equal(26, frame.Length);
+        var decoded = Assert.IsType<RtcmV3Message1032>(DeserializeFrame(frame));
+        Assert.Equal(message.X, decoded.X, 4);
+        Assert.Equal(message.Y, decoded.Y, 4);
+        Assert.Equal(message.Z, decoded.Z, 4);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    [Fact]
+    public void Serialize_BeidouEphemeris_PreservesNegativeClockAndUnsignedEccentricity()
+    {
+        var message = new RtcmV3Message1042
+        {
+            SatellitePrn = 1, WeekRaw = 1000, A2 = -RtcmV3EphemerisHelper.P2_66,
+            A1 = -2 * RtcmV3Helper.P2_50, A0 = -3 * RtcmV3Helper.P2_33, e = 0.375,
+        };
+        var frame = SerializeFrame(message);
+        var decoded = Assert.IsType<RtcmV3Message1042>(DeserializeFrame(frame));
+        Assert.Equal(message.A2, decoded.A2);
+        Assert.Equal(message.A1, decoded.A1);
+        Assert.Equal(message.A0, decoded.A0);
+        Assert.Equal(0.375, decoded.e, 12);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(1022)]
+    public void Serialize_ProprietaryPayload_PreservesHalfByteAndBufferRemainder(int length)
+    {
+        var data = Enumerable.Range(0, length).Select(i => (byte)i).ToArray();
+        data[0] = 0x0B;
+        var message = new RtcmV3Msg4094 { Data = data };
+        var size = message.GetByteSize();
+        var buffer = Enumerable.Repeat((byte)0xFF, size + 2).ToArray();
+        Span<byte> span = buffer;
+        message.Serialize(ref span);
+        Assert.Equal(2, span.Length);
+        Assert.Equal((byte)0xFF, span[0]);
+        Assert.Equal(0x0B, buffer[4] & 0x0F);
+        var decoded = Assert.IsType<RtcmV3Msg4094>(DeserializeFrame(buffer[..size]));
+        Assert.Equal(data, decoded.Data);
+    }
+
+    [Fact]
+    public void Serialize_OversizedPayload_RejectsLengthOverflow()
+    {
+        var message = new RtcmV3Msg4094 { Data = new byte[1023] };
+        Assert.Throws<InvalidOperationException>(() => SerializeFrame(message));
+    }
+
+    [Fact]
+    public void Serialize_Msm4_ZeroFineRangesRemainValid()
+    {
+        var message = new RtcmV3Msm4Msg1074
+        {
+            SatelliteIds = [1], SignalIds = [2], CellMask = [[1]], EpochTimeTow = 123456,
+            RoughRangesRaw = [70 * RtcmV3Helper.RANGE_MS], PseudoRangeRaw = [0], PhaseRangeRaw = [0],
+            LockRaw = [7], HalfCycleRaw = [1], CnrRaw = [45],
+        };
+        var frame = SerializeFrame(message);
+        var bit = 24 + 12 + 157 + 1 + 18;
+        Assert.Equal(0, Asv.IO.SpanBitHelper.GetBitS(frame, ref bit, 15));
+        Assert.Equal(0, Asv.IO.SpanBitHelper.GetBitS(frame, ref bit, 22));
+        var decoded = Assert.IsType<RtcmV3Msm4Msg1074>(DeserializeFrame(frame));
+        Assert.Equal(0, decoded.PseudoRangeRaw[0]);
+        Assert.Equal(0, decoded.PhaseRangeRaw[0]);
+        Assert.Equal(frame, SerializeFrame(decoded));
+    }
+
+    private static byte[] SerializeFrame(RtcmV3MessageBase message)
+    {
+        var frame = new byte[message.GetByteSize()];
+        Span<byte> span = frame;
+        message.Serialize(ref span);
+        Assert.Equal(0, span.Length);
+        return frame;
     }
 
     private static Dictionary<ushort, int> DeserializeResource(string resourceName)

@@ -11,6 +11,18 @@ public class RtcmV2Message1 : RtcmV2MessageBase
 
     public DObservationItem[] ObservationItems { get; set; } = [];
 
+    /// <inheritdoc />
+    protected override int GetContentBitSize() => checked(ObservationItems.Length * 40);
+
+    /// <inheritdoc />
+    protected override void SerializeContent(Span<byte> buffer, ref int bitIndex)
+    {
+        foreach (var item in ObservationItems)
+        {
+            item.Serialize(buffer, ref bitIndex);
+        }
+    }
+
     protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, byte payloadLength)
     {
         var itemCount = payloadLength / 5;

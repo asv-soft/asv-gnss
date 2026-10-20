@@ -11,14 +11,32 @@ public enum UbxCfgMsgType
 }
 
 
-public class UbxCfgMsgPool : UbxMessageBase
+public partial class UbxCfgMsgPool : UbxMessageBase
 {
     public override byte Class => 0x06;
     public override byte SubClass => 0x01;
     public override string Name => "UBX-CFG-MSG-POOL";
 
-    public byte MsgClass { get; set; }
-    public byte MsgId { get; set; }
+    private byte _msgClass;
+
+    /// <summary>
+    /// UBX class identifier of the message whose output rate is queried or configured.
+    /// </summary>
+    public byte MsgClass
+    {
+        get => _msgClass;
+        set => _msgClass = value;
+    }
+    private byte _msgId;
+
+    /// <summary>
+    /// UBX message identifier within MsgClass.
+    /// </summary>
+    public byte MsgId
+    {
+        get => _msgId;
+        set => _msgId = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -51,16 +69,54 @@ public class UbxCfgMsgPool : UbxMessageBase
 /// 20.1, 20.2, 20.3, 22, 22.01, 23 and 23.01
 /// Set message rate configuration for the current port.
 /// </summary>
-public class UbxCfgMsg : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.18. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+public partial class UbxCfgMsg : UbxMessageBase
 {
     public override byte Class => 0x06;
     public override byte SubClass => 0x01;
     public override string Name => "UBX-CFG-MSG";
 
-    public byte MsgClass { get; set; }
-    public byte MsgId { get; set; }
-    public byte? CurrentPortRate { get; set; }
-    public byte[] Ports { get; set; }
+    private byte _msgClass;
+
+    /// <summary>
+    /// UBX class identifier of the message whose output rate is queried or configured.
+    /// </summary>
+    public byte MsgClass
+    {
+        get => _msgClass;
+        set => _msgClass = value;
+    }
+    private byte _msgId;
+
+    /// <summary>
+    /// UBX message identifier within MsgClass.
+    /// </summary>
+    public byte MsgId
+    {
+        get => _msgId;
+        set => _msgId = value;
+    }
+    private byte? _currentPortRate;
+
+    /// <summary>
+    /// Output interval for the current port in navigation epochs; 0 disables output. A non-null value selects the three-byte form.
+    /// </summary>
+    public byte? CurrentPortRate
+    {
+        get => _currentPortRate;
+        set => _currentPortRate = value;
+    }
+    private byte[]? _ports;
+
+    /// <summary>
+    /// Per-port output intervals in navigation epochs for the eight-byte message form: DDC, UART1, UART2, USB, SPI, and one reserved byte. Zero disables output on a port.
+    /// </summary>
+    public byte[] Ports
+    {
+        get => _ports!;
+        set => _ports = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -98,15 +154,22 @@ public class UbxCfgMsg : UbxMessageBase
 
     protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
     {
+        if (buffer.Length is not (3 or 8))
+        {
+            throw new ArgumentException("CFG-MSG payload must contain 3 or 8 bytes.");
+        }
+
         MsgClass = BinSerialize.ReadByte(ref buffer);
         MsgId = BinSerialize.ReadByte(ref buffer);
         if (buffer.Length == 1)
         {
+            Ports = null!;
             CurrentPortRate = BinSerialize.ReadByte(ref buffer);
         }
         else
         {
-            Ports = new byte[8];
+            CurrentPortRate = null;
+            Ports = new byte[6];
             BinSerialize.ReadBlock(ref buffer, Ports);
         }
     }

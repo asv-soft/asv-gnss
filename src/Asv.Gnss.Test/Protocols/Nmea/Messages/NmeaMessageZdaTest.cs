@@ -3,7 +3,7 @@ using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 [TestSubject(typeof(NmeaMessageZda))]
 public class NmeaMessageZdaTest(ITestOutputHelper output)

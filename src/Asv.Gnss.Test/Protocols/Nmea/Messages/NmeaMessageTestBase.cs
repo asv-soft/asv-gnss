@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 public abstract class NmeaMessageTestBase<TMessage>(ITestOutputHelper output, Dictionary<string, string> testMessages)
     where TMessage : NmeaMessageBase, new()

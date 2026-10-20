@@ -1,4 +1,4 @@
-﻿using Asv.IO;
+using Asv.IO;
 using System.Linq;
 using System;
 
@@ -8,10 +8,49 @@ namespace Asv.Gnss
     {
         public Satellite[] Satellites { get; set; } = Array.Empty<Satellite>();
 
+        // Unscaled wire fields used for serialization, including invalid-value sentinels.
+        public int[] RoughRangeIntegerRaw { get; set; } = Array.Empty<int>();
+        public int[] ExtendedSatelliteInfoRaw { get; set; } = Array.Empty<int>();
+        public int[] RoughRangeModuloRaw { get; set; } = Array.Empty<int>();
+        public int[] RoughPhaseRangeRateRaw { get; set; } = Array.Empty<int>();
+        public int[] FinePseudorangeRaw { get; set; } = Array.Empty<int>();
+        public int[] FinePhaseRangeRaw { get; set; } = Array.Empty<int>();
+        public int[] LockTimeRaw { get; set; } = Array.Empty<int>();
+        public int[] HalfCycleRaw { get; set; } = Array.Empty<int>();
+        public int[] CnrRaw { get; set; } = Array.Empty<int>();
+        public int[] FinePhaseRangeRateRaw { get; set; } = Array.Empty<int>();
+
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            base.InternalSerialize(buffer, ref bitIndex);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 8, RoughRangeIntegerRaw, SatelliteIds.Length, false);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 4, ExtendedSatelliteInfoRaw, SatelliteIds.Length, false);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 10, RoughRangeModuloRaw, SatelliteIds.Length, false);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 14, RoughPhaseRangeRateRaw, SatelliteIds.Length, true);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 15, FinePseudorangeRaw, CellCount, true);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 22, FinePhaseRangeRaw, CellCount, true);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 4, LockTimeRaw, CellCount, false);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 1, HalfCycleRaw, CellCount, false);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 6, CnrRaw, CellCount, false);
+            RtcmV3Serialization.WriteColumn(buffer, ref bitIndex, 15, FinePhaseRangeRateRaw, CellCount, true);
+        }
+
+        protected override int InternalGetBitSize() => base.InternalGetBitSize() + SatelliteIds.Length * 36 + CellCount * 63;
+
         protected override void InternalDeserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
         {
             base.InternalDeserialize(buffer, ref bitIndex);
-            var nCell = CellMask.SelectMany(_ => _).Count(_ => _ > 0);
+            var nCell = CellCount;
+            RoughRangeIntegerRaw = new int[SatelliteIds.Length];
+            ExtendedSatelliteInfoRaw = new int[SatelliteIds.Length];
+            RoughRangeModuloRaw = new int[SatelliteIds.Length];
+            RoughPhaseRangeRateRaw = new int[SatelliteIds.Length];
+            FinePseudorangeRaw = new int[CellCount];
+            FinePhaseRangeRaw = new int[CellCount];
+            LockTimeRaw = new int[CellCount];
+            HalfCycleRaw = new int[CellCount];
+            CnrRaw = new int[CellCount];
+            FinePhaseRangeRateRaw = new int[CellCount];
 
             // Satellite data Nsat*(8 + 10) bit
             // Satellite  rough ranges
@@ -46,24 +85,24 @@ namespace Asv.Gnss
             for (var i = 0; i < SatelliteIds.Length; i++)
             {
                 /* Satellite  rough ranges */
-                var rng = SpanBitHelper.GetBitU(buffer, ref bitIndex, 8);
+                var rng = (RoughRangeIntegerRaw[i] = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 8));
                 if (rng != 255) roughRanges[i] = rng * RtcmV3Helper.RANGE_MS;
             }
 
             for (var j = 0; j < SatelliteIds.Length; j++)
             { /* extended info */
-                extSatInfo[j] = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4);
+                extSatInfo[j] = (byte)(ExtendedSatelliteInfoRaw[j] = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4));
             }
 
             for (var i = 0; i < SatelliteIds.Length; i++)
             {
-                var rngM = SpanBitHelper.GetBitU(buffer, ref bitIndex, 10);
+                var rngM = (RoughRangeModuloRaw[i] = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 10));
                 if (roughRanges[i] != 0.0) roughRanges[i] += rngM * RtcmV3Helper.P2_10 * RtcmV3Helper.RANGE_MS;
             }
 
             for (var i = 0; i < SatelliteIds.Length; i++)
             { /* phaserangerate */
-                var rate = SpanBitHelper.GetBitS(buffer, ref bitIndex, 14);
+                var rate = (RoughPhaseRangeRateRaw[i] = (int)SpanBitHelper.GetBitS(buffer, ref bitIndex, 14));
                 if (rate != -8192) roughPhaseRangeRates[i] = rate * 1.0;
             }
 
@@ -72,27 +111,27 @@ namespace Asv.Gnss
             for (var i = 0; i < nCell; i++)
             {
                 /* pseudorange */
-                var prv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 15);
+                var prv = (FinePseudorangeRaw[i] = (int)SpanBitHelper.GetBitS(buffer, ref bitIndex, 15));
                 if (prv != -16384) pseudorange[i] = prv * RtcmV3Helper.P2_24 * RtcmV3Helper.RANGE_MS;
             }
 
             for (var i = 0; i < nCell; i++)
             {
                 /* phase range */
-                var cpv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 22);
+                var cpv = (FinePhaseRangeRaw[i] = (int)SpanBitHelper.GetBitS(buffer, ref bitIndex, 22));
                 if (cpv != -2097152) phaseRange[i] = cpv * RtcmV3Helper.P2_29 * RtcmV3Helper.RANGE_MS;
             }
 
             for (var i = 0; i < nCell; i++)
             {
                 /* lock time */
-                @lock[i] = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4);
+                @lock[i] = (byte)(LockTimeRaw[i] = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 4));
             }
 
             for (var i = 0; i < nCell; i++)
             {
                 /* half-cycle ambiguity */
-                halfCycle[i] = (byte)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
+                halfCycle[i] = (byte)(HalfCycleRaw[i] = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 1));
             }
 
             for (var i = 0; i < nCell; i++)
@@ -100,12 +139,12 @@ namespace Asv.Gnss
                 /* cnr */
                 /* GNSS signal CNR
                  1–63 dBHz */
-                cnr[i] = SpanBitHelper.GetBitU(buffer, ref bitIndex, 6) * 1.0;
+                cnr[i] = (CnrRaw[i] = (int)SpanBitHelper.GetBitU(buffer, ref bitIndex, 6)) * 1.0;
             }
 
             for (var j = 0; j < nCell; j++)
             { /* phaserangerate */
-                var rrv = SpanBitHelper.GetBitS(buffer, ref bitIndex, 15);
+                var rrv = (FinePhaseRangeRateRaw[j] = (int)SpanBitHelper.GetBitS(buffer, ref bitIndex, 15));
                 if (rrv != -16384) phaseRangeRates[j] = rrv * 0.0001;
             }
 

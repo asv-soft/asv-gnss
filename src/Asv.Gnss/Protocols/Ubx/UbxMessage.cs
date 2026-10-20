@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class UbxMessageBase : IProtocolMessage<ushort>
+public abstract class UbxMessageBase : IProtocolMessage<ushort>, IVisitable
 {
     private ProtocolTags _tags = [];
     
@@ -106,4 +106,14 @@ public abstract class UbxMessageBase : IProtocolMessage<ushort>
     /// </summary>
     /// <param name="random">The random number generator to use.</param>
     public abstract void Randomize(Random random);
+
+    /// <summary>
+    /// Visits the typed UBX payload model. Empty poll messages have no payload fields.
+    /// </summary>
+    /// <remarks>This traversal is independent of UBX wire serialization. Existing subclasses can override it to expose their payload.</remarks>
+    public virtual void Accept(IVisitor visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor);
+    }
+
 }

@@ -3,8 +3,12 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class UbxAckBase : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.8. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public abstract partial class UbxAckBase : UbxMessageBase
 {
+    private byte _ackClassId;
+    private byte _ackSubclassId;
+
     protected override void DeserializeContent(ref ReadOnlySpan<byte> buffer)
     {
         AckClassId = BinSerialize.ReadByte(ref buffer);
@@ -21,11 +25,19 @@ public abstract class UbxAckBase : UbxMessageBase
     /// <summary>
     /// Class ID of the Acknowledged Message
     /// </summary>
-    public byte AckClassId { get; set; }
+    public byte AckClassId
+    {
+        get => _ackClassId;
+        set => _ackClassId = value;
+    }
     /// <summary>
     /// Message ID of the Acknowledged Message
     /// </summary>
-    public byte AckSubclassId { get; set; }
+    public byte AckSubclassId
+    {
+        get => _ackSubclassId;
+        set => _ackSubclassId = value;
+    }
 
     public override void Randomize(Random random)
     {

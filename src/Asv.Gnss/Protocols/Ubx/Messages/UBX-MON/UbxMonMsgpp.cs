@@ -27,8 +27,17 @@ public class UbxMonMsgppPool : UbxMessageBase
     }
 }
 
-public class UbxMonMsgpp : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.16.6. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+public partial class UbxMonMsgpp : UbxMessageBase
 {
+    private readonly ushort[] _msg1 = new ushort[8];
+    private readonly ushort[] _msg2 = new ushort[8];
+    private readonly ushort[] _msg3 = new ushort[8];
+    private readonly ushort[] _msg4 = new ushort[8];
+    private readonly ushort[] _msg5 = new ushort[8];
+    private readonly ushort[] _msg6 = new ushort[8];
+    private readonly uint[] _skipped = new uint[6];
+
     public override string Name => "UBX-MON-MSGPP";
     public override byte Class => 0x0A;
     public override byte SubClass => 0x06;
@@ -37,42 +46,42 @@ public class UbxMonMsgpp : UbxMessageBase
     /// Number of successfully parsed messages
     /// for each protocol on port0
     /// </summary>
-    public ushort[] Msg1 { get; } = new ushort[8];
+    public ushort[] Msg1 => _msg1;
 
     /// <summary>
     /// Number of successfully parsed messages
     /// for each protocol on port1
     /// </summary>
-    public ushort[] Msg2 { get; } = new ushort[8];
+    public ushort[] Msg2 => _msg2;
 
     /// <summary>
     /// Number of successfully parsed messages
     /// for each protocol on port2
     /// </summary>
-    public ushort[] Msg3 { get; } = new ushort[8];
+    public ushort[] Msg3 => _msg3;
 
     /// <summary>
     /// Number of successfully parsed messages
     /// for each protocol on port3
     /// </summary>
-    public ushort[] Msg4 { get; } = new ushort[8];
+    public ushort[] Msg4 => _msg4;
 
     /// <summary>
     /// Number of successfully parsed messages
     /// for each protocol on port4
     /// </summary>
-    public ushort[] Msg5 { get; } = new ushort[8];
+    public ushort[] Msg5 => _msg5;
 
     /// <summary>
     /// Number of successfully parsed messages
     /// for each protocol on port5
     /// </summary>
-    public ushort[] Msg6 { get; } = new ushort[8];
+    public ushort[] Msg6 => _msg6;
 
     /// <summary>
     /// Number skipped bytes for each port
     /// </summary>
-    public uint[] Skipped { get; } = new uint[6];
+    public uint[] Skipped => _skipped;
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {

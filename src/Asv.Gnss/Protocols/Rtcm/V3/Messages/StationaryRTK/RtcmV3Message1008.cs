@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -25,6 +25,14 @@ namespace Asv.Gnss
         /// antenna.
         /// </summary>
         public string AntennaSerialNumber { get; set; }
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            base.InternalSerialize(buffer, ref bitIndex);
+            RtcmV3Serialization.WriteString(buffer, ref bitIndex, AntennaSerialNumber);
+        }
+
+        protected override int InternalGetBitSize() => base.InternalGetBitSize() + RtcmV3Serialization.StringBitSize(AntennaSerialNumber);
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             base.DeserializeContent(buffer, ref bitIndex, messageLength);

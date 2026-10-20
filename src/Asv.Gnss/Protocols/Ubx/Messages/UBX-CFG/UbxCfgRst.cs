@@ -18,14 +18,34 @@ namespace Asv.Gnss;
 /// • If Galileo is enabled, use resetMode Hardware reset instead of Controlled
 /// software reset or Controlled software reset (GNSS only)
 /// </summary>
-public class UbxCfgRst : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.29. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+public partial class UbxCfgRst : UbxMessageBase
 {
     public override string Name => "UBX-CFG-RST";
     public override byte Class => 0x06;
     public override byte SubClass => 0x04;
 
-    public BbrMask Bbr { get; set; } = BbrMask.HotStart;
-    public ResetMode Mode { get; set; } = ResetMode.HardwareResetImmediately;
+    private BbrMask _bbr = BbrMask.HotStart;
+
+    /// <summary>
+    /// Battery-backed data to clear before reset; HotStart preserves these data, WarmStart clears ephemerides, and ColdStart clears all selected data.
+    /// </summary>
+    public BbrMask Bbr
+    {
+        get => _bbr;
+        set => _bbr = value;
+    }
+    private ResetMode _mode = ResetMode.HardwareResetImmediately;
+
+    /// <summary>
+    /// Requested reset mechanism, including hardware reset, software reset, and GNSS-only stop or restart.
+    /// </summary>
+    public ResetMode Mode
+    {
+        get => _mode;
+        set => _mode = value;
+    }
 
     protected override void SerializeContent(ref Span<byte> buffer)
     {
@@ -54,7 +74,7 @@ public enum BbrMask : ushort
 {
     HotStart = 0x00,
     WarmStart = 0x01,
-    ColdStart = 0xFF14
+    ColdStart = 0xFFFF
 }
 
 public enum ResetMode : byte

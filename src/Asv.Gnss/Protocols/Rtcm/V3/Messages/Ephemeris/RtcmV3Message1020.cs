@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Asv.IO;
 
 namespace Asv.Gnss
@@ -16,6 +16,50 @@ namespace Asv.Gnss
         public override ushort MessageId => RtcmMessageId;
         public override string Name => "GLONASS Satellite Ephemeris Data";
     
+        protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
+        {
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, SatellitePrn, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 5, FrequencyNumber + 7, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, AlmanacHealth, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, AlmanacHealthAvailabilityIndicator, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 2, P1Word, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 5, FrameTime.AddHours(3).Hour, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 6, FrameTime.AddHours(3).Minute, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, FrameTime.AddHours(3).Second, 30.0);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, OperationHealth, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, P2Word, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 7, Iode, 1);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 24, Velocity.X, RtcmV3Helper.P2_20 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 27, Position.X, RtcmV3Helper.P2_11 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 5, Acceleration.X, RtcmV3Helper.P2_30 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 24, Velocity.Y, RtcmV3Helper.P2_20 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 27, Position.Y, RtcmV3Helper.P2_11 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 5, Acceleration.Y, RtcmV3Helper.P2_30 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 24, Velocity.Z, RtcmV3Helper.P2_20 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 27, Position.Z, RtcmV3Helper.P2_11 * 1E3);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 5, Acceleration.Z, RtcmV3Helper.P2_30 * 1E3);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, P3Word, 1);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 11, RelativeFreqBias, RtcmV3Helper.P2_40);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 2, MPWord, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, MLThirdStringWord, 1);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 22, SvClockBias, RtcmV3Helper.P2_30);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 5, DelayL1ToL2, RtcmV3Helper.P2_30);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 5, OperationAge, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, MP4Word, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 4, MFtWord, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 11, MNtWord, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 2, MMWord, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, AvailabilityOfAdditionalData, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 11, Na, 1);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 32, _tc, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 5, MN4, 1);
+            RtcmV3Serialization.WriteG(buffer, ref bitIndex, 22, _mTgps, 1);
+            RtcmV3Serialization.WriteU(buffer, ref bitIndex, 1, MLFifthStringWord, 1);
+            RtcmV3Serialization.WriteS(buffer, ref bitIndex, 7, 0, 1);
+        }
+
+        protected override int InternalGetBitSize() => 348;
+
         protected override void DeserializeContent(ReadOnlySpan<byte> buffer, ref int bitIndex, int messageLength)
         {
             var utc = DateTime.UtcNow;
@@ -74,9 +118,9 @@ namespace Asv.Gnss
             MMWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 2);
             AvailabilityOfAdditionalData = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
             Na = SpanBitHelper.GetBitU(buffer, ref bitIndex, 11);
-            Tc = SpanBitHelper.GetBitS(buffer, ref bitIndex, 32);
+            _tc = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 32);
             MN4 = SpanBitHelper.GetBitU(buffer, ref bitIndex, 5);
-            MTgps = SpanBitHelper.GetBitS(buffer, ref bitIndex, 22);
+            _mTgps = RtcmV3Helper.GetBitG(buffer, ref bitIndex, 22);
             MLFifthStringWord = SpanBitHelper.GetBitU(buffer, ref bitIndex, 1);
 
             var reserved = SpanBitHelper.GetBitS(buffer, ref bitIndex, 7);
@@ -114,11 +158,13 @@ namespace Asv.Gnss
 
         public uint MLFifthStringWord { get; set; }
 
-        public int MTgps { get; set; }
+        private double _mTgps;
+        public int MTgps { get => (int)_mTgps; set => _mTgps = value; }
 
         public uint MN4 { get; set; }
 
-        public int Tc { get; set; }
+        private double _tc;
+        public int Tc { get => (int)_tc; set => _tc = value; }
 
         public uint Na { get; set; }
 

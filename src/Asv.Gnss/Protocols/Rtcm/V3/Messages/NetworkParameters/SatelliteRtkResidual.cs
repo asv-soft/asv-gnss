@@ -1,4 +1,4 @@
-﻿namespace Asv.Gnss.Parsers.RTCM.V3.Messages.NetworkParameters
+﻿namespace Asv.Gnss
 {
     internal class SatelliteRtkResidual
     {

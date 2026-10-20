@@ -99,6 +99,12 @@ public class NmeaMessageParser : ProtocolParser<NmeaMessageBase, NmeaMessageId>
                     }
                     break;
                 case State.Id:
+                    if (data is NmeaProtocol.StartMessageByte1 or NmeaProtocol.StartMessageByte2)
+                    {
+                        // A preceding binary packet can end with a NMEA start byte.
+                        _byteRead = 0;
+                        break;
+                    }
                     if (_byteRead >= 6)
                     {
                         // oversize for message id

@@ -36,40 +36,276 @@ public class UbxCfgNav5Pool : UbxMessageBase
 /// See the Navigation Configuration Settings Description for a detailed description
 /// of how these settings affect receiver operation.
 /// </summary>
-public class UbxCfgNav5 : UbxMessageBase
+/// <remarks>Payload fields follow u-blox document UBX-13003221 R23, section 32.10.19. Receiver and firmware support must be checked against the applicable interface description.</remarks>
+/// <remarks>ZED-F9P integration manual UBX-18010802 R08, section 3.1.6, describes limited legacy UBX-CFG compatibility and recommends the configuration-item interface.</remarks>
+public partial class UbxCfgNav5 : UbxMessageBase
 {
     public override string Name => "UBX-CFG-NAV5";
     public override byte Class => 0x06;
     public override byte SubClass => 0x24;
 
-    public bool ApplyDynamicModel { get; set; } = true;
-    public bool ApplyMinimumElevation { get; set; } = true;
-    public bool ApplyFixMode { get; set; } = true;
-    public bool ApplyDrLimit { get; set; } = true;
-    public bool ApplyPositionMask { get; set; } = true;
-    public bool ApplyTimeMask { get; set; } = true;
-    public bool ApplyStaticHold { get; set; } = true;
-    public bool ApplyDGPS { get; set; } = true;
-    public bool ApplyCnoThreshold { get; set; } = true;
-    public bool ApplyUTC { get; set; } = true;
+    private bool _applyDynamicModel = true;
 
-    public ModelEnum PlatformModel { get; set; } = ModelEnum.Stationary;
-    public PositionModeEnum PositionMode { get; set; } = PositionModeEnum.Auto;
+    /// <summary>
+    /// Whether the NAV5 update mask applies the platform model.
+    /// </summary>
+    public bool ApplyDynamicModel
+    {
+        get => _applyDynamicModel;
+        set => _applyDynamicModel = value;
+    }
+    private bool _applyMinimumElevation = true;
 
-    public double FixedAltitude { get; set; }
-    public double FixedAltitudeVariance { get; set; } = 1.0;
-    public byte DrLimit { get; set; }
-    public sbyte MinimumElevation { get; set; } = 15;
-    public double PositionDOP { get; set; } = 25.0;
-    public double TimeDOP { get; set; } = 25.0;
-    public ushort PositionAccuracy { get; set; } = 100;
-    public ushort TimeAccuracy { get; set; } = 300;
-    public double StaticHoldThreshold { get; set; }
-    public byte DGNSSTimeout { get; set; }
-    public byte CnoThreshNumSVs { get; set; }
-    public byte CnoThreshold { get; set; } = 35;
-    public ushort StaticHoldMaxDistance { get; set; }
-    public byte UtcStandard { get; set; }
+    /// <summary>
+    /// Whether the NAV5 update mask applies the minimum elevation.
+    /// </summary>
+    public bool ApplyMinimumElevation
+    {
+        get => _applyMinimumElevation;
+        set => _applyMinimumElevation = value;
+    }
+    private bool _applyFixMode = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the 2D/3D fix policy.
+    /// </summary>
+    public bool ApplyFixMode
+    {
+        get => _applyFixMode;
+        set => _applyFixMode = value;
+    }
+    private bool _applyDrLimit = true;
+
+    /// <summary>
+    /// Legacy update-mask bit for the dead-reckoning limit; reserved in the R23 NAV5 mask definition.
+    /// </summary>
+    public bool ApplyDrLimit
+    {
+        get => _applyDrLimit;
+        set => _applyDrLimit = value;
+    }
+    private bool _applyPositionMask = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the position DOP and accuracy masks.
+    /// </summary>
+    public bool ApplyPositionMask
+    {
+        get => _applyPositionMask;
+        set => _applyPositionMask = value;
+    }
+    private bool _applyTimeMask = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the time DOP and accuracy masks.
+    /// </summary>
+    public bool ApplyTimeMask
+    {
+        get => _applyTimeMask;
+        set => _applyTimeMask = value;
+    }
+    private bool _applyStaticHold = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the static-hold settings.
+    /// </summary>
+    public bool ApplyStaticHold
+    {
+        get => _applyStaticHold;
+        set => _applyStaticHold = value;
+    }
+    private bool _applyDGPS = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the differential correction timeout.
+    /// </summary>
+    public bool ApplyDGPS
+    {
+        get => _applyDGPS;
+        set => _applyDGPS = value;
+    }
+    private bool _applyCnoThreshold = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the carrier-to-noise thresholds.
+    /// </summary>
+    public bool ApplyCnoThreshold
+    {
+        get => _applyCnoThreshold;
+        set => _applyCnoThreshold = value;
+    }
+    private bool _applyUTC = true;
+
+    /// <summary>
+    /// Whether the NAV5 update mask applies the UTC standard selector.
+    /// </summary>
+    public bool ApplyUTC
+    {
+        get => _applyUTC;
+        set => _applyUTC = value;
+    }
+
+    private ModelEnum _platformModel = ModelEnum.Stationary;
+
+    /// <summary>
+    /// Dynamic platform model used by the navigation engine; supported models depend on firmware.
+    /// </summary>
+    public ModelEnum PlatformModel
+    {
+        get => _platformModel;
+        set => _platformModel = value;
+    }
+    private PositionModeEnum _positionMode = PositionModeEnum.Auto;
+
+    /// <summary>
+    /// Position solution policy: 2D only, 3D only, or automatic 2D/3D.
+    /// </summary>
+    public PositionModeEnum PositionMode
+    {
+        get => _positionMode;
+        set => _positionMode = value;
+    }
+
+    private double _fixedAltitude;
+
+    /// <summary>
+    /// Altitude constraint for 2D fixes in meters above mean sea level; wire resolution is 0.01 m.
+    /// </summary>
+    public double FixedAltitude
+    {
+        get => _fixedAltitude;
+        set => _fixedAltitude = value;
+    }
+    private double _fixedAltitudeVariance = 1.0;
+
+    /// <summary>
+    /// Variance of the fixed-altitude constraint, in square meters; wire resolution is 0.0001 square meters.
+    /// </summary>
+    public double FixedAltitudeVariance
+    {
+        get => _fixedAltitudeVariance;
+        set => _fixedAltitudeVariance = value;
+    }
+    private byte _drLimit;
+
+    /// <summary>
+    /// Legacy dead-reckoning limit byte; reserved in the R23 NAV5 field table.
+    /// </summary>
+    public byte DrLimit
+    {
+        get => _drLimit;
+        set => _drLimit = value;
+    }
+    private sbyte _minimumElevation = 15;
+
+    /// <summary>
+    /// Minimum satellite elevation for navigation use, in degrees.
+    /// </summary>
+    public sbyte MinimumElevation
+    {
+        get => _minimumElevation;
+        set => _minimumElevation = value;
+    }
+    private double _positionDOP = 25.0;
+
+    /// <summary>
+    /// Position dilution-of-precision mask, dimensionless; wire resolution is 0.1.
+    /// </summary>
+    public double PositionDOP
+    {
+        get => _positionDOP;
+        set => _positionDOP = value;
+    }
+    private double _timeDOP = 25.0;
+
+    /// <summary>
+    /// Time dilution-of-precision mask, dimensionless; wire resolution is 0.1.
+    /// </summary>
+    public double TimeDOP
+    {
+        get => _timeDOP;
+        set => _timeDOP = value;
+    }
+    private ushort _positionAccuracy = 100;
+
+    /// <summary>
+    /// Position accuracy mask in meters.
+    /// </summary>
+    public ushort PositionAccuracy
+    {
+        get => _positionAccuracy;
+        set => _positionAccuracy = value;
+    }
+    private ushort _timeAccuracy = 300;
+
+    /// <summary>
+    /// Time accuracy mask expressed as a distance in meters, as specified for the NAV5 tAcc field.
+    /// </summary>
+    public ushort TimeAccuracy
+    {
+        get => _timeAccuracy;
+        set => _timeAccuracy = value;
+    }
+    private double _staticHoldThreshold;
+
+    /// <summary>
+    /// Speed threshold for static hold, in meters per second; wire resolution is 0.01 m/s.
+    /// </summary>
+    public double StaticHoldThreshold
+    {
+        get => _staticHoldThreshold;
+        set => _staticHoldThreshold = value;
+    }
+    private byte _dgnssTimeout;
+
+    /// <summary>
+    /// Maximum age of differential GNSS corrections, in seconds.
+    /// </summary>
+    public byte DGNSSTimeout
+    {
+        get => _dgnssTimeout;
+        set => _dgnssTimeout = value;
+    }
+    private byte _cnoThreshNumSVs;
+
+    /// <summary>
+    /// Minimum number of satellites that must meet the configured carrier-to-noise threshold.
+    /// </summary>
+    public byte CnoThreshNumSVs
+    {
+        get => _cnoThreshNumSVs;
+        set => _cnoThreshNumSVs = value;
+    }
+    private byte _cnoThreshold = 35;
+
+    /// <summary>
+    /// Carrier-to-noise density threshold in dB-Hz.
+    /// </summary>
+    public byte CnoThreshold
+    {
+        get => _cnoThreshold;
+        set => _cnoThreshold = value;
+    }
+    private ushort _staticHoldMaxDistance;
+
+    /// <summary>
+    /// Maximum displacement from the static-hold position, in meters.
+    /// </summary>
+    public ushort StaticHoldMaxDistance
+    {
+        get => _staticHoldMaxDistance;
+        set => _staticHoldMaxDistance = value;
+    }
+    private byte _utcStandard;
+
+    /// <summary>
+    /// UTC realization selector: 0 automatic, 3 USNO, 5 European, 6 SU, or 7 NTSC; support depends on firmware.
+    /// </summary>
+    public byte UtcStandard
+    {
+        get => _utcStandard;
+        set => _utcStandard = value;
+    }
 
     public enum PositionModeEnum
     {

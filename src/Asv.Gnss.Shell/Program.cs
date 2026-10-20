@@ -1,16 +1,21 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.Text;
-using Asv.Gnss.Shell;
+﻿using System.Text;
 using ConsoleAppFramework;
 
-Console.InputEncoding = Encoding.UTF8;
-Console.OutputEncoding = Encoding.UTF8;
-Console.BackgroundColor = ConsoleColor.Black;
-        
-var app = ConsoleApp.Create();
+namespace Asv.Gnss;
 
-// app.Add<NmeaCommand>();
-app.Add<RtcmV3Command>();
-app.Add<AsterixStreamCommand>();
-await app.RunAsync(args);
+internal static class Program
+{
+    public static async Task Main(string[] args)
+    {
+        Console.InputEncoding = Encoding.UTF8;
+        Console.OutputEncoding = Encoding.UTF8;
+        Console.BackgroundColor = ConsoleColor.Black;
+
+        var app = ConsoleApp.Create();
+
+        // app.Add<NmeaCommand>();
+        app.Add<RtcmV3Command>();
+        app.Add<AsterixStreamCommand>();
+        await app.RunAsync(args);
+    }
+}

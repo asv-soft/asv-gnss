@@ -26,8 +26,8 @@ public class AsterixFieldI020Frn013Type245 : AsterixField
     public override void Serialize(ref Span<byte> buffer)
     {
         buffer[0] = (byte)((byte)Sti << 6);
-        buffer = buffer[1..];
-        AsterixProtocol.SetAircraftId(TargetIdentification, ref buffer);
+        var identificationBuffer = buffer.Slice(1, 6);
+        AsterixProtocol.SetAircraftId(TargetIdentification, ref identificationBuffer);
         buffer = buffer[GetByteSize()..];
     }
 

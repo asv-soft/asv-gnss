@@ -18,6 +18,7 @@ public static class RtcmV2Protocol
         var factory = new ProtocolMessageFactoryBuilder<RtcmV2MessageBase, ushort>(Info);
         factory
             .Add<RtcmV2Message1>()
+            .Add<RtcmV2Message9>()
             .Add<RtcmV2Message14>()
             .Add<RtcmV2Message15>()
             .Add<RtcmV2Message17>()
@@ -27,5 +28,9 @@ public static class RtcmV2Protocol
         configure?.Invoke(factory);
         var messageFactory = factory.Build();
         builder.Register(Info, (core, stat) => new RtcmV2Parser(messageFactory, core, stat));
+        if (builder is IProtocolEncoderBuilder encoderBuilder)
+        {
+            encoderBuilder.Register(Info, _ => new RtcmV2Encoder());
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 using Asv.Gnss;
 using Xunit;
 
-namespace Asv.Gnss.Test;
+namespace Asv.Gnss;
 
 public class AsterixStreamResourceTest
 {
