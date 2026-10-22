@@ -6,7 +6,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Dilution of precision
     /// </summary>
-    public class SbfPacketDOP:SbfMessageBase
+    public partial class SbfPacketDOP:SbfMessageBase
     {
         public override ushort MessageRevision => 0;
         public override ushort MessageType => 4001;

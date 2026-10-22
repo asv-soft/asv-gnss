@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public abstract class SbfPacketGnssRawNavMsgBase : SbfMessageBase
+    public abstract partial class SbfPacketGnssRawNavMsgBase : SbfMessageBase
     {
         public SbfNavSysEnum NavSystem { get; set; }
 

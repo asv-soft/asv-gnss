@@ -9,7 +9,7 @@ namespace Asv.Gnss;
 /// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GLL.html
 /// https://docs.novatel.com/OEM7/Content/Logs/GPGLL.htm?TocPath=Commands%20%26%20Logs%7CLogs%7CGNSS%20Logs%7C_____61
 /// </summary>
-public class NmeaMessageGll : NmeaMessageBase
+public partial class NmeaMessageGll : NmeaMessageBase
 {
     public const string MessageName = "GLL";
     public static readonly NmeaMessageId MessageId = new(MessageName);

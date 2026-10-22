@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/270 Target Size and Orientation.
 /// </summary>
-public class AsterixFieldI010Frn019Type270 : AsterixFieldI010
+public partial class AsterixFieldI010Frn019Type270 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

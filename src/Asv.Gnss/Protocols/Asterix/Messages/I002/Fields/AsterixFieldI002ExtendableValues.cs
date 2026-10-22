@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixFieldI002ExtendableValues : AsterixFieldI002Fixed
+public abstract partial class AsterixFieldI002ExtendableValues : AsterixFieldI002Fixed
 {
     public List<byte> Values { get; } = [];
 

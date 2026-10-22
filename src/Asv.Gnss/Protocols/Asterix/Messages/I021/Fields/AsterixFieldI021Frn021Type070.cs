@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn021Type070 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn021Type070 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 19;
     public override string Name => "Mode 3/A Code in Octal Representation";

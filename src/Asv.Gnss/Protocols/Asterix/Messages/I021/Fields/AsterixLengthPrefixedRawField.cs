@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixLengthPrefixedRawField : AsterixFieldI021Fixed
+public abstract partial class AsterixLengthPrefixedRawField : AsterixFieldI021Fixed
 {
     public byte[] Data { get; set; } = [];
 

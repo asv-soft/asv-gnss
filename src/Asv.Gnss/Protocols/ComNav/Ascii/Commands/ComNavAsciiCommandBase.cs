@@ -7,7 +7,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a base class for Communication Navigation ASCII commands.
     /// </summary>
-    public abstract class ComNavAsciiCommandBase : ComNavStringMessageBase
+    public abstract partial class ComNavAsciiCommandBase : ComNavStringMessageBase
     {
         /// <summary>
         /// Serializes the class into an ASCII string.

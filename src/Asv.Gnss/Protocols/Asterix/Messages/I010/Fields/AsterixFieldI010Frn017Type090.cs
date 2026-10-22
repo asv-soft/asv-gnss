@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/090 Flight Level in Binary Representation.
 /// </summary>
-public class AsterixFieldI010Frn017Type090 : AsterixFieldI010
+public partial class AsterixFieldI010Frn017Type090 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

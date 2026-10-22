@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn041Type008 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn041Type008 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 36;
     public override string Name => "Aircraft Operational Status";

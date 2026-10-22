@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class ComNavBinaryObservationInfo : ComNavBinaryMessageBase
+    public partial class ComNavBinaryObservationInfo : ComNavBinaryMessageBase
     {
         public const ushort ComNavMessageId = 43;
         public override ushort MessageId => ComNavMessageId;
@@ -33,7 +33,7 @@ namespace Asv.Gnss
         }
     }
     
-    public class Observation : ISpanSerializable
+    public partial class Observation : ISpanSerializable
     {
         public int Prn { get; set; }
         public double PseudoRange { get; set; }

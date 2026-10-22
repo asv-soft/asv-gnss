@@ -17,7 +17,7 @@ namespace Asv.Gnss
     /// received bit is the MSB.
     /// Bits 30-31: Reserved
     /// </summary>
-    public class SbfPacketGpsRawCa : SbfPacketGnssRawNavMsgBase
+    public partial class SbfPacketGpsRawCa : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4017;
         public override ushort MessageRevision => 0;

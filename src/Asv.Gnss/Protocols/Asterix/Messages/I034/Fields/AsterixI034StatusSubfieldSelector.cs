@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Subfield selector used by CAT034 compound status items.
 /// </summary>
-public sealed class AsterixI034StatusSubfieldSelector
+public sealed partial class AsterixI034StatusSubfieldSelector
 {
     /// <summary>
     /// Raw subfield selector octet.

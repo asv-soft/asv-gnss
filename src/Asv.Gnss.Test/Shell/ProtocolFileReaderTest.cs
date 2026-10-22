@@ -59,13 +59,28 @@ public class ProtocolFileReaderTest
             NmeaProtocol.Info.Id, RtcmV2Protocol.Info.Id, RtcmV3Protocol.Info.Id, UbxProtocol.Info.Id,
             AsterixProtocol.Info.Id, AsvProtocol.Info.Id, GbasProtocol.Info.Id, SbfProtocol.Info.Id,
             ComNavProtocol.BinaryInfo.Id, ComNavProtocol.AsciiInfo.Id, ComNavProtocol.SimpleAnswerInfo.Id,
-            JavadProtocol.Info.Id, RinexProtocol.Info.Id
+            JavadProtocol.Info.Id, RinexProtocol.Info.Id, AdsbProtocol.Info.Id
         ];
         Assert.Equal(expected.Order(StringComparer.Ordinal), capture.Protocols);
-        Assert.DoesNotContain(AdsbProtocol.Info.Id, capture.Protocols);
         Assert.Empty(capture.Messages);
         Assert.Equal(0, capture.ByteCount);
         Assert.Equal(0, capture.ErrorCount);
+    }
+
+    [Fact]
+    public async Task ReadAsync_AvrAndBeastAdsb_UsesTheRegisteredNativeProtocol()
+    {
+        var raw = Convert.FromHexString("8D4840D6202CC371C32CE0576098");
+        var avr = Encoding.ASCII.GetBytes("*8D4840D6202CC371C32CE0576098;\r\n");
+        // Independent Beast transport fixture: 48-bit clock, signal byte and native message.
+        using var stream = new MemoryStream([.. avr, 0x1A, 0x33, 0, 0, 0, 0, 0, 1, 127, .. raw]);
+        var capture = await ProtocolFileReader.ReadAsync(stream, "aircraft.bin", TestContext.Current.CancellationToken);
+        var messages = capture.Messages.Select(x => x.Message).OfType<AdsbDfMessage>().ToArray();
+        Assert.Equal(2, messages.Length);
+        Assert.Equal(AdsbFrameFormat.Avr, messages[0].FrameFormat);
+        Assert.Equal(AdsbFrameFormat.Beast, messages[1].FrameFormat);
+        Assert.All(messages, message => Assert.Equal("KLM1023", message.ExtendedSquitter!.Identification!.Callsign));
+        Assert.Contains(AdsbProtocol.Info.Id, capture.Protocols);
     }
 
     [Fact]

@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn003Type161 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn003Type161 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 3;
     public override string Name => "Track Number";

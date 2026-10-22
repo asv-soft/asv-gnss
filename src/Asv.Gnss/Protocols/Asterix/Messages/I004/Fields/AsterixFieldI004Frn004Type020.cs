@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn004Type020 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn004Type020 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 4;
     public override string Name => "Time of Message";

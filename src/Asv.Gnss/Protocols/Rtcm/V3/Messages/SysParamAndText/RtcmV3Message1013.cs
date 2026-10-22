@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class RtcmV3Message1013 : RtcmV3LegacyMessageBase
+    public partial class RtcmV3Message1013 : RtcmV3LegacyMessageBase
     {
         public const int RtcmMessageId = 1013;
 
@@ -85,7 +85,7 @@ namespace Asv.Gnss
         
     }
 
-    public class SystemMessage
+    public partial class SystemMessage
     {
         /// <summary>
         /// Each announcement lists the Message ID as transmitted by the reference station.

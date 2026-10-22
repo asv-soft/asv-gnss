@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixFieldI021HighPrecisionTime : AsterixFieldI021Fixed
+public abstract partial class AsterixFieldI021HighPrecisionTime : AsterixFieldI021Fixed
 {
     private const double Lsb = 1.0 / 1073741824.0;
     public byte FullSecondIndication { get; set; }

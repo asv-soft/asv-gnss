@@ -14,7 +14,7 @@ public enum MessageBlockIdEnum : byte
 /// A GBAS application block, including its six-byte header and CRC-32Q.
 /// Use <see cref="GbasMessage"/> to encode or decode the containing VDB burst.
 /// </summary>
-public abstract class GbasMessageBlockBase : SpanBitCompactSerializableBase, IProtocolMessage<byte>
+public abstract partial class GbasMessageBlockBase : SpanBitCompactSerializableBase, IProtocolMessage<byte>
 {
     private ProtocolTags _tags = [];
 

@@ -7,7 +7,7 @@ namespace Asv.Gnss
     /// Proprietary Message Type.
     /// Trimble Navigation Ltd.
     /// </summary>
-    public class RtcmV3Msg4094 : RtcmV3LegacyMessageBase
+    public partial class RtcmV3Msg4094 : RtcmV3LegacyMessageBase
     {
         /// <summary>
         /// Rtcm Message Id

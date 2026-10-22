@@ -5,7 +5,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class MessageBlockType2 : GbasMessageBlockBase
+public partial class MessageBlockType2 : GbasMessageBlockBase
 {
     public const byte GbasMessageTypeId = 2;
 

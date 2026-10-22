@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/000 Message Type.
 /// </summary>
-public sealed class AsterixFieldI034Frn002Type000 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn002Type000 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

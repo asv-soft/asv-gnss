@@ -1532,7 +1532,7 @@ public enum TimeSystemEnum
     TSYS_IRN = 6 /* time system: IRNSS time */
 }
 
-public class SignalRaw
+public partial class SignalRaw
 {
     public string RinexCode { get; set; }
     public byte ObservationCode { get; set; }

@@ -4,7 +4,7 @@
     /// This command allows all satellites or systems which have been previously locked out
     /// (LOCKOUT command on page 242 or LOCKOUTSYSTEM command on page 243) to be reinstated in the solution computation.
     /// </summary>
-    public class ComNavUnLockoutAllSystemCommand : ComNavAsciiCommandBase
+    public partial class ComNavUnLockoutAllSystemCommand : ComNavAsciiCommandBase
     {
         /// <summary>
         /// Gets the default instance of the ComNavUnLockoutAllSystemCommand class.

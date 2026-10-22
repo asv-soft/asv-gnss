@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Mode-S system configuration and status subfield.
 /// </summary>
-public sealed class AsterixI034SystemConfigurationModeS
+public sealed partial class AsterixI034SystemConfigurationModeS
 {
     /// <summary>
     /// Antenna selection.

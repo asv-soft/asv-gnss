@@ -23,7 +23,7 @@ public class AsterixMessageI002 : AsterixMessage<AsterixRecordI002>
 /// <summary>
 /// ASTERIX CAT002 record using the edition 1.0 field reference number mapping.
 /// </summary>
-public class AsterixRecordI002 : AsterixRecord
+public partial class AsterixRecordI002 : AsterixRecord
 {
     public AsterixFieldI002Frn001Type010? DataSourceIdentifier { get; set; }
     public AsterixFieldI002Frn002Type000? MessageType { get; set; }

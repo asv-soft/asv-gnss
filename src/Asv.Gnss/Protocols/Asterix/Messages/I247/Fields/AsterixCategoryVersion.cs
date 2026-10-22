@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Version information for a single ASTERIX category.
 /// </summary>
-public class AsterixCategoryVersion
+public partial class AsterixCategoryVersion
 {
     /// <summary>
     /// ASTERIX category number.

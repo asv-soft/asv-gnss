@@ -4,7 +4,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
+public abstract partial class RtcmV3Msm4Base : RtcmV3MsmBase
 {
     protected override void InternalDeserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
     {
@@ -281,14 +281,14 @@ public abstract class RtcmV3Msm4Base : RtcmV3MsmBase
     public Satellite[] Satellites { get; set; }
 }
 
-public class Satellite
+public partial class Satellite
 {
     public byte SatellitePrn { get; set; }
     public Signal[] Signals { get; set; }
     public string SatelliteCode { get; set; }
 }
 
-public class Signal
+public partial class Signal
 {
     public string RinexCode { get; set; }
 

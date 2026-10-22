@@ -5,7 +5,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Asv.Gnss
 {
-    public class ComNavLogListAMessage : ComNavAsciiMessageBase
+    public partial class ComNavLogListAMessage : ComNavAsciiMessageBase
 	{
 		public const string ComNavMessageId = "LOGLISTA";
 		public override string MessageId => ComNavMessageId;
@@ -60,7 +60,7 @@ namespace Asv.Gnss
 		public LogMessage[] Messages { get; private set; }
 	}
 
-	public class LogMessage
+	public partial class LogMessage
 	{
 		[JsonConverter(typeof(StringEnumConverter))]
 		public ComNavPortEnum Direction { get; set; }

@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class RtcmV2Message15 : RtcmV2MessageBase
+public partial class RtcmV2Message15 : RtcmV2MessageBase
 {
     public const int RtcmMessageId = 15;
 
@@ -37,7 +37,7 @@ public class RtcmV2Message15 : RtcmV2MessageBase
     }
 }
 
-public class IonosphericDelayItem
+public partial class IonosphericDelayItem
 {
     private byte _reserved;
     private bool _hasOriginalInvalidDelay;

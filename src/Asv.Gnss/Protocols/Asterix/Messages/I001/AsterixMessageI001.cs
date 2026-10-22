@@ -29,7 +29,7 @@ public class AsterixMessageI001 : AsterixMessage<AsterixRecordI001>
 /// <summary>
 /// ASTERIX CAT001 record containing the decoded data items selected by FSPEC.
 /// </summary>
-public class AsterixRecordI001 : AsterixRecord
+public partial class AsterixRecordI001 : AsterixRecord
 {
     /// <summary>
     /// Gets or sets I001/010 Data Source Identifier.

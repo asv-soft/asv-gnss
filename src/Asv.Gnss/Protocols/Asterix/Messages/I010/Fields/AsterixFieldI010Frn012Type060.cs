@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/060 Mode-3/A Code in Octal Representation.
 /// </summary>
-public class AsterixFieldI010Frn012Type060 : AsterixFieldI010
+public partial class AsterixFieldI010Frn012Type060 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

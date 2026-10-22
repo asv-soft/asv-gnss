@@ -25,7 +25,7 @@ public enum AdditionalMessageEnum
 }
 
 
-public class MessageBlockType1 : GbasMessageBlockBase
+public partial class MessageBlockType1 : GbasMessageBlockBase
 {
     /// <summary>
     /// 5 * 10^-6

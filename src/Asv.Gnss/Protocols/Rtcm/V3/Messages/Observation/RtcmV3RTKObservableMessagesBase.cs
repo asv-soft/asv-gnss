@@ -7,7 +7,7 @@ namespace Asv.Gnss
     /// Table 3.5-1 Contents of the Message Header, Types 1001, 1002, 1003, 1004: GPS RTK Messages and
     /// Table 3.5-10 Contents of the Message Header, Types 1009 through 1012: GLONASS RTK Messages
     /// </summary>
-    public abstract class RtcmV3RTKObservableMessagesBase : RtcmV3LegacyMessageBase
+    public abstract partial class RtcmV3RTKObservableMessagesBase : RtcmV3LegacyMessageBase
     {
         protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
         {

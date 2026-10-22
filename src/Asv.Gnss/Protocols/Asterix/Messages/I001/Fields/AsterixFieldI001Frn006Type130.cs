@@ -8,7 +8,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/130: Radar Plot Characteristics.
 /// Contains a variable-length chain of characteristic values, each followed by an extension bit.
 /// </summary>
-public class AsterixFieldI001Frn006Type130 : AsterixField
+public partial class AsterixFieldI001Frn006Type130 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/130.
@@ -64,10 +64,6 @@ public class AsterixFieldI001Frn006Type130 : AsterixField
     /// <inheritdoc />
     public override int GetByteSize() => Items.Count;
 
-    /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
 }
 
 /// <summary>
@@ -75,4 +71,4 @@ public class AsterixFieldI001Frn006Type130 : AsterixField
 /// </summary>
 /// <param name="Value">The seven-bit characteristic value.</param>
 /// <param name="Extend">True when another radar plot characteristic octet follows.</param>
-public readonly record struct RadarPlotCharacteristic(byte Value, bool Extend);
+public readonly partial record struct RadarPlotCharacteristic(byte Value, bool Extend);

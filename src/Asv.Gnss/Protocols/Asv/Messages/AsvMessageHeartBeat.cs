@@ -18,7 +18,7 @@ public enum AsvDeviceState : byte
     Error = 2,
 }
 
-public class AsvMessageHeartBeat : AsvMessageBase
+public partial class AsvMessageHeartBeat : AsvMessageBase
 {
     public static readonly ushort PacketMessageId = 0x0000;
 

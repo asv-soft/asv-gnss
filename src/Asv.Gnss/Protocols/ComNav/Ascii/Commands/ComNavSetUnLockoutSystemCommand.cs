@@ -2,7 +2,7 @@
 
 namespace Asv.Gnss
 {
-    public class ComNavSetUnLockoutSystemCommand : ComNavAsciiCommandBase
+    public partial class ComNavSetUnLockoutSystemCommand : ComNavAsciiCommandBase
     {
         public ComNavSatelliteSystemEnum SatelliteSystem { get; set; }
 

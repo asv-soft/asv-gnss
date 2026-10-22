@@ -14,7 +14,7 @@ public enum SBASServiceProviderEnum : byte
     AnySBAS = 15
 }
 
-public class FasDataSet : SpanBitCompactSerializableBase
+public partial class FasDataSet : SpanBitCompactSerializableBase
 {
     /// <summary>
     /// 0.0005 arcsecond

@@ -4,7 +4,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class ComNavBinaryRawGloEphemPacket : ComNavBinaryMessageBase
+    public partial class ComNavBinaryRawGloEphemPacket : ComNavBinaryMessageBase
 	{
 		public const ushort ComNavMessageId = 792;
 		public override ushort MessageId => ComNavMessageId;

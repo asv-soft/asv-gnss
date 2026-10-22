@@ -8,7 +8,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/040: Measured Position in Polar Coordinates.
 /// Contains range and azimuth measured by the radar sensor.
 /// </summary>
-public class AsterixFieldI001Frn003Type040 : AsterixField
+public partial class AsterixFieldI001Frn003Type040 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/040.
@@ -69,8 +69,4 @@ public class AsterixFieldI001Frn003Type040 : AsterixField
     /// <inheritdoc />
     public override int GetByteSize() => 4;
 
-    /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
 }

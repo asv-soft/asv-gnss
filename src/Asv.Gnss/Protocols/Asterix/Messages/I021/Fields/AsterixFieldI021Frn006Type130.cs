@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn006Type130 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn006Type130 : AsterixFieldI021Fixed
 {
     private const double Lsb = 180.0 / 8388608.0;
     public const byte StaticFrn = 6;

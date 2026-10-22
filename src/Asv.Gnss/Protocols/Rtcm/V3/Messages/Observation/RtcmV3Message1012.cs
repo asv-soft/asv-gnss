@@ -10,7 +10,7 @@ namespace Asv.Gnss
     /// measured by the reference station.Since the CNR does not usually change from measurement to measurement, this message type can
     /// be mixed with the Type 1011, and used only when a satellite CNR changes, thus saving broadcast link throughput.
     /// </summary>
-    public class RtcmV3Message1012 : RtcmV3RTKObservableMessagesBase
+    public partial class RtcmV3Message1012 : RtcmV3RTKObservableMessagesBase
     {
         protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
         {
@@ -41,7 +41,7 @@ namespace Asv.Gnss
         public GLONASSSatellite[] Satellites { get; set; } = Array.Empty<GLONASSSatellite>();
     }
 
-    public class GLONASSSatellite
+    public partial class GLONASSSatellite
     {
         public void Serialize(Span<byte> buffer, ref int bitIndex)
         {

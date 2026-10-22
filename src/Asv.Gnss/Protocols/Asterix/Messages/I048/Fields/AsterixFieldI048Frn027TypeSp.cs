@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/SP Special Purpose Field.
 /// </summary>
-public sealed class AsterixFieldI048Frn027TypeSp : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn027TypeSp : AsterixFieldI048
 {
     public const byte StaticFrn = 27;
     public override string Name => "Special Purpose Field";

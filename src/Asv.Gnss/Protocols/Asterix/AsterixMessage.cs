@@ -7,7 +7,7 @@ using Asv.IO;
 namespace Asv.Gnss;
 
 
-public abstract class AsterixMessage : IProtocolMessage<byte>
+public abstract class AsterixMessage : IProtocolMessage<byte>, IVisitable
 {
     private ProtocolTags _tags = [];
     public abstract string Name { get; }
@@ -18,12 +18,27 @@ public abstract class AsterixMessage : IProtocolMessage<byte>
     public abstract void Deserialize(ref ReadOnlySpan<byte> buffer);
     public abstract void Serialize(ref Span<byte> buffer);
     public abstract int GetByteSize();
+    public abstract void Accept(IVisitor visitor);
 }
 
 public abstract class AsterixMessage<TRecord> : AsterixMessage, IEnumerable<TRecord>
     where TRecord : AsterixRecord, new()
 {
     private readonly List<TRecord> _records = new(1);
+    private static readonly Field RecordsField = new Field.Builder().Name("Records").Title("Records")
+        .Description("ASTERIX records in wire order").DataType(new ListType(new StructType([]), 0, ushort.MaxValue)).Build();
+
+    /// <inheritdoc />
+    public override void Accept(IVisitor visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor);
+        var records = _records;
+        AsterixVisitor.VisitList(visitor, RecordsField, ref records,
+            static () => new TRecord(),
+            static (IVisitor v, Field field, IFieldType type, ref TRecord record) =>
+                StructType.Accept(v, field, type, record));
+    }
+
     public void Add(TRecord record)
     {
         ArgumentNullException.ThrowIfNull(record);

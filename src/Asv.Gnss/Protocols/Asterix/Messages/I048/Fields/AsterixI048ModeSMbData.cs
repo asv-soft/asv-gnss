@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Mode S MB data block used by CAT048.
 /// </summary>
-public sealed class AsterixI048ModeSMbData
+public sealed partial class AsterixI048ModeSMbData
 {
     /// <summary>
     /// Raw seven-octet MB data.

@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/202 Calculated Track Velocity in Cartesian Coordinates.
 /// </summary>
-public class AsterixFieldI010Frn009Type202 : AsterixFieldI010
+public partial class AsterixFieldI010Frn009Type202 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

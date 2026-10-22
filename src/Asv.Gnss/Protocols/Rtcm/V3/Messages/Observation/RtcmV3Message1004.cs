@@ -10,7 +10,7 @@ namespace Asv.Gnss
     /// measured by the reference station.Since the CNR does not usually change from measurement to measurement, this message type can
     /// be mixed with the Type 1003, and used only when a satellite CNR changes, thus saving broadcast link throughput.
     /// </summary>
-    public class RtcmV3Message1004 : RtcmV3RTKObservableMessagesBase
+    public partial class RtcmV3Message1004 : RtcmV3RTKObservableMessagesBase
     {
         protected override void InternalSerialize(Span<byte> buffer, ref int bitIndex)
         {
@@ -42,7 +42,7 @@ namespace Asv.Gnss
 
     }
 
-    public class GPSSatellite 
+    public partial class GPSSatellite
     {
         private static readonly int[] L2Codes = { RtcmV3Helper.CODE_L2X, RtcmV3Helper.CODE_L2P, RtcmV3Helper.CODE_L2D, RtcmV3Helper.CODE_L2W };
 

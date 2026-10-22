@@ -5,7 +5,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class ObstructedApproaches : SpanBitCompactSerializableBase
+public partial class ObstructedApproaches : SpanBitCompactSerializableBase
 {
     public ObstructedApproaches()
     {

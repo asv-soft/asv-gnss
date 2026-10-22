@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class SbfPacketPvtGeodeticRev2:SbfMessageBase
+    public partial class SbfPacketPvtGeodeticRev2:SbfMessageBase
     {
         public override ushort MessageRevision => 2;
         public override ushort MessageType => 4007;

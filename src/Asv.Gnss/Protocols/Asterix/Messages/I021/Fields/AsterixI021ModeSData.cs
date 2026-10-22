@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixI021ModeSData
+public sealed partial class AsterixI021ModeSData
 {
     public const int ByteSize = 8;
     public byte[] MbData { get; } = new byte[7];

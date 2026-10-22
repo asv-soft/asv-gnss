@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <ProductVersion>2.5.0</ProductVersion>
+    <ProductVersion>2.5.1</ProductVersion>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Asv.Gnss</RootNamespace>
     <FileVersion>$(ProductVersion)</FileVersion>

@@ -13,5 +13,6 @@ public abstract class AsterixFieldI247 : AsterixField
     /// <inheritdoc />
     public override void Accept(IVisitor visitor)
     {
+        System.ArgumentNullException.ThrowIfNull(visitor);
     }
 }

@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/010 Data Source Identifier.
 /// </summary>
-public sealed class AsterixFieldI034Frn001Type010 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn001Type010 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

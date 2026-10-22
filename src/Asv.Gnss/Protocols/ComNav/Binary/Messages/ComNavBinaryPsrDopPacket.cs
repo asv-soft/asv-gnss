@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class ComNavBinaryPsrDopPacket : ComNavBinaryMessageBase
+    public partial class ComNavBinaryPsrDopPacket : ComNavBinaryMessageBase
     {
         public const ushort ComNavMessageId = 174;
         public override ushort MessageId => ComNavMessageId;

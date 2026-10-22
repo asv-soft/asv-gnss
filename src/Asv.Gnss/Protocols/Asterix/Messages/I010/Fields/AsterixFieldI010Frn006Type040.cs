@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/040 Measured Position in Polar Coordinates.
 /// </summary>
-public class AsterixFieldI010Frn006Type040 : AsterixFieldI010
+public partial class AsterixFieldI010Frn006Type040 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/030 Time of Day.
 /// </summary>
-public sealed class AsterixFieldI034Frn003Type030 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn003Type030 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

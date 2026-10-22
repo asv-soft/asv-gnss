@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class AdditionalDataBlock1 : AdditionalDataBlock
+public partial class AdditionalDataBlock1 : AdditionalDataBlock
 {
     public const byte BlockNumber = 1;
 

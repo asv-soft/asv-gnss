@@ -2,7 +2,7 @@ using Asv.IO;
 using System;
 namespace Asv.Gnss
 {
-    public abstract class RtcmV3Message1007and1008 : RtcmV3LegacyMessageBase
+    public abstract partial class RtcmV3Message1007and1008 : RtcmV3LegacyMessageBase
     {
         /// <summary>
         /// The Reference Station ID is determined by the service provider. Its 

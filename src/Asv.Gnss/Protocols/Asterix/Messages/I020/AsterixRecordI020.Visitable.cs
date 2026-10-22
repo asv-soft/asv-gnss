@@ -1,0 +1,125 @@
+using System;
+using System.Collections.Generic;
+using Asv.IO;
+
+namespace Asv.Gnss;
+
+public partial class AsterixRecordI020
+{
+    private static readonly Field VisitorDataSourceIdentifierField = new Field.Builder().Name(nameof(DataSourceIdentifier)).Title(nameof(DataSourceIdentifier)).Description("DataSourceIdentifier").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTargetReportDescriptorField = new Field.Builder().Name(nameof(TargetReportDescriptor)).Title(nameof(TargetReportDescriptor)).Description("TargetReportDescriptor").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTimeOfDayField = new Field.Builder().Name(nameof(TimeOfDay)).Title(nameof(TimeOfDay)).Description("TimeOfDay").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorPositionWgs84Field = new Field.Builder().Name(nameof(PositionWgs84)).Title(nameof(PositionWgs84)).Description("PositionWgs84").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorPositionCartesianField = new Field.Builder().Name(nameof(PositionCartesian)).Title(nameof(PositionCartesian)).Description("PositionCartesian").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTrackNumberField = new Field.Builder().Name(nameof(TrackNumber)).Title(nameof(TrackNumber)).Description("TrackNumber").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTrackStatusField = new Field.Builder().Name(nameof(TrackStatus)).Title(nameof(TrackStatus)).Description("TrackStatus").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorMode3ACodeField = new Field.Builder().Name(nameof(Mode3ACode)).Title(nameof(Mode3ACode)).Description("Mode3ACode").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTrackVelocityCartesianField = new Field.Builder().Name(nameof(TrackVelocityCartesian)).Title(nameof(TrackVelocityCartesian)).Description("TrackVelocityCartesian").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorFlightLevelField = new Field.Builder().Name(nameof(FlightLevel)).Title(nameof(FlightLevel)).Description("FlightLevel").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorModeCCodeField = new Field.Builder().Name(nameof(ModeCCode)).Title(nameof(ModeCCode)).Description("ModeCCode").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTargetAddressField = new Field.Builder().Name(nameof(TargetAddress)).Title(nameof(TargetAddress)).Description("TargetAddress").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorTargetIdentificationField = new Field.Builder().Name(nameof(TargetIdentification)).Title(nameof(TargetIdentification)).Description("TargetIdentification").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorMeasuredHeightCartesianField = new Field.Builder().Name(nameof(MeasuredHeightCartesian)).Title(nameof(MeasuredHeightCartesian)).Description("MeasuredHeightCartesian").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorGeometricHeightWgs84Field = new Field.Builder().Name(nameof(GeometricHeightWgs84)).Title(nameof(GeometricHeightWgs84)).Description("GeometricHeightWgs84").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorCalculatedAccelerationField = new Field.Builder().Name(nameof(CalculatedAcceleration)).Title(nameof(CalculatedAcceleration)).Description("CalculatedAcceleration").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorVehicleFleetIdField = new Field.Builder().Name(nameof(VehicleFleetId)).Title(nameof(VehicleFleetId)).Description("VehicleFleetId").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorPreProgrammedMessageField = new Field.Builder().Name(nameof(PreProgrammedMessage)).Title(nameof(PreProgrammedMessage)).Description("PreProgrammedMessage").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorPositionAccuracyField = new Field.Builder().Name(nameof(PositionAccuracy)).Title(nameof(PositionAccuracy)).Description("PositionAccuracy").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorContributingDevicesField = new Field.Builder().Name(nameof(ContributingDevices)).Title(nameof(ContributingDevices)).Description("ContributingDevices").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorModeSMbDataField = new Field.Builder().Name(nameof(ModeSMbData)).Title(nameof(ModeSMbData)).Description("ModeSMbData").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorCommsAcasCapabilityStatusField = new Field.Builder().Name(nameof(CommsAcasCapabilityStatus)).Title(nameof(CommsAcasCapabilityStatus)).Description("CommsAcasCapabilityStatus").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorAcasResolutionAdvisoryReportField = new Field.Builder().Name(nameof(AcasResolutionAdvisoryReport)).Title(nameof(AcasResolutionAdvisoryReport)).Description("AcasResolutionAdvisoryReport").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorWarningErrorConditionsField = new Field.Builder().Name(nameof(WarningErrorConditions)).Title(nameof(WarningErrorConditions)).Description("WarningErrorConditions").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorMode1CodeField = new Field.Builder().Name(nameof(Mode1Code)).Title(nameof(Mode1Code)).Description("Mode1Code").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorMode2CodeField = new Field.Builder().Name(nameof(Mode2Code)).Title(nameof(Mode2Code)).Description("Mode2Code").DataType(new OptionalStructType(new StructType([]))).Build();
+    private static readonly Field VisitorReservedExpansionFieldField = new Field.Builder().Name(nameof(ReservedExpansionField)).Title(nameof(ReservedExpansionField)).Description("ReservedExpansionField").DataType(new OptionalStructType(AsterixFieldI020Frn027TypeRe.AsterixVisitorType)).Build();
+
+    internal static readonly StructType AsterixVisitorType = new([VisitorDataSourceIdentifierField, VisitorTargetReportDescriptorField, VisitorTimeOfDayField, VisitorPositionWgs84Field, VisitorPositionCartesianField, VisitorTrackNumberField, VisitorTrackStatusField, VisitorMode3ACodeField, VisitorTrackVelocityCartesianField, VisitorFlightLevelField, VisitorModeCCodeField, VisitorTargetAddressField, VisitorTargetIdentificationField, VisitorMeasuredHeightCartesianField, VisitorGeometricHeightWgs84Field, VisitorCalculatedAccelerationField, VisitorVehicleFleetIdField, VisitorPreProgrammedMessageField, VisitorPositionAccuracyField, VisitorContributingDevicesField, VisitorModeSMbDataField, VisitorCommsAcasCapabilityStatusField, VisitorAcasResolutionAdvisoryReportField, VisitorWarningErrorConditionsField, VisitorMode1CodeField, VisitorMode2CodeField, VisitorReservedExpansionFieldField]);
+
+    /// <inheritdoc />
+    public override void Accept(IVisitor visitor)
+    {
+        ArgumentNullException.ThrowIfNull(visitor);
+        var valueDataSourceIdentifier = DataSourceIdentifier;
+        OptionalStructType.Accept(visitor, VisitorDataSourceIdentifierField, ref valueDataSourceIdentifier);
+        if (!ReferenceEquals(valueDataSourceIdentifier, DataSourceIdentifier)) DataSourceIdentifier = valueDataSourceIdentifier;
+        var valueTargetReportDescriptor = TargetReportDescriptor;
+        OptionalStructType.Accept(visitor, VisitorTargetReportDescriptorField, ref valueTargetReportDescriptor);
+        if (!ReferenceEquals(valueTargetReportDescriptor, TargetReportDescriptor)) TargetReportDescriptor = valueTargetReportDescriptor;
+        var valueTimeOfDay = TimeOfDay;
+        OptionalStructType.Accept(visitor, VisitorTimeOfDayField, ref valueTimeOfDay);
+        if (!ReferenceEquals(valueTimeOfDay, TimeOfDay)) TimeOfDay = valueTimeOfDay;
+        var valuePositionWgs84 = PositionWgs84;
+        OptionalStructType.Accept(visitor, VisitorPositionWgs84Field, ref valuePositionWgs84);
+        if (!ReferenceEquals(valuePositionWgs84, PositionWgs84)) PositionWgs84 = valuePositionWgs84;
+        var valuePositionCartesian = PositionCartesian;
+        OptionalStructType.Accept(visitor, VisitorPositionCartesianField, ref valuePositionCartesian);
+        if (!ReferenceEquals(valuePositionCartesian, PositionCartesian)) PositionCartesian = valuePositionCartesian;
+        var valueTrackNumber = TrackNumber;
+        OptionalStructType.Accept(visitor, VisitorTrackNumberField, ref valueTrackNumber);
+        if (!ReferenceEquals(valueTrackNumber, TrackNumber)) TrackNumber = valueTrackNumber;
+        var valueTrackStatus = TrackStatus;
+        OptionalStructType.Accept(visitor, VisitorTrackStatusField, ref valueTrackStatus);
+        if (!ReferenceEquals(valueTrackStatus, TrackStatus)) TrackStatus = valueTrackStatus;
+        var valueMode3ACode = Mode3ACode;
+        OptionalStructType.Accept(visitor, VisitorMode3ACodeField, ref valueMode3ACode);
+        if (!ReferenceEquals(valueMode3ACode, Mode3ACode)) Mode3ACode = valueMode3ACode;
+        var valueTrackVelocityCartesian = TrackVelocityCartesian;
+        OptionalStructType.Accept(visitor, VisitorTrackVelocityCartesianField, ref valueTrackVelocityCartesian);
+        if (!ReferenceEquals(valueTrackVelocityCartesian, TrackVelocityCartesian)) TrackVelocityCartesian = valueTrackVelocityCartesian;
+        var valueFlightLevel = FlightLevel;
+        OptionalStructType.Accept(visitor, VisitorFlightLevelField, ref valueFlightLevel);
+        if (!ReferenceEquals(valueFlightLevel, FlightLevel)) FlightLevel = valueFlightLevel;
+        var valueModeCCode = ModeCCode;
+        OptionalStructType.Accept(visitor, VisitorModeCCodeField, ref valueModeCCode);
+        if (!ReferenceEquals(valueModeCCode, ModeCCode)) ModeCCode = valueModeCCode;
+        var valueTargetAddress = TargetAddress;
+        OptionalStructType.Accept(visitor, VisitorTargetAddressField, ref valueTargetAddress);
+        if (!ReferenceEquals(valueTargetAddress, TargetAddress)) TargetAddress = valueTargetAddress;
+        var valueTargetIdentification = TargetIdentification;
+        OptionalStructType.Accept(visitor, VisitorTargetIdentificationField, ref valueTargetIdentification);
+        if (!ReferenceEquals(valueTargetIdentification, TargetIdentification)) TargetIdentification = valueTargetIdentification;
+        var valueMeasuredHeightCartesian = MeasuredHeightCartesian;
+        OptionalStructType.Accept(visitor, VisitorMeasuredHeightCartesianField, ref valueMeasuredHeightCartesian);
+        if (!ReferenceEquals(valueMeasuredHeightCartesian, MeasuredHeightCartesian)) MeasuredHeightCartesian = valueMeasuredHeightCartesian;
+        var valueGeometricHeightWgs84 = GeometricHeightWgs84;
+        OptionalStructType.Accept(visitor, VisitorGeometricHeightWgs84Field, ref valueGeometricHeightWgs84);
+        if (!ReferenceEquals(valueGeometricHeightWgs84, GeometricHeightWgs84)) GeometricHeightWgs84 = valueGeometricHeightWgs84;
+        var valueCalculatedAcceleration = CalculatedAcceleration;
+        OptionalStructType.Accept(visitor, VisitorCalculatedAccelerationField, ref valueCalculatedAcceleration);
+        if (!ReferenceEquals(valueCalculatedAcceleration, CalculatedAcceleration)) CalculatedAcceleration = valueCalculatedAcceleration;
+        var valueVehicleFleetId = VehicleFleetId;
+        OptionalStructType.Accept(visitor, VisitorVehicleFleetIdField, ref valueVehicleFleetId);
+        if (!ReferenceEquals(valueVehicleFleetId, VehicleFleetId)) VehicleFleetId = valueVehicleFleetId;
+        var valuePreProgrammedMessage = PreProgrammedMessage;
+        OptionalStructType.Accept(visitor, VisitorPreProgrammedMessageField, ref valuePreProgrammedMessage);
+        if (!ReferenceEquals(valuePreProgrammedMessage, PreProgrammedMessage)) PreProgrammedMessage = valuePreProgrammedMessage;
+        var valuePositionAccuracy = PositionAccuracy;
+        OptionalStructType.Accept(visitor, VisitorPositionAccuracyField, ref valuePositionAccuracy);
+        if (!ReferenceEquals(valuePositionAccuracy, PositionAccuracy)) PositionAccuracy = valuePositionAccuracy;
+        var valueContributingDevices = ContributingDevices;
+        OptionalStructType.Accept(visitor, VisitorContributingDevicesField, ref valueContributingDevices);
+        if (!ReferenceEquals(valueContributingDevices, ContributingDevices)) ContributingDevices = valueContributingDevices;
+        var valueModeSMbData = ModeSMbData;
+        OptionalStructType.Accept(visitor, VisitorModeSMbDataField, ref valueModeSMbData);
+        if (!ReferenceEquals(valueModeSMbData, ModeSMbData)) ModeSMbData = valueModeSMbData;
+        var valueCommsAcasCapabilityStatus = CommsAcasCapabilityStatus;
+        OptionalStructType.Accept(visitor, VisitorCommsAcasCapabilityStatusField, ref valueCommsAcasCapabilityStatus);
+        if (!ReferenceEquals(valueCommsAcasCapabilityStatus, CommsAcasCapabilityStatus)) CommsAcasCapabilityStatus = valueCommsAcasCapabilityStatus;
+        var valueAcasResolutionAdvisoryReport = AcasResolutionAdvisoryReport;
+        OptionalStructType.Accept(visitor, VisitorAcasResolutionAdvisoryReportField, ref valueAcasResolutionAdvisoryReport);
+        if (!ReferenceEquals(valueAcasResolutionAdvisoryReport, AcasResolutionAdvisoryReport)) AcasResolutionAdvisoryReport = valueAcasResolutionAdvisoryReport;
+        var valueWarningErrorConditions = WarningErrorConditions;
+        OptionalStructType.Accept(visitor, VisitorWarningErrorConditionsField, ref valueWarningErrorConditions);
+        if (!ReferenceEquals(valueWarningErrorConditions, WarningErrorConditions)) WarningErrorConditions = valueWarningErrorConditions;
+        var valueMode1Code = Mode1Code;
+        OptionalStructType.Accept(visitor, VisitorMode1CodeField, ref valueMode1Code);
+        if (!ReferenceEquals(valueMode1Code, Mode1Code)) Mode1Code = valueMode1Code;
+        var valueMode2Code = Mode2Code;
+        OptionalStructType.Accept(visitor, VisitorMode2CodeField, ref valueMode2Code);
+        if (!ReferenceEquals(valueMode2Code, Mode2Code)) Mode2Code = valueMode2Code;
+        var valueReservedExpansionField = ReservedExpansionField;
+        OptionalStructType.Accept(visitor, VisitorReservedExpansionFieldField, ref valueReservedExpansionField);
+        if (!ReferenceEquals(valueReservedExpansionField, ReservedExpansionField)) ReservedExpansionField = valueReservedExpansionField;
+    }
+}

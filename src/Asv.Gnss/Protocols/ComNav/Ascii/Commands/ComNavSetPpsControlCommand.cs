@@ -5,7 +5,7 @@
         Negative,
         Positive
     }
-    public class ComNavSetPpsControlCommand : ComNavAsciiCommandBase
+    public partial class ComNavSetPpsControlCommand : ComNavAsciiCommandBase
     {
         public ComNavPpsPolarityEnum Polarity { get; set; } = ComNavPpsPolarityEnum.Negative;
 

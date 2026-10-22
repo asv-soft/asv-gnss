@@ -6,7 +6,7 @@ namespace Asv.Gnss
     /// <summary>
     /// PSRPOSA pseudorange position ASCII log.
     /// </summary>
-    public class ComNavPsrPosAMessage : ComNavAsciiMessageBase
+    public partial class ComNavPsrPosAMessage : ComNavAsciiMessageBase
     {
         public const string ComNavMessageId = "PSRPOSA";
 

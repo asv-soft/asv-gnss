@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/245 Target Identification.
 /// </summary>
-public class AsterixFieldI010Frn014Type245 : AsterixFieldI010
+public partial class AsterixFieldI010Frn014Type245 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

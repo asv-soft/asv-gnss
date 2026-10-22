@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/RE Reserved Expansion Field.
 /// </summary>
-public class AsterixFieldI010Frn027TypeRe : AsterixFieldI010
+public partial class AsterixFieldI010Frn027TypeRe : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

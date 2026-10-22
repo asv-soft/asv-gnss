@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Message count value used by I034/070.
 /// </summary>
-public sealed class AsterixI034MessageCountValue
+public sealed partial class AsterixI034MessageCountValue
 {
     /// <summary>
     /// Aerial indicator.

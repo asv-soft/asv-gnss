@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn007Type060 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn007Type060 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 7;
     public override string Name => "Safety Net Function & System Status";

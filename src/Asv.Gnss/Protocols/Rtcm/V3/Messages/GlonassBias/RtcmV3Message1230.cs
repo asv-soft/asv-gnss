@@ -4,7 +4,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class RtcmV3Message1230 : RtcmV3MessageBase
+public partial class RtcmV3Message1230 : RtcmV3MessageBase
 {
     private const double DfResol = 0.02;
     private short _l1CACodePhaseBiasDf;

@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixFieldI021SelectedAltitude : AsterixFieldI021Fixed
+public abstract partial class AsterixFieldI021SelectedAltitude : AsterixFieldI021Fixed
 {
     public bool SourceAvailability { get; set; }
     public byte Source { get; set; }

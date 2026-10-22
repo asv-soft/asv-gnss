@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/030 Warning/Error Conditions.
 /// </summary>
-public sealed class AsterixFieldI048Frn016Type030 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn016Type030 : AsterixFieldI048
 {
     public const byte StaticFrn = 16;
     public override string Name => "Warning/Error Conditions";

@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class RtcmV3Message1005and1006 : RtcmV3MessageBase
+public abstract partial class RtcmV3Message1005and1006 : RtcmV3MessageBase
 {
     protected override void InternalDeserialize(ReadOnlySpan<byte> buffer, ref int bitIndex)
     {

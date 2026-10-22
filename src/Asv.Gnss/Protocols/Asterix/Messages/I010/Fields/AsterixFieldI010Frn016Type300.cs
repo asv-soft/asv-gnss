@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/300 Vehicle Fleet Identification.
 /// </summary>
-public class AsterixFieldI010Frn016Type300 : AsterixFieldI010
+public partial class AsterixFieldI010Frn016Type300 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

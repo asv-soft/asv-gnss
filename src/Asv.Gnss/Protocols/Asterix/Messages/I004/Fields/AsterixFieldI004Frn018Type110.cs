@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn018Type110 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn018Type110 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 18;
     public override string Name => "FDPS Sector Control Identification";

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn044Type250 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn044Type250 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 39;
     public override string Name => "Mode S MB Data";

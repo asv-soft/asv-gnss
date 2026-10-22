@@ -722,7 +722,7 @@ namespace Asv.Gnss
     /// This command is used to configure and control logging of ASCII messages on a ComNav device.
     /// @inherits ComNavAsciiCommandBase
     /// /
-    public class ComNavAsciiLogCommand: ComNavAsciiCommandBase
+    public partial class ComNavAsciiLogCommand: ComNavAsciiCommandBase
     {
         /// <summary>
         /// Gets or sets the Type of the ComNavMessageEnum.

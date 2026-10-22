@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// PSR system configuration and status subfield.
 /// </summary>
-public sealed class AsterixI034SystemConfigurationPsr
+public sealed partial class AsterixI034SystemConfigurationPsr
 {
     /// <summary>
     /// Antenna selection.

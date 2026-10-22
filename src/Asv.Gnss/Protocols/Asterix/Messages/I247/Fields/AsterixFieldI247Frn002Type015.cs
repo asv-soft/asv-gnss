@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I247/015 Service Identification.
 /// </summary>
-public class AsterixFieldI247Frn002Type015 : AsterixFieldI247
+public partial class AsterixFieldI247Frn002Type015 : AsterixFieldI247
 {
     /// <summary>
     /// Field reference number.

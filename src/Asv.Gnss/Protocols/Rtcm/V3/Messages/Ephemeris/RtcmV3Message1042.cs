@@ -7,7 +7,7 @@ namespace Asv.Gnss
     /// Proprietary Message Type.
     /// Trimble Navigation Ltd.
     /// </summary>
-    public class RtcmV3Message1042 : RtcmV3LegacyMessageBase
+    public partial class RtcmV3Message1042 : RtcmV3LegacyMessageBase
     {
         /// <summary>
         /// Rtcm Message Id
@@ -288,7 +288,7 @@ namespace Asv.Gnss
         {
             return RtcmV3Helper.GetFromBeiDou((int)WeekRaw, TocRaw);
         }
-        public double Idot => Idot * RtcmV3Helper.SC2RAD;
+        public double Idot => IdotRaw * RtcmV3Helper.SC2RAD;
         public DateTime GetToc(DateTime utc)
         {
             return RtcmV3Helper.GetFromBeiDou(GetWeek(utc), TocRaw);

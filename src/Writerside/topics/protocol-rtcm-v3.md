@@ -64,7 +64,15 @@ Defaults include station and antenna messages, GPS/GLONASS legacy observations, 
 
 ## Usage and limitations
 
-Registration does not imply that every model can be transmitted. Types derived from `RtcmV3LegacyMessageBase` do not implement payload serialization or size calculation. Check the concrete message before encoding. The standalone `RtcmV3MessageFactory` has a smaller set than `RegisterRtcmV3Protocol`; use the registration method for the defaults below.
+Registration selects message decoders; transmitting a message also requires a valid concrete payload. Check the concrete model and populate its required fields before encoding. The standalone `RtcmV3MessageFactory` has a smaller set than `RegisterRtcmV3Protocol`; use the registration method for the defaults below.
+
+## Typed field inspection
+
+All 38 concrete RTCM3 message models implement `IVisitable` through `RtcmV3MessageBase`. Call `Accept(IVisitor)` to inspect payload fields without coupling a viewer to RTCM3. The traversal includes inherited fields, satellite and signal records, system announcements, network residuals, ECEF coordinates, raw MSM arrays and jagged cell masks.
+
+Field and structure metadata is cached. Scalar types retain their CLR widths; enum fields expose their numeric underlying type with enum type metadata. Variable arrays use `ListType`. Nullable strings and the nullable GPS week retain their optional field types. Computed properties are marked read-only; frame-level `Protocol`, `Tags`, `Name` and message identifiers are not repeated as payload fields. The announcement record's `Id` remains part of that record's payload.
+
+A visitor that only reads values preserves nulls, collection identity and serialized bytes. Writable visitors can update scalar values, nested records and list sizes; list sizes are bounded by the RTCM3 payload bit count. These visitor operations do not replace the binary codec or validate consistency between related payload fields.
 
 ## Implementation reference
 

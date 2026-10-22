@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I247/SP Special Purpose Field.
 /// </summary>
-public class AsterixFieldI247Frn006TypeSp : AsterixFieldI247
+public partial class AsterixFieldI247Frn006TypeSp : AsterixFieldI247
 {
     /// <summary>
     /// Field reference number.

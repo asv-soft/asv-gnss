@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/020 Target Report Descriptor.
 /// </summary>
-public sealed class AsterixFieldI048Frn003Type020 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn003Type020 : AsterixFieldI048
 {
     /// <summary>
     /// Field reference number.

@@ -7,7 +7,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixRecord : ISizedSpanSerializable, IEnumerable<AsterixField>
+public abstract class AsterixRecord : ISizedSpanSerializable, IEnumerable<AsterixField>, IVisitable
 {
     public virtual void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
@@ -51,6 +51,8 @@ public abstract class AsterixRecord : ISizedSpanSerializable, IEnumerable<Asteri
         }
         return fspec.GetByteSize() + this.Sum(field => field.GetByteSize());
     }
+
+    public abstract void Accept(IVisitor visitor);
 
     public abstract int Category { get; }
     public abstract IEnumerator<AsterixField> GetEnumerator();

@@ -12,7 +12,7 @@ public class AsterixMessageI020 : AsterixMessage<AsterixRecordI020>
 }
 
 
-public class AsterixRecordI020 : AsterixRecord
+public partial class AsterixRecordI020 : AsterixRecord
 {
     public AsterixFieldI020Frn001Type010? DataSourceIdentifier { get; set; }
     public AsterixFieldI020Frn002Type020? TargetReportDescriptor { get; set; }

@@ -23,7 +23,7 @@ public class AsterixMessageI247 : AsterixMessage<AsterixRecordI247>
 /// <summary>
 /// ASTERIX CAT247 record using the edition 1.2/1.3 field reference number mapping.
 /// </summary>
-public class AsterixRecordI247 : AsterixRecord
+public partial class AsterixRecordI247 : AsterixRecord
 {
     /// <summary>
     /// I247/010 Data Source Identifier.

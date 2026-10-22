@@ -8,7 +8,7 @@ namespace Asv.Gnss;
 /// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GSA.html
 /// https://docs.novatel.com/OEM7/Content/Logs/GPGSA.htm?TocPath=Commands%20%26%20Logs%7CLogs%7CGNSS%20Logs%7C_____63
 /// </summary>
-public class NmeaMessageGsa : NmeaMessageBase
+public partial class NmeaMessageGsa : NmeaMessageBase
 {
     public const string MessageName = "GSA";
     public static readonly NmeaMessageId MessageId = new(MessageName);

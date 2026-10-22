@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class MeasurementBlockMsg1 : SpanBitCompactSerializableBase
+public partial class MeasurementBlockMsg1 : SpanBitCompactSerializableBase
 {
     public MeasurementBlockMsg1()
     {

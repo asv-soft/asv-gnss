@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/240 Aircraft Identification.
 /// </summary>
-public sealed class AsterixFieldI048Frn009Type240 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn009Type240 : AsterixFieldI048
 {
     /// <summary>
     /// Field reference number.

@@ -247,7 +247,7 @@ namespace Asv.Gnss
 		}
 	}
 
-	public class ComNavAsciiSetCommand : ComNavAsciiCommandBase
+	public partial class ComNavAsciiSetCommand : ComNavAsciiCommandBase
 	{
 		public override string MessageId => "SET";
 		public ComNavSetTypeEnum Type { get; set; }

@@ -3,7 +3,7 @@ using System;
 namespace Asv.Gnss;
 
     
-public class NmeaMessageZda : NmeaMessageBase
+public partial class NmeaMessageZda : NmeaMessageBase
 {
     private int? _zoneHours;
     private int? _zoneMinutes;

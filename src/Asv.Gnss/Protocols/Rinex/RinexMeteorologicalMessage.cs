@@ -8,10 +8,10 @@ namespace Asv.Gnss;
 /// <summary>A header-defined meteorological observable with its nullable value in the native unit.</summary>
 /// <param name="Code">Two-character descriptor, such as PR, TD or HR.</param>
 /// <param name="Value">Stored measurement; null denotes a blank field.</param>
-public sealed record RinexMeteorologicalValue(string Code, double? Value);
+public sealed partial record RinexMeteorologicalValue(string Code, double? Value);
 
 /// <summary>Meteorological observations in the order declared by the file header.</summary>
-public class RinexMeteorologicalMessage : RinexMessageBase
+public partial class RinexMeteorologicalMessage : RinexMessageBase
 {
     /// <inheritdoc />
     public override RinexMessageId Id => RinexMessageId.Meteorological;

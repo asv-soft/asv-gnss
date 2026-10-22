@@ -10,7 +10,7 @@
     /// MSB of NAVBits[0]. The 20 unused bits in NAVBits[9] must be
     /// ignored by the decoding software. The bits are deinterleaved.
     /// </summary>
-    public class SbfPacketBdsRaw : SbfPacketGnssRawNavMsgBase
+    public partial class SbfPacketBdsRaw : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4047;
         public override ushort MessageRevision => 0;

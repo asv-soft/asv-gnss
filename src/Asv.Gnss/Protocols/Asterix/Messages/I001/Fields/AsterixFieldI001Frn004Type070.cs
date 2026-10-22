@@ -8,7 +8,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/070: Mode-3/A Reply in Octal Representation.
 /// Contains validation flags and the transponder Mode-3/A reply code.
 /// </summary>
-public class AsterixFieldI001Frn004Type070 : AsterixField
+public partial class AsterixFieldI001Frn004Type070 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/070.
@@ -101,9 +101,7 @@ public class AsterixFieldI001Frn004Type070 : AsterixField
     public override int GetByteSize() => 2;
 
     /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
+
 
     private void SetBit(ushort mask, bool value)
     {

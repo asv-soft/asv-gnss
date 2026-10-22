@@ -5,7 +5,7 @@ namespace Asv.Gnss
 {
     
 
-    public class SbfPacketMeasEpochRev1 : SbfMessageBase
+    public partial class SbfPacketMeasEpochRev1 : SbfMessageBase
     {
         public override ushort MessageType => 4027;
         
@@ -111,7 +111,7 @@ namespace Asv.Gnss
         Scrambling,
     }
 
-    public class MeasEpochChannelType1
+    public partial class MeasEpochChannelType1
     {
         private const byte SB1Length = 20;
         public void Deserialize(ref ReadOnlySpan<byte> buffer, byte length, out byte n2)

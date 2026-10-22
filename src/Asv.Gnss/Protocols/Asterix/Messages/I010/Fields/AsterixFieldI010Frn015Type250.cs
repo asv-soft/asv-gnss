@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/250 Mode S MB Data.
 /// </summary>
-public class AsterixFieldI010Frn015Type250 : AsterixFieldI010
+public partial class AsterixFieldI010Frn015Type250 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

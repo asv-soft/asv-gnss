@@ -4,7 +4,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public abstract class ComNavSimpleAnswerMessageBase : ComNavStringMessageBase
+    public abstract partial class ComNavSimpleAnswerMessageBase : ComNavStringMessageBase
     {
         public override string ProtocolId => ComNavSimpleAnswerParser.GnssProtocolId;
         public override ProtocolInfo Protocol => ComNavProtocol.SimpleAnswerInfo;

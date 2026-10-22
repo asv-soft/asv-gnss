@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I247/550 Category Version Number Report.
 /// </summary>
-public class AsterixFieldI247Frn004Type550 : AsterixFieldI247
+public partial class AsterixFieldI247Frn004Type550 : AsterixFieldI247
 {
     /// <summary>
     /// Field reference number.

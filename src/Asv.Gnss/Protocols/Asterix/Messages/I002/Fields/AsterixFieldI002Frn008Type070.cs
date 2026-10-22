@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI002Frn008Type070 : AsterixFieldI002Fixed
+public sealed partial class AsterixFieldI002Frn008Type070 : AsterixFieldI002Fixed
 {
     public const byte StaticFrn = 8;
     public override string Name => "Plot Count Values";

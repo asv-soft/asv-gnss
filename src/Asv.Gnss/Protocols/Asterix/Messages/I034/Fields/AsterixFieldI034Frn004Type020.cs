@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/020 Sector Number.
 /// </summary>
-public sealed class AsterixFieldI034Frn004Type020 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn004Type020 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

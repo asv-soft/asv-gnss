@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/500 Standard Deviation of Position.
 /// </summary>
-public class AsterixFieldI010Frn022Type500 : AsterixFieldI010
+public partial class AsterixFieldI010Frn022Type500 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

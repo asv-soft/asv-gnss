@@ -7,7 +7,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/020: Target Report Descriptor.
 /// Describes the report type and radar source flags for a CAT001 plot.
 /// </summary>
-public class AsterixFieldI001Frn002Type020 : AsterixField
+public partial class AsterixFieldI001Frn002Type020 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/020.
@@ -107,9 +107,7 @@ public class AsterixFieldI001Frn002Type020 : AsterixField
     public override int GetByteSize() => 1;
 
     /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
+
 
     private void SetBit(byte mask, bool value)
     {

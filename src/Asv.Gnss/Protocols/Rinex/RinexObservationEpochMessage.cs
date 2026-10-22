@@ -7,7 +7,7 @@ using System.Text;
 namespace Asv.Gnss;
 
 /// <summary>A RINEX observation epoch, event, or cycle-slip record.</summary>
-public sealed class RinexObservationEpochMessage : RinexMessageBase
+public sealed partial class RinexObservationEpochMessage : RinexMessageBase
 {
     /// <inheritdoc />
     public override RinexMessageId Id => RinexMessageId.ObservationEpoch;
@@ -284,7 +284,7 @@ public sealed class RinexObservationEpochMessage : RinexMessageBase
 }
 
 /// <summary>Observations for one satellite in header-defined code order.</summary>
-public sealed class RinexSatelliteObservation
+public sealed partial class RinexSatelliteObservation
 {
     /// <summary>Native satellite identifier, such as G01 or R24; system-only identifiers are retained for applicable system records.</summary>
     public string Satellite { get; set; } = "G01";
@@ -293,4 +293,4 @@ public sealed class RinexSatelliteObservation
 }
 
 /// <summary>A stored observation; blank values and blank indicators remain distinct from zero.</summary>
-public sealed record RinexObservationValue(string Code, double? Value, byte? LossOfLockIndicator = null, byte? SignalStrengthIndicator = null);
+public sealed partial record RinexObservationValue(string Code, double? Value, byte? LossOfLockIndicator = null, byte? SignalStrengthIndicator = null);

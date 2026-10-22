@@ -50,6 +50,7 @@ internal static class ProtocolFileReader
             builder.Protocols.RegisterAsterixProtocol(factory =>
                 asterixFactory = ((ProtocolMessageFactoryBuilder<AsterixMessage, byte>)factory).Build());
             builder.Protocols.RegisterAsvProtocol();
+            builder.Protocols.RegisterAdsbProtocol();
             builder.Protocols.RegisterGbasProtocol();
             builder.Protocols.RegisterRinexProtocol();
             builder.Protocols.RegisterSbfProtocol();

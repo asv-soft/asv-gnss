@@ -44,7 +44,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a command for setting the Differential GPS (DGPS) transmission identification (TxID) type and ID.
     /// </summary>
-    public class ComNavDgpsTxIdCommand : ComNavAsciiCommandBase
+    public partial class ComNavDgpsTxIdCommand : ComNavAsciiCommandBase
     {
         /// <summary>
         /// Gets or sets the type of DgpsTxId.

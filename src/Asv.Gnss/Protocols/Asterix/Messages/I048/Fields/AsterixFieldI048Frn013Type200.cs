@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/200 Calculated Track Velocity in Polar Coordinates.
 /// </summary>
-public sealed class AsterixFieldI048Frn013Type200 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn013Type200 : AsterixFieldI048
 {
     /// <summary>
     /// Field reference number.

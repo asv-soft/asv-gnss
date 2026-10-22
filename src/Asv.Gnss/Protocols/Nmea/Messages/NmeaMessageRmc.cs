@@ -7,7 +7,7 @@ namespace Asv.Gnss;
 /// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_RMC.html
 /// https://docs.novatel.com/OEM7/Content/Logs/GPRMC.htm?tocpath=Commands%20%2526%20Logs%7CLogs%7CGNSS%20Logs%7C_____69#NMEAPositioningSystemModeIndicator
 /// </summary>
-public class NmeaMessageRmc : NmeaMessageBase
+public partial class NmeaMessageRmc : NmeaMessageBase
 {
     public const string MessageName = "RMC";
     public static readonly NmeaMessageId MessageId = new(MessageName);

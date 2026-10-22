@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/090 Collimation Error.
 /// </summary>
-public sealed class AsterixFieldI034Frn012Type090 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn012Type090 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

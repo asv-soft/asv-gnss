@@ -7,7 +7,7 @@ namespace Asv.Gnss;
 /// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_VTG.html
 /// https://docs.novatel.com/OEM7/Content/Logs/GPVTG.htm?tocpath=Commands%20%2526%20Logs%7CLogs%7CGNSS%20Logs%7C_____72
 /// </summary>
-public class NmeaMessageVtg : NmeaMessageBase
+public partial class NmeaMessageVtg : NmeaMessageBase
 {
     public const string MessageName = "VTG";
     public static readonly NmeaMessageId MessageId = new(MessageName);

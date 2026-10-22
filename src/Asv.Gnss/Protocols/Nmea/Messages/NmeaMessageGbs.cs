@@ -7,7 +7,7 @@ namespace Asv.Gnss
     /// https://gpsd.gitlab.io/gpsd/NMEA.html#MX521
     /// https://receiverhelp.trimble.com/alloy-gnss/en-us/NMEA-0183messages_GBS.html
     /// </summary>
-    public class NmeaMessageGbs : NmeaMessageBase
+    public partial class NmeaMessageGbs : NmeaMessageBase
     {
         public const string MessageName = "GBS";
         public static readonly NmeaMessageId MessageId = new(MessageName);

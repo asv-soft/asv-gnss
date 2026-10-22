@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixRawCompoundField : AsterixFieldI021Fixed
+public abstract partial class AsterixRawCompoundField : AsterixFieldI021Fixed
 {
     private readonly List<byte> _fspecBytes = [];
     public byte[] Data { get; set; } = [];

@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn007Type131 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn007Type131 : AsterixFieldI021Fixed
 {
     private const double Lsb = 180.0 / 1073741824.0;
     public const byte StaticFrn = 7;

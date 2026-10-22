@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/220 Aircraft Address.
 /// </summary>
-public sealed class AsterixFieldI048Frn008Type220 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn008Type220 : AsterixFieldI048
 {
     /// <summary>
     /// Field reference number.

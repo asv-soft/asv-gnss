@@ -12,6 +12,7 @@ The pages below describe the current source implementation, its default registra
 | UBX | `RegisterUbxProtocol` | [Coverage and usage](protocol-ubx.md) |
 | UBX X20 HPG 2.11 | `RegisterUbxX20Protocol` | [163 typed variants and configuration keys](protocol-ubx-x20.md) |
 | ASTERIX | `RegisterAsterixProtocol` | [Coverage and usage](protocol-asterix.md) |
+| ADS-B / Mode S | `RegisterAdsbProtocol` | [AVR, Beast, parity and typed payloads](protocol-ads-b.md) |
 | ASV | `RegisterAsvProtocol` | [Coverage and usage](protocol-asv.md) |
 | GBAS | `RegisterGbasProtocol` | [Coverage and usage](protocol-gbas.md) |
 | RINEX OBS/NAV/MET | `RegisterRinexProtocol` | [Versions, file API, and examples](protocol-rinex.md) |
@@ -32,12 +33,6 @@ All registration methods are extensions on `IProtocolParserBuilder` in the `Asv.
 
 These compatibility entry points decode navigation words carried by receiver messages. The returned models also support the native bit-stream protocols above. Receiver uint layouts and native transmitted bits are different representations; consult each protocol page before converting between them. Raw navigation parsers require explicit registration on a suitable navigation stream and are not automatic mixed-file detectors.
 
-## Incomplete or reference-only modules
-
-| Module | Current status |
-|--------|----------------|
-| [ADS-B](protocol-ads-b.md) | Parser and message scaffolding; runtime methods are unimplemented. |
-
 ## Specification coverage tables
 
 Each protocol page includes a specification catalog with message IDs, implementation status, C# model names, default registration, and PDF references where available. The catalogs use these local specification baselines:
@@ -57,7 +52,7 @@ Each protocol page includes a specification catalog with message IDs, implementa
 | [Raw GLONASS](protocol-raw-glonass.md) | Legacy navigation strings from ICD edition 5.1 (2008). |
 | [RINEX](protocol-rinex.md) | IGS RINEX 2.11, 3.04 and 4.02; OBS/NAV/MET coverage and implementation limits documented separately. |
 | [ASV](protocol-asv.md) | Source inventory; no local protocol PDF. |
-| [ADS-B](protocol-ads-b.md) | Implementation status only; no local native ADS-B message-catalog PDF. |
+| [ADS-B](protocol-ads-b.md) | Jetvision AVR/Beast framing and published 1090MHz Riddle downlink/type-code definitions; typed and raw coverage listed separately. |
 
 **Model present** records a concrete model in source, while **Default** separately records registration by the standard builder. Neither means that every payload revision or optional field is supported. Known incomplete decoders are marked **Partial**. Reserved identifiers and proprietary ranges retain their specification designation.
 

@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Common system configuration and status subfield.
 /// </summary>
-public sealed class AsterixI034SystemConfigurationCommon
+public sealed partial class AsterixI034SystemConfigurationCommon
 {
     /// <summary>
     /// No-go bit.

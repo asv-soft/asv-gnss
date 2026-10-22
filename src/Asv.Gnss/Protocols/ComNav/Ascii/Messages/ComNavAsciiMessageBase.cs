@@ -69,7 +69,7 @@ namespace Asv.Gnss
 		/// </summary>
 		SATTIME = 200
 	}
-    public abstract class ComNavAsciiMessageBase : ComNavStringMessageBase
+    public abstract partial class ComNavAsciiMessageBase : ComNavStringMessageBase
     {
         public override string ProtocolId => ComNavAsciiParser.GnssProtocolId;
 		public override ProtocolInfo Protocol => ComNavProtocol.AsciiInfo;

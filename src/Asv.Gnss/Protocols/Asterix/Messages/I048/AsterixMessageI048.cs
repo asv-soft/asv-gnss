@@ -23,7 +23,7 @@ public class AsterixMessageI048 : AsterixMessage<AsterixRecordI048>
 /// <summary>
 /// ASTERIX CAT048 record using the editions 1.15 and 1.23 UAP layout.
 /// </summary>
-public class AsterixRecordI048 : AsterixRecord
+public partial class AsterixRecordI048 : AsterixRecord
 {
     /// <summary>
     /// I048/010 Data Source Identifier.

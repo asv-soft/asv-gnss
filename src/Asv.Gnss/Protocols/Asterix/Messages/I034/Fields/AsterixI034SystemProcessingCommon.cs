@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Common system processing mode subfield.
 /// </summary>
-public sealed class AsterixI034SystemProcessingCommon
+public sealed partial class AsterixI034SystemProcessingCommon
 {
     /// <summary>
     /// Reduced RDP chain mode.

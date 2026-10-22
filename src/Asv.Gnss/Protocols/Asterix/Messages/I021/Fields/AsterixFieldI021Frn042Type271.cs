@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn042Type271 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn042Type271 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 37;
     public override string Name => "Surface Capabilities and Characteristics";

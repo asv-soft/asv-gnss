@@ -5,7 +5,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
+public abstract partial class NmeaMessageBase : IProtocolMessage<NmeaMessageId>
 {
     private ProtocolTags _tags = [];
     private NmeaTalkerId _talkerId;

@@ -22,7 +22,7 @@ public enum AsvDatumEnum
     PZ90_02
 }
 
-public class AsvMessagePvtGeo : AsvMessageBase
+public partial class AsvMessagePvtGeo : AsvMessageBase
 {
     public override ushort MessageId => 0x114;
     public override string Name => "PvtGeo";

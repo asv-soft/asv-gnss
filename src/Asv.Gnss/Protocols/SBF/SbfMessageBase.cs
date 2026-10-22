@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public abstract class SbfMessageBase:IProtocolMessage<ushort>
+    public abstract partial class SbfMessageBase:IProtocolMessage<ushort>
     {
         private ProtocolTags _tags = [];
 

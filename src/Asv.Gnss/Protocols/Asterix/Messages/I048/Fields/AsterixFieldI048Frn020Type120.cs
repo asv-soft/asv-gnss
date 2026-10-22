@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/120 Radial Doppler Speed.
 /// </summary>
-public sealed class AsterixFieldI048Frn020Type120 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn020Type120 : AsterixFieldI048
 {
     public const byte StaticFrn = 20;
     public override string Name => "Radial Doppler Speed";

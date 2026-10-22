@@ -6,7 +6,7 @@ using System.Linq;
 namespace Asv.Gnss;
 
 /// <summary>A broadcast navigation record. Values retain the order and units of the RINEX specification.</summary>
-public class RinexNavigationMessage : RinexMessageBase
+public partial class RinexNavigationMessage : RinexMessageBase
 {
     /// <inheritdoc />
     public override RinexMessageId Id => RinexMessageId.Navigation;

@@ -9,7 +9,7 @@ public enum SourceAvailabilitySenseEnum : byte
     WillStart = 1
 }
 
-public class ImpactedSource : SpanBitCompactSerializableBase
+public partial class ImpactedSource : SpanBitCompactSerializableBase
 {
     public byte RangingSourceId { get; set; }
 

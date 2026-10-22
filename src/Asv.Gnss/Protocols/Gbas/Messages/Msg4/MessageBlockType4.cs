@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Asv.Gnss;
 
-public class MessageBlockType4 : GbasMessageBlockBase
+public partial class MessageBlockType4 : GbasMessageBlockBase
 {
     public const byte GbasMessageTypeId = 4;
 

@@ -23,7 +23,7 @@ public class AsterixMessageI010 : AsterixMessage<AsterixRecordI010>
 /// <summary>
 /// ASTERIX CAT010 record containing surface movement target reports.
 /// </summary>
-public class AsterixRecordI010 : AsterixRecord
+public partial class AsterixRecordI010 : AsterixRecord
 {
     /// <summary>
     /// I010/010 Data Source Identifier.

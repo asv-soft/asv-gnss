@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI002Frn009Type100 : AsterixFieldI002Fixed
+public sealed partial class AsterixFieldI002Frn009Type100 : AsterixFieldI002Fixed
 {
     public const byte StaticFrn = 9;
     public override string Name => "Dynamic Window - Type 1";

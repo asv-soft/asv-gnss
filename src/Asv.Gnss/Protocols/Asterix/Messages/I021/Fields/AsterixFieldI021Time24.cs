@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixFieldI021Time24 : AsterixFieldI021Fixed
+public abstract partial class AsterixFieldI021Time24 : AsterixFieldI021Fixed
 {
     public double Seconds { get; set; }
 

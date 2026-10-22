@@ -10,7 +10,7 @@
     /// Encoding: NAVBits contains all the symbols of the frame, excluding the preamble. The first received symbol (i.e. the MSB of the PRN field)
     /// is stored as the MSB of NAVBits[0].
     /// </summary>
-    public class SbfPacketBdsRawB2A : SbfPacketGnssRawNavMsgBase
+    public partial class SbfPacketBdsRawB2A : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4219;
         public override ushort MessageRevision => 0;

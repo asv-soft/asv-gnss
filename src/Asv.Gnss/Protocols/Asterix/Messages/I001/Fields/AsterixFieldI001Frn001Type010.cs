@@ -7,7 +7,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/010: Data Source Identifier.
 /// Identifies the system from which the data was received by SAC and SIC.
 /// </summary>
-public class AsterixFieldI001Frn001Type010 : AsterixField
+public partial class AsterixFieldI001Frn001Type010 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/010.
@@ -57,8 +57,4 @@ public class AsterixFieldI001Frn001Type010 : AsterixField
     /// <inheritdoc />
     public override int GetByteSize() => 2;
 
-    /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
 }

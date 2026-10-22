@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn001Type010 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn001Type010 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 1;
     public override string Name => "Data Source Identifier";

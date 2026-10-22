@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public abstract class ComNavBinaryMessageBase : ComNavMessageBase<ushort>
+    public abstract partial class ComNavBinaryMessageBase : ComNavMessageBase<ushort>
     {
 	    /// <summary>
 	    /// In current version, the length of header is always 28 bytes.

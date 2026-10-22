@@ -4,7 +4,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class RtcmV3Message1029 : RtcmV3LegacyMessageBase
+    public partial class RtcmV3Message1029 : RtcmV3LegacyMessageBase
     {
         public const int RtcmMessageId = 1029;
         public override ushort MessageId => RtcmMessageId;

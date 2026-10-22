@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class AsvMessageGbasMonDevSendV2 : AsvMessageBase
+public partial class AsvMessageGbasMonDevSendV2 : AsvMessageBase
 {
     public override ushort MessageId => 0x0103;
     public override string Name => "GbasCuSendV2";

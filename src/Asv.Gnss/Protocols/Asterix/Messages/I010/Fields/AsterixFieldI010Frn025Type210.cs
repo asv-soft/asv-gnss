@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/210 Calculated Acceleration.
 /// </summary>
-public class AsterixFieldI010Frn025Type210 : AsterixFieldI010
+public partial class AsterixFieldI010Frn025Type210 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

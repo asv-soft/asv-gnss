@@ -8,7 +8,7 @@ namespace Asv.Gnss
     /// 4.2.7.5 PSRPOS Pseudorange Position
     /// This message includes position calculated using pseudorange and other information such as differential age, station id and so on.
     /// </summary>
-    public class ComNavBinaryPsrPosPacket : ComNavBinaryMessageBase
+    public partial class ComNavBinaryPsrPosPacket : ComNavBinaryMessageBase
     {
         public const ushort ComNavMessageId = 47;
 

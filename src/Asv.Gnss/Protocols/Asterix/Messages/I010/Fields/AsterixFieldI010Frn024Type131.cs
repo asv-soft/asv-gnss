@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/131 Amplitude of Primary Plot.
 /// </summary>
-public class AsterixFieldI010Frn024Type131 : AsterixFieldI010
+public partial class AsterixFieldI010Frn024Type131 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

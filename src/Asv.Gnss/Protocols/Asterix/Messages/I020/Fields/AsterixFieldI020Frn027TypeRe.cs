@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class AsterixFieldI020Frn027TypeRe : AsterixField
+public partial class AsterixFieldI020Frn027TypeRe : AsterixField
 {
     public const byte StaticFrn = 27;
     public override string Name => "Reserved Expansion Field";
@@ -34,8 +34,5 @@ public class AsterixFieldI020Frn027TypeRe : AsterixField
     public override int GetByteSize() => 1 + Data.Length;
 
 
-    public override void Accept(IVisitor visitor)
-    {
-        
-    }
+
 }

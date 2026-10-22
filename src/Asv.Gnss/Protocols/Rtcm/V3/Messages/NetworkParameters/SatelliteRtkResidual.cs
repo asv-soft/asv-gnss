@@ -1,6 +1,6 @@
-﻿namespace Asv.Gnss
+namespace Asv.Gnss
 {
-    internal class SatelliteRtkResidual
+    internal partial class SatelliteRtkResidual
     {
         private const double mm05Res = 0.5;
         private const double ppm001Res = 0.01;

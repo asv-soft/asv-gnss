@@ -1,6 +1,6 @@
 namespace Asv.Gnss;
 
-public class SatelliteInfo
+public partial class SatelliteInfo
 {
     private readonly int? _nmeaPrn;
     private readonly int? _elevation;

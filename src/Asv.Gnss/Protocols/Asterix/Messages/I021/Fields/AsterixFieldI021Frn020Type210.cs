@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn020Type210 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn020Type210 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 18;
     public override string Name => "MOPS Version";

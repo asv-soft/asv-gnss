@@ -24,7 +24,8 @@ Read the [Asv.Gnss documentation](https://asv.me/asv-gnss/) for installation, qu
 - Parse ASTERIX categories `001`, `002`, `004`, `010`, `020`, `021`, `034`, `048`, and `247`.
 - Parse and serialize 303 native Javad GREIS message IDs, with receiver commands, response labels, DTP file-transfer codecs, and the GREIS 4.2.01 object catalog. See [Javad / GREIS coverage](src/Writerside/topics/protocol-javad.md).
 - Parse and serialize native GPS LNAV subframes and GLONASS FDMA strings with parity validation, typed visitors, and bit-stream protocol registration, including GPS NMCT/special-message/UTC pages and explicit GLONASS fifth-frame layouts.
-- Additional protocols and parsers: ADS-B, ASV, SBF, and ComNav.
+- Parse and serialize ADS-B / Mode S AVR and Beast receiver streams, with CRC/parity status and typed identification, airborne/surface position fields and velocity. See [ADS-B coverage and limits](src/Writerside/topics/protocol-ads-b.md).
+- Additional protocols and parsers: ASV, SBF, and ComNav.
 - Integration with `Asv.IO`: protocol registration, routers, ports, GNSS device discovery, and NMEA/RTCM/UBX microservices.
 
 ## Requirements

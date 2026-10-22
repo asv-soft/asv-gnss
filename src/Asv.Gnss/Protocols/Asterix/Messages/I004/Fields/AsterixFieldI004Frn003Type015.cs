@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn003Type015 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn003Type015 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 3;
     public override string Name => "SDPS Identifier";

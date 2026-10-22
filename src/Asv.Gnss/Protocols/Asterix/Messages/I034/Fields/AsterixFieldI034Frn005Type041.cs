@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/041 Antenna Rotation Speed.
 /// </summary>
-public sealed class AsterixFieldI034Frn005Type041 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn005Type041 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

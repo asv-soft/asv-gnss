@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Base class for fixed-length raw CAT034 fields.
 /// </summary>
-public abstract class AsterixFieldI034FixedRaw : AsterixFieldI034
+public abstract partial class AsterixFieldI034FixedRaw : AsterixFieldI034
 {
     /// <summary>
     /// Raw field bytes.

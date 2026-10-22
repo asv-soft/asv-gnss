@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/161 Track Number.
 /// </summary>
-public class AsterixFieldI010Frn010Type161 : AsterixFieldI010
+public partial class AsterixFieldI010Frn010Type161 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

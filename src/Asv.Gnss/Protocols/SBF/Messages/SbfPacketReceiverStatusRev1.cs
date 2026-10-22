@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class SbfPacketReceiverStatusRev1 : SbfMessageBase
+    public partial class SbfPacketReceiverStatusRev1 : SbfMessageBase
     {
         public override ushort MessageRevision => 1;
         public override ushort MessageType => 4014;
@@ -73,7 +73,7 @@ namespace Asv.Gnss
         public byte CPULoad { get; set; }
     }
 
-    public class SbfReceiverStatusAGCState
+    public partial class SbfReceiverStatusAGCState
     {
         public void Deserialize(ref ReadOnlySpan<byte> buffer,  byte sbLength)
         {

@@ -9,7 +9,7 @@
     /// The unused bits in NAVBits[9] must be ignored by the decoding
     /// software.
     /// </summary>
-    public class SbfPacketGpsRawL2C : SbfPacketGnssRawNavMsgBase
+    public partial class SbfPacketGpsRawL2C : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4018;
         public override ushort MessageRevision => 0;

@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class SbfPacketQualityInd:SbfMessageBase
+    public partial class SbfPacketQualityInd:SbfMessageBase
     {
         public override ushort MessageRevision => 0;
         public override ushort MessageType => 4082;
@@ -73,7 +73,7 @@ namespace Asv.Gnss
         RtkPostProcessing = 31,
     }
 
-    public class QualityIndicator
+    public partial class QualityIndicator
     {
         public SbfQualityIndicatorTypeEnum IndicatorType { get; set; }
         public byte Value { get; set; }

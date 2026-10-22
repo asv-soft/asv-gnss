@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class DObservationItem
+public partial class DObservationItem
 {
     private readonly NavigationSystemEnum _system;
     private bool _hasOriginalCorrections;

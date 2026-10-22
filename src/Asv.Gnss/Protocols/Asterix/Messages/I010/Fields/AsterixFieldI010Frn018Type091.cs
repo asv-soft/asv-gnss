@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/091 Measured Height.
 /// </summary>
-public class AsterixFieldI010Frn018Type091 : AsterixFieldI010
+public partial class AsterixFieldI010Frn018Type091 : AsterixFieldI010
 {
     /// <summary>
     /// Field reference number.

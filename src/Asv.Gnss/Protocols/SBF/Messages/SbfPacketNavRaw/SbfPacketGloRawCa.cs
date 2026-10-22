@@ -11,7 +11,7 @@ namespace Asv.Gnss
     /// Encoding: The first received bit is stored as the MSB of NAVBits[0]. The
     /// unused bits in NAVBits[2] must be ignored by the decoding software.
     /// </summary> 
-    public class SbfPacketGloRawCa : SbfPacketGnssRawNavMsgBase
+    public partial class SbfPacketGloRawCa : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4026;
         public override ushort MessageRevision => 0;

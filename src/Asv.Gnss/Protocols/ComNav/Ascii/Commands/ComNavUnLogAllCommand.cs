@@ -1,6 +1,6 @@
 ﻿namespace Asv.Gnss
 {
-    public class ComNavUnLogAllCommand : ComNavAsciiCommandBase
+    public partial class ComNavUnLogAllCommand : ComNavAsciiCommandBase
     {
         public static ComNavUnLogAllCommand Default = new ComNavUnLogAllCommand();
 

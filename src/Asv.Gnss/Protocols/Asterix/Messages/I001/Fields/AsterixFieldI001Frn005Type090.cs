@@ -8,7 +8,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/090: Mode-C Code in Binary Representation.
 /// Contains validation flags and altitude derived from the Mode-C reply.
 /// </summary>
-public class AsterixFieldI001Frn005Type090 : AsterixField
+public partial class AsterixFieldI001Frn005Type090 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/090.
@@ -89,9 +89,7 @@ public class AsterixFieldI001Frn005Type090 : AsterixField
     public override int GetByteSize() => 2;
 
     /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
+
 
     private void SetBit(int mask, bool value)
     {

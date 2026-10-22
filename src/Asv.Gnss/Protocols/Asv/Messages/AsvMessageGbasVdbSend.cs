@@ -27,7 +27,7 @@ public enum AsvGbasMessage : ulong
     Msg5 = 0b00100000,
 }
 
-public class AsvMessageGbasVdbSend : AsvMessageBase
+public partial class AsvMessageGbasVdbSend : AsvMessageBase
 {
     public override ushort MessageId => 0x0100;
     public override string Name => "GbasVdbSend";

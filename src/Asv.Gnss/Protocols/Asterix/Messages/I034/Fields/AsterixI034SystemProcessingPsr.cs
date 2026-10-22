@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// PSR system processing mode subfield.
 /// </summary>
-public sealed class AsterixI034SystemProcessingPsr
+public sealed partial class AsterixI034SystemProcessingPsr
 {
     /// <summary>
     /// Polarization mode.

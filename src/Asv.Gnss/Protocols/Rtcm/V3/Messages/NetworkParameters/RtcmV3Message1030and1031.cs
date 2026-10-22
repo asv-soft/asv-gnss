@@ -1,9 +1,9 @@
-﻿using Asv.IO;
+using Asv.IO;
 using System;
 
 namespace Asv.Gnss
 {
-    public abstract class RtcmV3Message1030and1031 : RtcmV3LegacyMessageBase
+    public abstract partial class RtcmV3Message1030and1031 : RtcmV3LegacyMessageBase
     {
         public RtcmV3NetworkResidual[] SatelliteResiduals { get; set; } = Array.Empty<RtcmV3NetworkResidual>();
 
@@ -168,7 +168,7 @@ namespace Asv.Gnss
         public double SId => FirstResidual.SId;
 
     }
-    public class RtcmV3NetworkResidual
+    public partial class RtcmV3NetworkResidual
     {
         public byte SatelliteId { get; set; }
         public double SOc { get; set; }

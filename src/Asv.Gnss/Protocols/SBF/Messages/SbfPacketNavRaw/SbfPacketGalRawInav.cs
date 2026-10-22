@@ -15,7 +15,7 @@
     /// MSB of NAVBits[0]. The unused bits in NAVBits[7] must be ignored
     /// by the decoding software.
     /// </summary>
-    public class SbfPacketGalRawInav : SbfPacketGnssRawNavMsgBase
+    public partial class SbfPacketGalRawInav : SbfPacketGnssRawNavMsgBase
     {
         public override ushort MessageType => 4023;
         public override ushort MessageRevision => 0;

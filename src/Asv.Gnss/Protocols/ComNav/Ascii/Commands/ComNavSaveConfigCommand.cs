@@ -3,7 +3,7 @@
     /// <summary>
     /// This command saves the user’s present configuration, including the current log settings (type, whether output testing data, etc.), FIX settings, baud rate, and so on, refer to Table 14.
     /// </summary>
-    public class ComNavSaveConfigCommand : ComNavAsciiCommandBase
+    public partial class ComNavSaveConfigCommand : ComNavAsciiCommandBase
     {
         /// <summary>
         /// Gets the default <see cref="ComNavSaveConfigCommand"/> instance.

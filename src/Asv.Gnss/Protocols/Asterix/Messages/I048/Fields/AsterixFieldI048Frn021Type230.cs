@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/230 Communications/ACAS Capability and Flight Status.
 /// </summary>
-public sealed class AsterixFieldI048Frn021Type230 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn021Type230 : AsterixFieldI048
 {
     /// <summary>
     /// Field reference number.

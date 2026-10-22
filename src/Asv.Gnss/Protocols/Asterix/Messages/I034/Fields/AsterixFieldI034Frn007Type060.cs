@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/060 System Processing Mode.
 /// </summary>
-public sealed class AsterixFieldI034Frn007Type060 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn007Type060 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

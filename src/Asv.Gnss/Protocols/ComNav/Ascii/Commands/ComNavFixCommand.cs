@@ -55,7 +55,7 @@ namespace Asv.Gnss
     /// <summary>
     /// Represents a command to fix the navigation in ComNav ASCII protocol.
     /// </summary>
-    public class ComNavFixCommand: ComNavAsciiCommandBase
+    public partial class ComNavFixCommand: ComNavAsciiCommandBase
     {
         /// <summary>
         /// Gets or sets the fix type of the ComNav device.

@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/RE Reserved Expansion Field.
 /// </summary>
-public sealed class AsterixFieldI048Frn028TypeRe : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn028TypeRe : AsterixFieldI048
 {
     public const byte StaticFrn = 28;
     public override string Name => "Reserved Expansion Field";

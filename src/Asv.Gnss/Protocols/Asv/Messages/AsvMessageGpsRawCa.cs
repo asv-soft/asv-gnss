@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class AsvMessageGpsRawCa : AsvMessageBase
+public partial class AsvMessageGpsRawCa : AsvMessageBase
 {
     private const int NavBitsU32Length = 10;
 

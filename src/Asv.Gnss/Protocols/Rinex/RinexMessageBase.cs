@@ -20,7 +20,7 @@ public enum RinexMessageId : byte
 }
 
 /// <summary>A native RINEX record. Body records require the corresponding file header as context.</summary>
-public abstract class RinexMessageBase : IProtocolMessage<RinexMessageId>
+public abstract partial class RinexMessageBase : IProtocolMessage<RinexMessageId>
 {
     private ProtocolTags _tags = [];
     /// <inheritdoc />

@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I010/041 Position in WGS-84 Coordinates.
 /// </summary>
-public class AsterixFieldI010Frn005Type041 : AsterixFieldI010
+public partial class AsterixFieldI010Frn005Type041 : AsterixFieldI010
 {
     private const double Scale = 180.0 / 2147483648.0;
 

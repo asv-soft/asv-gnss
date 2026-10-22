@@ -142,7 +142,7 @@ public readonly struct ComNavAsciiMessageId(string id) : IEquatable<ComNavAsciiM
 /// <summary>
 /// Base class for restored ComNav messages identified by ASCII text.
 /// </summary>
-public abstract class ComNavStringMessageBase : IProtocolMessage<ComNavAsciiMessageId>
+public abstract partial class ComNavStringMessageBase : IProtocolMessage<ComNavAsciiMessageId>
 {
     private ProtocolTags _tags = [];
 

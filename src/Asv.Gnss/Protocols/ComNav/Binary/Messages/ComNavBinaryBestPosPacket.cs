@@ -7,7 +7,7 @@ namespace Asv.Gnss
     /// <summary>
     /// BESTPOS binary position log.
     /// </summary>
-    public class ComNavBinaryBestPosPacket : ComNavBinaryMessageBase
+    public partial class ComNavBinaryBestPosPacket : ComNavBinaryMessageBase
     {
         public const ushort ComNavMessageId = 42;
 

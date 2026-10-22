@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public abstract class AsterixFieldI021VerticalRate : AsterixFieldI021Fixed
+public abstract partial class AsterixFieldI021VerticalRate : AsterixFieldI021Fixed
 {
     public bool RangeExceeded { get; set; }
     public double RateFtPerMinute { get; set; }

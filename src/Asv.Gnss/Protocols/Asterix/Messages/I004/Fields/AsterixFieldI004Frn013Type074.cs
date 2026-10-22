@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn013Type074 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn013Type074 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 13;
     public override string Name => "Longitudinal Deviation";

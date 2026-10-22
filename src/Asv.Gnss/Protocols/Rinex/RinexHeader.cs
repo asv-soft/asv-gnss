@@ -6,7 +6,7 @@ using System.Linq;
 namespace Asv.Gnss;
 
 /// <summary>File context. Observation values retain stored units; header corrections are not applied automatically.</summary>
-public sealed class RinexHeader
+public sealed partial class RinexHeader
 {
     /// <summary>RINEX format revision; supported revisions are 2.10/2.11, 3.00–3.05 and 4.00–4.02.</summary>
     public decimal Version { get; set; } = 3.04m;
@@ -213,7 +213,7 @@ public sealed class RinexHeader
 }
 
 /// <summary>A complete file header, including metadata needed to decode later records.</summary>
-public sealed class RinexHeaderMessage : RinexMessageBase
+public sealed partial class RinexHeaderMessage : RinexMessageBase
 {
     /// <inheritdoc />
     public override RinexMessageId Id => RinexMessageId.Header;

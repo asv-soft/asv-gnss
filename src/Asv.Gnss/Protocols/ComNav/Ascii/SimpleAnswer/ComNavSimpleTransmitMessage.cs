@@ -1,6 +1,6 @@
 namespace Asv.Gnss
 {
-    public class ComNavSimpleTransmitMessage : ComNavSimpleAnswerMessageBase
+    public partial class ComNavSimpleTransmitMessage : ComNavSimpleAnswerMessageBase
     {
         public const string ComNavMessageId = "Command transmited";
         public override string MessageId => ComNavMessageId;

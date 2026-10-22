@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class RtcmV3MessageBase : IProtocolMessage<ushort>
+public abstract partial class RtcmV3MessageBase : IProtocolMessage<ushort>
 {
     private ProtocolTags _tags = [];
     

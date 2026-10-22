@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I048/130 Radar Plot Characteristics.
 /// </summary>
-public sealed class AsterixFieldI048Frn007Type130 : AsterixFieldI048
+public sealed partial class AsterixFieldI048Frn007Type130 : AsterixFieldI048
 {
     private byte _flags;
 

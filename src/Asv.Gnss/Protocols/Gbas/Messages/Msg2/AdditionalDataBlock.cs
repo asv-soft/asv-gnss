@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public abstract class AdditionalDataBlock : SpanBitCompactSerializableBase
+public abstract partial class AdditionalDataBlock : SpanBitCompactSerializableBase
 {
     public override int GetBitSize()
     {

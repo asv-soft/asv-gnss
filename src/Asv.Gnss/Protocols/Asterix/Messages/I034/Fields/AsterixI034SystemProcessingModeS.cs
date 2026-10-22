@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Mode-S system processing mode subfield.
 /// </summary>
-public sealed class AsterixI034SystemProcessingModeS
+public sealed partial class AsterixI034SystemProcessingModeS
 {
     /// <summary>
     /// Reduced radar mode.

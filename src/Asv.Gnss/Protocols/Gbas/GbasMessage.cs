@@ -17,7 +17,7 @@ public enum SlotIdEnum : byte
     H = 7
 }
 
-public class GbasMessage : SpanBitCompactSerializableBase
+public partial class GbasMessage : SpanBitCompactSerializableBase
 {
 
     public const int MaxAppDataSize = 222;

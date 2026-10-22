@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/050 System Configuration and Status.
 /// </summary>
-public sealed class AsterixFieldI034Frn006Type050 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn006Type050 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

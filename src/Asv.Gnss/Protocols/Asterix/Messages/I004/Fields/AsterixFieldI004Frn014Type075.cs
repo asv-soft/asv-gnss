@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI004Frn014Type075 : AsterixFieldI004Fixed
+public sealed partial class AsterixFieldI004Frn014Type075 : AsterixFieldI004Fixed
 {
     public const byte StaticFrn = 14;
     public override string Name => "Transversal Distance Deviation";

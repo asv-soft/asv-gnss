@@ -2,7 +2,7 @@ using System;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI002Frn010Type090 : AsterixFieldI002Fixed
+public sealed partial class AsterixFieldI002Frn010Type090 : AsterixFieldI002Fixed
 {
     public const byte StaticFrn = 10;
     public override string Name => "Collimation Error";

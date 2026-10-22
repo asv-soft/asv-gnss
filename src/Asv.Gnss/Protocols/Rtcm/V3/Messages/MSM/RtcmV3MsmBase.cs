@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Asv.Gnss;
 
-public struct MsmHeader
+public partial struct MsmHeader
 {
     public int time_s;   // 7 бит
     public int clk_str;  // 2 бита
@@ -179,7 +179,7 @@ public static class RtcmMsm
 }
 
 
-public abstract class RtcmV3MsmBase : RtcmV3MessageBase
+public abstract partial class RtcmV3MsmBase : RtcmV3MessageBase
 {
     public virtual ushort MessageId => Id;
     public override ushort Id => MessageId;

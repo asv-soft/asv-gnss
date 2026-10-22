@@ -4,7 +4,7 @@ using System;
 
 namespace Asv.Gnss
 {
-    public abstract class RtcmV3Msm5 : RtcmV3MsmBase
+    public abstract partial class RtcmV3Msm5 : RtcmV3MsmBase
     {
         public Satellite[] Satellites { get; set; } = Array.Empty<Satellite>();
 

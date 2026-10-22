@@ -3,7 +3,7 @@ using System;
 namespace Asv.Gnss;
 
 /// <summary>A RINEX calendar epoch in the file's time system, including leap seconds and picoseconds.</summary>
-public readonly record struct RinexEpoch(int Year, int Month, int Day, int Hour, int Minute, decimal Seconds)
+public readonly partial record struct RinexEpoch(int Year, int Month, int Day, int Hour, int Minute, decimal Seconds)
 {
     /// <summary>Converts to an unspecified-kind calendar value, rounding down below .NET tick precision.</summary>
     /// <remarks>No time-system or leap-second conversion is performed.</remarks>

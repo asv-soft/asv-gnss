@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn029Type160 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn029Type160 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 26;
     public override string Name => "Airborne Ground Vector";

@@ -12,7 +12,7 @@ namespace Asv.Gnss
     /// If data for multiple GNSS are transmitted and the difference between the clocks for these GNSS
     /// exceeds 0.25 ms (modulo 1 second), then this message type shall not be used.
     /// </summary>
-    public abstract class RtcmV3Msm3 : RtcmV3MsmBase
+    public abstract partial class RtcmV3Msm3 : RtcmV3MsmBase
     {
         // Unscaled wire fields used for serialization, including invalid-value sentinels.
         public int[] RoughRangeModuloRaw { get; set; } = Array.Empty<int>();

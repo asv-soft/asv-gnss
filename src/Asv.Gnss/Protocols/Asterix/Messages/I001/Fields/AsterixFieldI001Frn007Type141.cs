@@ -8,7 +8,7 @@ namespace Asv.Gnss;
 /// ASTERIX CAT001 field I001/141: Truncated Time of Day.
 /// Contains the truncated time in seconds with 1/128 second resolution.
 /// </summary>
-public class AsterixFieldI001Frn007Type141 : AsterixField
+public partial class AsterixFieldI001Frn007Type141 : AsterixField
 {
     /// <summary>
     /// Field reference number for I001/141.
@@ -57,8 +57,4 @@ public class AsterixFieldI001Frn007Type141 : AsterixField
     /// <inheritdoc />
     public override int GetByteSize() => 2;
 
-    /// <inheritdoc />
-    public override void Accept(IVisitor visitor)
-    {
-    }
 }

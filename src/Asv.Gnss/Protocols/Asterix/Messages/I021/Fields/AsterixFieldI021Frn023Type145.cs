@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 namespace Asv.Gnss;
 
-public sealed class AsterixFieldI021Frn023Type145 : AsterixFieldI021Fixed
+public sealed partial class AsterixFieldI021Frn023Type145 : AsterixFieldI021Fixed
 {
     public const byte StaticFrn = 21;
     public override string Name => "Flight Level";

@@ -3,14 +3,14 @@ using Asv.IO;
 
 namespace Asv.Gnss
 {
-    public class EcefPoint
+    public partial class EcefPoint
     {
         public double X { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
     }
     
-    public class RtcmV3Message1020 : RtcmV3LegacyMessageBase
+    public partial class RtcmV3Message1020 : RtcmV3LegacyMessageBase
     {
         public const int RtcmMessageId = 1020;
         public override ushort MessageId => RtcmMessageId;

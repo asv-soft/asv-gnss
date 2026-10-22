@@ -15,7 +15,7 @@ namespace Asv.Gnss
     /// Prevents the receiver from using a system
     /// This command is used to prevent the receiver from using all satellites in a system in the solution computations.
     /// </summary>
-    public class ComNavSetLockoutSystemCommand:ComNavAsciiCommandBase
+    public partial class ComNavSetLockoutSystemCommand:ComNavAsciiCommandBase
     {
         /// Gets or sets the satellite system of the property.
         public ComNavSatelliteSystemEnum SatelliteSystem { get; set; }

@@ -100,7 +100,7 @@ synchronization marker, so plausible candidates in arbitrary binary data can be
 ambiguous. Container metadata is not interpreted by this command; use
 `asterix-stream` for ASTERIX container statistics and KML export.
 
-ADS-B is excluded because its parser is not implemented. The standalone
+ADS-B AVR/Beast receiver streams are included through [the native ADS-B parser](protocol-ads-b.md). The standalone
 [GPS LNAV](protocol-raw-gps.md) and [GLONASS FDMA](protocol-raw-glonass.md)
 bit-stream parsers require explicit registration on suitable navigation streams;
 they are not included in this command's mixed-file detection. In particular,

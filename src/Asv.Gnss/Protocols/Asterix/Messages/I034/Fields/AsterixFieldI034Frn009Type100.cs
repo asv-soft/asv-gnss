@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// I034/100 Generic Polar Window.
 /// </summary>
-public sealed class AsterixFieldI034Frn009Type100 : AsterixFieldI034
+public sealed partial class AsterixFieldI034Frn009Type100 : AsterixFieldI034
 {
     /// <summary>
     /// Field reference number.

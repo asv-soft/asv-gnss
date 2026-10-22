@@ -185,7 +185,7 @@ public enum NmeaTalkerClass
 }
 
 
-public readonly struct NmeaTalkerId : ISizedSpanSerializable, IEquatable<NmeaTalkerId>
+public readonly partial struct NmeaTalkerId : ISizedSpanSerializable, IEquatable<NmeaTalkerId>
 {
     private const string Ag = "AG";
     private const string Ap = "AP";

@@ -4,7 +4,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class AsvMessageGpsObservations : AsvMessageBase
+public partial class AsvMessageGpsObservations : AsvMessageBase
 {
     public override ushort MessageId => 0x110;
     public override string Name => "GpsObservation";
@@ -87,7 +87,7 @@ public class AsvMessageGpsObservations : AsvMessageBase
     }
 }
 
-public class AsvGpsObservation : ISizedSpanSerializable
+public partial class AsvGpsObservation : ISizedSpanSerializable
 {
     public int Prn { get; set; }
     public int SatelliteId { get; set; }

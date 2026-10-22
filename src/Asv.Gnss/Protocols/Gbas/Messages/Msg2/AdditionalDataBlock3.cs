@@ -3,7 +3,7 @@ using Asv.IO;
 
 namespace Asv.Gnss;
 
-public class AdditionalDataBlock3 : AdditionalDataBlock
+public partial class AdditionalDataBlock3 : AdditionalDataBlock
 {
     private const double P10_7 = 0.0000001;
 
