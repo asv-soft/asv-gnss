@@ -1,6 +1,5 @@
-using Asv.IO;
+﻿using Asv.IO;
 using System;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Asv.Gnss
 {

@@ -2,7 +2,6 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
-using Asv.Gnss;
 using JetBrains.Annotations;
 using Xunit;
 

@@ -1,5 +1,4 @@
 using System;
-using Asv.Gnss;
 using Xunit;
 
 namespace Asv.Gnss;

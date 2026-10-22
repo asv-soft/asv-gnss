@@ -1,8 +1,4 @@
-﻿using Asv.Gnss;
-using Asv.IO;
-using System;
-
-namespace Asv.Gnss
+﻿namespace Asv.Gnss
 {
     public class RtcmV3Message1007 : RtcmV3Message1007and1008
     {

@@ -1,5 +1,4 @@
 using System;
-using Asv.Gnss;
 using Asv.IO;
 using JetBrains.Annotations;
 using Xunit;

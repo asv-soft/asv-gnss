@@ -1,6 +1,3 @@
-using System;
-using Asv.IO;
-
 namespace Asv.Gnss;
 
 public class SatelliteInfo

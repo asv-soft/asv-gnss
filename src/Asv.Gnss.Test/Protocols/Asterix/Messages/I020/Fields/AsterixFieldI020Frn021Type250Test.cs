@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
 using Xunit;
 using System;
-using System.Linq;
 
 namespace Asv.Gnss;
 

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using Asv.Gnss;
 using DeepEqual.Syntax;
 using JetBrains.Annotations;
 using Xunit;

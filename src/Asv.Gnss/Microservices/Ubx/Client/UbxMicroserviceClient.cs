@@ -5,7 +5,6 @@ using Asv.Common;
 using Asv.IO;
 using Microsoft.Extensions.Logging;
 using R3;
-using ZLogger;
 
 namespace Asv.Gnss;
 
