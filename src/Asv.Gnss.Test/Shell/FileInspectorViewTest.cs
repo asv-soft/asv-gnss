@@ -192,6 +192,10 @@ public class FileInspectorViewTest
         var console = AnsiConsole.Create(new AnsiConsoleSettings
         {
             Ansi = AnsiSupport.No,
+            ColorSystem = ColorSystemSupport.NoColors,
+            Interactive = InteractionSupport.No,
+            // CI profile enrichment can override AnsiSupport.No (for example on GitHub Actions).
+            Enrichment = new ProfileEnrichment { UseDefaultEnrichers = false },
             Out = new AnsiConsoleOutput(writer),
         });
         console.Profile.Width = width;
