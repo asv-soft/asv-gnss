@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Represents a Glonass Word 3 message.
 /// </summary>
-public class GlonassWord3 : GlonassWordBase
+public partial class GlonassWord3 : GlonassWordBase
 {
     /// <summary>
     /// Gets the identifier of the word.
@@ -39,40 +39,73 @@ public class GlonassWord3 : GlonassWordBase
         bitIndex += 27;
     }
 
-    public byte P3 { get; set; }
+    public byte P3
+    {
+        get => _p3;
+        set => _p3 = value;
+    }
+    private byte _p3;
 
     /// <summary>
     /// relative freq bias (γn(tb)). Относительное отклонение прогнозируемого значения несущей частоты излучаемого сигнала n-го
     /// спутника от номинального значения на момент времени tb
     /// </summary>
-    public double GamN { get; set; }
+    public double GamN
+    {
+        get => _gamN;
+        set => _gamN = value;
+    }
+    private double _gamN;
 
     /// <summary>
-    /// Признак режима работы НКА по ЧВИ 
+    /// Признак режима работы НКА по ЧВИ
     /// </summary>
-    public byte P { get; set; }
+    public byte P
+    {
+        get => _p;
+        set => _p = value;
+    }
+    private byte _p;
 
     /// <summary>
     /// Признак недостоверности кадра n-го НКА; ln = 0 свидетельствует о пригодности НКА для навигации;  ln = 1 означает факт непригодности данного НКА для навигации
     /// </summary>
-    public byte ln { get; set; }
+    public byte ln
+    {
+        get => _ln;
+        set => _ln = value;
+    }
+    private byte _ln;
 
     /// <summary>
     /// satellite position (ecef) (m). Координаты n-го спутника в системе координат ПЗ-90 на момент времени tb
     /// </summary>
-    public double PositionZ { get; set; }
+    public double PositionZ
+    {
+        get => _positionZ;
+        set => _positionZ = value;
+    }
+    private double _positionZ;
 
     /// <summary>
     /// satellite velocity (ecef) (m/s). составляющие вектора скорости n-го спутника в системе координат ПЗ-90 на момент
     /// времени tb
     /// </summary>
-    public double VelocityZ { get; set; }
+    public double VelocityZ
+    {
+        get => _velocityZ;
+        set => _velocityZ = value;
+    }
+    private double _velocityZ;
 
     /// <summary>
     /// satellite acceleration (ecef) (m/s^2). Составляющие ускорения n-го спутника в системе координат ПЗ-90 на момент времени tb,
     /// обусловленные действием луны и солнца
     /// </summary>
-    public double AccelerationZ { get; set; }
-
-
+    public double AccelerationZ
+    {
+        get => _accelerationZ;
+        set => _accelerationZ = value;
+    }
+    private double _accelerationZ;
 }

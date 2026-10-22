@@ -1,0 +1,6557 @@
+{
+  "specification": "GREIS 4.2.01",
+  "source": "../Docs/GREIS-4.2.01.pdf",
+  "records": [
+    {
+      "name": "UtcOffsetParameters",
+      "page": 77,
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Constant term of polynomial [s]",
+          "wireName": "a0",
+          "name": "A0"
+        },
+        {
+          "type": "f4",
+          "description": "First order term of polynomial [s/s]",
+          "wireName": "a1",
+          "name": "A1"
+        },
+        {
+          "type": "u4",
+          "description": "Reference time of week [s]",
+          "wireName": "tot",
+          "name": "Tot"
+        },
+        {
+          "type": "u2",
+          "description": "Reference week number []",
+          "wireName": "wnt",
+          "name": "Wnt"
+        },
+        {
+          "type": "i1",
+          "description": "Delta time due to leap seconds [s]",
+          "wireName": "dtls",
+          "name": "Dtls"
+        },
+        {
+          "type": "u1",
+          "description": "'Future' reference day number [1\u20267] []",
+          "wireName": "dn",
+          "name": "Dn"
+        },
+        {
+          "type": "u2",
+          "description": "'Future' reference week number []",
+          "wireName": "wnlsf",
+          "name": "Wnlsf"
+        },
+        {
+          "type": "i1",
+          "description": "'Future' delta time due to leap seconds [s]",
+          "wireName": "dtlsf",
+          "name": "Dtlsf"
+        }
+      ]
+    },
+    {
+      "name": "SystemPositionStatistics",
+      "page": 84,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Number of SVs locked",
+          "wireName": "locked",
+          "name": "Locked"
+        },
+        {
+          "type": "u1",
+          "description": "Number of SVs available for positioning",
+          "wireName": "avail",
+          "name": "Avail"
+        },
+        {
+          "type": "u1",
+          "description": "Number of SVs used in positioning",
+          "wireName": "used",
+          "name": "Used"
+        }
+      ]
+    },
+    {
+      "name": "SatelliteIdentifier",
+      "page": 86,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Satellite system identifier (SSID)",
+          "missing": true,
+          "wireName": "ssid",
+          "name": "SystemId"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite identifier (SVID) inside system",
+          "missing": true,
+          "wireName": "svid",
+          "name": "SatelliteId"
+        }
+      ]
+    },
+    {
+      "name": "SmoothingCorrection",
+      "page": 96,
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Smoothing correction [s]",
+          "missing": true,
+          "wireName": "value",
+          "name": "Value"
+        },
+        {
+          "type": "u2",
+          "description": "Smoothing interval [s]",
+          "missing": true,
+          "wireName": "interval",
+          "name": "Interval"
+        }
+      ]
+    },
+    {
+      "name": "EphemerisRequiredData",
+      "page": 108,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number within the range [1\u202637]",
+          "wireName": "sv",
+          "name": "Sv"
+        },
+        {
+          "type": "u4",
+          "description": "Time of week [s]",
+          "wireName": "tow",
+          "name": "TimeOfWeek"
+        },
+        {
+          "type": "u1",
+          "description": "Flags (see GPS ICD for details)[bitfield]:",
+          "wireName": "flags",
+          "name": "Flags"
+        },
+        {
+          "type": "i2",
+          "description": "Issue of data, clock []",
+          "wireName": "iodc",
+          "name": "Iodc"
+        },
+        {
+          "type": "i4",
+          "description": "Clock data reference time [s]",
+          "wireName": "toc",
+          "name": "Toc"
+        },
+        {
+          "type": "i1",
+          "description": "User range accuracy []",
+          "wireName": "ura",
+          "name": "Ura"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite health []",
+          "wireName": "healthS",
+          "name": "HealthS"
+        },
+        {
+          "type": "i2",
+          "description": "Week number []",
+          "wireName": "wn",
+          "name": "Wn"
+        },
+        {
+          "type": "f4",
+          "description": "Estimated group delay differential [s]",
+          "wireName": "tgd",
+          "name": "Tgd"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s/(s^2)]",
+          "wireName": "af2",
+          "name": "Af2"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s/s]",
+          "wireName": "af1",
+          "name": "Af1"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s]",
+          "wireName": "af0",
+          "name": "Af0"
+        },
+        {
+          "type": "i4",
+          "description": "Ephemeris reference time [s]",
+          "wireName": "toe",
+          "name": "Toe"
+        },
+        {
+          "type": "i2",
+          "description": "Issue of data, ephemeris []",
+          "wireName": "iode",
+          "name": "Iode"
+        },
+        {
+          "type": "f8",
+          "description": "Square root of the semi-major axis [m^0.5]",
+          "wireName": "rootA",
+          "name": "RootA"
+        },
+        {
+          "type": "f8",
+          "description": "Eccentricity []",
+          "wireName": "ecc",
+          "name": "Ecc"
+        },
+        {
+          "type": "f8",
+          "description": "Mean Anomaly at reference time (wn,toe)",
+          "wireName": "m0",
+          "name": "M0"
+        },
+        {
+          "type": "f8",
+          "description": "Longitude of ascending node of orbit plane at the",
+          "wireName": "omega0",
+          "name": "Omega0"
+        },
+        {
+          "type": "f8",
+          "description": "Inclination angle at reference time [semi-circles]",
+          "wireName": "inc0",
+          "name": "Inc0"
+        },
+        {
+          "type": "f8",
+          "description": "Argument of perigee [semi-circles]",
+          "wireName": "argPer",
+          "name": "ArgPer"
+        },
+        {
+          "type": "f4",
+          "description": "Mean motion difference from computed value",
+          "wireName": "deln",
+          "name": "Deln"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of right ascension [semi-circle/s]",
+          "wireName": "omegaDot",
+          "name": "OmegaDot"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of inclination angle [semi-circle/s]",
+          "wireName": "incDot",
+          "name": "IncDot"
+        },
+        {
+          "type": "f4",
+          "description": "Amplitude of the cosine harmonic correction term",
+          "wireName": "crc",
+          "name": "Crc"
+        },
+        {
+          "type": "f4",
+          "description": "Amplitude of the sine harmonic correction term",
+          "wireName": "crs",
+          "name": "Crs"
+        },
+        {
+          "type": "f4",
+          "description": "Amplitude of the cosine harmonic correction term",
+          "wireName": "cuc",
+          "name": "Cuc"
+        },
+        {
+          "type": "f4",
+          "description": "Amplitude of the sine harmonic correction term",
+          "wireName": "cus",
+          "name": "Cus"
+        },
+        {
+          "type": "f4",
+          "description": "Amplitude of the cosine harmonic correction term",
+          "wireName": "cic",
+          "name": "Cic"
+        },
+        {
+          "type": "f4",
+          "description": "Amplitude of the sine harmonic correction term",
+          "wireName": "cis",
+          "name": "Cis"
+        }
+      ]
+    },
+    {
+      "name": "GpsCnavInterSignalCorrections",
+      "page": 109,
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Inter-signal correction between L1P(Y) and L1 C/A",
+          "wireName": "fIscL1CA",
+          "name": "FIscL1CA"
+        },
+        {
+          "type": "f4",
+          "description": "Inter-signal correction between L1P(Y) and L2C",
+          "wireName": "fIscL2C",
+          "name": "FIscL2C"
+        },
+        {
+          "type": "f4",
+          "description": "Inter-signal correction between L1P(Y) and L5I5",
+          "wireName": "fIscL5I5",
+          "name": "FIscL5I5"
+        },
+        {
+          "type": "f4",
+          "description": "Inter-signal correction between L1P(Y) and L5Q5",
+          "wireName": "fIscL5Q5",
+          "name": "FIscL5Q5"
+        }
+      ]
+    },
+    {
+      "name": "GpsCnav2InterSignalCorrections",
+      "page": 109,
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Inter-signal correction between L1P(Y) and L1CP",
+          "wireName": "fIscL1CP",
+          "name": "FIscL1CP"
+        },
+        {
+          "type": "f4",
+          "description": "Inter-signal correction between L1P(Y) and L1CD",
+          "wireName": "fIscL1CD",
+          "name": "FIscL1CD"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouLegacyEphemerisData",
+      "page": 110,
+      "fields": [
+        {
+          "type": "u1",
+          "wireName": "AODC",
+          "name": "AODC"
+        },
+        {
+          "type": "u1",
+          "wireName": "AODE",
+          "name": "AODE"
+        }
+      ]
+    },
+    {
+      "name": "SpectrumExtension",
+      "page": 119,
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Frequency of spectrum first point [Hz]",
+          "wireName": "freq0",
+          "name": "Freq0"
+        },
+        {
+          "type": "f4",
+          "description": "Spectrum frequency step [Hz]",
+          "wireName": "step",
+          "name": "Step"
+        },
+        {
+          "type": "i4",
+          "description": "Total number of spectrum points",
+          "wireName": "points",
+          "name": "Points"
+        },
+        {
+          "type": "a1",
+          "count": "(8)",
+          "description": "Spectrum name. String with '\\0' at the end",
+          "wireName": "name",
+          "name": "SpectrumName"
+        },
+        {
+          "type": "i4",
+          "description": "Spectrum timeTag - weekTime [ms]",
+          "wireName": "timeTag",
+          "name": "TimeTag"
+        },
+        {
+          "type": "a1",
+          "count": "(8)",
+          "description": "Spectrum log point",
+          "wireName": "logPoint",
+          "name": "LogPoint"
+        },
+        {
+          "type": "a1",
+          "description": "Spectrum antenna",
+          "wireName": "antenna",
+          "name": "Antenna"
+        }
+      ]
+    },
+    {
+      "name": "GlonassSatelliteDelay",
+      "page": 119,
+      "fields": [
+        {
+          "type": "i1",
+          "description": "GLONASS FCN[-7\u20267]",
+          "wireName": "fcn",
+          "name": "Fcn"
+        },
+        {
+          "type": "f4",
+          "description": "Phase delay [cycles]",
+          "wireName": "phase",
+          "name": "Phase"
+        },
+        {
+          "type": "f4",
+          "description": "Range delay [s]",
+          "wireName": "range",
+          "name": "Range"
+        }
+      ]
+    },
+    {
+      "name": "BandDelay",
+      "page": 120,
+      "fields": [
+        {
+          "type": "i1",
+          "description": "Band, see table below",
+          "wireName": "band",
+          "name": "Band"
+        },
+        {
+          "type": "i1",
+          "description": "0 - 1.023 MHz (C/A-like), 1 - 10.23 MHz (P-like)",
+          "wireName": "code_frq",
+          "name": "Code_frq"
+        },
+        {
+          "type": "f4",
+          "description": "Code delay [s]",
+          "wireName": "delay",
+          "name": "Delay"
+        }
+      ]
+    },
+    {
+      "name": "SpoofingSatelliteData",
+      "page": 130,
+      "fields": [
+        {
+          "type": "u2",
+          "description": "SVID from ESI, but 2 bytes long",
+          "wireName": "svid",
+          "name": "Svid"
+        },
+        {
+          "type": "u2",
+          "description": "Main peak value [percents]",
+          "wireName": "peak1",
+          "name": "Peak1"
+        },
+        {
+          "type": "u2",
+          "description": "Second peak value [percents]",
+          "wireName": "peak2",
+          "name": "Peak2"
+        },
+        {
+          "type": "i4",
+          "description": "Delta range between peaks [meters]",
+          "wireName": "dRange",
+          "name": "DRange"
+        }
+      ]
+    },
+    {
+      "name": "GpsAlmanacData",
+      "page": 105,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number within the range [1\u202637]",
+          "wireName": "sv",
+          "name": "Sv"
+        },
+        {
+          "type": "i2",
+          "description": "Almanac reference week []",
+          "wireName": "wna",
+          "name": "Wna"
+        },
+        {
+          "type": "i4",
+          "description": "Almanac reference time of week [s]",
+          "wireName": "toa",
+          "name": "Toa"
+        },
+        {
+          "type": "u1",
+          "description": "Health summary (from almanac), [bitfield]",
+          "wireName": "healthA",
+          "name": "HealthA"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite health (page 25 of subframe 5) []",
+          "wireName": "healthS",
+          "name": "HealthS"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite configuration (page 25 of subframe 4)",
+          "wireName": "config",
+          "name": "Config"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s/s]",
+          "wireName": "af1",
+          "name": "Af1"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s]",
+          "wireName": "af0",
+          "name": "Af0"
+        },
+        {
+          "type": "f4",
+          "description": "Square root of the semi-major axis [m^0.5]",
+          "wireName": "rootA",
+          "name": "RootA"
+        },
+        {
+          "type": "f4",
+          "description": "Eccentricity []",
+          "wireName": "ecc",
+          "name": "Ecc"
+        },
+        {
+          "type": "f4",
+          "description": "Mean Anomaly at reference time [semi-circles]",
+          "wireName": "m0",
+          "name": "M0"
+        },
+        {
+          "type": "f4",
+          "description": "Longitude of ascending node of orbit plane",
+          "wireName": "omega0",
+          "name": "Omega0"
+        },
+        {
+          "type": "f4",
+          "description": "Argument of perigee [semi-circles]",
+          "wireName": "argPer",
+          "name": "ArgPer"
+        },
+        {
+          "type": "f4",
+          "description": "Correction to inclination angle [semi-circles]",
+          "wireName": "deli",
+          "name": "Deli"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of right ascension [semi-circle/s]",
+          "wireName": "omegaDot",
+          "name": "OmegaDot"
+        }
+      ]
+    },
+    {
+      "name": "IonosphericParameters",
+      "page": 129,
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Time of week [s]",
+          "wireName": "tot",
+          "name": "Tot"
+        },
+        {
+          "type": "u2",
+          "description": "Week number (taken from the first subframe)",
+          "wireName": "wn",
+          "name": "Wn"
+        },
+        {
+          "type": "f4",
+          "description": "[s]",
+          "wireName": "alpha0",
+          "name": "Alpha0"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles]",
+          "wireName": "alpha1",
+          "name": "Alpha1"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles2]",
+          "wireName": "alpha2",
+          "name": "Alpha2"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles3]",
+          "wireName": "alpha3",
+          "name": "Alpha3"
+        },
+        {
+          "type": "f4",
+          "description": "[s]",
+          "wireName": "beta0",
+          "name": "Beta0"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles]",
+          "wireName": "beta1",
+          "name": "Beta1"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles2]",
+          "wireName": "beta2",
+          "name": "Beta2"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles3]",
+          "wireName": "beta3",
+          "name": "Beta3"
+        }
+      ]
+    },
+    {
+      "name": "GlonassAlmanacExtension",
+      "page": 107,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "<reserved>",
+          "wireName": "reserved",
+          "name": "Reserved"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of coarse satellite clock correction to",
+          "wireName": "gammaN",
+          "name": "GammaN"
+        }
+      ]
+    },
+    {
+      "name": "GlonassEphemerisExtension",
+      "page": 112,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Signal type [bitfield]",
+          "wireName": "navType",
+          "name": "NavType"
+        },
+        {
+          "type": "f4",
+          "description": "Derivation of rate of satellite clock offset [s/s/s]",
+          "wireName": "beta",
+          "name": "Beta"
+        },
+        {
+          "type": "f4",
+          "description": "Derivation of \u2018tauSys\u2019 [s/s]",
+          "wireName": "tauSysDot",
+          "name": "TauSysDot"
+        },
+        {
+          "type": "u1",
+          "description": "Age of clock information (days)",
+          "wireName": "ec",
+          "name": "Ec"
+        },
+        {
+          "type": "u1",
+          "description": "Age of ephemeris information (days)",
+          "wireName": "ee",
+          "name": "Ee"
+        },
+        {
+          "type": "i1",
+          "description": "Clock accuracy index",
+          "wireName": "fc",
+          "name": "Fc"
+        },
+        {
+          "type": "i1",
+          "description": "Ephemeris accuracy index",
+          "wireName": "fe",
+          "name": "Fe"
+        },
+        {
+          "type": "u2",
+          "wireName": "reserv",
+          "name": "Reserv"
+        }
+      ]
+    },
+    {
+      "name": "GpsEphemerisOptionalData",
+      "page": 109,
+      "custom": true,
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Signal type [bitfield]",
+          "wireName": "navType",
+          "name": "NavType"
+        },
+        {
+          "type": "i4",
+          "description": "Time of prediction for ephemeris data",
+          "wireName": "lTope",
+          "name": "LTope"
+        },
+        {
+          "type": "i4",
+          "description": "Time of prediction for clock data",
+          "wireName": "lTopc",
+          "name": "LTopc"
+        },
+        {
+          "type": "f8",
+          "description": "Change rate in semi-major axis",
+          "wireName": "dADot",
+          "name": "DADot"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of mean motion",
+          "wireName": "fDelnDot",
+          "name": "FDelnDot"
+        },
+        {
+          "type": "i1",
+          "description": "SV ephemeris URA index",
+          "wireName": "cURAoe",
+          "name": "CURAoe"
+        },
+        {
+          "type": "i1",
+          "description": "SV clock URA index",
+          "wireName": "cURAoc",
+          "name": "CURAoc"
+        },
+        {
+          "type": "i1",
+          "description": "SV clock URA change index",
+          "wireName": "cURAoc1",
+          "name": "CURAoc1"
+        },
+        {
+          "type": "i1",
+          "description": "SV clock URA change rate index",
+          "wireName": "cURAoc2",
+          "name": "CURAoc2"
+        },
+        {
+          "name": "Cnav",
+          "type": "GpsCnavInterSignalCorrections",
+          "nullable": true
+        },
+        {
+          "name": "Cnav2",
+          "type": "GpsCnav2InterSignalCorrections",
+          "nullable": true
+        },
+        {
+          "type": "f4",
+          "description": "correction to \u2018af0\u2019. Exact term = af0 + DAF0",
+          "wireName": "DAf0",
+          "name": "DAf0"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouModernEphemerisData",
+      "page": 110,
+      "custom": true,
+      "fields": [
+        {
+          "type": "f8",
+          "description": "derivative of A",
+          "wireName": "ADot",
+          "name": "ADot"
+        },
+        {
+          "type": "f4",
+          "description": "derivative of DelN",
+          "wireName": "DelNDot",
+          "name": "DelNDot"
+        },
+        {
+          "type": "f4",
+          "description": "ISC of B1C signal",
+          "wireName": "isc_B1C",
+          "name": "Isc_B1C"
+        },
+        {
+          "type": "f4",
+          "description": "ISC of B1A signal",
+          "wireName": "isc_B2A",
+          "name": "Isc_B2A"
+        },
+        {
+          "type": "f4",
+          "description": "Optional, only if receiver supports B2B",
+          "wireName": "tgd_B2Bdata",
+          "name": "Tgd_B2Bdata",
+          "nullable": true
+        },
+        {
+          "type": "f4",
+          "description": "Optional, only if receiver supports B2B",
+          "wireName": "tgd_B2Bpilot",
+          "name": "Tgd_B2Bpilot",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "name": "IqSample",
+      "page": 104,
+      "custom": true,
+      "fields": [
+        {
+          "name": "I",
+          "type": "i2"
+        },
+        {
+          "name": "Q",
+          "type": "i2",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "name": "SpectrumBlock",
+      "page": 118,
+      "custom": true,
+      "fields": [
+        {
+          "name": "Values",
+          "type": "i2",
+          "count": "SpectrumCount"
+        }
+      ]
+    },
+    {
+      "name": "ExtendedSpectrumBlock",
+      "page": 118,
+      "custom": true,
+      "fields": [
+        {
+          "name": "Values",
+          "type": "i2",
+          "count": "SpectrumCount"
+        },
+        {
+          "name": "AgcMinimum",
+          "type": "u1",
+          "count": "SpectrumCount"
+        },
+        {
+          "name": "AgcMaximum",
+          "type": "u1",
+          "count": "SpectrumCount"
+        }
+      ]
+    },
+    {
+      "name": "LegacyRawMeasurementSatellite",
+      "page": 557,
+      "fields": [
+        {
+          "name": "ReferenceRange",
+          "type": "u4"
+        },
+        {
+          "name": "Usi",
+          "type": "u1"
+        },
+        {
+          "name": "SlotFlags",
+          "type": "u1"
+        },
+        {
+          "name": "HeaderExtension",
+          "type": "u1",
+          "count": "remaining"
+        },
+        {
+          "name": "Slots",
+          "type": "LegacyRawMeasurementSlot",
+          "count": "remaining"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "LegacyRawMeasurementSlot",
+      "page": 558,
+      "fields": [
+        {
+          "name": "StatusOrDeltaRange",
+          "type": "i2"
+        },
+        {
+          "name": "Word1",
+          "type": "u4"
+        },
+        {
+          "name": "Flags",
+          "type": "u2",
+          "nullable": true
+        },
+        {
+          "name": "Lock",
+          "type": "u2",
+          "nullable": true
+        },
+        {
+          "name": "Word2",
+          "type": "u4",
+          "nullable": true
+        },
+        {
+          "name": "ExtensionData",
+          "type": "u1",
+          "count": "remaining"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "LegacyClockOffset",
+      "page": 560,
+      "fields": [
+        {
+          "name": "Word1",
+          "type": "u4"
+        },
+        {
+          "name": "Word2",
+          "type": "u4"
+        },
+        {
+          "name": "ExtensionData",
+          "type": "u1",
+          "count": "remaining"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "LegacyGpsNavigationSatellite",
+      "page": 561,
+      "fields": [
+        {
+          "name": "Prn",
+          "type": "i1"
+        },
+        {
+          "name": "Counter",
+          "type": "u1"
+        },
+        {
+          "name": "Data",
+          "type": "u4",
+          "count": "10"
+        },
+        {
+          "name": "ExtensionData",
+          "type": "u1",
+          "count": "remaining"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "LegacyGlonassNavigationSatellite",
+      "page": 562,
+      "fields": [
+        {
+          "name": "FrequencyChannelPlusOne",
+          "type": "i1"
+        },
+        {
+          "name": "Counter",
+          "type": "u1"
+        },
+        {
+          "name": "Data",
+          "type": "u4",
+          "count": "4"
+        },
+        {
+          "name": "ExtensionData",
+          "type": "u1",
+          "count": "remaining"
+        }
+      ],
+      "custom": true
+    }
+  ],
+  "messages": [
+    {
+      "name": "FileIdentifier",
+      "ids": [
+        "JP"
+      ],
+      "page": 73,
+      "declaredBodySize": "85",
+      "checksum": "None",
+      "fields": [
+        {
+          "type": "a1",
+          "count": "(5)",
+          "description": "File type identifier",
+          "wireName": "id",
+          "name": "FileTypeIdentifier",
+          "default": "RLOGF"
+        },
+        {
+          "type": "a1",
+          "count": "(80)",
+          "description": "Human-readable stream description",
+          "wireName": "description",
+          "name": "Description"
+        }
+      ]
+    },
+    {
+      "name": "MessagesFormat",
+      "ids": [
+        "MF"
+      ],
+      "page": 74,
+      "declaredBodySize": "9",
+      "checksum": "AsciiHex8",
+      "fields": [
+        {
+          "type": "a1",
+          "count": "(2)",
+          "description": "JP identifier",
+          "wireName": "id",
+          "name": "FormatIdentifier",
+          "default": "JP"
+        },
+        {
+          "type": "a1",
+          "count": "(2)",
+          "description": "Format major version as decimal (e.g., '01')",
+          "wireName": "majorVer",
+          "name": "MajorVer",
+          "default": "01"
+        },
+        {
+          "type": "a1",
+          "count": "(2)",
+          "description": "Format minor version as decimal",
+          "wireName": "minorVer",
+          "name": "MinorVer",
+          "default": "00"
+        },
+        {
+          "type": "a1",
+          "description": "Bytes order",
+          "wireName": "order",
+          "name": "Order",
+          "default": "0"
+        }
+      ],
+      "validation": "ValidateFormat()"
+    },
+    {
+      "name": "ReceiverTime",
+      "ids": [
+        "~~"
+      ],
+      "page": 74,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Tr modulo 1 day (86400000 ms) [ms]",
+          "wireName": "tod",
+          "name": "TimeOfDay"
+        }
+      ]
+    },
+    {
+      "name": "EpochTime",
+      "ids": [
+        "::"
+      ],
+      "page": 75,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Tr modulo 1 day (86400000 ms) [ms]",
+          "wireName": "tod",
+          "name": "TimeOfDay"
+        }
+      ]
+    },
+    {
+      "name": "ReceiverDate",
+      "ids": [
+        "RD"
+      ],
+      "page": 75,
+      "declaredBodySize": "6",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u2",
+          "description": "Current year [1\u202665534][]",
+          "wireName": "year",
+          "name": "Year"
+        },
+        {
+          "type": "u1",
+          "description": "Current month [1\u202612] []",
+          "wireName": "month",
+          "name": "Month"
+        },
+        {
+          "type": "u1",
+          "description": "Current day [1\u202631] []",
+          "wireName": "day",
+          "name": "Day"
+        },
+        {
+          "type": "u1",
+          "description": "Receiver reference time [enumerated]",
+          "wireName": "base",
+          "name": "ReferenceTimeScale"
+        }
+      ]
+    },
+    {
+      "name": "ReferenceTimeOffset",
+      "ids": [
+        "TO"
+      ],
+      "page": 75,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Trr - Tr [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Trr - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "ReferenceTimeOffsetDerivative",
+      "ids": [
+        "DO"
+      ],
+      "page": 75,
+      "declaredBodySize": "9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Derivative of (Trr - Tr) [s/s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f4",
+          "description": "Smoothed derivative of (Trr - Tr) [s/s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "TimeApproximationAccuracy",
+      "ids": [
+        "BP"
+      ],
+      "page": 76,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Accuracy [s]",
+          "wireName": "acc",
+          "name": "Acc"
+        }
+      ]
+    },
+    {
+      "name": "GpsTime",
+      "ids": [
+        "GT"
+      ],
+      "page": 76,
+      "declaredBodySize": "8",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Time of week [ms]",
+          "wireName": "tow",
+          "name": "TimeOfWeek"
+        },
+        {
+          "type": "u2",
+          "description": "GPS week number (modulo 1024) []",
+          "wireName": "wn",
+          "name": "Wn"
+        },
+        {
+          "type": "u1",
+          "description": "number of 1024-weeks cycle",
+          "wireName": "cycle",
+          "name": "Cycle"
+        }
+      ]
+    },
+    {
+      "name": "GpsTimeOffset",
+      "ids": [
+        "GO"
+      ],
+      "page": 76,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Tg - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Tg - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "GlonassTime",
+      "ids": [
+        "NT"
+      ],
+      "page": 76,
+      "declaredBodySize": "8",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "time of day [ms]",
+          "wireName": "tod",
+          "name": "TimeOfDay"
+        },
+        {
+          "type": "u2",
+          "description": "GLONASS day number (modulo 4 years",
+          "wireName": "dn",
+          "name": "Dn"
+        },
+        {
+          "type": "u1",
+          "description": "number of 4-years cycle",
+          "wireName": "cycle",
+          "name": "Cycle"
+        }
+      ]
+    },
+    {
+      "name": "GlonassTimeOffset",
+      "ids": [
+        "NO"
+      ],
+      "page": 76,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Tn - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Tn - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "GalileoTimeOffset",
+      "ids": [
+        "EO"
+      ],
+      "page": 76,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Te - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Te - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "SbasTimeOffset",
+      "ids": [
+        "WO"
+      ],
+      "page": 77,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Tw - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Tw - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "QzssTimeOffset",
+      "ids": [
+        "QO"
+      ],
+      "page": 77,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Tq - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Tq - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouTimeOffset",
+      "ids": [
+        "CO"
+      ],
+      "page": 77,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Tb - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Tb - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "IrnssTimeOffset",
+      "ids": [
+        "Io"
+      ],
+      "page": 77,
+      "declaredBodySize": "17",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "(Ti - Tr) [s]",
+          "wireName": "val",
+          "name": "Val"
+        },
+        {
+          "type": "f8",
+          "description": "Smoothed (Ti - Tr) [s]",
+          "wireName": "sval",
+          "name": "Sval"
+        }
+      ]
+    },
+    {
+      "name": "GpsUtcParameters",
+      "ids": [
+        "UO"
+      ],
+      "page": 77,
+      "declaredBodySize": "24",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "UtcOffsetParameters",
+          "description": "GPS UTC time offset parameters",
+          "wireName": "utc",
+          "name": "Utc"
+        }
+      ]
+    },
+    {
+      "name": "SbasUtcParameters",
+      "ids": [
+        "WU"
+      ],
+      "page": 78,
+      "declaredBodySize": "32",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "UtcOffsetParameters",
+          "description": "SBAS to UTC time offset parameters",
+          "wireName": "utc",
+          "name": "Utc"
+        },
+        {
+          "type": "i1",
+          "description": "UTC Standard Identifier[]",
+          "wireName": "utcsi",
+          "name": "Utcsi"
+        },
+        {
+          "type": "u4",
+          "description": "Reference time of week [s]",
+          "wireName": "tow",
+          "name": "TimeOfWeek"
+        },
+        {
+          "type": "u2",
+          "description": "Reference week number []",
+          "wireName": "wn",
+          "name": "Wn"
+        },
+        {
+          "type": "u1",
+          "description": "Flags, reserved (always 0)",
+          "wireName": "flags",
+          "name": "Flags"
+        }
+      ]
+    },
+    {
+      "name": "GalileoUtcGpsParameters",
+      "ids": [
+        "EU"
+      ],
+      "page": 78,
+      "declaredBodySize": "40",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "UtcOffsetParameters",
+          "description": "GALILEO to UTC time offset parameters",
+          "wireName": "utc",
+          "name": "Utc"
+        },
+        {
+          "type": "f4",
+          "description": "Constant term of time offset [s]",
+          "wireName": "a0g",
+          "name": "A0g"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of time offset [s/s]",
+          "wireName": "a1g",
+          "name": "A1g"
+        },
+        {
+          "type": "u4",
+          "description": "Reference time of week",
+          "wireName": "t0g",
+          "name": "T0g"
+        },
+        {
+          "type": "u2",
+          "description": "Reference week number",
+          "wireName": "wn0g",
+          "name": "Wn0g"
+        },
+        {
+          "type": "u2",
+          "description": "Flags of data availability [bitfield]",
+          "wireName": "flags",
+          "name": "Flags"
+        }
+      ]
+    },
+    {
+      "name": "QzssUtcParameters",
+      "ids": [
+        "QU"
+      ],
+      "page": 78,
+      "declaredBodySize": "24",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "UtcOffsetParameters",
+          "description": "QZSS UTC time offset parameters",
+          "wireName": "utc",
+          "name": "Utc"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouUtcParameters",
+      "ids": [
+        "CU"
+      ],
+      "page": 79,
+      "declaredBodySize": "24",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "UtcOffsetParameters",
+          "description": "BeiDou UTC time offset parameters",
+          "wireName": "utc",
+          "name": "Utc"
+        }
+      ]
+    },
+    {
+      "name": "IrnssUtcParameters",
+      "ids": [
+        "IU"
+      ],
+      "page": 79,
+      "declaredBodySize": "24",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "UtcOffsetParameters",
+          "description": "IRNSS UTC time offset parameters",
+          "wireName": "utc",
+          "name": "Utc"
+        }
+      ]
+    },
+    {
+      "name": "GlonassUtcGpsParameters",
+      "ids": [
+        "NU"
+      ],
+      "page": 79,
+      "declaredBodySize": "27",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Time correction to GLONASS time scale (vs. UTC(SU))",
+          "wireName": "tauSys",
+          "name": "TauSys"
+        },
+        {
+          "type": "f4",
+          "description": "tauGps = Tgps - Tglo [s]",
+          "wireName": "tauGps",
+          "name": "TauGps"
+        },
+        {
+          "type": "f4",
+          "description": "Coefficient for calculation of UT1",
+          "wireName": "B1",
+          "name": "B1"
+        },
+        {
+          "type": "f4",
+          "description": "Coefficient for calculation of UT1",
+          "wireName": "B2",
+          "name": "B2"
+        },
+        {
+          "type": "u1",
+          "description": "Leap second information",
+          "wireName": "KP",
+          "name": "KP"
+        },
+        {
+          "type": "u1",
+          "description": "Number of 4-year cycle [1\u202631]",
+          "wireName": "N4",
+          "name": "N4"
+        },
+        {
+          "type": "i2",
+          "description": "Day number within 4-year period []",
+          "wireName": "Dn",
+          "name": "Dn"
+        },
+        {
+          "type": "i2",
+          "description": "Current day number at the decoding time",
+          "wireName": "Nt",
+          "name": "Nt",
+          "legacyOptionalTail": true
+        }
+      ],
+      "legacyBodySize": "25",
+      "legacyLayoutSource": "RTKLIB test/data/rcvraw/javad_20110115.jps; trailing extension rule GREIS 4.2.01 section 3.4.1, page 67."
+    },
+    {
+      "name": "SolutionTime",
+      "ids": [
+        "ST"
+      ],
+      "page": 79,
+      "declaredBodySize": "6",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Solution time. Tr modulo 1 day (86400000 ms)[ms]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "CartesianPosition",
+      "ids": [
+        "PO"
+      ],
+      "page": 80,
+      "declaredBodySize": "30",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "SpecificCartesianPosition",
+      "ids": [
+        "Po"
+      ],
+      "page": 80,
+      "declaredBodySize": "38",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "Source of position",
+          "wireName": "system",
+          "name": "System"
+        },
+        {
+          "type": "a1",
+          "count": "(5)",
+          "description": "Name of the coordinate reference system",
+          "wireName": "crsCode",
+          "name": "CrsCode"
+        },
+        {
+          "type": "u2",
+          "description": "Counter incrementing on every potential change",
+          "wireName": "chIssue",
+          "name": "ChIssue"
+        }
+      ]
+    },
+    {
+      "name": "CartesianVelocity",
+      "ids": [
+        "VE"
+      ],
+      "page": 80,
+      "declaredBodySize": "18",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Cartesian velocity vector [m/s]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f4",
+          "description": "Cartesian velocity vector [m/s]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f4",
+          "description": "Cartesian velocity vector [m/s]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Velocity 3D RMS [m/s]",
+          "wireName": "vSigma",
+          "name": "VelocitySigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "CartesianPositionVelocity",
+      "ids": [
+        "PV"
+      ],
+      "page": 80,
+      "declaredBodySize": "46",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "missing": true,
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "missing": true,
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "missing": true,
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "missing": true,
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "f4",
+          "description": "Cartesian velocities [m/s]",
+          "missing": true,
+          "wireName": "vx",
+          "name": "Vx"
+        },
+        {
+          "type": "f4",
+          "description": "Cartesian velocities [m/s]",
+          "missing": true,
+          "wireName": "vy",
+          "name": "Vy"
+        },
+        {
+          "type": "f4",
+          "description": "Cartesian velocities [m/s]",
+          "missing": true,
+          "wireName": "vz",
+          "name": "Vz"
+        },
+        {
+          "type": "f4",
+          "description": "Velocity 3D RMS [m/s]",
+          "missing": true,
+          "wireName": "vSigma",
+          "name": "VelocitySigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "GeodeticPosition",
+      "ids": [
+        "PG"
+      ],
+      "page": 81,
+      "declaredBodySize": "30",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Latitude [rad]",
+          "wireName": "lat",
+          "name": "Latitude"
+        },
+        {
+          "type": "f8",
+          "description": "Longitude [rad]",
+          "wireName": "lon",
+          "name": "Longitude"
+        },
+        {
+          "type": "f8",
+          "description": "Ellipsoidal height [m]",
+          "wireName": "alt",
+          "name": "Altitude"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "SpecificGeodeticPosition",
+      "ids": [
+        "Pg"
+      ],
+      "page": 81,
+      "declaredBodySize": "38",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Latitude [rad]",
+          "wireName": "lat",
+          "name": "Latitude"
+        },
+        {
+          "type": "f8",
+          "description": "Longitude [rad]",
+          "wireName": "lon",
+          "name": "Longitude"
+        },
+        {
+          "type": "f8",
+          "description": "Ellipsoidal height [m]",
+          "wireName": "alt",
+          "name": "Altitude"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "Coordinate system",
+          "wireName": "system",
+          "name": "System"
+        },
+        {
+          "type": "a1",
+          "count": "(5)",
+          "description": "Name of the coordinate reference system",
+          "wireName": "crsCode",
+          "name": "CrsCode"
+        },
+        {
+          "type": "u2",
+          "description": "Counter incrementing on every potential change",
+          "wireName": "chIssue",
+          "name": "ChIssue"
+        }
+      ]
+    },
+    {
+      "name": "GeodeticVelocity",
+      "ids": [
+        "VG"
+      ],
+      "page": 81,
+      "declaredBodySize": "18",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Northing velocity [m/s]",
+          "wireName": "lat",
+          "name": "Latitude"
+        },
+        {
+          "type": "f4",
+          "description": "Easting velocity [m/s]",
+          "wireName": "lon",
+          "name": "Longitude"
+        },
+        {
+          "type": "f4",
+          "description": "Height velocity [m/s]",
+          "wireName": "alt",
+          "name": "Altitude"
+        },
+        {
+          "type": "f4",
+          "description": "Velocity 3D RMS [m/s]",
+          "wireName": "vSigma",
+          "name": "VelocitySigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "PositionVelocityRms",
+      "ids": [
+        "SG"
+      ],
+      "page": 81,
+      "declaredBodySize": "18",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Horizontal position RMS error [m]",
+          "missing": true,
+          "wireName": "hpos",
+          "name": "Hpos"
+        },
+        {
+          "type": "f4",
+          "description": "Vertical position RMS error [m]",
+          "missing": true,
+          "wireName": "vpos",
+          "name": "Vpos"
+        },
+        {
+          "type": "f4",
+          "description": "Horizontal velocity RMS error [m/s]",
+          "missing": true,
+          "wireName": "hvel",
+          "name": "Hvel"
+        },
+        {
+          "type": "f4",
+          "description": "Vertical velocity RMS error [m/s]",
+          "missing": true,
+          "wireName": "vvel",
+          "name": "Vvel"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "LocalPlanePosition",
+      "ids": [
+        "mp"
+      ],
+      "page": 82,
+      "declaredBodySize": "45",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Northern coordinate [m]",
+          "wireName": "n",
+          "name": "N"
+        },
+        {
+          "type": "f8",
+          "description": "Eastern coordinate [m]",
+          "wireName": "e",
+          "name": "E"
+        },
+        {
+          "type": "f8",
+          "description": "Altitude above local ellipsoid [m]",
+          "wireName": "u",
+          "name": "U"
+        },
+        {
+          "type": "f8",
+          "description": "Geoid separation relatively to local ellipsoid [m]",
+          "wireName": "sep",
+          "name": "Sep"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "Grid source",
+          "wireName": "grid",
+          "name": "Grid"
+        },
+        {
+          "type": "u1",
+          "description": "Geoid source",
+          "wireName": "geoid",
+          "name": "Geoid"
+        },
+        {
+          "type": "u2",
+          "description": "EPSG code of used projection",
+          "wireName": "prj",
+          "name": "Prj"
+        },
+        {
+          "type": "u1",
+          "description": "Grid zone for global systems UTM and UPS, 0 otherwise",
+          "wireName": "gridZone",
+          "name": "GridZone"
+        },
+        {
+          "type": "u2",
+          "description": "Counter incrementing on every potential change",
+          "wireName": "chIssue",
+          "name": "ChIssue"
+        }
+      ]
+    },
+    {
+      "name": "ReferenceStationLocalPlanePosition",
+      "ids": [
+        "bp"
+      ],
+      "page": 82,
+      "declaredBodySize": "42",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Northern coordinate [m]",
+          "wireName": "n",
+          "name": "N"
+        },
+        {
+          "type": "f8",
+          "description": "Eastern coordinate [m]",
+          "wireName": "e",
+          "name": "E"
+        },
+        {
+          "type": "f8",
+          "description": "Altitude above local ellipsoid [m]",
+          "wireName": "u",
+          "name": "U"
+        },
+        {
+          "type": "f8",
+          "description": "Geoid separation relatively to local ellipsoid [m]",
+          "wireName": "sep",
+          "name": "Sep"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "Grid source",
+          "wireName": "grid",
+          "name": "Grid"
+        },
+        {
+          "type": "u1",
+          "description": "Geoid source",
+          "wireName": "geoid",
+          "name": "Geoid"
+        },
+        {
+          "type": "u2",
+          "description": "EPSG code of used projection",
+          "wireName": "prj",
+          "name": "Prj"
+        }
+      ]
+    },
+    {
+      "name": "DilutionOfPrecision",
+      "ids": [
+        "DP"
+      ],
+      "page": 83,
+      "declaredBodySize": "18",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Horizontal dilution of precision (HDOP)[]",
+          "wireName": "hdop",
+          "name": "Hdop"
+        },
+        {
+          "type": "f4",
+          "description": "Vertical dilution of precision (VDOP) []",
+          "wireName": "vdop",
+          "name": "Vdop"
+        },
+        {
+          "type": "f4",
+          "description": "Time dilution of precision (TDOP) []",
+          "wireName": "tdop",
+          "name": "Tdop"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "f4",
+          "description": "East dilution of precision (eDOP) []",
+          "wireName": "edop",
+          "name": "Edop",
+          "legacyOptionalTail": true
+        }
+      ],
+      "legacyBodySize": "14",
+      "legacyLayoutSource": "RTKLIB test/data/rcvraw/javad_20110115.jps; trailing extension rule GREIS 4.2.01 section 3.4.1, page 67."
+    },
+    {
+      "name": "PositionCovariance",
+      "ids": [
+        "SP"
+      ],
+      "page": 83,
+      "declaredBodySize": "42",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "xx",
+          "name": "Xx"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "yy",
+          "name": "Yy"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "zz",
+          "name": "Zz"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "tt",
+          "name": "Tt"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "xy",
+          "name": "Xy"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "xz",
+          "name": "Xz"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "xt",
+          "name": "Xt"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "yz",
+          "name": "Yz"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "yt",
+          "name": "Yt"
+        },
+        {
+          "type": "f4",
+          "description": "[m^2]",
+          "wireName": "zt",
+          "name": "Zt"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "VelocityCovariance",
+      "ids": [
+        "SV"
+      ],
+      "page": 83,
+      "declaredBodySize": "42",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "xx",
+          "name": "Xx"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "yy",
+          "name": "Yy"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "zz",
+          "name": "Zz"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "tt",
+          "name": "Tt"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "xy",
+          "name": "Xy"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "xz",
+          "name": "Xz"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "xt",
+          "name": "Xt"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "yz",
+          "name": "Yz"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "yt",
+          "name": "Yt"
+        },
+        {
+          "type": "f4",
+          "description": "[(m/s)^2]",
+          "wireName": "zt",
+          "name": "Zt"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "Baseline",
+      "ids": [
+        "BL"
+      ],
+      "page": 83,
+      "declaredBodySize": "34",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Calculated baseline vector coordinates [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Calculated baseline vector coordinates [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Calculated baseline vector coordinates [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Baseline 3D RMS [m]",
+          "wireName": "sigma",
+          "name": "Sigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "i4",
+          "description": "receiver time of the baseline estimate [s]",
+          "wireName": "time",
+          "name": "Time"
+        }
+      ]
+    },
+    {
+      "name": "AttitudeBaselines",
+      "ids": [
+        "bL"
+      ],
+      "page": 84,
+      "declaredBodySize": "52",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "baseline vector M-S0 [m]",
+          "wireName": "bl0",
+          "name": "Bl0"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "baseline vector M-S1 [m]",
+          "wireName": "bl1",
+          "name": "Bl1"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "baseline vector M-S2 [m]",
+          "wireName": "bl2",
+          "name": "Bl2"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "estimated accuracies for baseline vectors [m]",
+          "wireName": "rms",
+          "name": "Rms"
+        },
+        {
+          "type": "u1",
+          "count": "(3)",
+          "description": "solution types for baseline vectors",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "AttitudeRotationMatrix",
+      "ids": [
+        "mR"
+      ],
+      "page": 84,
+      "declaredBodySize": "37",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q00",
+          "name": "Q00"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q01",
+          "name": "Q01"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q02",
+          "name": "Q02"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q10",
+          "name": "Q10"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q11",
+          "name": "Q11"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q12",
+          "name": "Q12"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q20",
+          "name": "Q20"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q21",
+          "name": "Q21"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q22",
+          "name": "Q22"
+        }
+      ]
+    },
+    {
+      "name": "PositionStatistics",
+      "ids": [
+        "PS"
+      ],
+      "page": 84,
+      "declaredBodySize": "9 + 3 * N_SYS",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "Number of GPS SVs locked",
+          "wireName": "gpsLocked",
+          "name": "GpsLocked"
+        },
+        {
+          "type": "u1",
+          "description": "Number of GLONASS SVs locked",
+          "wireName": "gloLocked",
+          "name": "GloLocked"
+        },
+        {
+          "type": "u1",
+          "description": "Number of GPS SVs available for positioning",
+          "wireName": "gpsAvail",
+          "name": "GpsAvail"
+        },
+        {
+          "type": "u1",
+          "description": "Number of GLONASS SVs available for positioning",
+          "wireName": "gloAvail",
+          "name": "GloAvail"
+        },
+        {
+          "type": "u1",
+          "description": "Number of GPS SVs used in positioning",
+          "wireName": "gpsUsed",
+          "name": "GpsUsed"
+        },
+        {
+          "type": "u1",
+          "description": "Number of GLONASS SVs used in positioning",
+          "wireName": "gloUsed",
+          "name": "GloUsed"
+        },
+        {
+          "type": "u1",
+          "description": "Ambiguity fixing progress indicator",
+          "wireName": "fixProg",
+          "name": "FixProg"
+        },
+        {
+          "type": "SystemPositionStatistics",
+          "count": "remaining",
+          "description": "Statistics for the rest of the systems",
+          "wireName": "stat",
+          "name": "Stat"
+        }
+      ]
+    },
+    {
+      "name": "ContinuousPositionTime",
+      "ids": [
+        "PT"
+      ],
+      "page": 85,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Continuous position computation time [s]",
+          "wireName": "pt",
+          "name": "Pt"
+        }
+      ]
+    },
+    {
+      "name": "ExtendedSatelliteIndices",
+      "ids": [
+        "SX"
+      ],
+      "page": 92,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "SatelliteIdentifier",
+          "count": "remaining",
+          "description": "ESI array []",
+          "wireName": "esi",
+          "name": "Satellites"
+        }
+      ]
+    },
+    {
+      "name": "AntennaNames",
+      "ids": [
+        "AN"
+      ],
+      "page": 92,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "a1",
+          "count": "remaining",
+          "description": "Antenna names[a\u2026z]",
+          "wireName": "name",
+          "name": "Names"
+        }
+      ]
+    },
+    {
+      "name": "GlonassSatelliteNumbers",
+      "ids": [
+        "NN"
+      ],
+      "page": 93,
+      "declaredBodySize": "nGloSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "remaining",
+          "description": "GLONASS SV orbit slot number []",
+          "missing": true,
+          "wireName": "osn",
+          "name": "Osn"
+        }
+      ]
+    },
+    {
+      "name": "SatelliteElevations",
+      "ids": [
+        "EL"
+      ],
+      "page": 93,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i1",
+          "count": "remaining",
+          "description": "Elevation angle [degrees] [-90\u202690)",
+          "missing": true,
+          "wireName": "elev",
+          "name": "Elev"
+        }
+      ]
+    },
+    {
+      "name": "SatelliteAzimuths",
+      "ids": [
+        "AZ"
+      ],
+      "page": 93,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "remaining",
+          "description": "Azimuth angle [degrees*2] [0\u2026180)",
+          "missing": true,
+          "wireName": "azim",
+          "name": "Azim"
+        }
+      ]
+    },
+    {
+      "name": "PseudoRanges",
+      "ids": [
+        "RX",
+        "RC",
+        "R1",
+        "R2",
+        "R3",
+        "R5",
+        "Rl"
+      ],
+      "page": 93,
+      "declaredBodySize": "8*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "count": "remaining",
+          "description": "Pseudo-range, [s]",
+          "missing": true,
+          "wireName": "pr",
+          "name": "Pr"
+        }
+      ]
+    },
+    {
+      "name": "IntegerPseudoRanges",
+      "ids": [
+        "rx",
+        "rc",
+        "r1",
+        "r2",
+        "r3",
+        "r5",
+        "rl"
+      ],
+      "page": 94,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i4",
+          "count": "remaining",
+          "description": "(PR[s] - Asys) / Ksys",
+          "missing": true,
+          "wireName": "spr",
+          "name": "Spr"
+        }
+      ]
+    },
+    {
+      "name": "RelativePseudoRanges",
+      "ids": [
+        "CR",
+        "1R",
+        "2R",
+        "3R",
+        "5R",
+        "lR"
+      ],
+      "page": 95,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "PR - REF, [s]",
+          "missing": true,
+          "wireName": "rpr",
+          "name": "Rpr"
+        }
+      ]
+    },
+    {
+      "name": "IntegerRelativePseudoRanges",
+      "ids": [
+        "cr",
+        "1r",
+        "2r",
+        "3r",
+        "5r",
+        "lr"
+      ],
+      "page": 95,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "(PR[s] - REF[s] - 2*10-7) * 1011",
+          "missing": true,
+          "wireName": "srpr",
+          "name": "Srpr"
+        }
+      ]
+    },
+    {
+      "name": "PseudoRangeCorrections",
+      "ids": [
+        "cm",
+        "1m",
+        "2m",
+        "3m",
+        "5m",
+        "lm"
+      ],
+      "page": 96,
+      "declaredBodySize": "2*nSats+2",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "Correction [Seconds * 1e11]",
+          "missing": true,
+          "wireName": "prc",
+          "name": "Prc"
+        },
+        {
+          "type": "u1",
+          "description": "Mode",
+          "wireName": "mode",
+          "name": "Mode"
+        }
+      ]
+    },
+    {
+      "name": "SmoothingCorrections",
+      "ids": [
+        "CC",
+        "C1",
+        "C2",
+        "C3",
+        "C5",
+        "Cl"
+      ],
+      "page": 96,
+      "declaredBodySize": "6*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "SmoothingCorrection",
+          "count": "remaining",
+          "description": "PR smoothing",
+          "missing": true,
+          "wireName": "smooth",
+          "name": "Smooth"
+        }
+      ]
+    },
+    {
+      "name": "IntegerSmoothingCorrections",
+      "ids": [
+        "cc",
+        "c1",
+        "c2",
+        "c3",
+        "c5",
+        "cl"
+      ],
+      "page": 97,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "Smoothing correction [s*10-11]",
+          "missing": true,
+          "wireName": "smooth",
+          "name": "Smooth"
+        }
+      ]
+    },
+    {
+      "name": "CarrierPhases",
+      "ids": [
+        "PC",
+        "P1",
+        "P2",
+        "P3",
+        "P5",
+        "Pl"
+      ],
+      "page": 97,
+      "declaredBodySize": "8*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "count": "remaining",
+          "description": "CP, [cycles]",
+          "missing": true,
+          "wireName": "cp",
+          "name": "Cp"
+        }
+      ]
+    },
+    {
+      "name": "IntegerCarrierPhases",
+      "ids": [
+        "pc",
+        "p1",
+        "p2",
+        "p3",
+        "p5",
+        "pl"
+      ],
+      "page": 97,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "count": "remaining",
+          "description": "CP, [cycles/1024]",
+          "missing": true,
+          "wireName": "scp",
+          "name": "Scp"
+        }
+      ]
+    },
+    {
+      "name": "RelativeCarrierPhases",
+      "ids": [
+        "CP",
+        "1P",
+        "2P",
+        "3P",
+        "5P",
+        "lP"
+      ],
+      "page": 98,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "cp / FLn - PR_REF [s]",
+          "missing": true,
+          "wireName": "rcp",
+          "name": "Rcp"
+        }
+      ]
+    },
+    {
+      "name": "IntegerRelativeCarrierPhases",
+      "ids": [
+        "cp",
+        "1p",
+        "2p",
+        "3p",
+        "5p",
+        "lp"
+      ],
+      "page": 98,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i4",
+          "count": "remaining",
+          "description": "cp / FLn - pr_ref, [s*2-40]",
+          "missing": true,
+          "wireName": "rcp",
+          "name": "Rcp"
+        }
+      ]
+    },
+    {
+      "name": "PhaseCorrections",
+      "ids": [
+        "cf",
+        "1f",
+        "2f",
+        "3f",
+        "5f",
+        "lf"
+      ],
+      "page": 99,
+      "declaredBodySize": "2*nSats+2",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "Correction [cycles * 1024]",
+          "missing": true,
+          "wireName": "phc",
+          "name": "Phc"
+        },
+        {
+          "type": "u1",
+          "description": "Mode",
+          "wireName": "mode",
+          "name": "Mode"
+        }
+      ]
+    },
+    {
+      "name": "Doppler",
+      "ids": [
+        "DX",
+        "DC",
+        "D1",
+        "D2",
+        "D3",
+        "D5",
+        "Dl"
+      ],
+      "page": 99,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i4",
+          "count": "remaining",
+          "description": "DP [Hz*10-4]",
+          "missing": true,
+          "wireName": "dp",
+          "name": "Dp"
+        }
+      ]
+    },
+    {
+      "name": "RelativeDoppler",
+      "ids": [
+        "0d",
+        "1d",
+        "2d",
+        "3d",
+        "5d",
+        "ld"
+      ],
+      "page": 100,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "(dp * FL1/FLn - dpCA1)[Hz*10-4]",
+          "missing": true,
+          "wireName": "srdp",
+          "name": "Srdp"
+        }
+      ]
+    },
+    {
+      "name": "SignalToNoise",
+      "ids": [
+        "EC",
+        "E1",
+        "E2",
+        "E3",
+        "E5",
+        "El"
+      ],
+      "page": 100,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "remaining",
+          "description": "C/N0 [dB*Hz]",
+          "missing": true,
+          "wireName": "cnr",
+          "name": "Cnr"
+        }
+      ]
+    },
+    {
+      "name": "SignalToNoiseQuarter",
+      "ids": [
+        "CE",
+        "1E",
+        "2E",
+        "3E",
+        "5E",
+        "lE"
+      ],
+      "page": 101,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "remaining",
+          "description": "C/N0 [0.25*dB*Hz]",
+          "missing": true,
+          "wireName": "cnrX4",
+          "name": "CnrX4"
+        }
+      ]
+    },
+    {
+      "name": "SignalToNoise256",
+      "ids": [
+        "s0",
+        "s1",
+        "s2",
+        "s3",
+        "s5",
+        "sl"
+      ],
+      "page": 101,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u2",
+          "count": "remaining",
+          "description": "C/N0 [(1/256)*dB*Hz]",
+          "missing": true,
+          "wireName": "cnrX256",
+          "name": "CnrX256"
+        }
+      ]
+    },
+    {
+      "name": "DataSignalToNoise256",
+      "ids": [
+        "j0",
+        "j1",
+        "j2",
+        "j3",
+        "j5",
+        "jl"
+      ],
+      "page": 101,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u2",
+          "count": "remaining",
+          "description": "C/N0 [(1/256)*dB*Hz]",
+          "missing": true,
+          "wireName": "cnrX256",
+          "name": "CnrX256"
+        }
+      ]
+    },
+    {
+      "name": "SignalLockFlags",
+      "ids": [
+        "FC",
+        "F1",
+        "F2",
+        "F3",
+        "F5",
+        "Fl"
+      ],
+      "page": 101,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u2",
+          "count": "remaining",
+          "description": "Lock Loop Flags [bitfield]",
+          "wireName": "flags",
+          "name": "Flags"
+        }
+      ]
+    },
+    {
+      "name": "InphaseAmplitude",
+      "ids": [
+        "ec",
+        "e1",
+        "e2",
+        "e3",
+        "e5"
+      ],
+      "page": 103,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "(I) amplitudes",
+          "missing": true,
+          "wireName": "amp",
+          "name": "Amp"
+        }
+      ]
+    },
+    {
+      "name": "QuadratureAmplitude",
+      "ids": [
+        "qc",
+        "q1",
+        "q2",
+        "q3",
+        "q5"
+      ],
+      "page": 103,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "count": "remaining",
+          "description": "(Q) amplitudes",
+          "missing": true,
+          "wireName": "amp",
+          "name": "Amp"
+        }
+      ]
+    },
+    {
+      "name": "ScintillationS4",
+      "ids": [
+        "x0",
+        "x1",
+        "x2",
+        "x3",
+        "x5",
+        "x4"
+      ],
+      "page": 103,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "S4",
+          "wireName": "s4",
+          "name": "S4"
+        }
+      ]
+    },
+    {
+      "name": "ScintillationSigmaPhi",
+      "ids": [
+        "y0",
+        "y1",
+        "y2",
+        "y3",
+        "y5",
+        "y4"
+      ],
+      "page": 103,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "SigmaPhi [radians]",
+          "wireName": "sigmaPhi",
+          "name": "SigmaPhi"
+        }
+      ]
+    },
+    {
+      "name": "IqSamples",
+      "ids": [
+        "IQ"
+      ],
+      "page": 104,
+      "declaredBodySize": "var",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "SatelliteIdentifier",
+          "description": "ESI",
+          "wireName": "esi",
+          "name": "Satellite"
+        },
+        {
+          "type": "u1",
+          "description": "SlotId",
+          "wireName": "slotId",
+          "name": "SlotId"
+        },
+        {
+          "type": "i1",
+          "description": "1 if Q output is enabled, 0 otherwise",
+          "wireName": "isQ",
+          "name": "IsQ"
+        },
+        {
+          "name": "Samples",
+          "type": "IqSample",
+          "count": "remaining"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "ContinuousTrackingTime",
+      "ids": [
+        "TC"
+      ],
+      "page": 104,
+      "declaredBodySize": "2*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u2",
+          "count": "remaining",
+          "description": "tracking time [s]",
+          "wireName": "tt",
+          "name": "Tt"
+        }
+      ]
+    },
+    {
+      "name": "SatelliteNavigationStatus",
+      "ids": [
+        "SS"
+      ],
+      "page": 104,
+      "declaredBodySize": "nSats+2",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "remaining",
+          "description": "Navigation Status",
+          "wireName": "ns",
+          "name": "Ns"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "IonosphericDelays",
+      "ids": [
+        "ID"
+      ],
+      "page": 105,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "Ionospheric delay [s]",
+          "missing": true,
+          "wireName": "delay",
+          "name": "Delay"
+        }
+      ]
+    },
+    {
+      "name": "RangeResiduals",
+      "ids": [
+        "rr"
+      ],
+      "page": 105,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "Range residual [m]",
+          "missing": true,
+          "wireName": "res",
+          "name": "Res"
+        }
+      ]
+    },
+    {
+      "name": "VelocityResiduals",
+      "ids": [
+        "vr"
+      ],
+      "page": 105,
+      "declaredBodySize": "4*nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "remaining",
+          "description": "Radial velocity residual [m]",
+          "missing": true,
+          "wireName": "res",
+          "name": "Res"
+        }
+      ]
+    },
+    {
+      "name": "GpsAlmanac",
+      "ids": [
+        "GA"
+      ],
+      "page": 105,
+      "declaredBodySize": "47",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number within the range [1\u202637]",
+          "wireName": "sv",
+          "name": "Sv"
+        },
+        {
+          "type": "i2",
+          "description": "Almanac reference week []",
+          "wireName": "wna",
+          "name": "Wna"
+        },
+        {
+          "type": "i4",
+          "description": "Almanac reference time of week [s]",
+          "wireName": "toa",
+          "name": "Toa"
+        },
+        {
+          "type": "u1",
+          "description": "Health summary (from almanac), [bitfield]",
+          "wireName": "healthA",
+          "name": "HealthA"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite health (page 25 of subframe 5) []",
+          "wireName": "healthS",
+          "name": "HealthS"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite configuration (page 25 of subframe 4)",
+          "wireName": "config",
+          "name": "Config"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s/s]",
+          "wireName": "af1",
+          "name": "Af1"
+        },
+        {
+          "type": "f4",
+          "description": "Polynomial coefficient [s]",
+          "wireName": "af0",
+          "name": "Af0"
+        },
+        {
+          "type": "f4",
+          "description": "Square root of the semi-major axis [m^0.5]",
+          "wireName": "rootA",
+          "name": "RootA"
+        },
+        {
+          "type": "f4",
+          "description": "Eccentricity []",
+          "wireName": "ecc",
+          "name": "Ecc"
+        },
+        {
+          "type": "f4",
+          "description": "Mean Anomaly at reference time [semi-circles]",
+          "wireName": "m0",
+          "name": "M0"
+        },
+        {
+          "type": "f4",
+          "description": "Longitude of ascending node of orbit plane",
+          "wireName": "omega0",
+          "name": "Omega0"
+        },
+        {
+          "type": "f4",
+          "description": "Argument of perigee [semi-circles]",
+          "wireName": "argPer",
+          "name": "ArgPer"
+        },
+        {
+          "type": "f4",
+          "description": "Correction to inclination angle [semi-circles]",
+          "wireName": "deli",
+          "name": "Deli"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of right ascension [semi-circle/s]",
+          "wireName": "omegaDot",
+          "name": "OmegaDot"
+        }
+      ]
+    },
+    {
+      "name": "GalileoAlmanac",
+      "ids": [
+        "EA"
+      ],
+      "page": 106,
+      "declaredBodySize": "49",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "GpsAlmanacData",
+          "description": "Without \u2018cs\u2019 field, gps.sv within the range [1\u202637]",
+          "wireName": "gps",
+          "name": "Gps"
+        },
+        {
+          "type": "i2",
+          "description": "Issue of almanac data []",
+          "wireName": "iod",
+          "name": "Iod"
+        }
+      ]
+    },
+    {
+      "name": "QzssAlmanac",
+      "ids": [
+        "QA"
+      ],
+      "page": 106,
+      "declaredBodySize": "47",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "GpsAlmanacData",
+          "description": "\u2018gps.sv\u2019 within the range [193\u2026199]",
+          "wireName": "gps",
+          "name": "Gps"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouAlmanac",
+      "ids": [
+        "CA"
+      ],
+      "page": 106,
+      "declaredBodySize": "47",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "GpsAlmanacData",
+          "description": "\u2018gps.sv\u2019 within the range [1\u202663]",
+          "wireName": "gps",
+          "name": "Gps"
+        }
+      ]
+    },
+    {
+      "name": "IrnssAlmanac",
+      "ids": [
+        "IA"
+      ],
+      "page": 106,
+      "declaredBodySize": "47",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "GpsAlmanacData",
+          "description": "\u2018gps.sv\u2019 within the range [1\u202630]",
+          "wireName": "gps",
+          "name": "Gps"
+        }
+      ]
+    },
+    {
+      "name": "GlonassAlmanac",
+      "ids": [
+        "NA"
+      ],
+      "page": 107,
+      "declaredBodySize": "47 | 52",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Satellite orbit slot number within [1\u202632] []",
+          "wireName": "sv",
+          "name": "Sv"
+        },
+        {
+          "type": "i1",
+          "description": "Satellite frequency channel number [-7\u202624] []",
+          "wireName": "frqNum",
+          "name": "FrqNum"
+        },
+        {
+          "type": "i2",
+          "description": "Day number within 4-year period starting",
+          "wireName": "dna",
+          "name": "Dna"
+        },
+        {
+          "type": "f4",
+          "description": "Time of the first ascending node passage",
+          "wireName": "tlam",
+          "name": "Tlam"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite flags [bitfield]:",
+          "wireName": "flags",
+          "name": "Flags"
+        },
+        {
+          "type": "f4",
+          "description": "Coarse time correction to SV clock",
+          "wireName": "tauN",
+          "name": "TauN"
+        },
+        {
+          "type": "f8",
+          "description": "Correction to GLONASS system time with respect",
+          "wireName": "tauSys",
+          "name": "TauSys"
+        },
+        {
+          "type": "f4",
+          "description": "Eccentricity at reference time \u2018tlam\u2019 []",
+          "wireName": "ecc",
+          "name": "Ecc"
+        },
+        {
+          "type": "f4",
+          "description": "Longitude of ascending node",
+          "wireName": "lambda",
+          "name": "Lambda"
+        },
+        {
+          "type": "f4",
+          "description": "Argument of perigee",
+          "wireName": "argPer",
+          "name": "ArgPer"
+        },
+        {
+          "type": "f4",
+          "description": "Correction to mean Draconic period",
+          "wireName": "delT",
+          "name": "DelT"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of change of Draconic period [s/period^2]",
+          "wireName": "delTdt",
+          "name": "DelTdt"
+        },
+        {
+          "type": "f4",
+          "description": "Correction to inclination",
+          "wireName": "deli",
+          "name": "Deli"
+        },
+        {
+          "type": "u1",
+          "description": "Number of 4-year period []",
+          "wireName": "n4",
+          "name": "N4"
+        },
+        {
+          "name": "OptionalData",
+          "type": "GlonassAlmanacExtension",
+          "optional": 5
+        }
+      ]
+    },
+    {
+      "name": "SbasAlmanac",
+      "ids": [
+        "WA"
+      ],
+      "page": 107,
+      "declaredBodySize": "51",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SBAS SV PRN number within [120\u2026142]",
+          "wireName": "waasPrn",
+          "name": "WaasPrn"
+        },
+        {
+          "type": "u1",
+          "description": "GPS SV PRN associated with SBAS SV",
+          "wireName": "gpsPrn",
+          "name": "GpsPrn"
+        },
+        {
+          "type": "u1",
+          "description": "Data ID",
+          "wireName": "id",
+          "name": "DataId"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite health [bitfield]:",
+          "wireName": "healthS",
+          "name": "HealthS"
+        },
+        {
+          "type": "u4",
+          "description": "Time of the day [s]",
+          "wireName": "tod",
+          "name": "TimeOfDay"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "xg",
+          "name": "Xg"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "yg",
+          "name": "Yg"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "zg",
+          "name": "Zg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF velocity [m/s]",
+          "wireName": "vxg",
+          "name": "Vxg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF velocity [m/s]",
+          "wireName": "vyg",
+          "name": "Vyg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF velocity [m/s]",
+          "wireName": "vzg",
+          "name": "Vzg"
+        },
+        {
+          "type": "u4",
+          "description": "time of GPS week almanac was received at",
+          "wireName": "tow",
+          "name": "TimeOfWeek"
+        },
+        {
+          "type": "u2",
+          "description": "GPS week this almanac was received at",
+          "wireName": "wn",
+          "name": "Wn"
+        }
+      ]
+    },
+    {
+      "name": "GpsEphemeris",
+      "ids": [
+        "GE"
+      ],
+      "page": 108,
+      "declaredBodySize": "123 | 160 | 168",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "name": "RequiredData",
+          "type": "EphemerisRequiredData"
+        },
+        {
+          "name": "OptionalData",
+          "type": "GpsEphemerisOptionalData",
+          "optional": 37
+        }
+      ]
+    },
+    {
+      "name": "GalileoEphemeris",
+      "ids": [
+        "EN"
+      ],
+      "page": 109,
+      "declaredBodySize": "149",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "EphemerisRequiredData",
+          "description": "GPS required data, \u2018req.sv\u2019 within the range [1\u202637]",
+          "wireName": "req",
+          "name": "RequiredData"
+        },
+        {
+          "type": "f4",
+          "description": "broadcast group delay E1 - E5A [s]",
+          "wireName": "bgdE1E5a",
+          "name": "BgdE1E5a"
+        },
+        {
+          "type": "f4",
+          "description": "broadcast group delay E1 - E5B [s]",
+          "wireName": "bgdE1E5b",
+          "name": "BgdE1E5b"
+        },
+        {
+          "type": "f4",
+          "description": "Effective ionisation level 1-st order parameter []",
+          "wireName": "ai0",
+          "name": "Ai0"
+        },
+        {
+          "type": "f4",
+          "description": "Effective ionisation level 2-nd order parameter []",
+          "wireName": "ai1",
+          "name": "Ai1"
+        },
+        {
+          "type": "f4",
+          "description": "Effective ionisation level 3-rd order parameter []",
+          "wireName": "ai2",
+          "name": "Ai2"
+        },
+        {
+          "type": "u1",
+          "description": "Ionospheric disturbance flags [bitfield]",
+          "wireName": "sfi",
+          "name": "Sfi"
+        },
+        {
+          "type": "u1",
+          "description": "Signal type [bitfield]:",
+          "wireName": "navType",
+          "name": "NavType"
+        },
+        {
+          "type": "f4",
+          "description": "correction to \u2018af0\u2019. Exact term = af0 + DAF0",
+          "wireName": "DAf0",
+          "name": "DAf0",
+          "legacyOptionalTail": true
+        }
+      ],
+      "legacyBodySize": "145",
+      "legacyLayoutSource": "RTKLIB test/data/rcvraw/javad_20110115.jps; trailing extension rule GREIS 4.2.01 section 3.4.1, page 67."
+    },
+    {
+      "name": "QzssEphemeris",
+      "ids": [
+        "QE"
+      ],
+      "page": 110,
+      "declaredBodySize": "123 | 160",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "name": "RequiredData",
+          "type": "EphemerisRequiredData"
+        },
+        {
+          "name": "OptionalData",
+          "type": "GpsEphemerisOptionalData",
+          "optional": 37
+        }
+      ]
+    },
+    {
+      "name": "BeiDouEphemeris",
+      "ids": [
+        "CN"
+      ],
+      "page": 110,
+      "declaredBodySize": "134|152|160",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "EphemerisRequiredData",
+          "description": "GPS required data, \u2018req.sv\u2019 within the range [1\u202663]",
+          "wireName": "req",
+          "name": "RequiredData"
+        },
+        {
+          "type": "f4",
+          "description": "tgd between B2A and B3 signals",
+          "wireName": "tgd2",
+          "name": "Tgd2"
+        },
+        {
+          "type": "u1",
+          "description": "Signal type[bitfield]",
+          "wireName": "navType",
+          "name": "NavType",
+          "default": 1
+        },
+        {
+          "type": "f4",
+          "description": "correction to \u2018af0\u2019. Exact term = af0 + DAF0",
+          "wireName": "DAf0",
+          "name": "DAf0"
+        },
+        {
+          "name": "LegacyData",
+          "type": "BeiDouLegacyEphemerisData",
+          "nullable": true
+        },
+        {
+          "name": "ModernData",
+          "type": "BeiDouModernEphemerisData",
+          "nullable": true
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "GlonassEphemeris",
+      "ids": [
+        "NE"
+      ],
+      "page": 111,
+      "declaredBodySize": "88 | 103",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Satellite orbit slot number [1\u202632] []",
+          "missing": true,
+          "wireName": "sv",
+          "name": "Sv"
+        },
+        {
+          "type": "i1",
+          "description": "Satellite frequency channel number [-7\u202624] []",
+          "wireName": "frqNum",
+          "name": "FrqNum"
+        },
+        {
+          "type": "i2",
+          "description": "Day number within 4-year period []",
+          "missing": true,
+          "wireName": "dne",
+          "name": "Dne"
+        },
+        {
+          "type": "i4",
+          "description": "Frame start time within current day [s]",
+          "wireName": "tk",
+          "name": "Tk"
+        },
+        {
+          "type": "i4",
+          "description": "Ephemeris reference time (for day \u2018dne\u2019) [s]",
+          "wireName": "tb",
+          "name": "Tb"
+        },
+        {
+          "type": "u1",
+          "description": "Satellite health [bitfield]",
+          "wireName": "health",
+          "name": "Health"
+        },
+        {
+          "type": "u1",
+          "description": "Age of operational information (En) [days]",
+          "wireName": "age",
+          "name": "Age"
+        },
+        {
+          "type": "u1",
+          "description": "Flags (for details, see GLONASS ICD) [bitfield]:",
+          "wireName": "flags",
+          "name": "Flags"
+        },
+        {
+          "type": "f8",
+          "count": "(3)",
+          "description": "Satellite PE-90 coordinates [km]",
+          "wireName": "r",
+          "name": "R"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "Satellite PE-90 velocities [km/s]",
+          "wireName": "v",
+          "name": "V"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "Satellite PE-90 accelerations due to Luni-Solar",
+          "wireName": "w",
+          "name": "W"
+        },
+        {
+          "type": "f8",
+          "description": "Time correction to GLONASS time scale (vs. UTC(SU))",
+          "wireName": "tauSys",
+          "name": "TauSys"
+        },
+        {
+          "type": "f4",
+          "description": "Correction to satellite clock (vs. GLONASS time)",
+          "wireName": "tau",
+          "name": "Tau"
+        },
+        {
+          "type": "f4",
+          "description": "Rate of satellite clock offset [s/s]",
+          "wireName": "gamma",
+          "name": "Gamma"
+        },
+        {
+          "type": "f4",
+          "description": "Delta Tau N - delay between L1 and L2 [s]",
+          "wireName": "fDelTauN",
+          "name": "FDelTauN"
+        },
+        {
+          "type": "u1",
+          "description": "Ft (User Range Accuracy), see GLONASS ICD for values",
+          "wireName": "nFt",
+          "name": "NFt"
+        },
+        {
+          "type": "u1",
+          "description": "Number of 4-year cycle [1\u202631]",
+          "wireName": "nN4",
+          "name": "NN4"
+        },
+        {
+          "type": "u2",
+          "description": "Flags (for details, see GLONASS ICD) [bitfield]:",
+          "wireName": "flags2",
+          "name": "Flags2"
+        },
+        {
+          "name": "OptionalData",
+          "type": "GlonassEphemerisExtension",
+          "optional": 15
+        }
+      ]
+    },
+    {
+      "name": "SbasEphemeris",
+      "ids": [
+        "WE"
+      ],
+      "page": 112,
+      "declaredBodySize": "73",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SBAS SV PRN number within [120\u2026142]",
+          "wireName": "waasPrn",
+          "name": "WaasPrn"
+        },
+        {
+          "type": "u1",
+          "description": "GPS SV PRN associated with SBAS SV",
+          "wireName": "gpsPrn",
+          "name": "GpsPrn"
+        },
+        {
+          "type": "u1",
+          "description": "Issue of data",
+          "wireName": "iod",
+          "name": "Iod"
+        },
+        {
+          "type": "u1",
+          "description": "SBAS SV accuracy7",
+          "wireName": "acc",
+          "name": "Acc"
+        },
+        {
+          "type": "u4",
+          "description": "Reference time (seconds of the day)[s]",
+          "wireName": "tod",
+          "name": "TimeOfDay"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "xg",
+          "name": "Xg"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "yg",
+          "name": "Yg"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "zg",
+          "name": "Zg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF velocity [m/s]",
+          "wireName": "vxg",
+          "name": "Vxg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF velocity [m/s]",
+          "wireName": "vyg",
+          "name": "Vyg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF velocity [m/s]",
+          "wireName": "vzg",
+          "name": "Vzg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF acceleration [m/s^2]",
+          "wireName": "vvxg",
+          "name": "Vvxg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF acceleration [m/s^2]",
+          "wireName": "vvyg",
+          "name": "Vvyg"
+        },
+        {
+          "type": "f4",
+          "description": "ECEF acceleration [m/s^2]",
+          "wireName": "vvzg",
+          "name": "Vvzg"
+        },
+        {
+          "type": "f4",
+          "description": "SBAS SV clock offset factor \u2018ao\u2019 [s]",
+          "wireName": "agf0",
+          "name": "Agf0"
+        },
+        {
+          "type": "f4",
+          "description": "SBAS SV clock offset factor \u2018a1\u2019 [s/s]",
+          "wireName": "agf1",
+          "name": "Agf1"
+        },
+        {
+          "type": "u4",
+          "description": "Time of GPS week this ephemeris was",
+          "wireName": "tow",
+          "name": "TimeOfWeek"
+        },
+        {
+          "type": "u2",
+          "description": "GPS week this ephemeris was received at",
+          "wireName": "wn",
+          "name": "Wn"
+        },
+        {
+          "type": "u2",
+          "description": "Flags [bitfield]:",
+          "wireName": "flags",
+          "name": "Flags",
+          "legacyOptionalTail": true
+        }
+      ],
+      "legacyBodySize": "71",
+      "legacyLayoutSource": "RTKLIB test/data/rcvraw/javad_20110115.jps; trailing extension rule GREIS 4.2.01 section 3.4.1, page 67."
+    },
+    {
+      "name": "IrnssEphemeris",
+      "ids": [
+        "IE"
+      ],
+      "page": 112,
+      "declaredBodySize": "124",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "name": "RequiredData",
+          "type": "EphemerisRequiredData"
+        },
+        {
+          "type": "u1",
+          "description": "Signal type [bitfield]",
+          "wireName": "navType",
+          "name": "NavType"
+        }
+      ]
+    },
+    {
+      "name": "GpsRawNavigationData",
+      "ids": [
+        "gd"
+      ],
+      "page": 113,
+      "declaredBodySize": "len*4+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Pseudo-Range Number (PRN)",
+          "wireName": "prn",
+          "name": "Prn"
+        },
+        {
+          "type": "u4",
+          "description": "Time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of the navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u4",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "QzssRawNavigationData",
+      "ids": [
+        "qd"
+      ],
+      "page": 114,
+      "declaredBodySize": "len*4+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Pseudo-Range Number (PRN)",
+          "wireName": "prn",
+          "name": "Prn"
+        },
+        {
+          "type": "u4",
+          "description": "Time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of the navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u4",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "GlonassRawNavigationData",
+      "ids": [
+        "lD"
+      ],
+      "page": 114,
+      "declaredBodySize": "len*4+10",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV number",
+          "missing": true,
+          "wireName": "num",
+          "name": "Num"
+        },
+        {
+          "type": "i1",
+          "description": "SV frequency code number",
+          "missing": true,
+          "wireName": "fcn",
+          "name": "Fcn"
+        },
+        {
+          "type": "u4",
+          "description": "GLONASS time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of the navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u4",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "SbasRawNavigationData",
+      "ids": [
+        "WD"
+      ],
+      "page": 114,
+      "declaredBodySize": "len+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number within the range [120\u2026147,183\u2026202]",
+          "wireName": "prn",
+          "name": "Prn"
+        },
+        {
+          "type": "u4",
+          "description": "Time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of the navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u1",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "GalileoRawNavigationData",
+      "ids": [
+        "ED"
+      ],
+      "page": 115,
+      "declaredBodySize": "len+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number within the range [1\u202630]",
+          "wireName": "prn",
+          "name": "Prn"
+        },
+        {
+          "type": "u4",
+          "description": "Time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of the navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u1",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouRawNavigationData",
+      "ids": [
+        "cd"
+      ],
+      "page": 116,
+      "declaredBodySize": "len*4+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number",
+          "wireName": "prn",
+          "name": "Prn"
+        },
+        {
+          "type": "u4",
+          "description": "BeiDou Time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data [bitfield]:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of the navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u4",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "IrnssRawNavigationData",
+      "ids": [
+        "id"
+      ],
+      "page": 117,
+      "declaredBodySize": "len*4+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SV PRN number",
+          "wireName": "prn",
+          "name": "Prn"
+        },
+        {
+          "type": "u4",
+          "description": "IRNSS time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data:",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u4",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "QzssL6RawNavigationData",
+      "ids": [
+        "xd"
+      ],
+      "page": 117,
+      "declaredBodySize": "len+9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SVID from ESI",
+          "wireName": "svid",
+          "name": "Svid"
+        },
+        {
+          "type": "u4",
+          "description": "QZSS time of receiving of message [s]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "u1",
+          "description": "Type of data: // 0 - L6D; 1 - L6E",
+          "wireName": "type",
+          "name": "Type"
+        },
+        {
+          "type": "u1",
+          "description": "Length of navigation data block \u2018data\u2019",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "u1",
+          "count": "(len)",
+          "description": "Navigation data block",
+          "wireName": "data",
+          "name": "Data"
+        },
+        {
+          "type": "i1",
+          "description": "Error corrections",
+          "wireName": "errCorr",
+          "name": "ErrCorr"
+        }
+      ]
+    },
+    {
+      "name": "Spectrum",
+      "ids": [
+        "sp"
+      ],
+      "page": 118,
+      "declaredBodySize": "n*m*2+7",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "description": "Current frequency [Hz*104]",
+          "wireName": "currFrq",
+          "name": "CurrFrq"
+        },
+        {
+          "type": "i2",
+          "description": "Frequency of the last message [Hz*104]",
+          "wireName": "finalFrq",
+          "name": "FinalFrq"
+        },
+        {
+          "type": "u1",
+          "description": "Number of spectra in this",
+          "wireName": "n",
+          "name": "SpectrumCount"
+        },
+        {
+          "type": "u1",
+          "description": "Number of spectrum blocks in this message",
+          "wireName": "m",
+          "name": "BlockCount"
+        },
+        {
+          "type": "SpectrumBlock",
+          "count": "(m)",
+          "description": "Spectrum data",
+          "wireName": "s",
+          "name": "Blocks"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "ExtendedSpectrum",
+      "ids": [
+        "sP"
+      ],
+      "page": 118,
+      "declaredBodySize": "n*m*4+7",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "description": "Current frequency [Hz*104]",
+          "wireName": "currFrq",
+          "name": "CurrFrq"
+        },
+        {
+          "type": "i2",
+          "description": "Frequency of the last message [Hz*104]",
+          "wireName": "finalFrq",
+          "name": "FinalFrq"
+        },
+        {
+          "type": "u1",
+          "description": "Number of spectra in this message",
+          "wireName": "n",
+          "name": "SpectrumCount"
+        },
+        {
+          "type": "u1",
+          "description": "Number of spectrum blocks in this message",
+          "wireName": "m",
+          "name": "BlockCount"
+        },
+        {
+          "type": "ExtendedSpectrumBlock",
+          "count": "(m)",
+          "description": "Extended spectrum data",
+          "wireName": "s",
+          "name": "Blocks"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "SingleSpectrum",
+      "ids": [
+        "Sp"
+      ],
+      "page": 119,
+      "declaredBodySize": "m*2+9+(sizeof(extData) for first and last nessage only)",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i4",
+          "description": "Number of fists spectrum value in this message",
+          "wireName": "pointNumber",
+          "name": "PointNumber"
+        },
+        {
+          "type": "u1",
+          "description": "Spectrum name ID (see /par/specrt/name parameter)",
+          "wireName": "nameId",
+          "name": "NameId"
+        },
+        {
+          "type": "u1",
+          "description": "Type of spectrum data (currently always 1)",
+          "wireName": "m",
+          "name": "ValuesPerPoint",
+          "default": 1
+        },
+        {
+          "type": "u2",
+          "description": "Number of spectrum data in this message",
+          "wireName": "n",
+          "name": "PointCount"
+        },
+        {
+          "name": "Values",
+          "type": "i2",
+          "count": "ValuesPerPoint*PointCount"
+        },
+        {
+          "name": "SpectrumInfo",
+          "type": "SpectrumExtension",
+          "optional": 33
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "ModemSpectrum",
+      "ids": [
+        "ms"
+      ],
+      "page": 119,
+      "declaredBodySize": "9",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i4",
+          "description": "Current frequency [Hz]",
+          "wireName": "frq",
+          "name": "Frq"
+        },
+        {
+          "type": "i4",
+          "description": "Current signal (or noise) power [dBm]",
+          "wireName": "pwr",
+          "name": "Pwr"
+        }
+      ]
+    },
+    {
+      "name": "GlonassDelays",
+      "ids": [
+        "gC",
+        "g1",
+        "g2",
+        "g3"
+      ],
+      "page": 119,
+      "declaredBodySize": "9*nFcn+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "GlonassSatelliteDelay",
+          "count": "remaining",
+          "description": "Delays",
+          "wireName": "del",
+          "name": "Del"
+        }
+      ]
+    },
+    {
+      "name": "ReceiverBandDelays",
+      "ids": [
+        "gR"
+      ],
+      "page": 120,
+      "declaredBodySize": "6*n+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "BandDelay",
+          "count": "remaining",
+          "description": "\u2018n\u2019 may vary depending on receiver model",
+          "wireName": "d",
+          "name": "D"
+        }
+      ]
+    },
+    {
+      "name": "RotationMatrix",
+      "ids": [
+        "MR"
+      ],
+      "page": 121,
+      "declaredBodySize": "37",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "receiver time [ms]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q00",
+          "name": "Q00"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q01",
+          "name": "Q01"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q02",
+          "name": "Q02"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q12",
+          "name": "Q12"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "estimated accuracy for three baseline vectors [m]",
+          "wireName": "rms",
+          "name": "Rms"
+        },
+        {
+          "type": "u1",
+          "count": "(3)",
+          "description": "solution type8 for three baseline vectors",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "0 \u2013 components of matrix Q are invalid, 1 - valid",
+          "wireName": "flag",
+          "name": "Flag"
+        }
+      ]
+    },
+    {
+      "name": "RotationMatrixVectors",
+      "ids": [
+        "mr"
+      ],
+      "page": 121,
+      "declaredBodySize": "73",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "receiver time [ms]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q00",
+          "name": "Q00"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q01",
+          "name": "Q01"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q02",
+          "name": "Q02"
+        },
+        {
+          "type": "f4",
+          "description": "components of the rotation matrix Q []",
+          "wireName": "q12",
+          "name": "Q12"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "estimated accuracy for three baseline vectors [m]",
+          "wireName": "rms",
+          "name": "Rms"
+        },
+        {
+          "type": "u1",
+          "count": "(3)",
+          "description": "solution type8 for three baseline vectors",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "0 \u2013 components of matrix Q are invalid, 1 - valid",
+          "wireName": "flag",
+          "name": "Flag"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "baseline vector M-S0 in the current epoch [m]",
+          "wireName": "bl0",
+          "name": "Bl0"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "baseline vector M-S1 in the current epoch [m]",
+          "wireName": "bl1",
+          "name": "Bl1"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "baseline vector M-S2 in the current epoch [m]",
+          "wireName": "bl2",
+          "name": "Bl2"
+        }
+      ]
+    },
+    {
+      "name": "RotationAngles",
+      "ids": [
+        "AR"
+      ],
+      "page": 121,
+      "declaredBodySize": "33",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Receiver time [ms]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch ,roll , heading angles [deg]",
+          "wireName": "p",
+          "name": "P"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch ,roll , heading angles [deg]",
+          "wireName": "r",
+          "name": "R"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch ,roll , heading angles [deg]",
+          "wireName": "h",
+          "name": "H"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch, roll, heading angles RMS [deg]",
+          "wireName": "sp",
+          "name": "Sp"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch, roll, heading angles RMS [deg]",
+          "wireName": "sr",
+          "name": "Sr"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch, roll, heading angles RMS [deg]",
+          "wireName": "sh",
+          "name": "Sh"
+        },
+        {
+          "type": "u1",
+          "count": "(3)",
+          "description": "Solution type for 3 base lines",
+          "wireName": "solType",
+          "name": "SolutionType"
+        },
+        {
+          "type": "u1",
+          "description": "flags [bitfield]:",
+          "wireName": "flags",
+          "name": "Flags"
+        }
+      ]
+    },
+    {
+      "name": "AngularVelocity",
+      "ids": [
+        "AV"
+      ],
+      "page": 121,
+      "declaredBodySize": "22",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "receiver time [ms]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "f4",
+          "description": "X component of angular velocity [rad/s]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f4",
+          "description": "Y component of angular velocity [rad/s]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f4",
+          "description": "Z component of angular velocity [rad/s]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Angular velocity RMS [rad/s]",
+          "wireName": "rms",
+          "name": "Rms"
+        },
+        {
+          "type": "u1",
+          "description": "flags [bitfield]:",
+          "wireName": "flags",
+          "name": "Flags"
+        }
+      ]
+    },
+    {
+      "name": "InertialMeasurements",
+      "ids": [
+        "IM"
+      ],
+      "page": 122,
+      "declaredBodySize": "25",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "ax,ay,az [m/sec2]",
+          "wireName": "accelerations",
+          "name": "Accelerations"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "wx,wy,wz [rad/sec]",
+          "wireName": "angularVelocities",
+          "name": "AngularVelocities"
+        }
+      ]
+    },
+    {
+      "name": "AccelerometerMagnetometer",
+      "ids": [
+        "MA"
+      ],
+      "page": 122,
+      "declaredBodySize": "38",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "receiver time [ms]",
+          "wireName": "time",
+          "name": "Time"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "ax, ay, az [cm/sec2]",
+          "wireName": "accelerations",
+          "name": "Accelerations"
+        },
+        {
+          "type": "f4",
+          "count": "(3)",
+          "description": "bx, by, bz",
+          "wireName": "induction",
+          "name": "Induction"
+        },
+        {
+          "type": "f4",
+          "description": "Value of magnetic field",
+          "wireName": "magnitude",
+          "name": "Magnitude"
+        },
+        {
+          "type": "f4",
+          "description": "Temperature of magnetic sensor [deg C]",
+          "wireName": "temperature",
+          "name": "Temperature"
+        },
+        {
+          "type": "u1",
+          "description": "1 - calibrated, 0 - not calibrated",
+          "wireName": "calibrated",
+          "name": "Calibrated"
+        }
+      ]
+    },
+    {
+      "name": "AccelerometerRaw",
+      "ids": [
+        "fA"
+      ],
+      "page": 122,
+      "declaredBodySize": "7",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "description": "ax multiplied by 588 [g]",
+          "wireName": "ax",
+          "name": "Ax"
+        },
+        {
+          "type": "i2",
+          "description": "ay multiplied by 588 [g]",
+          "wireName": "ay",
+          "name": "Ay"
+        },
+        {
+          "type": "i2",
+          "description": "az multiplied by 588 [g]",
+          "wireName": "az",
+          "name": "Az"
+        }
+      ]
+    },
+    {
+      "name": "AccelerometerLRaw",
+      "ids": [
+        "lA"
+      ],
+      "page": 123,
+      "declaredBodySize": "7",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "description": "ax multiplied by 588 [g]",
+          "wireName": "ax",
+          "name": "Ax"
+        },
+        {
+          "type": "i2",
+          "description": "ay multiplied by 588 [g]",
+          "wireName": "ay",
+          "name": "Ay"
+        },
+        {
+          "type": "i2",
+          "description": "az multiplied by 588 [g]",
+          "wireName": "az",
+          "name": "Az"
+        }
+      ]
+    },
+    {
+      "name": "CalibratedInertialMeasurements",
+      "ids": [
+        "tA"
+      ],
+      "page": 123,
+      "declaredBodySize": "25",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "(ax-ox)*Kx [ m/sec^2]",
+          "wireName": "ax",
+          "name": "Ax"
+        },
+        {
+          "type": "f4",
+          "description": "(ay-oy)*Ky [ m/sec^2]",
+          "wireName": "ay",
+          "name": "Ay"
+        },
+        {
+          "type": "f4",
+          "description": "(az-oz)*Kz [ m/sec^2]",
+          "wireName": "az",
+          "name": "Az"
+        },
+        {
+          "type": "f4",
+          "description": "wx-gox [rad/sec]",
+          "wireName": "wx",
+          "name": "Wx"
+        },
+        {
+          "type": "f4",
+          "description": "wy-goy [rad/sec]",
+          "wireName": "wy",
+          "name": "Wy"
+        },
+        {
+          "type": "f4",
+          "description": "wz-goz [rad/sec]",
+          "wireName": "wz",
+          "name": "Wz"
+        }
+      ]
+    },
+    {
+      "name": "GyroscopeRaw",
+      "ids": [
+        "aV"
+      ],
+      "page": 123,
+      "declaredBodySize": "13",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "x-component multiplied by 2800 [rad/sec]",
+          "wireName": "wx",
+          "name": "Wx"
+        },
+        {
+          "type": "f4",
+          "description": "y-component multiplied by 2800 [rad/sec]",
+          "wireName": "wy",
+          "name": "Wy"
+        },
+        {
+          "type": "f4",
+          "description": "z-component multiplied by 2800 [rad/sec]",
+          "wireName": "wz",
+          "name": "Wz"
+        }
+      ]
+    },
+    {
+      "name": "MagnetometerRaw",
+      "ids": [
+        "mA"
+      ],
+      "page": 123,
+      "declaredBodySize": "7",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i2",
+          "description": "x-component",
+          "wireName": "bx",
+          "name": "Bx"
+        },
+        {
+          "type": "i2",
+          "description": "y-component",
+          "wireName": "by",
+          "name": "By"
+        },
+        {
+          "type": "i2",
+          "description": "z-component",
+          "wireName": "bz",
+          "name": "Bz"
+        }
+      ]
+    },
+    {
+      "name": "EnuAcceleration",
+      "ids": [
+        "dV"
+      ],
+      "page": 124,
+      "declaredBodySize": "13",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Derivative of the eastern velocity [m/sec2]",
+          "wireName": "dvx",
+          "name": "Dvx"
+        },
+        {
+          "type": "f4",
+          "description": "Derivative of the northern velocity [m/sec2]",
+          "wireName": "dvy",
+          "name": "Dvy"
+        },
+        {
+          "type": "f4",
+          "description": "Derivative of the up velocity [m/sec2]",
+          "wireName": "dvz",
+          "name": "Dvz"
+        }
+      ]
+    },
+    {
+      "name": "PoleEndCoordinates",
+      "ids": [
+        "PE"
+      ],
+      "page": 124,
+      "declaredBodySize": "25",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "x-coordinate of the end of the pole in WGS84 [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "y-coordinate of the end of the pole in WGS84 [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "z-coordinate of the end of the pole in WGS84 [m]",
+          "wireName": "z",
+          "name": "Z"
+        }
+      ]
+    },
+    {
+      "name": "AntennaPhaseCenterLocalCoordinates",
+      "ids": [
+        "pV"
+      ],
+      "page": 124,
+      "declaredBodySize": "37",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Eastern coordinate of APC in ENU [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Northern coordinate of APC in ENU [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Up-coordinate of APC in ENU [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Eastern velocity in ENU [m/s]",
+          "wireName": "vx",
+          "name": "Vx"
+        },
+        {
+          "type": "f4",
+          "description": "Northern velocity in ENU [m/s]",
+          "wireName": "vy",
+          "name": "Vy"
+        },
+        {
+          "type": "f4",
+          "description": "Up velocity in ENU [m/s]",
+          "wireName": "vz",
+          "name": "Vz"
+        }
+      ]
+    },
+    {
+      "name": "TiltCompensatedSolution",
+      "ids": [
+        "pE"
+      ],
+      "page": 124,
+      "declaredBodySize": "104",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Status (see below)",
+          "wireName": "status",
+          "name": "Status"
+        },
+        {
+          "type": "u1",
+          "description": "Error (see below)",
+          "wireName": "error",
+          "name": "Error"
+        },
+        {
+          "type": "f8",
+          "description": "Latitude of the end of the pole in WGS84 [rad]",
+          "wireName": "lat",
+          "name": "Latitude"
+        },
+        {
+          "type": "f8",
+          "description": "Longitude of the end of the pole in WGS84 [rad]",
+          "wireName": "lon",
+          "name": "Longitude"
+        },
+        {
+          "type": "f8",
+          "description": "Height of the end of the pole above WGS84 ellipsoid [m]",
+          "wireName": "h",
+          "name": "H"
+        },
+        {
+          "type": "f4",
+          "description": "RMS of position in local plane [m]",
+          "wireName": "rms_xy",
+          "name": "Rms_xy"
+        },
+        {
+          "type": "f4",
+          "description": "RMS of position of local hight [m]",
+          "wireName": "rms_h",
+          "name": "Rms_h"
+        },
+        {
+          "type": "f4",
+          "description": "Length of time interval [sec];",
+          "wireName": "len",
+          "name": "Len"
+        },
+        {
+          "type": "f4",
+          "description": "First value of the criterion",
+          "wireName": "crit0",
+          "name": "Crit0"
+        },
+        {
+          "type": "f4",
+          "description": "Final value of the criterion",
+          "wireName": "crit1",
+          "name": "Crit1"
+        },
+        {
+          "type": "f4",
+          "description": "Eastern component of the end of the pole in ENU [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f4",
+          "description": "Nothern component of the end of the pole in ENU [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f4",
+          "description": "Up-component of the end of the pole in ENU [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Heading angle of the device [rad]",
+          "wireName": "heading",
+          "name": "Heading"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch angle of the device [rad]",
+          "wireName": "pitch",
+          "name": "Pitch"
+        },
+        {
+          "type": "f4",
+          "description": "Roll angle of the device [rad]",
+          "wireName": "roll",
+          "name": "Roll"
+        },
+        {
+          "type": "f4",
+          "description": "Initial value of dir angle [rad]",
+          "wireName": "crit0_dir",
+          "name": "Crit0_dir"
+        },
+        {
+          "type": "f4",
+          "description": "Final value of dir angle [rad]",
+          "wireName": "crit1_dir",
+          "name": "Crit1_dir"
+        },
+        {
+          "type": "f4",
+          "description": "Dir angle [rad]",
+          "wireName": "min_dir",
+          "name": "Min_dir"
+        },
+        {
+          "type": "f4",
+          "description": "Incline angle [rad]",
+          "wireName": "incline",
+          "name": "Incline"
+        },
+        {
+          "type": "f4",
+          "description": "Rotation angle [rad]",
+          "wireName": "rotation",
+          "name": "Rotation"
+        },
+        {
+          "type": "f4",
+          "description": "Auto bias for x-component of the angular velocity",
+          "wireName": "biasWX",
+          "name": "BiasWX"
+        },
+        {
+          "type": "f4",
+          "description": "Auto bias for y-component of the angular velocity",
+          "wireName": "biasWY",
+          "name": "BiasWY"
+        },
+        {
+          "type": "f4",
+          "description": "Auto bias for z-component of the angular velocity",
+          "wireName": "biasWZ",
+          "name": "BiasWZ"
+        },
+        {
+          "type": "u1",
+          "description": "Status of continuous tilt-compensated solution",
+          "wireName": "fast_status",
+          "name": "Fast_status"
+        }
+      ]
+    },
+    {
+      "name": "TiltCompensatedSolutionShort",
+      "ids": [
+        "pe"
+      ],
+      "page": 126,
+      "declaredBodySize": "54",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Current x-coordinate of the end of the pole in WGS84 [meters]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Current y-coordinate of the end of the pole in WGS84 [meters]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Current z-coordinate of the end of the pole in WGS84 [meters]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "u1",
+          "description": "see Table 2",
+          "wireName": "error",
+          "name": "Error"
+        },
+        {
+          "type": "i4",
+          "description": "Position update rate [ms]",
+          "wireName": "posMsInt",
+          "name": "PosMsInt"
+        },
+        {
+          "type": "i4",
+          "description": "Mode of operation",
+          "wireName": "headingMode",
+          "name": "HeadingMode"
+        },
+        {
+          "type": "f4",
+          "description": "Stillness duration [sec]",
+          "wireName": "stopInterval",
+          "name": "StopInterval"
+        },
+        {
+          "type": "f4",
+          "description": "Duration of motion [sec]",
+          "wireName": "motionInterval",
+          "name": "MotionInterval"
+        },
+        {
+          "type": "f4",
+          "description": "Length of the pole [meters]",
+          "wireName": "poleLength",
+          "name": "PoleLength"
+        },
+        {
+          "type": "u1",
+          "description": "Automatic detection of stillness",
+          "wireName": "autoCount",
+          "name": "AutoCount"
+        },
+        {
+          "type": "u1",
+          "description": "Automatic estimation of gyroscope bias",
+          "wireName": "autoGyrBiases",
+          "name": "AutoGyrBiases"
+        },
+        {
+          "type": "u1",
+          "description": "IMU calibration epochs",
+          "wireName": "gyroCalibEpochs",
+          "name": "GyroCalibEpochs"
+        },
+        {
+          "type": "u1",
+          "description": "IMU calibration state",
+          "wireName": "calibState",
+          "name": "CalibState"
+        },
+        {
+          "type": "f4",
+          "description": "Doppler smoothing bandwidth [Hz]",
+          "wireName": "doppsmi",
+          "name": "Doppsmi"
+        }
+      ]
+    },
+    {
+      "name": "ExternalEvent",
+      "ids": [
+        "XA",
+        "XB"
+      ],
+      "page": 127,
+      "declaredBodySize": "10",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "i4",
+          "description": "ms part of event time tag",
+          "wireName": "ms",
+          "name": "Ms"
+        },
+        {
+          "type": "i4",
+          "description": "ns part of event time tag",
+          "wireName": "ns",
+          "name": "Ns"
+        },
+        {
+          "type": "u1",
+          "description": "time scale",
+          "wireName": "timeScale",
+          "name": "TimeScale"
+        }
+      ]
+    },
+    {
+      "name": "PpsOffset",
+      "ids": [
+        "ZA",
+        "ZB"
+      ],
+      "page": 127,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "PPS offset in nanoseconds",
+          "wireName": "offs",
+          "name": "Offs"
+        }
+      ]
+    },
+    {
+      "name": "PpsTimeOffset",
+      "ids": [
+        "YA",
+        "YB"
+      ],
+      "page": 128,
+      "declaredBodySize": "10",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "[Tpps-Tr] offset [s]",
+          "wireName": "offs",
+          "name": "Offs"
+        },
+        {
+          "type": "u1",
+          "description": "time scale",
+          "wireName": "timeScale",
+          "name": "TimeScale"
+        }
+      ]
+    },
+    {
+      "name": "HeadingPitch",
+      "ids": [
+        "ha"
+      ],
+      "page": 128,
+      "declaredBodySize": "10",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Heading of the baseline between the base and the",
+          "wireName": "heading",
+          "name": "Heading"
+        },
+        {
+          "type": "f4",
+          "description": "Pitch of the baseline between the base and the",
+          "wireName": "pitch",
+          "name": "Pitch"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "GpsIonosphericParameters",
+      "ids": [
+        "IO"
+      ],
+      "page": 129,
+      "declaredBodySize": "39",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "Time of week [s]",
+          "wireName": "tot",
+          "name": "Tot"
+        },
+        {
+          "type": "u2",
+          "description": "Week number (taken from the first subframe)",
+          "wireName": "wn",
+          "name": "Wn"
+        },
+        {
+          "type": "f4",
+          "description": "[s]",
+          "wireName": "alpha0",
+          "name": "Alpha0"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles]",
+          "wireName": "alpha1",
+          "name": "Alpha1"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles2]",
+          "wireName": "alpha2",
+          "name": "Alpha2"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles3]",
+          "wireName": "alpha3",
+          "name": "Alpha3"
+        },
+        {
+          "type": "f4",
+          "description": "[s]",
+          "wireName": "beta0",
+          "name": "Beta0"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles]",
+          "wireName": "beta1",
+          "name": "Beta1"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles2]",
+          "wireName": "beta2",
+          "name": "Beta2"
+        },
+        {
+          "type": "f4",
+          "description": "[s/semicircles3]",
+          "wireName": "beta3",
+          "name": "Beta3"
+        }
+      ]
+    },
+    {
+      "name": "QzssIonosphericParameters",
+      "ids": [
+        "QI"
+      ],
+      "page": 130,
+      "declaredBodySize": "39",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "IonosphericParameters",
+          "wireName": "par",
+          "name": "Par"
+        }
+      ]
+    },
+    {
+      "name": "BeiDouIonosphericParameters",
+      "ids": [
+        "CI"
+      ],
+      "page": 130,
+      "declaredBodySize": "39",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "IonosphericParameters",
+          "wireName": "par",
+          "name": "Par"
+        }
+      ]
+    },
+    {
+      "name": "IrnssIonosphericParameters",
+      "ids": [
+        "II"
+      ],
+      "page": 130,
+      "declaredBodySize": "39",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "IonosphericParameters",
+          "wireName": "par",
+          "name": "Par"
+        }
+      ]
+    },
+    {
+      "name": "SpoofingJamming",
+      "ids": [
+        "sj"
+      ],
+      "page": 130,
+      "declaredBodySize": "var",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "SSID from ESI",
+          "wireName": "ssid",
+          "name": "Ssid"
+        },
+        {
+          "type": "u1",
+          "description": "SlotId",
+          "wireName": "slotId",
+          "name": "SlotId"
+        },
+        {
+          "type": "u2",
+          "description": "Number of satellites in this record",
+          "wireName": "num",
+          "name": "Num"
+        },
+        {
+          "type": "u2",
+          "description": "Number of spoofed (with 2 correlation peaks)",
+          "wireName": "numSpoofed",
+          "name": "NumSpoofed"
+        },
+        {
+          "type": "u2",
+          "description": "Noise mean value (percents)",
+          "wireName": "meanNoise",
+          "name": "MeanNoise"
+        },
+        {
+          "type": "u2",
+          "description": "Noise deviation value (percents)",
+          "wireName": "devNoise",
+          "name": "DevNoise"
+        },
+        {
+          "type": "SpoofingSatelliteData",
+          "count": "(num)",
+          "description": "Spoofing information for each satellite",
+          "wireName": "sj",
+          "name": "Sj"
+        }
+      ]
+    },
+    {
+      "name": "MessageOutputLatency",
+      "ids": [
+        "LT"
+      ],
+      "page": 131,
+      "declaredBodySize": "2",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "output latency [ms]",
+          "wireName": "lt",
+          "name": "Lt"
+        }
+      ]
+    },
+    {
+      "name": "LoggingHistory",
+      "ids": [
+        "LH"
+      ],
+      "page": 133,
+      "declaredBodySize": "var",
+      "checksum": "None",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "Number of SVs",
+          "wireName": "svsCount",
+          "name": "SatelliteCount"
+        },
+        {
+          "type": "u1",
+          "description": "Stream ID",
+          "wireName": "targetStream",
+          "name": "TargetStream"
+        },
+        {
+          "type": "u2",
+          "description": "Issue of the history",
+          "wireName": "issue",
+          "name": "Issue"
+        },
+        {
+          "type": "u2",
+          "description": "Number of bits",
+          "wireName": "bitsCount",
+          "name": "BitsCount"
+        },
+        {
+          "type": "u4",
+          "description": "Time since the last history shift [ms]",
+          "wireName": "lastBitTime",
+          "name": "LastBitTime"
+        },
+        {
+          "type": "u1",
+          "count": "(svsCount)",
+          "description": "SVs UIDs",
+          "wireName": "uids",
+          "name": "Uids"
+        },
+        {
+          "type": "u1",
+          "count": "(padCount)",
+          "description": "Padding",
+          "wireName": "pad",
+          "name": "Pad"
+        },
+        {
+          "type": "u4",
+          "count": "((BitsCount+31)/32)*SatelliteCount",
+          "description": "History bits",
+          "wireName": "hist",
+          "name": "Hist"
+        }
+      ],
+      "custom": true
+    },
+    {
+      "name": "AntennaInformation",
+      "ids": [
+        "AI"
+      ],
+      "page": 134,
+      "declaredBodySize": "var",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "description": "APC length [0|3]. 0 if APC is not set",
+          "wireName": "apcNum",
+          "name": "ApcNum"
+        },
+        {
+          "type": "f8",
+          "count": "(apcNum)",
+          "description": "APC(GPS L1) WGS84(x,y,z) [meters]",
+          "wireName": "apc",
+          "name": "Apc"
+        },
+        {
+          "type": "u1",
+          "description": "ARP length [0|3]. 0 if ARP is not set",
+          "wireName": "arpNum",
+          "name": "ArpNum"
+        },
+        {
+          "type": "f8",
+          "count": "(arpNum)",
+          "description": "ARP WGS84(x,y,z) [meters]",
+          "wireName": "arp",
+          "name": "Arp"
+        },
+        {
+          "type": "u1",
+          "description": "Antenna ID Length",
+          "wireName": "aidLen",
+          "name": "AidLen"
+        },
+        {
+          "type": "a1",
+          "count": "(aidLen)",
+          "description": "Antenna ID",
+          "wireName": "aid",
+          "name": "Aid"
+        }
+      ],
+      "validation": "ValidateCoordinates()"
+    },
+    {
+      "name": "BaseStationInformation",
+      "ids": [
+        "BI"
+      ],
+      "page": 134,
+      "declaredBodySize": "28",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "ECEF coordinates [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "u2",
+          "description": "Reference station ID",
+          "wireName": "id",
+          "name": "ReferenceStationId"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "Security",
+      "ids": [
+        "SE"
+      ],
+      "page": 134,
+      "declaredBodySize": "6",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "(5)",
+          "description": "Opaque data",
+          "wireName": "data",
+          "name": "Data"
+        }
+      ]
+    },
+    {
+      "name": "SecurityRm",
+      "ids": [
+        "SM"
+      ],
+      "page": 134,
+      "declaredBodySize": "8",
+      "checksum": "Crc16",
+      "fields": [
+        {
+          "type": "u1",
+          "count": "(6)",
+          "description": "Opaque data",
+          "wireName": "data",
+          "name": "Data"
+        }
+      ]
+    },
+    {
+      "name": "OverallContinuousTrackingTime",
+      "ids": [
+        "TT"
+      ],
+      "page": 134,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "u4",
+          "description": "tracking time [s]",
+          "wireName": "tt",
+          "name": "Tt"
+        }
+      ]
+    },
+    {
+      "name": "OscillatorOffset",
+      "ids": [
+        "OO"
+      ],
+      "page": 135,
+      "declaredBodySize": "5",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f4",
+          "description": "Oscillator offset [s/s]",
+          "wireName": "val",
+          "name": "Val"
+        }
+      ]
+    },
+    {
+      "name": "EpochEnd",
+      "ids": [
+        "||"
+      ],
+      "page": 135,
+      "declaredBodySize": "1",
+      "checksum": "Binary8",
+      "fields": []
+    },
+    {
+      "name": "SatelliteIndices",
+      "ids": [
+        "SI"
+      ],
+      "page": 560,
+      "declaredBodySize": "nSats+1",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "name": "Satellites",
+          "wireName": "usi",
+          "type": "u1",
+          "count": "remaining",
+          "description": "Obsolete universal satellite identifiers (USI), in epoch array order."
+        }
+      ]
+    },
+    {
+      "name": "LeverArmCartesianPosition",
+      "ids": [
+        "RO"
+      ],
+      "page": 128,
+      "declaredBodySize": "30",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "x",
+          "name": "X"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "y",
+          "name": "Y"
+        },
+        {
+          "type": "f8",
+          "description": "Cartesian coordinates [m]",
+          "wireName": "z",
+          "name": "Z"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "LeverArmGeodeticPosition",
+      "ids": [
+        "RG"
+      ],
+      "page": 128,
+      "declaredBodySize": "30",
+      "checksum": "Binary8",
+      "fields": [
+        {
+          "type": "f8",
+          "description": "Latitude [rad]",
+          "wireName": "lat",
+          "name": "Latitude"
+        },
+        {
+          "type": "f8",
+          "description": "Longitude [rad]",
+          "wireName": "lon",
+          "name": "Longitude"
+        },
+        {
+          "type": "f8",
+          "description": "Ellipsoidal height [m]",
+          "wireName": "alt",
+          "name": "Altitude"
+        },
+        {
+          "type": "f4",
+          "description": "Position 3D RMS [m]",
+          "wireName": "pSigma",
+          "name": "PositionSigma"
+        },
+        {
+          "type": "u1",
+          "description": "Solution type",
+          "wireName": "solType",
+          "name": "SolutionType"
+        }
+      ]
+    },
+    {
+      "name": "LegacyReferenceEpoch",
+      "ids": [
+        "rE"
+      ],
+      "page": 556,
+      "fields": [
+        {
+          "name": "Sample",
+          "type": "u2"
+        },
+        {
+          "name": "Scale",
+          "type": "u2"
+        },
+        {
+          "name": "ReferenceTime",
+          "type": "u4"
+        }
+      ],
+      "custom": false,
+      "checksum": "Crc16",
+      "declaredBodySize": "10"
+    },
+    {
+      "name": "LegacyPositionVelocity",
+      "ids": [
+        "rV"
+      ],
+      "page": 559,
+      "fields": [
+        {
+          "name": "Sample",
+          "type": "u2"
+        },
+        {
+          "name": "Delta",
+          "type": "u2"
+        },
+        {
+          "name": "Word1",
+          "type": "u4"
+        },
+        {
+          "name": "Word2",
+          "type": "u4"
+        },
+        {
+          "name": "Word3",
+          "type": "u4"
+        },
+        {
+          "name": "Word4",
+          "type": "u4"
+        },
+        {
+          "name": "Word5",
+          "type": "u4"
+        },
+        {
+          "name": "Word6",
+          "type": "u4"
+        },
+        {
+          "name": "Word7",
+          "type": "u4"
+        },
+        {
+          "name": "Word8",
+          "type": "u4"
+        },
+        {
+          "name": "Word9",
+          "type": "u4"
+        }
+      ],
+      "custom": false,
+      "checksum": "Crc16",
+      "declaredBodySize": "42"
+    },
+    {
+      "name": "LegacyRawMeasurements",
+      "ids": [
+        "rM"
+      ],
+      "page": 557,
+      "fields": [
+        {
+          "name": "Sample",
+          "type": "u2"
+        },
+        {
+          "name": "Scale",
+          "type": "u2"
+        },
+        {
+          "name": "ReferenceTime",
+          "type": "u4"
+        },
+        {
+          "name": "Clock",
+          "type": "i2"
+        },
+        {
+          "name": "Flags",
+          "type": "u2",
+          "default": 4
+        },
+        {
+          "name": "Satellites",
+          "type": "LegacyRawMeasurementSatellite",
+          "count": "remaining"
+        }
+      ],
+      "custom": true,
+      "checksum": "Crc16",
+      "declaredBodySize": "var",
+      "visitorFields": [
+        {
+          "name": "Version",
+          "type": "i4",
+          "readOnly": true,
+          "description": "Legacy raw measurement format version decoded from Flags bits 13 through 15."
+        },
+        {
+          "name": "HeaderSize",
+          "type": "i4",
+          "readOnly": true,
+          "description": "Satellite record header length including its extension bytes.",
+          "units": "byte"
+        },
+        {
+          "name": "SlotSize",
+          "type": "i4",
+          "readOnly": true,
+          "description": "Measurement slot record length including its extension bytes.",
+          "units": "byte"
+        }
+      ]
+    },
+    {
+      "name": "LegacyClockOffsets",
+      "ids": [
+        "rT"
+      ],
+      "page": 560,
+      "fields": [
+        {
+          "name": "Sample",
+          "type": "u2"
+        },
+        {
+          "name": "Reserved",
+          "type": "u2"
+        },
+        {
+          "name": "RecordSize",
+          "type": "u1",
+          "default": 8
+        },
+        {
+          "name": "Offsets",
+          "type": "LegacyClockOffset",
+          "count": "remaining"
+        }
+      ],
+      "custom": true,
+      "checksum": "Crc16",
+      "declaredBodySize": "var"
+    },
+    {
+      "name": "LegacyGpsNavigation",
+      "ids": [
+        "GD",
+        "QD"
+      ],
+      "page": 561,
+      "fields": [
+        {
+          "name": "RecordSize",
+          "type": "u1",
+          "default": 42
+        },
+        {
+          "name": "Satellites",
+          "type": "LegacyGpsNavigationSatellite",
+          "count": "remaining"
+        }
+      ],
+      "custom": true,
+      "checksum": "Binary8",
+      "declaredBodySize": "var"
+    },
+    {
+      "name": "LegacyGlonassNavigation",
+      "ids": [
+        "LD"
+      ],
+      "page": 562,
+      "fields": [
+        {
+          "name": "RecordSize",
+          "type": "u1",
+          "default": 18
+        },
+        {
+          "name": "Satellites",
+          "type": "LegacyGlonassNavigationSatellite",
+          "count": "remaining"
+        }
+      ],
+      "custom": true,
+      "checksum": "Binary8",
+      "declaredBodySize": "var"
+    }
+  ],
+  "errata": [
+    "S4 and SigmaPhi on p.103 declare nSats+1 bytes, but their f4 array fields require 4*nSats+1. The codecs follow the field declarations.",
+    "Single spectrum Sp on p.119 omits n from its size expression. The codecs use 8+n*m*2 payload bytes plus the optional 33-byte extension.",
+    "sj on p.130 is absent from the table of contents and is included here.",
+    "SvDelay on p.119 refers to the immediately preceding SvDelays record.",
+    "IRNSS ephemeris IE p.112 is 124 bytes and embeds the required 122-byte GPS ephemeris data, followed by navType and checksum.",
+    "QZSS QE follows the GPS ephemeris optional block, including its CNAV2 layout; the declared QZSS length list omits the extended 168-byte form."
+  ]
+}

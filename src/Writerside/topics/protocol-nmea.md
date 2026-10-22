@@ -4,7 +4,7 @@ ASCII navigation sentences for position, time, satellite status, velocity, and e
 
 ## Connect the parser
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 

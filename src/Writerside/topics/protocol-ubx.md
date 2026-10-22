@@ -4,7 +4,7 @@ u-blox binary receiver configuration, acknowledgements, monitoring, navigation r
 
 ## Connect the parser
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 

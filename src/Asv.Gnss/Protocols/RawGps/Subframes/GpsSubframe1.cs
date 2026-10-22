@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Represents a GPS subframe 1.
 /// </summary>
-public class GpsSubframe1 : GpsSubframeBase
+public partial class GpsSubframe1 : GpsSubframeBase
 {
     /// <summary>
     /// Gets the subframe identifier.
@@ -53,40 +53,92 @@ public class GpsSubframe1 : GpsSubframeBase
         Tgd[0] = tgd == -128 ? 0.0 : tgd * GpsRawHelper.P2_31;
     }
 
-    public DateTime Toc { get; set; }
+    private DateTime _toc;
+    public DateTime Toc
+    {
+        get => _toc;
+        set => _toc = value;
+    }
 
-    public int Flag { get; set; }
+    private int _flag;
+    public int Flag
+    {
+        get => _flag;
+        set => _flag = value;
+    }
 
-    public int Code { get; set; }
-    public double Af0 { get; set; }
-    public double Af1 { get; set; }
-    public double Af2 { get; set; }
-    public double TocSec { get; set; }
-    public int iodc { get; set; }
+    private int _code;
+    public int Code
+    {
+        get => _code;
+        set => _code = value;
+    }
+    private double _af0;
+    public double Af0
+    {
+        get => _af0;
+        set => _af0 = value;
+    }
+    private double _af1;
+    public double Af1
+    {
+        get => _af1;
+        set => _af1 = value;
+    }
+    private double _af2;
+    public double Af2
+    {
+        get => _af2;
+        set => _af2 = value;
+    }
+    private double _tocSec;
+    public double TocSec
+    {
+        get => _tocSec;
+        set => _tocSec = value;
+    }
+    private int _iodc;
+    public int iodc
+    {
+        get => _iodc;
+        set => _iodc = value;
+    }
 
-    public double[] Tgd { get; set; } = new double[1];
+    private double[] _tgd = new double[1];
+    public double[] Tgd
+    {
+        get => _tgd;
+        set => _tgd = value;
+    }
 
     /// <summary>
     /// Gets or sets the satellite accuracy in byte value.
     /// </summary>
-    public byte SatelliteAccuracy { get; set; }
+    private byte _satelliteAccuracy;
+    public byte SatelliteAccuracy
+    {
+        get => _satelliteAccuracy;
+        set => _satelliteAccuracy = value;
+    }
 
     /// <summary>
     /// Gets or sets the health status of the satellite.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The health status is represented as a byte value.
-    /// </para>
-    /// <para>
-    /// The value ranges from 0 to 255, where 0 represents a completely malfunctioning satellite
-    /// and 255 represents a perfectly functioning satellite.
+    /// The raw six-bit health indication ranges from 0 to 63. Zero indicates healthy LNAV data
+    /// and signals, as defined by IS-GPS-200N, section 20.3.3.3.1.4.
     /// </para>
     /// </remarks>
     /// <value>
     /// The health status of the satellite.
     /// </value>
-    public byte SatelliteHealth { get; set; }
+    private byte _satelliteHealth;
+    public byte SatelliteHealth
+    {
+        get => _satelliteHealth;
+        set => _satelliteHealth = value;
+    }
 
     /// <summary>
     /// Gets or sets the week number.
@@ -94,7 +146,12 @@ public class GpsSubframe1 : GpsSubframeBase
     /// <value>
     /// The week number.
     /// </value>
-    public int WeekNumber { get; set; }
+    private int _weekNumber;
+    public int WeekNumber
+    {
+        get => _weekNumber;
+        set => _weekNumber = value;
+    }
 
     /// <summary>
     /// Returns a string that represents the current object.

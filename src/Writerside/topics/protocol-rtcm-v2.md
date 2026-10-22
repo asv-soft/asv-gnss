@@ -4,7 +4,7 @@ Legacy differential GNSS correction and navigation messages.
 
 ## Connect the parser
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 
@@ -38,7 +38,7 @@ The project references the NuGet packages `Asv.IO` and `Asv.Common` 3.7.0. `Rtcm
 
 For direct encoding, create one encoder for each outgoing stream and reuse it in transmission order:
 
-```csharp
+```c#
 var encoder = new RtcmV2Encoder();
 var message = new RtcmV2Message1
 {

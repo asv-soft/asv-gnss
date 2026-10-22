@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Represents a Glonass Word 4 object.
 /// </summary>
-public class GlonassWord4 : GlonassWordBase
+public partial class GlonassWord4 : GlonassWordBase
 {
     /// <summary>
     /// Gets the unique identifier for the word.
@@ -47,53 +47,92 @@ public class GlonassWord4 : GlonassWordBase
     /// равный смещению по фазе ПСПД излучаемого навигационного радиосигнала n-го НКА относительно
     /// системного опорного сигнала на момент времени tb, выраженный в единицах времени
     /// </summary>
-    public double TauN { get; set; }
+    public double TauN
+    {
+        get => _tauN;
+        set => _tauN = value;
+    }
+    private double _tauN;
 
     /// <summary>
     /// Смещение излучаемого навигационного радиосигнала поддиапазона L2 относительно навигационного
     /// радиосигнала поддиапазона L1 для n-го НКА.
     /// </summary>
-    public double DelayTauN { get; set; }
+    public double DelayTauN
+    {
+        get => _delayTauN;
+        set => _delayTauN = value;
+    }
+    private double _delayTauN;
 
     /// <summary>
     /// En - характеризует "возраст" оперативной информации, то есть интервал времени, прошедший от момента расчета (закладки)
     /// оперативной информации до момента времени tb для n-го НКА. Слово En формируется на борту НКА.
     /// </summary>
-    public byte Age { get; set; }
+    public byte Age
+    {
+        get => _age;
+        set => _age = value;
+    }
+    private byte _age;
 
     /// <summary>
     /// Признак того, что на текущем интервале времени tb средствами ПКУ на НКА заложена (1)
-    /// или не заложена (0) обновленная эфемеридная или частотно-временная информация. 
+    /// или не заложена (0) обновленная эфемеридная или частотно-временная информация.
     /// </summary>
-    public byte P4 { get; set; }
-
+    public byte P4
+    {
+        get => _p4;
+        set => _p4 = value;
+    }
+    private byte _p4;
 
     /// <summary>
     /// Фактор точности измерений, характеризующий в виде эквивалентной ошибки прогнозируемую ошибку измерения
     /// псевдодальности, обусловленную набором данных (эфемеридная и частотно-временная информация), излучаемых в
     /// навигационном сообщении на момент времени tb (см. таблицу 4.4)(1);
     /// </summary>
-    public double Accuracy { get; set; }
+    public double Accuracy
+    {
+        get => _accuracy;
+        set => _accuracy = value;
+    }
+    private double _accuracy;
 
     /// <summary>
     /// Текущая дата, календарный номер суток внутри четырехлетнего интервала, начиная с 1-го января
     /// високосного года (1). Алгоритм пересчета от номера суток внутри четырехлетнего интервала к общепринятой
     /// форме даты (чч.мм.гг.) приведен в разделе П 3.1.3;
     /// </summary>
-    public ushort Nt { get; set; }
+    public ushort Nt
+    {
+        get => _nt;
+        set => _nt = value;
+    }
+    private ushort _nt;
 
     /// <summary>
     /// Номер НКА, излучающего данный навигационный сигнал (1) и соответствующий его рабочей точке
     /// внутри орбитальной группировки ГЛОНАСС
     /// </summary>
-    public byte Slot { get; set; }
+    public byte Slot
+    {
+        get => _slot;
+        set => _slot = value;
+    }
+    private byte _slot;
 
     /// <summary>
     /// This method returns the time correction value (Ft) for a given navigation signal.
     /// The input parameter ft is a byte that represents the modification of the emitting satellite.
     /// A value of "00" indicates the satellite is "Glonass", "01" indicates the satellite is "Glonass-M".
     /// </summary>
-    public byte M { get; set; }
+    public byte M
+    {
+        get => _m;
+        set => _m = value;
+    }
+    private byte _m;
 
     private double GetFt(byte ft)
     {

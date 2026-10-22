@@ -3,7 +3,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Represents a Glonass Word 2 object.
 /// </summary>
-public class GlonassWord2 : GlonassWordBase
+public partial class GlonassWord2 : GlonassWordBase
 {
     /// <summary>
     /// Gets the ID of the word.
@@ -37,9 +37,19 @@ public class GlonassWord2 : GlonassWordBase
         bitIndex += 27;
     }
 
-    public byte Tb { get; set; }
+    public byte Tb
+    {
+        get => _tb;
+        set => _tb = value;
+    }
+    private byte _tb;
 
-    public byte Health { get; set; }
+    public byte Health
+    {
+        get => _health;
+        set => _health = value;
+    }
+    private byte _health;
 
     /// <summary>
     /// Gets or sets the value of property P2.
@@ -48,23 +58,42 @@ public class GlonassWord2 : GlonassWordBase
     /// This property is of type byte and can store values ranging from 0 to 255.
     /// </remarks>
     /// <value>The value of property P2.</value>
-    public byte P2 { get; set; }
+    public byte P2
+    {
+        get => _p2;
+        set => _p2 = value;
+    }
+    private byte _p2;
 
     /// <summary>
     /// satellite position (ecef) (m). Координаты n-го спутника в системе координат ПЗ-90 на момент времени tb
     /// </summary>
-    public double PositionY { get; set; }
+    public double PositionY
+    {
+        get => _positionY;
+        set => _positionY = value;
+    }
+    private double _positionY;
 
     /// <summary>
     /// satellite velocity (ecef) (m/s). составляющие вектора скорости n-го спутника в системе координат ПЗ-90 на момент
     /// времени tb
     /// </summary>
-    public double VelocityY { get; set; }
+    public double VelocityY
+    {
+        get => _velocityY;
+        set => _velocityY = value;
+    }
+    private double _velocityY;
 
     /// <summary>
     /// satellite acceleration (ecef) (m/s^2). Составляющие ускорения n-го спутника в системе координат ПЗ-90 на момент времени tb,
     /// обусловленные действием луны и солнца
     /// </summary>
-    public double AccelerationY { get; set; }
-
+    public double AccelerationY
+    {
+        get => _accelerationY;
+        set => _accelerationY = value;
+    }
+    private double _accelerationY;
 }

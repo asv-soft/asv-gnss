@@ -15,24 +15,26 @@ The pages below describe the current source implementation, its default registra
 | GBAS | `RegisterGbasProtocol` | [Coverage and usage](protocol-gbas.md) |
 | Septentrio Binary Format (SBF) | `RegisterSbfProtocol` | [Coverage and usage](protocol-sbf.md) |
 | ComNav | `RegisterComNavProtocol` | [Coverage and usage](protocol-comnav.md) |
+| Javad / GREIS | `RegisterJavadProtocol` | [303 native message models, commands, and object catalog](protocol-javad.md) |
+| Raw GPS LNAV | `RegisterRawGpsProtocol` | [300-bit subframes, parity and typed fields](protocol-raw-gps.md) |
+| Raw GLONASS FDMA | `RegisterRawGlonassProtocol` | [85-bit strings, Hamming checks and typed fields](protocol-raw-glonass.md) |
 
 All registration methods are extensions on `IProtocolParserBuilder` in the `Asv.Gnss` namespace. Use them through `builder.Protocols` inside `Protocol.Create`; see [Quick Start](quick-start.md). Where a registration accepts a `configure` callback, it runs after the default messages are added and before the factory is built.
 
-## Embedded navigation decoders
+## Receiver navigation-word adapters
 
 | Module | Entry point | Documentation |
 |--------|-------------|---------------|
 | Raw GPS | `GpsSubFrameFactory.Create(uint[])` | [GPS navigation subframes](protocol-raw-gps.md) |
 | Raw GLONASS | `GlonassWordFactory.Create(uint[])` | [GLONASS navigation strings](protocol-raw-glonass.md) |
 
-These decode navigation words carried by receiver messages and do not have independent stream registrations.
+These compatibility entry points decode navigation words carried by receiver messages. The returned models also support the native bit-stream protocols above. Receiver uint layouts and native transmitted bits are different representations; consult each protocol page before converting between them. Raw navigation parsers require explicit registration on a suitable navigation stream and are not automatic mixed-file detectors.
 
 ## Incomplete or reference-only modules
 
 | Module | Current status |
 |--------|----------------|
 | [ADS-B](protocol-ads-b.md) | Parser and message scaffolding; runtime methods are unimplemented. |
-| [Javad / GREIS](protocol-javad.md) | Reference PDF only; no parser implementation. |
 
 ## Specification coverage tables
 
@@ -46,9 +48,9 @@ Each protocol page includes a specification catalog with message IDs, implementa
 | [UBX](protocol-ubx.md) | UBX-13003221 R23 message overview. |
 | [SBF](protocol-sbf.md) | SBF guide v1.11.0 and AsteRx-U firmware v4.6.1 block catalogs. |
 | [ComNav](protocol-comnav.md) | OEM Board Reference Manual v1.8 native logs and commands. |
-| [Javad / GREIS](protocol-javad.md) | GREIS v4.2.01 native receiver messages, including enumerated measurement families. |
+| [Javad / GREIS](protocol-javad.md) | GREIS v4.2.01: 303 native IDs, including measurement families and Appendix A.4 compatibility messages. |
 | [ASTERIX](protocol-asterix.md) | Implemented category list; CAT020 edition 1.9 and CAT021 editions 2.1/2.7 item lists. |
-| [Raw GPS](protocol-raw-gps.md) | Legacy GPS SPS subframes from the 1995 signal specification. |
+| [Raw GPS](protocol-raw-gps.md) | Legacy GPS LNAV; headers, AODO and navigation pages checked against IS-GPS-200N, preserving the original decoder contracts. |
 | [Raw GLONASS](protocol-raw-glonass.md) | Legacy navigation strings from ICD edition 5.1 (2008). |
 | [ASV](protocol-asv.md) | Source inventory; no local protocol PDF. |
 | [ADS-B](protocol-ads-b.md) | Implementation status only; no local native ADS-B message-catalog PDF. |

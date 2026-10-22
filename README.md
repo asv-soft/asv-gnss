@@ -20,7 +20,9 @@ Read the [Asv.Gnss documentation](https://asv.me/asv-gnss/) for installation, qu
 - Parse RTCM v2 and RTCM v3, including legacy messages, ephemeris, stationary RTK, GLONASS bias, and MSM3/MSM4/MSM5/MSM7 messages.
 - Support u-blox UBX messages: `ACK`, `CFG`, `INF`, `MON`, `NAV`, `RXM`.
 - Parse ASTERIX categories `001`, `002`, `004`, `010`, `020`, `021`, `034`, `048`, and `247`.
-- Additional protocols and parsers: ADS-B, ASV, Raw GPS, Raw GLONASS, SBF, ComNav, and Javad.
+- Parse and serialize 303 native Javad GREIS message IDs, with receiver commands, response labels, DTP file-transfer codecs, and the GREIS 4.2.01 object catalog. See [Javad / GREIS coverage](src/Writerside/topics/protocol-javad.md).
+- Parse and serialize native GPS LNAV subframes and GLONASS FDMA strings with parity validation, typed visitors, and bit-stream protocol registration.
+- Additional protocols and parsers: ADS-B, ASV, SBF, and ComNav.
 - Integration with `Asv.IO`: protocol registration, routers, ports, GNSS device discovery, and NMEA/RTCM/UBX microservices.
 
 ## Requirements

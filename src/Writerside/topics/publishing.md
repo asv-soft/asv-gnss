@@ -6,7 +6,7 @@ The repository includes `publish_nuget.bat` for publishing `%package%` packages.
 
 Build a Release package whose version matches the current Git tag or `git describe --tags` output.
 
-```bat
+```batch
 build.bat
 ```
 
@@ -20,7 +20,7 @@ dotnet pack src/Asv.Gnss/Asv.Gnss.csproj -c Release
 
 Run the publishing script from the repository root:
 
-```bat
+```batch
 publish_nuget.bat
 ```
 

@@ -43,7 +43,7 @@ src/
 
 Protocol registration is exposed through extension methods, for example:
 
-```csharp
+```c#
 builder.Protocols.RegisterNmeaProtocol();
 builder.Protocols.RegisterRtcmV2Protocol();
 builder.Protocols.RegisterRtcmV3Protocol();

@@ -4,7 +4,7 @@ Septentrio receiver binary blocks for PVT, quality, status, observations, and ra
 
 ## Connect the parser
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 

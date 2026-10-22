@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// This class inherits from the GlonassWordBase class and represents a Glonass word with an odd word ID.
 /// </summary>
-public class GlonassWordOdd : GlonassWordBase
+public partial class GlonassWordOdd : GlonassWordBase
 {
     /// <summary>
     /// Checks if the word ID meets the specified criteria.
@@ -35,32 +35,67 @@ public class GlonassWordOdd : GlonassWordBase
         bitIndex += 7;
         var h = (int)GlonassRawHelper.GetBitU(data, bitIndex, 5);
         bitIndex += 5;
-        if (h is >= 25 and <= 31) h -= 32;
+        if (h is >= 25 and <= 31)
+            h -= 32;
         Frequency = 1602000000 + h * 562500;
+        ln = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 1);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public double omega { get; set; }
+    /// <summary>Immediate satellite health flag: zero indicates usable navigation data.</summary>
+    public byte ln
+    {
+        get => _ln;
+        set => _ln = value;
+    }
+    private byte _ln;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public double ToaSec { get; set; }
+    public double omega
+    {
+        get => _omega;
+        set => _omega = value;
+    }
+    private double _omega;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public double DeltaT { get; set; }
+    public double ToaSec
+    {
+        get => _toaSec;
+        set => _toaSec = value;
+    }
+    private double _toaSec;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public double DeltaDT { get; set; }
+    public double DeltaT
+    {
+        get => _deltaT;
+        set => _deltaT = value;
+    }
+    private double _deltaT;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public long Frequency { get; set; }
+    public double DeltaDT
+    {
+        get => _deltaDT;
+        set => _deltaDT = value;
+    }
+    private double _deltaDT;
+
+    /// <summary>
+    ///
+    /// </summary>
+    public long Frequency
+    {
+        get => _frequency;
+        set => _frequency = value;
+    }
+    private long _frequency;
 }

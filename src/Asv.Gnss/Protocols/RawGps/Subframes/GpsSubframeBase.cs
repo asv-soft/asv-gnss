@@ -6,7 +6,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Base class for GPS subframes.
 /// </summary>
-public abstract class GpsSubframeBase
+public abstract partial class GpsSubframeBase
 {
     /// <summary>
     /// Gets or sets the TOW1_5Epoh property.
@@ -14,7 +14,12 @@ public abstract class GpsSubframeBase
     /// <value>
     /// The TOW1_5Epoh property represents a uint value.
     /// </value>
-    public uint TOW1_5Epoh { get; set; }
+    private uint _tOW1_5Epoh;
+    public uint TOW1_5Epoh
+    {
+        get => _tOW1_5Epoh;
+        set => _tOW1_5Epoh = value;
+    }
 
     /// <summary>
     /// Gets the identifier for the subframe.
@@ -38,11 +43,24 @@ public abstract class GpsSubframeBase
     {
         if (dataWithoutParity.Length != 30)
             throw new Exception(
-                $"Length of {nameof(dataWithoutParity)} array must be 24 bit x 10 word = 30 bytes  (as GPS ICD subframe length )");
+                $"Length of {nameof(dataWithoutParity)} array must be 24 bit x 10 word = 30 bytes  (as GPS ICD subframe length )"
+            );
         if (dataWithoutParity[0] != GpsRawHelper.GpsSubframePreamble)
-            throw new Exception($"Preamble error. Want {GpsRawHelper.GpsSubframePreamble}. Got {dataWithoutParity[0]}");
+            throw new Exception(
+                $"Preamble error. Want {GpsRawHelper.GpsSubframePreamble}. Got {dataWithoutParity[0]}"
+            );
+        dataWithoutParity.CopyTo(_sourceData, 0);
+        _pagePayloadChanged = false;
+        PreviousWordParity = 0;
+        _sourceWordParity = 0;
+        TelemetryMessage = (ushort)GpsRawHelper.GetBitU(dataWithoutParity, 8, 14);
+        IntegrityStatusFlag = GpsRawHelper.GetBitU(dataWithoutParity, 22, 1) != 0;
+        AlertFlag = GpsRawHelper.GetBitU(dataWithoutParity, 41, 1) != 0;
+        AntiSpoofFlag = GpsRawHelper.GetBitU(dataWithoutParity, 42, 1) != 0;
         TOW1_5Epoh = GpsRawHelper.GetBitU(dataWithoutParity, 24, 17); // 2-nd word 1-17 bit
-        var subframeId = GpsRawHelper.GetSubframeId((byte)GpsRawHelper.GetBitU(dataWithoutParity, 24 + 19, 3));
+        var subframeId = GpsRawHelper.GetSubframeId(
+            (byte)GpsRawHelper.GetBitU(dataWithoutParity, 24 + 19, 3)
+        );
         if (subframeId != SubframeId)
             throw new Exception($"Subframe ID not equals: want {SubframeId}. Got {subframeId}");
     }

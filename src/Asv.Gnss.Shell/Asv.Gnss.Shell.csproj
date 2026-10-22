@@ -9,8 +9,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Spectre.Console" Version="0.57.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asv.Gnss\Asv.Gnss.csproj" />
+    <InternalsVisibleTo Include="Asv.Gnss.Test" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@ Create a protocol, register GNSS protocol implementations, create a router, and 
 
 ## Register protocols
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 using R3;
@@ -46,7 +46,7 @@ using var subscription = router.OnRxMessage.Subscribe(packet =>
 
 Register the GNSS device factory when the application needs receiver-level discovery and microservices.
 
-```csharp
+```c#
 var explorer = DeviceExplorer.Create(router, builder =>
 {
     builder.Factories.RegisterGnssDevice();
@@ -57,7 +57,7 @@ var explorer = DeviceExplorer.Create(router, builder =>
 
 The UBX microservice includes helper methods for common u-blox workflows.
 
-```csharp
+```c#
 await ubx.GetMonVer(cancel);
 await ubx.GetNavPvt(cancel);
 await ubx.SetSurveyInMode(minDuration: 60, positionAccuracyLimit: 2, cancel: cancel);
@@ -70,7 +70,7 @@ await ubx.RebootReceiver(cancel);
 
 All existing UBX messages implement `Asv.IO.IVisitable`. Their `Accept` methods expose typed payload properties with field names, English descriptions, units where applicable, and numeric enum metadata. Satellite records, port configurations, coordinates, arrays, and lists are visited through the corresponding nested Asv.IO types.
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 

@@ -36,7 +36,7 @@ dotnet pack src/Asv.Gnss/Asv.Gnss.csproj -c Release
 
 On Windows, the repository build script can be used from the repository root:
 
-```bat
+```batch
 build.bat
 ```
 

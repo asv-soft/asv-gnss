@@ -16,6 +16,7 @@ internal static class Program
         // app.Add<NmeaCommand>();
         app.Add<RtcmV3Command>();
         app.Add<AsterixStreamCommand>();
+        app.Add<FileInspectCommand>();
         await app.RunAsync(args);
     }
 }

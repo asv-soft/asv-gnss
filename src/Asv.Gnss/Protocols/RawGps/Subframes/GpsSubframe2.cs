@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Represents a GPS Subframe 2.
 /// </summary>
-public class GpsSubframe2 : GpsSubframeBase
+public partial class GpsSubframe2 : GpsSubframeBase
 {
     /// <summary>
     /// Gets the subframe identifier.
@@ -27,9 +27,15 @@ public class GpsSubframe2 : GpsSubframeBase
         word2Start += 8;
         Crs = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_5;
         word2Start += 16;
-        deln = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_43 * GpsRawHelper.SC2RAD;
+        deln =
+            GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16)
+            * GpsRawHelper.P2_43
+            * GpsRawHelper.SC2RAD;
         word2Start += 16;
-        M0 = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 32) * GpsRawHelper.P2_31 * GpsRawHelper.SC2RAD;
+        M0 =
+            GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 32)
+            * GpsRawHelper.P2_31
+            * GpsRawHelper.SC2RAD;
         word2Start += 32;
         Cuc = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_29;
         word2Start += 16;
@@ -37,24 +43,88 @@ public class GpsSubframe2 : GpsSubframeBase
         word2Start += 32;
         Cus = GpsRawHelper.GetBitS(dataWithoutParity, word2Start, 16) * GpsRawHelper.P2_29;
         word2Start += 16;
-        A = Math.Pow(GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 32) * GpsRawHelper.P2_19, 2);
+        A = Math.Pow(
+            GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 32) * GpsRawHelper.P2_19,
+            2
+        );
         word2Start += 32;
         ToeSec = GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 16) * 16.0;
         word2Start += 16;
         Fit = GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 1) == 0 ? 0.0 : 4.0;
+        word2Start++;
+        Aodo = (byte)GpsRawHelper.GetBitU(dataWithoutParity, word2Start, 5);
     }
 
-    public double Fit { get; set; }
+    private byte _aodo;
 
-    public double M0 { get; set; }
-    public double deln { get; set; }
-    public double e { get; set; }
-    public double A { get; set; }
+    /// <summary>Age of data offset in 900-second units; the five-bit value 31 indicates invalid NMCT data.</summary>
+    public byte Aodo
+    {
+        get => _aodo;
+        set => _aodo = value;
+    }
 
-    public double Cuc { get; set; }
-    public double Cus { get; set; }
-    public double Crs { get; set; }
+    private double _fit;
+    public double Fit
+    {
+        get => _fit;
+        set => _fit = value;
+    }
 
-    public double ToeSec { get; set; }
-    public int iode { get; set; }
+    private double _m0;
+    public double M0
+    {
+        get => _m0;
+        set => _m0 = value;
+    }
+    private double _deln;
+    public double deln
+    {
+        get => _deln;
+        set => _deln = value;
+    }
+    private double _e;
+    public double e
+    {
+        get => _e;
+        set => _e = value;
+    }
+    private double _a;
+    public double A
+    {
+        get => _a;
+        set => _a = value;
+    }
+
+    private double _cuc;
+    public double Cuc
+    {
+        get => _cuc;
+        set => _cuc = value;
+    }
+    private double _cus;
+    public double Cus
+    {
+        get => _cus;
+        set => _cus = value;
+    }
+    private double _crs;
+    public double Crs
+    {
+        get => _crs;
+        set => _crs = value;
+    }
+
+    private double _toeSec;
+    public double ToeSec
+    {
+        get => _toeSec;
+        set => _toeSec = value;
+    }
+    private int _iode;
+    public int iode
+    {
+        get => _iode;
+        set => _iode = value;
+    }
 }

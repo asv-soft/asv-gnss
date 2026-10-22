@@ -4,7 +4,7 @@ ASV-specific heartbeat, GNSS observations, raw navigation data, PVT, and GBAS da
 
 ## Connect the parser
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 

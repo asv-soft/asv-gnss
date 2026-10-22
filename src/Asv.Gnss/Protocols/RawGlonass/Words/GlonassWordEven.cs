@@ -5,7 +5,7 @@ namespace Asv.Gnss;
 /// <summary>
 /// Represents a derived class of GlonassWordBase that checks for even word IDs greater than 5 during deserialization.
 /// </summary>
-public class GlonassWordEven : GlonassWordBase
+public partial class GlonassWordEven : GlonassWordBase
 {
     /// <summary>
     /// Checks the word ID to ensure it meets certain criteria.
@@ -37,7 +37,9 @@ public class GlonassWordEven : GlonassWordBase
         bitIndex += 10;
         LOmega = GlonassRawHelper.GetBitG(data, bitIndex, 21) * GlonassRawHelper.P2_20 * Math.PI;
         bitIndex += 21;
-        i = (63.0 / 180.0 + GlonassRawHelper.GetBitG(data, bitIndex, 18) * GlonassRawHelper.P2_20) * Math.PI;
+        i =
+            (63.0 / 180.0 + GlonassRawHelper.GetBitG(data, bitIndex, 18) * GlonassRawHelper.P2_20)
+            * Math.PI;
         bitIndex += 18;
         e = GlonassRawHelper.GetBitU(data, bitIndex, 15) * GlonassRawHelper.P2_20;
         bitIndex += 15;
@@ -47,41 +49,75 @@ public class GlonassWordEven : GlonassWordBase
     /// 0 - non-operability
     /// 1 - operability
     /// </summary>
-    public byte С { get; set; }
+    public byte С
+    {
+        get => _с;
+        set => _с = value;
+    }
+    private byte _с;
 
     /// <summary>
     /// 0 - GLONASS
     /// 1 - GLONASS-M
     /// </summary>
-    public byte M { get; set; }
+    public byte M
+    {
+        get => _m;
+        set => _m = value;
+    }
+    private byte _m;
 
     /// <summary>
     /// Satellite number
     /// [1-24]
     /// </summary>
-    public byte Prn { get; set; }
-
+    public byte Prn
+    {
+        get => _prn;
+        set => _prn = value;
+    }
+    private byte _prn;
 
     /// <summary>
     /// Correction to onboard time scale
     /// [s]
     /// </summary>
-    public double DelaT2 { get; set; }
+    public double DelaT2
+    {
+        get => _delaT2;
+        set => _delaT2 = value;
+    }
+    private double _delaT2;
 
     /// <summary>
     /// Longitude of the first (within the NA -day) ascending node of orbit in PZ-90.02 coordinate system
     /// [Rad]
     /// </summary>
-    public double LOmega { get; set; }
+    public double LOmega
+    {
+        get => _lOmega;
+        set => _lOmega = value;
+    }
+    private double _lOmega;
 
     /// <summary>
     /// Orbital inclination
     /// [Rad]
     /// </summary>
-    public double i { get; set; }
+    public double i
+    {
+        get => _i;
+        set => _i = value;
+    }
+    private double _i;
 
     /// <summary>
     /// Eccentricity
     /// </summary>
-    public double e { get; set; }
+    public double e
+    {
+        get => _e;
+        set => _e = value;
+    }
+    private double _e;
 }

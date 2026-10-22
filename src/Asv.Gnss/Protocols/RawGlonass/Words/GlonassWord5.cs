@@ -2,7 +2,7 @@ namespace Asv.Gnss;
 
 /// GlonassWord5 represents a Glonass Word 5 message.
 /// /
-public class GlonassWord5 : GlonassWordBase
+public partial class GlonassWord5 : GlonassWordBase
 {
     /// <summary>
     /// Gets the unique identifier for the word.
@@ -40,27 +40,52 @@ public class GlonassWord5 : GlonassWordBase
     /// Календарный номер суток внутри четырехлетнего периода, начиная с високосного года,
     /// к которым относятся поправка τc и данные альманаха системы (альманах орбит и альманах фаз);
     /// </summary>
-    public ushort Na { get; set; }
+    public ushort Na
+    {
+        get => _na;
+        set => _na = value;
+    }
+    private ushort _na;
 
     /// <summary>
     /// Поправка к шкале времени системы ГЛОНАСС относительно UTC(SU). Поправка τc дана на начало суток с номером Na.
     /// τc  = UTC(SU) + 03 час 00 мин - TГЛ
     /// </summary>
-    public double TauC { get; set; }
+    public double TauC
+    {
+        get => _tauC;
+        set => _tauC = value;
+    }
+    private double _tauC;
 
     /// <summary>
     /// Номер четырехлетнего периода, первый год первого четырехлетия  соответствует 1996 году
     /// </summary>
-    public byte N4 { get; set; }
+    public byte N4
+    {
+        get => _n4;
+        set => _n4 = value;
+    }
+    private byte _n4;
 
     /// <summary>
     /// Поправка на расхождение системных шкал времени GPS(TGPS) и ГЛОНАСС (ТГЛ) в соответствии со следующим выражением:
     /// TGPS – TГЛ = ΔΤ + τGPS
     /// </summary>
-    public double TauGPS { get; set; }
+    public double TauGPS
+    {
+        get => _tauGPS;
+        set => _tauGPS = value;
+    }
+    private double _tauGPS;
 
     /// <summary>
     /// Признак недостоверности кадра n-го НКА; ln = 0 свидетельствует о пригодности НКА для навигации;  ln = 1 означает факт непригодности данного НКА для навигации
     /// </summary>
-    public byte ln { get; set; }
+    public byte ln
+    {
+        get => _ln;
+        set => _ln = value;
+    }
+    private byte _ln;
 }

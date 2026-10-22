@@ -2,7 +2,7 @@ namespace Asv.Gnss;
 
 /// GlonassWord1 class extends GlonassWordBase class and represents a Glonass word with ID 1.
 /// /
-public class GlonassWord1 : GlonassWordBase
+public partial class GlonassWord1 : GlonassWordBase
 {
     /// <summary>
     /// The ID of the word represented by this object.
@@ -23,7 +23,7 @@ public class GlonassWord1 : GlonassWordBase
     {
         base.Deserialize(data);
         var bitIndex = 8U + 2U;
-        P1 = (byte)GlonassRawHelper.GetBitU(data, bitIndex + 2, 2);
+        P1 = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 2);
         bitIndex += 2;
         var hh = (byte)GlonassRawHelper.GetBitU(data, bitIndex, 5);
         bitIndex += 5;
@@ -44,26 +44,49 @@ public class GlonassWord1 : GlonassWordBase
     /// <summary>
     /// The number of seconds elapsed since the beginning of the current day
     /// </summary>
-    public double TofLocalSec { get; set; }
+    public double TofLocalSec
+    {
+        get => _tofLocalSec;
+        set => _tofLocalSec = value;
+    }
+    private double _tofLocalSec;
 
-
-    public byte P1 { get; set; }
-
+    public byte P1
+    {
+        get => _p1;
+        set => _p1 = value;
+    }
+    private byte _p1;
 
     /// <summary>
     /// satellite position (ecef) (m). Координаты n-го спутника в системе координат ПЗ-90 на момент времени tb
     /// </summary>
-    public double PositionX { get; set; }
+    public double PositionX
+    {
+        get => _positionX;
+        set => _positionX = value;
+    }
+    private double _positionX;
 
     /// <summary>
     /// satellite velocity (ecef) (m/s). составляющие вектора скорости n-го спутника в системе координат ПЗ-90 на момент
     /// времени tb
     /// </summary>
-    public double VelocityX { get; set; }
+    public double VelocityX
+    {
+        get => _velocityX;
+        set => _velocityX = value;
+    }
+    private double _velocityX;
 
     /// <summary>
     /// satellite acceleration (ecef) (m/s^2). Составляющие ускорения n-го спутника в системе координат ПЗ-90 на момент времени tb,
     /// обусловленные действием луны и солнца
     /// </summary>
-    public double AccelerationX { get; set; }
+    public double AccelerationX
+    {
+        get => _accelerationX;
+        set => _accelerationX = value;
+    }
+    private double _accelerationX;
 }

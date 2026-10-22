@@ -4,7 +4,7 @@ ComNav receiver binary logs, ASCII logs, text commands, and simple command respo
 
 ## Connect the parser
 
-```csharp
+```c#
 using Asv.Gnss;
 using Asv.IO;
 
