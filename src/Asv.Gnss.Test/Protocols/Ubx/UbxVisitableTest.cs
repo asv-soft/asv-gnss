@@ -17,6 +17,7 @@ public class UbxVisitableTest
 
     public static IEnumerable<object[]> MessageTypes => typeof(UbxMessageBase).Assembly.GetTypes()
         .Where(type => !type.IsAbstract && typeof(UbxMessageBase).IsAssignableFrom(type))
+        .Where(type => !typeof(UbxX20MessageBase).IsAssignableFrom(type))
         .OrderBy(type => type.FullName).Select(type => new object[] { type });
 
     public static IEnumerable<object[]> NestedTypes =>

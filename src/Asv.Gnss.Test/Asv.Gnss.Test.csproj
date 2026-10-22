@@ -29,6 +29,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Resources\Rinex\**\*" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\testglo.rtcm2" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\GMSD7_20121014.rtcm3" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\fw206mrtk_rtcm" CopyToOutputDirectory="PreserveNewest" />
@@ -62,6 +63,10 @@
     <None Update="Resources\Ubx\*.bin" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Javad\*.jps" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Resources\Javad\*.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\RawNavigation\*.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\RawNavigation\Sources\*.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources\RawNavigation\Sources\*.arrow" CopyToOutputDirectory="PreserveNewest" />
     <None Remove="Resources\Ubx\Licenses\GPSD-COPYING.txt" />
+    <None Remove="Resources\Rinex\LICENSE.georinex.txt" />
   </ItemGroup>
 </Project>

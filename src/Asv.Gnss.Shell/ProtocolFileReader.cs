@@ -51,6 +51,7 @@ internal static class ProtocolFileReader
                 asterixFactory = ((ProtocolMessageFactoryBuilder<AsterixMessage, byte>)factory).Build());
             builder.Protocols.RegisterAsvProtocol();
             builder.Protocols.RegisterGbasProtocol();
+            builder.Protocols.RegisterRinexProtocol();
             builder.Protocols.RegisterSbfProtocol();
             builder.Protocols.RegisterComNavProtocol();
             builder.Protocols.RegisterJavadProtocol(factory =>
@@ -101,6 +102,14 @@ internal static class ProtocolFileReader
                 }
             }
             cancellationToken.ThrowIfCancellationRequested();
+            foreach (var rinex in parsers.OfType<RinexMessageParser>().Where(parser => parser.IsReadingFile))
+            {
+                try { rinex.Complete(); }
+                catch (Exception error) when (error is FormatException or NotSupportedException or ArgumentException or OverflowException)
+                {
+                    // Complete reports the error through the subscribed parser error stream.
+                }
+            }
             return new ProtocolFileCapture(path, byteCount, messages.ToArray(),
                 protocol.AvailableProtocols.Select(info => info.Id).Order(StringComparer.Ordinal).ToArray(), errors);
         }

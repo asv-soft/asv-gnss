@@ -6,7 +6,8 @@ namespace Asv.Gnss;
 public partial class GpsSubframe2
 {
     private static readonly Field AodoField = GpsNavigationVisitor.Field(
-        nameof(Aodo), UInt8Type.Default
+        nameof(Aodo),
+        UInt8Type.Default
     );
     private static readonly Field iodeField = GpsNavigationVisitor.Field(
         nameof(iode),

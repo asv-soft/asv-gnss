@@ -8,6 +8,10 @@ public partial class UbxNavPvt
     private static readonly Field MagneticDeclinationField = UbxVisitor.Field(nameof(MagneticDeclination), DoubleType.Default, "Magnetic declination. Only supported in ADR 4.10 and later. deg", "deg");
     private static readonly Field HeadingOfVehicle2DField = UbxVisitor.Field(nameof(HeadingOfVehicle2D), DoubleType.Default, "Vehicle heading in degrees. This deserializer sets the property to NaN when IsValidVehicleHeading is false.", "deg");
     private static readonly Field IsValidLLHField = UbxVisitor.Field(nameof(IsValidLLH), BoolType.Default, "Whether longitude, latitude and both height fields are valid; this is the inverse of the wire invalidLlh bit.");
+    private static readonly Field Flags3Field = UbxVisitor.Field(nameof(Flags3), UInt16Type.Default, "Raw additional navigation flags; unused bits are retained without interpretation.");
+    private static readonly Field LastCorrectionAgeField = UbxVisitor.Field(nameof(LastCorrectionAge), UInt8Type.Default, "Differential-correction age bucket, not seconds: 0 unavailable, 1 through 11 increasing intervals, 12 through 15 at least 120 seconds.");
+    private static readonly Field IsTimeAuthenticatedField = UbxVisitor.Field(nameof(IsTimeAuthenticated), BoolType.Default, "Output time has been validated against an external trusted time source.");
+    private static readonly Field IsNmaFixVerifiedField = UbxVisitor.Field(nameof(IsNmaFixVerified), BoolType.Default, "Mixed navigation solution agrees with NMA-authenticated data; false alone does not establish spoofing.");
     private static readonly Field PositionDOPField = UbxVisitor.Field(nameof(PositionDOP), DoubleType.Default, "Position dilution of precision, dimensionless; wire resolution is 0.01.");
     private static readonly Field HeadingAccuracyEstimateField = UbxVisitor.Field(nameof(HeadingAccuracyEstimate), DoubleType.Default, "Heading accuracy estimate (both motion and vehicle), deg", "deg");
     private static readonly Field SpeedAccuracyEstimateField = UbxVisitor.Field(nameof(SpeedAccuracyEstimate), DoubleType.Default, "Speed accuracy estimate, m\\s", "m/s");
@@ -64,6 +68,10 @@ public partial class UbxNavPvt
         MagneticDeclinationField,
         HeadingOfVehicle2DField,
         IsValidLLHField,
+        Flags3Field,
+        LastCorrectionAgeField,
+        IsTimeAuthenticatedField,
+        IsNmaFixVerifiedField,
         PositionDOPField,
         HeadingAccuracyEstimateField,
         SpeedAccuracyEstimateField,
@@ -114,6 +122,16 @@ public partial class UbxNavPvt
         DoubleType.Accept(visitor, MagneticDeclinationField, MagneticDeclinationField.DataType, ref _magneticDeclination);
         DoubleType.Accept(visitor, HeadingOfVehicle2DField, HeadingOfVehicle2DField.DataType, ref _headingOfVehicle2D);
         BoolType.Accept(visitor, IsValidLLHField, IsValidLLHField.DataType, ref _isValidLLH);
+        UInt16Type.Accept(visitor, Flags3Field, Flags3Field.DataType, ref _flags3);
+        var lastCorrectionAge = LastCorrectionAge;
+        UInt8Type.Accept(visitor, LastCorrectionAgeField, LastCorrectionAgeField.DataType, ref lastCorrectionAge);
+        LastCorrectionAge = lastCorrectionAge;
+        var isTimeAuthenticated = IsTimeAuthenticated;
+        BoolType.Accept(visitor, IsTimeAuthenticatedField, IsTimeAuthenticatedField.DataType, ref isTimeAuthenticated);
+        IsTimeAuthenticated = isTimeAuthenticated;
+        var isNmaFixVerified = IsNmaFixVerified;
+        BoolType.Accept(visitor, IsNmaFixVerifiedField, IsNmaFixVerifiedField.DataType, ref isNmaFixVerified);
+        IsNmaFixVerified = isNmaFixVerified;
         DoubleType.Accept(visitor, PositionDOPField, PositionDOPField.DataType, ref _positionDOP);
         DoubleType.Accept(visitor, HeadingAccuracyEstimateField, HeadingAccuracyEstimateField.DataType, ref _headingAccuracyEstimate);
         DoubleType.Accept(visitor, SpeedAccuracyEstimateField, SpeedAccuracyEstimateField.DataType, ref _speedAccuracyEstimate);

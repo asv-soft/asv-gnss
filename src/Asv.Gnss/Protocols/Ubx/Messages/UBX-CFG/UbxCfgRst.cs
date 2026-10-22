@@ -84,5 +84,7 @@ public enum ResetMode : byte
     ControlledSoftwareResetGnssOnly = 0x02,
     HardwareResetAfterShutdown = 0x04,
     ControlledGnssStop = 0x08,
-    ControlledGnssStart = 0x09
+    ControlledGnssStart = 0x09,
+    /// <summary>Hardware reset via PWSEQ while retaining battery-backed RAM contents.</summary>
+    HardwareResetRetainingBbr = 0x0A
 }

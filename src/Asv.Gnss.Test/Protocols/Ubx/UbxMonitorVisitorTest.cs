@@ -224,7 +224,8 @@ public class UbxMonitorVisitorTest
 
         Assert.Equal(UbxGnssTypeEnum.GLONASS, message.UbxGnssId);
         Assert.Equal(21, message.SvId);
-        Assert.Equal(2, message.Reserved1);
+        Assert.Equal(3, message.Reserved1);
+        Assert.Equal(3, message.SigId);
         Assert.Equal(-3, message.FreqId);
         Assert.Equal(3, message.NumWords);
         Assert.Equal(4, message.Chn);
@@ -233,7 +234,8 @@ public class UbxMonitorVisitorTest
         Assert.Equal(new uint[] { 0x7FFFFFFF, 0, 0x80000000 }, message.RawData);
         Assert.Same(gps, message.GpsSubFrame);
         Assert.Same(glonass, message.GlonassWord);
-        Assert.Equal(9, visitor.Fields.Count);
+        Assert.Equal(10, visitor.Fields.Count);
+        Assert.Contains(nameof(UbxRxmSfrbx.SigId), visitor.Fields.Keys);
         Assert.Equal("GLONASS", visitor.Fields["UbxGnssId"].GetEnum<int>()[6].Name);
     }
 

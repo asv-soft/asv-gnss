@@ -52,3 +52,7 @@ builder.Protocols.RegisterAsterixProtocol();
 ```
 
 This keeps application startup explicit: only the protocols you register are added to the runtime pipeline.
+
+## Stateful file protocols
+
+[RINEX](protocol-rinex.md) uses the same registration, message factory and parser interfaces as byte-stream protocols. A parser instance owns its current file header; factory-created record models receive that context before decoding. Observation type changes in flag-4 events replace the context for later epochs without rewriting earlier messages. `Complete()` marks EOF and validates the last record. `RinexFile` handles stream ownership, gzip detection and cancellation for file-oriented callers.

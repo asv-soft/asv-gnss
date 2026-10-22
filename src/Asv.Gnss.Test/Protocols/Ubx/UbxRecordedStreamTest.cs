@@ -12,11 +12,11 @@ namespace Asv.Gnss;
 public class UbxRecordedStreamTest
 {
     [Theory]
-    [InlineData("pygpsdata-NAV.bin", 5, 23, "d931b83094f6698d6245f5bcdadae8a909839abfb6171f5044512a463ddd0d8b", "aa39c4e9b63a2e2960ea1c9b5e80cce9f6313019a81031d4702ec0c1bff27735")]
-    [InlineData("pygpsdata-MON.bin", 5, 9, "057c5ba542d60136ecca81931b3517bd1df36035bd944200a8e94e3c9053c453", "83f971bceced7abe5abbccc244d5708f484bdcdf01546f4ed5ebf8735d2568cc")]
-    [InlineData("ublox-zed-f9p-sfrbx.bin", 95, 57, "465e6f4fceac5ad70928242fd9baee43ea82508a35a3ef838e006e223ab2107e", "26026749296b2dc5c2e68e4bfbd98ef69799e81706143aa46295acbdc6098981")]
+    [InlineData("pygpsdata-NAV.bin", 25, 3, "d931b83094f6698d6245f5bcdadae8a909839abfb6171f5044512a463ddd0d8b", "9fd5a09bdbb586850e09757ac671fd443f7282661a4adfe57950435939b03c12", "aa39c4e9b63a2e2960ea1c9b5e80cce9f6313019a81031d4702ec0c1bff27735")]
+    [InlineData("pygpsdata-MON.bin", 11, 3, "057c5ba542d60136ecca81931b3517bd1df36035bd944200a8e94e3c9053c453", "b50ac8971187f4ef2f2f52305a418835012fe8d549df1471e3ef0990e33db69a", "83f971bceced7abe5abbccc244d5708f484bdcdf01546f4ed5ebf8735d2568cc")]
+    [InlineData("ublox-zed-f9p-sfrbx.bin", 152, 0, "465e6f4fceac5ad70928242fd9baee43ea82508a35a3ef838e006e223ab2107e", "a67c42b5dadb89a519d426e8f6ecc0fa62c6e70c712b47f1aa729336ec418bef", "26026749296b2dc5c2e68e4bfbd98ef69799e81706143aa46295acbdc6098981")]
     public void Push_RecordedCapture_ShouldPreserveSupportedMessagesAndWireOrder(
-        string fileName, int messageCount, int unknownCount, string fileHash, string orderHash)
+        string fileName, int messageCount, int unknownCount, string fileHash, string orderHash, string legacyOrderHash)
     {
         var data = ReadResource(fileName);
         Assert.Equal(fileHash, Hash(data));
@@ -26,6 +26,7 @@ public class UbxRecordedStreamTest
 
         Assert.Equal(messageCount, stream.Messages.Count);
         Assert.Equal(orderHash, HashMessageOrder(stream.Messages));
+        Assert.Equal(legacyOrderHash, HashMessageOrder(stream.Messages.Where(message => message is not UbxX20MessageBase)));
         Assert.Equal(unknownCount, stream.Errors.Count);
         Assert.All(stream.Errors, error => Assert.IsType<ProtocolParserUnknownMessageException>(error));
     }
@@ -49,15 +50,20 @@ public class UbxRecordedStreamTest
 
         stream.Push(data, chunkSize);
 
-        Assert.Equal(107, stream.Messages.Count);
-        Assert.Equal("190dfd1c1dc081d7e0c5c4823701de71dbd0b088c4da06a5045c158c366caefa", HashMessageOrder(stream.Messages));
+        Assert.Equal(190, stream.Messages.Count);
+        Assert.Equal("a6f341988dd4a7cc550e3f2fc2a1c117230dea8ecd5594763d3dae766dd3c177", HashMessageOrder(stream.Messages));
+        Assert.Equal("190dfd1c1dc081d7e0c5c4823701de71dbd0b088c4da06a5045c158c366caefa",
+            HashMessageOrder(stream.Messages.Where(message => message is not UbxX20MessageBase)));
         Assert.Equal(20, stream.Messages.OfType<UbxNavPvt>().Count());
         Assert.Equal(20, stream.Messages.OfType<UbxNavDop>().Count());
         Assert.Equal(3, stream.Messages.OfType<UbxNavSat>().Count());
         Assert.Equal(55, stream.Messages.OfType<UbxRxmSfrbx>().Count());
+        Assert.Equal(20, stream.Messages.OfType<UbxX20NavPosecefData0>().Count());
+        Assert.Equal(20, stream.Messages.OfType<UbxX20NavVelecefData0>().Count());
+        Assert.Equal(20, stream.Messages.OfType<UbxX20NavTimegpsData0>().Count());
         Assert.Single(stream.Messages.OfType<NmeaMessageRmc>());
         Assert.Single(stream.Messages.OfType<NmeaMessageGga>());
-        Assert.Equal(89, stream.Errors.Count);
+        Assert.Equal(6, stream.Errors.Count);
         Assert.All(stream.Errors, error => Assert.IsType<ProtocolParserUnknownMessageException>(error));
     }
 
@@ -101,6 +107,13 @@ public class UbxRecordedStreamTest
         Assert.Equal(1.14, dop.gDOP, 2);
         Assert.Equal(1.01, dop.pDOP, 2);
         Assert.Equal(0.58, dop.hDOP, 2);
+
+        var ecef = Assert.Single(stream.Messages.OfType<UbxX20NavPosecefData0>());
+        Assert.Equal(560117000u, ecef.ITOW);
+        Assert.Equal(380364578, ecef.EcefX);
+        Assert.Equal(-14879975, ecef.EcefY);
+        Assert.Equal(510064662, ecef.EcefZ);
+        Assert.Equal(255u, ecef.PAcc);
     }
 
     [Fact]
@@ -127,6 +140,11 @@ public class UbxRecordedStreamTest
         Assert.Equal(92, hardware.Noise);
         Assert.Equal(1404, hardware.AgcCnt);
         Assert.Equal(new byte[] { 255, 0, 1, 3, 2, 16, 255, 18, 19, 20, 21, 14, 10, 11, 15, 255, 53 }, hardware.VP);
+
+        var communications = Assert.Single(stream.Messages.OfType<UbxX20MonCommsData0>());
+        Assert.Equal((byte)2, communications.NPorts);
+        Assert.Equal(new byte[] { 0, 1, 5, 255 }, communications.ProtIds);
+        Assert.Equal(2, stream.Messages.OfType<UbxX20MonRfData0>().Count());
     }
 
     [Fact]
@@ -156,6 +174,11 @@ public class UbxRecordedStreamTest
         var satellites = stream.Messages.OfType<UbxNavSat>().First();
         Assert.Equal(35, satellites.Items.Length);
         Assert.Equal(-0.2, satellites.Items[0].PrResM, 1);
+        var ecef = stream.Messages.OfType<UbxX20NavPosecefData0>().First();
+        Assert.Equal(336494000u, ecef.ITOW);
+        Assert.Equal(-238605335, ecef.EcefX);
+        Assert.Equal(-392219444, ecef.EcefY);
+        Assert.Equal(441436373, ecef.EcefZ);
     }
 
     [Theory]

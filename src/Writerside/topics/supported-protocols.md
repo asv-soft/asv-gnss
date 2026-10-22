@@ -10,9 +10,11 @@ The pages below describe the current source implementation, its default registra
 | RTCM v2 | `RegisterRtcmV2Protocol` | [Coverage and usage](protocol-rtcm-v2.md) |
 | RTCM v3 | `RegisterRtcmV3Protocol` | [Coverage and usage](protocol-rtcm-v3.md) |
 | UBX | `RegisterUbxProtocol` | [Coverage and usage](protocol-ubx.md) |
+| UBX X20 HPG 2.11 | `RegisterUbxX20Protocol` | [163 typed variants and configuration keys](protocol-ubx-x20.md) |
 | ASTERIX | `RegisterAsterixProtocol` | [Coverage and usage](protocol-asterix.md) |
 | ASV | `RegisterAsvProtocol` | [Coverage and usage](protocol-asv.md) |
 | GBAS | `RegisterGbasProtocol` | [Coverage and usage](protocol-gbas.md) |
+| RINEX OBS/NAV/MET | `RegisterRinexProtocol` | [Versions, file API, and examples](protocol-rinex.md) |
 | Septentrio Binary Format (SBF) | `RegisterSbfProtocol` | [Coverage and usage](protocol-sbf.md) |
 | ComNav | `RegisterComNavProtocol` | [Coverage and usage](protocol-comnav.md) |
 | Javad / GREIS | `RegisterJavadProtocol` | [303 native message models, commands, and object catalog](protocol-javad.md) |
@@ -46,12 +48,14 @@ Each protocol page includes a specification catalog with message IDs, implementa
 | [RTCM v2](protocol-rtcm-v2.md) | RTCM 10402.3 with Amendment 1. |
 | [RTCM v3](protocol-rtcm-v3.md) | RTCM 10403.3 with Amendment 1; older local editions are superseded for the catalog. |
 | [UBX](protocol-ubx.md) | UBX-13003221 R23 message overview. |
+| [UBX X20](protocol-ubx-x20.md) | ZED-X20P X20 HPG 2.11 JSON and UBXDOC-304424225-21617 R01; protocol 50.11. |
 | [SBF](protocol-sbf.md) | SBF guide v1.11.0 and AsteRx-U firmware v4.6.1 block catalogs. |
 | [ComNav](protocol-comnav.md) | OEM Board Reference Manual v1.8 native logs and commands. |
 | [Javad / GREIS](protocol-javad.md) | GREIS v4.2.01: 303 native IDs, including measurement families and Appendix A.4 compatibility messages. |
 | [ASTERIX](protocol-asterix.md) | Implemented category list; CAT020 edition 1.9 and CAT021 editions 2.1/2.7 item lists. |
 | [Raw GPS](protocol-raw-gps.md) | Legacy GPS LNAV; headers, AODO and navigation pages checked against IS-GPS-200N, preserving the original decoder contracts. |
 | [Raw GLONASS](protocol-raw-glonass.md) | Legacy navigation strings from ICD edition 5.1 (2008). |
+| [RINEX](protocol-rinex.md) | IGS RINEX 2.11, 3.04 and 4.02; OBS/NAV/MET coverage and implementation limits documented separately. |
 | [ASV](protocol-asv.md) | Source inventory; no local protocol PDF. |
 | [ADS-B](protocol-ads-b.md) | Implementation status only; no local native ADS-B message-catalog PDF. |
 

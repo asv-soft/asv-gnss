@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <PackageTags>.net;gnss;gps;glonass;galileo;ublox;sino-gnss;</PackageTags>
-    <Description>GNSS library for parsing RTCMv2, RTCMv3, NMEA, Asterix and control recievers througt SBF, ComNav, UBX protocols for .NET</Description>
+    <PackageTags>dotnet;gnss;gps;glonass;galileo;beidou;rinex;rtcm;nmea;ubx;ublox;asterix;asv;gbas;sbf;septentrio;comnav;sino-gnss;javad;greis;</PackageTags>
+    <Description>GNSS and aviation protocol codecs for .NET: RINEX OBS/NAV/MET files, RTCM v2/v3, NMEA, UBX, ASTERIX, ASV, GBAS, SBF, ComNav, Javad GREIS, and raw GPS/GLONASS navigation data.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\Asv.Gnss.xml</DocumentationFile>

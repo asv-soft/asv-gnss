@@ -49,7 +49,8 @@ public partial class UbxNavSatelliteItem : IVisitable
         new EnumValue<byte>((byte)UbxNavSatGnssId.BeiDou, nameof(UbxNavSatGnssId.BeiDou)),
         new EnumValue<byte>((byte)UbxNavSatGnssId.IMES, nameof(UbxNavSatGnssId.IMES)),
         new EnumValue<byte>((byte)UbxNavSatGnssId.QZSS, nameof(UbxNavSatGnssId.QZSS)),
-        new EnumValue<byte>((byte)UbxNavSatGnssId.GLONASS, nameof(UbxNavSatGnssId.GLONASS)));
+        new EnumValue<byte>((byte)UbxNavSatGnssId.GLONASS, nameof(UbxNavSatGnssId.GLONASS)),
+        new EnumValue<byte>((byte)UbxNavSatGnssId.NavIC, nameof(UbxNavSatGnssId.NavIC)));
     private static readonly Field GnssIdField = UbxVisitor.Field(nameof(GnssId), UInt8Type.Default, "GNSS identifier (see Satellite Numbering) for assignment");
     private static readonly Field SvIdField = UbxVisitor.Field(nameof(SvId), UInt8Type.Default, "Satellite identifier (see Satellite Numbering) for assignment");
     private static readonly Field CnobBHzField = UbxVisitor.Field(nameof(CnobBHz), UInt8Type.Default, "Carrier to noise ratio (signal strength)", "dB-Hz");
@@ -92,6 +93,9 @@ public partial class UbxNavSatelliteItem : IVisitable
     private static readonly Field IsprCorrUsedField = UbxVisitor.Field(nameof(IsprCorrUsed), BoolType.Default, "Pseudorange corrections have been used for a signal in the subset specified in Signal Identifiers");
     private static readonly Field IscrCorrUsedField = UbxVisitor.Field(nameof(IscrCorrUsed), BoolType.Default, "Carrier range corrections have been used for a signal in the subset specified in Signal Identifiers");
     private static readonly Field IsdoCorrUsedField = UbxVisitor.Field(nameof(IsdoCorrUsed), BoolType.Default, "Range rate (Doppler) corrections have been used for a signal in the subset specified in Signal");
+    private static readonly Field IsclasCorrUsedField = UbxVisitor.Field(nameof(IsclasCorrUsed), BoolType.Default, "CLAS corrections have been used for this satellite.");
+    private static readonly Field IslppCorrUsedField = UbxVisitor.Field(nameof(IslppCorrUsed), BoolType.Default, "LPP corrections have been used for this satellite.");
+    private static readonly Field IshasCorrUsedField = UbxVisitor.Field(nameof(IshasCorrUsed), BoolType.Default, "Galileo HAS corrections have been used for this satellite.");
 
     /// <summary>Describes the public navigation payload fields exposed to visitors.</summary>
     public static StructType StructType { get; } = new([
@@ -118,7 +122,10 @@ public partial class UbxNavSatelliteItem : IVisitable
         IsspartnCorrUsedField,
         IsprCorrUsedField,
         IscrCorrUsedField,
-        IsdoCorrUsedField
+        IsdoCorrUsedField,
+        IsclasCorrUsedField,
+        IslppCorrUsedField,
+        IshasCorrUsedField
     ]);
 
     /// <inheritdoc />
@@ -157,5 +164,8 @@ public partial class UbxNavSatelliteItem : IVisitable
         BoolType.Accept(visitor, IsprCorrUsedField, IsprCorrUsedField.DataType, ref _isprCorrUsed);
         BoolType.Accept(visitor, IscrCorrUsedField, IscrCorrUsedField.DataType, ref _iscrCorrUsed);
         BoolType.Accept(visitor, IsdoCorrUsedField, IsdoCorrUsedField.DataType, ref _isdoCorrUsed);
+        BoolType.Accept(visitor, IsclasCorrUsedField, IsclasCorrUsedField.DataType, ref _isclasCorrUsed);
+        BoolType.Accept(visitor, IslppCorrUsedField, IslppCorrUsedField.DataType, ref _islppCorrUsed);
+        BoolType.Accept(visitor, IshasCorrUsedField, IshasCorrUsedField.DataType, ref _ishasCorrUsed);
     }
 }

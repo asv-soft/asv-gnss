@@ -391,7 +391,10 @@ public partial class GlonassWordEven
 
 public partial class GlonassWordOdd
 {
-    private static readonly Field lnField = GlonassWordEncoding.Field(nameof(ln), UInt8Type.Default);
+    private static readonly Field lnField = GlonassWordEncoding.Field(
+        nameof(ln),
+        UInt8Type.Default
+    );
     private static readonly Field omegaField = GlonassWordEncoding.Field(
         nameof(omega),
         DoubleType.Default,
@@ -450,6 +453,8 @@ public partial class GlonassWordOdd
         DoubleType.Accept(visitor, DeltaTField, ref _deltaT);
         DoubleType.Accept(visitor, DeltaDTField, ref _deltaDT);
         Int64Type.Accept(visitor, FrequencyField, ref _frequency);
-        UInt8Type.Accept(visitor, lnField, ref _ln);
+        AcceptHealth(visitor);
     }
+
+    protected void AcceptHealth(IVisitor visitor) => UInt8Type.Accept(visitor, lnField, ref _ln);
 }

@@ -15,7 +15,8 @@ public partial class UbxCfgRst
         new EnumValue<byte>((byte)ResetMode.ControlledSoftwareResetGnssOnly, nameof(ResetMode.ControlledSoftwareResetGnssOnly)),
         new EnumValue<byte>((byte)ResetMode.HardwareResetAfterShutdown, nameof(ResetMode.HardwareResetAfterShutdown)),
         new EnumValue<byte>((byte)ResetMode.ControlledGnssStop, nameof(ResetMode.ControlledGnssStop)),
-        new EnumValue<byte>((byte)ResetMode.ControlledGnssStart, nameof(ResetMode.ControlledGnssStart)));
+        new EnumValue<byte>((byte)ResetMode.ControlledGnssStart, nameof(ResetMode.ControlledGnssStart)),
+        new EnumValue<byte>((byte)ResetMode.HardwareResetRetainingBbr, nameof(ResetMode.HardwareResetRetainingBbr)));
 
     /// <inheritdoc />
     public override void Accept(IVisitor visitor)

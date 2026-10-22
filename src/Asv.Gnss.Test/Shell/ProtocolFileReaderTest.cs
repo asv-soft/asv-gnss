@@ -59,7 +59,7 @@ public class ProtocolFileReaderTest
             NmeaProtocol.Info.Id, RtcmV2Protocol.Info.Id, RtcmV3Protocol.Info.Id, UbxProtocol.Info.Id,
             AsterixProtocol.Info.Id, AsvProtocol.Info.Id, GbasProtocol.Info.Id, SbfProtocol.Info.Id,
             ComNavProtocol.BinaryInfo.Id, ComNavProtocol.AsciiInfo.Id, ComNavProtocol.SimpleAnswerInfo.Id,
-            JavadProtocol.Info.Id
+            JavadProtocol.Info.Id, RinexProtocol.Info.Id
         ];
         Assert.Equal(expected.Order(StringComparer.Ordinal), capture.Protocols);
         Assert.DoesNotContain(AdsbProtocol.Info.Id, capture.Protocols);

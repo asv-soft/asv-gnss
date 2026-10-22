@@ -1,13 +1,23 @@
 using System;
+using System.Runtime.CompilerServices;
 using Asv.IO;
 
 namespace Asv.Gnss;
 
 public partial class GpsSubframe4
 {
-    private static readonly Field DataIdField = GpsNavigationVisitor.Field(nameof(DataId), UInt8Type.Default);
-    private static readonly Field PageIdField = GpsNavigationVisitor.Field(nameof(PageId), UInt8Type.Default);
-    private static readonly Field RawPageDataField = GpsNavigationVisitor.Field(nameof(RawPageData), new ArrayType(UInt8Type.Default, 23));
+    private static readonly Field DataIdField = GpsNavigationVisitor.Field(
+        nameof(DataId),
+        UInt8Type.Default
+    );
+    private static readonly Field PageIdField = GpsNavigationVisitor.Field(
+        nameof(PageId),
+        UInt8Type.Default
+    );
+    private static readonly Field RawPageDataField = GpsNavigationVisitor.Field(
+        nameof(RawPageData),
+        new ArrayType(UInt8Type.Default, 23)
+    );
     private static readonly Field TypeField = GpsNavigationVisitor.Field(
         nameof(Type),
         Int32Type.Default
@@ -77,9 +87,18 @@ public partial class GpsSubframe4
         new OptionalStructType(UtcGpsRelationship.Fields)
     );
 
-    private static readonly Field NmctAvailabilityIndicatorField = GpsNavigationVisitor.Field(nameof(NmctAvailabilityIndicator), UInt8Type.Default);
-    private static readonly Field NmctEstimatedRangeDeviationsField = GpsNavigationVisitor.Field(nameof(NmctEstimatedRangeDeviations), new ArrayType(Int32Type.Default, 30));
-    private static readonly Field SpecialMessageDataField = GpsNavigationVisitor.Field(nameof(SpecialMessageData), new ArrayType(UInt8Type.Default, 22));
+    private static readonly Field NmctAvailabilityIndicatorField = GpsNavigationVisitor.Field(
+        nameof(NmctAvailabilityIndicator),
+        UInt8Type.Default
+    );
+    private static readonly Field NmctEstimatedRangeDeviationsField = GpsNavigationVisitor.Field(
+        nameof(NmctEstimatedRangeDeviations),
+        new ArrayType(Int32Type.Default, 30)
+    );
+    private static readonly Field SpecialMessageDataField = GpsNavigationVisitor.Field(
+        nameof(SpecialMessageData),
+        new ArrayType(UInt8Type.Default, 22)
+    );
 
     private void ResetPage()
     {
@@ -183,15 +202,28 @@ public partial class GpsSubframe4
                 RawGpsCodec.Signed(source, 216, 8, UtcGps.DeltaT_LSF);
                 break;
             case Subframe4Type.Nmct:
-                GpsNavigationVisitor.RequireLength(NmctEstimatedRangeDeviations, 30, nameof(NmctEstimatedRangeDeviations));
+                GpsNavigationVisitor.RequireLength(
+                    NmctEstimatedRangeDeviations,
+                    30,
+                    nameof(NmctEstimatedRangeDeviations)
+                );
                 RawGpsCodec.Unsigned(source, 48, 2, 1);
                 RawGpsCodec.Unsigned(source, 50, 6, 52);
                 RawGpsCodec.Unsigned(source, 56, 2, NmctAvailabilityIndicator);
                 for (var index = 0; index < 30; index++)
-                    RawGpsCodec.Signed(source, 58 + index * 6, 6, NmctEstimatedRangeDeviations[index]);
+                    RawGpsCodec.Signed(
+                        source,
+                        58 + index * 6,
+                        6,
+                        NmctEstimatedRangeDeviations[index]
+                    );
                 break;
             case Subframe4Type.SpecialMessage:
-                GpsNavigationVisitor.RequireLength(SpecialMessageData, 22, nameof(SpecialMessageData));
+                GpsNavigationVisitor.RequireLength(
+                    SpecialMessageData,
+                    22,
+                    nameof(SpecialMessageData)
+                );
                 RawGpsCodec.Unsigned(source, 48, 2, 1);
                 RawGpsCodec.Unsigned(source, 50, 6, 55);
                 SpecialMessageData.CopyTo(source[7..29]);
@@ -199,7 +231,9 @@ public partial class GpsSubframe4
             case Subframe4Type.None:
                 var page = PageId;
                 if (DataId == 1 && (page is >= 25 and <= 32 or 52 or 55 or 56 or 63))
-                    throw new InvalidOperationException("Changing a known GPS page to None requires a new unknown-page identity.");
+                    throw new InvalidOperationException(
+                        "Changing a known GPS page to None requires a new unknown-page identity."
+                    );
                 GpsNavigationVisitor.RequireLength(_rawPageData, 23, nameof(RawPageData));
                 RawGpsCodec.Unsigned(source, 48, 2, DataId);
                 RawGpsCodec.Unsigned(source, 50, 6, PageId);
@@ -215,13 +249,25 @@ public partial class GpsSubframe4
         base.Accept(visitor);
         var dataId = DataId;
         UInt8Type.Accept(visitor, DataIdField, DataIdField.DataType, ref dataId);
-        if (dataId != DataId) DataId = dataId;
+        if (dataId != DataId)
+            DataId = dataId;
         var pageId = PageId;
         UInt8Type.Accept(visitor, PageIdField, PageIdField.DataType, ref pageId);
-        if (pageId != PageId) PageId = pageId;
-        var type = (int)Type;
-        Int32Type.Accept(visitor, TypeField, TypeField.DataType, ref type);
-        if (type != (int)Type) Type = (Subframe4Type)type;
+        if (pageId != PageId)
+            PageId = pageId;
+        var previousType = _type;
+        Int32Type.Accept(
+            visitor,
+            TypeField,
+            TypeField.DataType,
+            ref Unsafe.As<Subframe4Type, int>(ref _type)
+        );
+        if (_type != previousType)
+        {
+            var editedType = _type;
+            _type = previousType;
+            Type = editedType;
+        }
         switch (Type)
         {
             case Subframe4Type.Almanac:
@@ -236,8 +282,17 @@ public partial class GpsSubframe4
                 OptionalStructType.Accept(visitor, UtcGpsField, ref _utcGps);
                 break;
             case Subframe4Type.Nmct:
-                UInt8Type.Accept(visitor, NmctAvailabilityIndicatorField, NmctAvailabilityIndicatorField.DataType, ref _nmctAvailabilityIndicator);
-                GpsNavigationVisitor.Array(visitor, NmctEstimatedRangeDeviationsField, _nmctEstimatedRangeDeviations);
+                UInt8Type.Accept(
+                    visitor,
+                    NmctAvailabilityIndicatorField,
+                    NmctAvailabilityIndicatorField.DataType,
+                    ref _nmctAvailabilityIndicator
+                );
+                GpsNavigationVisitor.Array(
+                    visitor,
+                    NmctEstimatedRangeDeviationsField,
+                    _nmctEstimatedRangeDeviations
+                );
                 break;
             case Subframe4Type.SpecialMessage:
                 GpsNavigationVisitor.Array(visitor, SpecialMessageDataField, _specialMessageData);

@@ -1,13 +1,23 @@
 using System;
+using System.Runtime.CompilerServices;
 using Asv.IO;
 
 namespace Asv.Gnss;
 
 public partial class GpsSubFrame5
 {
-    private static readonly Field DataIdField = GpsNavigationVisitor.Field(nameof(DataId), UInt8Type.Default);
-    private static readonly Field PageIdField = GpsNavigationVisitor.Field(nameof(PageId), UInt8Type.Default);
-    private static readonly Field RawPageDataField = GpsNavigationVisitor.Field(nameof(RawPageData), new ArrayType(UInt8Type.Default, 23));
+    private static readonly Field DataIdField = GpsNavigationVisitor.Field(
+        nameof(DataId),
+        UInt8Type.Default
+    );
+    private static readonly Field PageIdField = GpsNavigationVisitor.Field(
+        nameof(PageId),
+        UInt8Type.Default
+    );
+    private static readonly Field RawPageDataField = GpsNavigationVisitor.Field(
+        nameof(RawPageData),
+        new ArrayType(UInt8Type.Default, 23)
+    );
     private static readonly Field TypeField = GpsNavigationVisitor.Field(
         nameof(Type),
         Int32Type.Default
@@ -145,7 +155,9 @@ public partial class GpsSubFrame5
             case Subframe5Type.None:
                 var page = PageId;
                 if (DataId == 1 && (page is >= 1 and <= 24 or 51))
-                    throw new InvalidOperationException("Changing a known GPS page to None requires a new unknown-page identity.");
+                    throw new InvalidOperationException(
+                        "Changing a known GPS page to None requires a new unknown-page identity."
+                    );
                 GpsNavigationVisitor.RequireLength(_rawPageData, 23, nameof(RawPageData));
                 RawGpsCodec.Unsigned(source, 48, 2, DataId);
                 RawGpsCodec.Unsigned(source, 50, 6, PageId);
@@ -161,13 +173,25 @@ public partial class GpsSubFrame5
         base.Accept(visitor);
         var dataId = DataId;
         UInt8Type.Accept(visitor, DataIdField, DataIdField.DataType, ref dataId);
-        if (dataId != DataId) DataId = dataId;
+        if (dataId != DataId)
+            DataId = dataId;
         var pageId = PageId;
         UInt8Type.Accept(visitor, PageIdField, PageIdField.DataType, ref pageId);
-        if (pageId != PageId) PageId = pageId;
-        var type = (int)Type;
-        Int32Type.Accept(visitor, TypeField, TypeField.DataType, ref type);
-        if (type != (int)Type) Type = (Subframe5Type)type;
+        if (pageId != PageId)
+            PageId = pageId;
+        var previousType = _type;
+        Int32Type.Accept(
+            visitor,
+            TypeField,
+            TypeField.DataType,
+            ref Unsafe.As<Subframe5Type, int>(ref _type)
+        );
+        if (_type != previousType)
+        {
+            var editedType = _type;
+            _type = previousType;
+            Type = editedType;
+        }
         switch (Type)
         {
             case Subframe5Type.Almanac:

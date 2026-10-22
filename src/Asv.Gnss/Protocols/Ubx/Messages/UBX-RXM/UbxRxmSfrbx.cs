@@ -12,6 +12,7 @@ public enum UbxGnssTypeEnum
         IMES = 4,
         QZSS = 5,
         GLONASS = 6,
+        NavIC = 7,
     }
 
 public class UbxRxmSfrbxPool : UbxMessageBase
@@ -84,6 +85,15 @@ public partial class UbxRxmSfrbx : UbxMessageBase
     }
 
     /// <summary>
+    /// Signal identifier in current UBX interfaces; aliases Reserved1 to preserve the legacy API.
+    /// </summary>
+    public byte SigId
+    {
+        get => _reserved1;
+        set => _reserved1 = value;
+    }
+
+    /// <summary>
     /// GLONASS frequency slot from -7 to 6; this library subtracts 7 from the encoded freqId value. Meaningful only for GLONASS.
     /// </summary>
     public sbyte FreqId
@@ -93,7 +103,7 @@ public partial class UbxRxmSfrbx : UbxMessageBase
     }
 
     /// <summary>
-    /// Number of 32-bit navigation words: version 1 permits 0 to 16; the R23 version-2 description lists up to 10 for supported signals.
+    /// Number of 32-bit navigation words: up to 16 in X20 HPG 2.11, depending on the signal.
     /// </summary>
     public byte NumWords
     {
@@ -173,7 +183,7 @@ public partial class UbxRxmSfrbx : UbxMessageBase
         {
             GpsSubFrame = GpsSubFrameFactory.Create(RawData);
         }
-        else if (UbxGnssId == UbxGnssTypeEnum.GLONASS)
+        else if (UbxGnssId == UbxGnssTypeEnum.GLONASS && (Version < 2 || SigId is 0 or 2))
         {
             // Section 3.13.1.3: the fourth word is receiver frame metadata, outside the 85-bit string.
             GlonassWord = GlonassWordFactory.Create(RawData.Length == 4 ? RawData[..3] : RawData);

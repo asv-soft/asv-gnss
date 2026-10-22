@@ -36,6 +36,7 @@ public partial class UbxNavPvt : UbxMessageBase
     private double _magneticDeclination;
     private double _headingOfVehicle2D;
     private bool _isValidLLH;
+    private ushort _flags3;
     private double _positionDOP;
     private double _headingAccuracyEstimate;
     private double _speedAccuracyEstimate;
@@ -115,6 +116,47 @@ public partial class UbxNavPvt : UbxMessageBase
     {
         get => _isValidLLH;
         set => _isValidLLH = value;
+    }
+
+    /// <summary>
+    /// Raw additional navigation flags. X20 HPG 2.11 defines invalidLlh, lastCorrectionAge,
+    /// authTime and nmaFixStatus; unused bits are retained without interpretation.
+    /// </summary>
+    public ushort Flags3
+    {
+        get => _flags3;
+        set => _flags3 = value;
+    }
+
+    /// <summary>
+    /// Differential-correction age bucket, not seconds: 0 means unavailable, 1 through 11
+    /// represent increasing intervals, and 12 through 15 mean at least 120 seconds.
+    /// </summary>
+    public byte LastCorrectionAge
+    {
+        get => (byte)((_flags3 >> 1) & 0x0F);
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, (byte)15);
+            _flags3 = (ushort)((_flags3 & ~0x001E) | (value << 1));
+        }
+    }
+
+    /// <summary>Whether the output time has been validated against an external trusted time source.</summary>
+    public bool IsTimeAuthenticated
+    {
+        get => (_flags3 & 0x2000) != 0;
+        set => _flags3 = value ? (ushort)(_flags3 | 0x2000) : (ushort)(_flags3 & ~0x2000);
+    }
+
+    /// <summary>
+    /// Whether the mixed navigation solution agrees with NMA-authenticated data.
+    /// A false value alone does not establish a spoofing attack; consult UBX-SEC-SIG.
+    /// </summary>
+    public bool IsNmaFixVerified
+    {
+        get => (_flags3 & 0x4000) != 0;
+        set => _flags3 = value ? (ushort)(_flags3 | 0x4000) : (ushort)(_flags3 & ~0x4000);
     }
 
     /// <summary>
@@ -522,9 +564,9 @@ public partial class UbxNavPvt : UbxMessageBase
         SpeedAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 0.001;
         HeadingAccuracyEstimate = BinSerialize.ReadUInt(ref buffer) * 1e-5;
         PositionDOP = BinSerialize.ReadUShort(ref buffer) * 0.01;
-        flags = BinSerialize.ReadByte(ref buffer);
-        IsValidLLH = (flags & 0b0000_0001) == 0;
-        buffer = buffer[5..];
+        Flags3 = BinSerialize.ReadUShort(ref buffer);
+        IsValidLLH = (Flags3 & 0b0000_0001) == 0;
+        buffer = buffer[4..];
         HeadingOfVehicle2D = BinSerialize.ReadInt(ref buffer) * 1e-5;
         if (!IsValidVehicleHeading) HeadingOfVehicle2D = double.NaN;
         MagneticDeclination = BinSerialize.ReadShort(ref buffer) * 1e-2;

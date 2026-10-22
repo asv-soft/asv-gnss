@@ -66,7 +66,7 @@ Subframe 5 covers almanac pages 1–24 and page 25 (`PageId=51`) containing refe
 
 Subframes 4 and 5 expose `DataId` (two transmitted bits) and `PageId` (six transmitted bits). The existing layouts use `DataId=1`. Other data identifiers and reserved page IDs are retained as `Type.None`. Repeated reserved IDs mean a unique cycle position cannot be inferred from `PageId` alone. The original enum values remain unchanged; the new subframe-4 values are appended as `Nmct` and `SpecialMessage`.
 
-For a known layout, the existing `Type` and `SatelliteNumber` properties remain authoritative. For an unknown or reserved layout, `RawPageData` exposes the 23 bytes after the page identifiers. These include the final word's two non-information bits; edited native serialization may recompute those two bits to satisfy parity. Selecting an explicit unknown `PageId` or nonstandard `DataId` supplies the identity needed to create a raw page.
+For a known layout, the existing `Type` and `SatelliteNumber` properties remain authoritative. For an unknown or reserved layout, `RawPageData` exposes the editable 23-byte backing array after the page identifiers. Its getter returns null for a typed layout; assigning raw bytes requires `Type.None` and exactly 23 bytes. These include the final word's two non-information bits; edited native serialization may recompute those two bits to satisfy parity. Selecting an explicit unknown `PageId` or nonstandard `DataId` supplies the identity needed to create a raw page.
 
 ## Coverage and compatibility limits
 
@@ -75,6 +75,12 @@ This implementation covers legacy LNAV, not CNAV, CNAV-2, RF samples, signal acq
 In particular, the legacy almanac `Af0` property combines its split wire fields using the existing decoder convention, rather than exposing a new signed 11-bit value. Unchanged encodings are preserved; edited values must fit that convention. Existing `Fit`, almanac `e`, UTC `Tot` and `DeltaT_LS` representations also retain their prior decoder semantics. Do not infer corrected navigation calculations from the addition of stream framing and parity validation.
 
 Initialize the required fields and arrays before serializing a newly constructed page model. Changing `Type` to a supported page layout requires that layout's fields. `None` represents an unmodeled page. Changing a known page to `None` without supplying an explicit raw-page identity remains rejected because it does not specify a new page identifier.
+
+## Recorded-stream tests
+
+`Asv.Gnss.Test/Resources/RawNavigation` includes a real GFZ GPS C/A recording from 2025-01-01, PRN 1: 125 consecutive subframes covering one complete 25-frame page cycle. The 4,688-byte stream retains all 37,500 native bits, including original parity and D30* inversion, with only four final zero padding bits. The unchanged source Arrow container, selected source rows, provenance, licenses and an offline extraction script are retained alongside it.
+
+`RawNavigationRecordedStreamTest` checks all recorded subframes and page IDs, exact native-bit preservation through serialization, independent parity equations, read sizes from 1 to 4096 bytes, and an incomplete final subframe. It also checks the recorded NMCT, special message, future UTC fields and dummy page with `PageId=0`. These are recorded navigation bits after demodulation, not RF samples. The [fixture documentation](https://github.com/asv-soft/asv-gnss/tree/main/src/Asv.Gnss.Test/Resources/RawNavigation) describes sources and reproducible extraction; tests run offline.
 
 ## Specification message catalog
 

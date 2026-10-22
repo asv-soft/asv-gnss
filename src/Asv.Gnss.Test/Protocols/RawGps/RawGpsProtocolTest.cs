@@ -121,8 +121,10 @@ public class RawGpsProtocolTest
         Set(source, 8, 14, 0x3FFF);
         Set(source, 22, 1, 1);
         Set(source, 41, 2, 3);
-        var words = Enumerable.Range(0, 10)
-            .Select(index => Read(source, index * 24, 24) << 6).ToArray();
+        var words = Enumerable
+            .Range(0, 10)
+            .Select(index => Read(source, index * 24, 24) << 6)
+            .ToArray();
         var message = GpsSubFrameFactory.Create(words);
         Assert.Equal(id, message.SubframeId);
         Assert.Equal(0x3FFF, message.TelemetryMessage);
@@ -469,7 +471,7 @@ public class RawGpsProtocolTest
         var utcFields = new Collector();
         fourth.UtcGps.Accept(utcFields);
         Assert.Equal(
-            new[] { "A0", "A1", "Tot", "WNt", "DeltaT_LS" },
+            new[] { "A0", "A1", "Tot", "WNt", "DeltaT_LS", "WN_LSF", "DN", "DeltaT_LSF" },
             utcFields.Fields.Select(field => field.Name)
         );
         fourth.Accept(new IonosphereEditor(fourth));
@@ -494,13 +496,20 @@ public class RawGpsProtocolTest
             4 when page is >= 25 and <= 32 =>
                 "Type SatelliteNumber A e i0 OMG0 omg M0 OMGd ToaSec Af0 Af1 Health",
             4 when page == 56 => "Type Iono UtcGps",
+            4 when page == 52 => "Type NmctAvailabilityIndicator NmctEstimatedRangeDeviations",
+            4 when page == 55 => "Type SpecialMessageData",
             4 when page == 63 => "Type SvConfig Health",
             5 when page is >= 1 and <= 24 =>
                 "Type SatelliteNumber A e i0 OMG0 omg M0 OMGd ToaSec Af0 Af1 Health",
             5 when page == 51 => "Type ToaSec Week Health",
-            _ => "Type",
+            _ => "Type RawPageData",
         };
-        return ("TelemetryMessage IntegrityStatusFlag AlertFlag AntiSpoofFlag TOW1_5Epoh PreviousWordParity " + body).Split(' ');
+        if (id is 4 or 5)
+            body = "DataId PageId " + body;
+        return (
+            "TelemetryMessage IntegrityStatusFlag AlertFlag AntiSpoofFlag TOW1_5Epoh PreviousWordParity "
+            + body
+        ).Split(' ');
     }
 
     private static IProtocolParser CreateParser() =>
@@ -666,7 +675,9 @@ public class RawGpsProtocolTest
         public override byte SubframeId => 1;
     }
 
-    private sealed class HeaderEditor(GpsSubframeBase model) : UInt16Type.IVisitor, BoolType.IVisitor
+    private sealed class HeaderEditor(GpsSubframeBase model)
+        : UInt16Type.IVisitor,
+            BoolType.IVisitor
     {
         public int ImmediatelyVisibleEdits { get; private set; }
 

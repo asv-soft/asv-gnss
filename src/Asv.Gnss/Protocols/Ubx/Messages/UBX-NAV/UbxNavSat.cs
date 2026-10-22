@@ -134,6 +134,9 @@ public partial class UbxNavSatelliteItem : ISizedSpanSerializable
     private bool _isprCorrUsed;
     private bool _iscrCorrUsed;
     private bool _isdoCorrUsed;
+    private bool _isclasCorrUsed;
+    private bool _islppCorrUsed;
+    private bool _ishasCorrUsed;
 
     /// <summary>
     /// GNSS constellation identifier associated with this satellite.
@@ -351,6 +354,27 @@ public partial class UbxNavSatelliteItem : ISizedSpanSerializable
         set => _isdoCorrUsed = value;
     }
 
+    /// <summary>Whether CLAS corrections have been used for this satellite.</summary>
+    public bool IsclasCorrUsed
+    {
+        get => _isclasCorrUsed;
+        set => _isclasCorrUsed = value;
+    }
+
+    /// <summary>Whether LPP corrections have been used for this satellite.</summary>
+    public bool IslppCorrUsed
+    {
+        get => _islppCorrUsed;
+        set => _islppCorrUsed = value;
+    }
+
+    /// <summary>Whether Galileo HAS corrections have been used for this satellite.</summary>
+    public bool IshasCorrUsed
+    {
+        get => _ishasCorrUsed;
+        set => _ishasCorrUsed = value;
+    }
+
     public void Deserialize(ref ReadOnlySpan<byte> buffer)
     {
         GnssId = BinSerialize.ReadByte(ref buffer);
@@ -380,6 +404,9 @@ public partial class UbxNavSatelliteItem : ISizedSpanSerializable
         IsprCorrUsed = (flags & 0b0001_0000_0000_0000_0000_0000) != 0;
         IscrCorrUsed = (flags & 0b0010_0000_0000_0000_0000_0000) != 0;
         IsdoCorrUsed = (flags & 0b0100_0000_0000_0000_0000_0000) != 0;
+        IsclasCorrUsed = (flags & 0x0080_0000) != 0;
+        IslppCorrUsed = (flags & 0x0100_0000) != 0;
+        IshasCorrUsed = (flags & 0x0200_0000) != 0;
     }
 
 
@@ -410,6 +437,7 @@ public enum UbxNavSatGnssId : byte
     IMES = 4,
     QZSS = 5,
     GLONASS = 6,
+    NavIC = 7,
 }
 
 
@@ -443,4 +471,3 @@ public enum UbxQualityIndEnum
     CodeAndCarrierLockedAndTimeSynchronized2 = 6,
     CodeAndCarrierLockedAndTimeSynchronized3 = 7,
 }
-    

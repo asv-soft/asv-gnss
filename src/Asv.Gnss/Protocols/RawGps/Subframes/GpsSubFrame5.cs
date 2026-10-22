@@ -35,7 +35,7 @@ public partial class GpsSubFrame5 : GpsSubframeBase
     private void DeserializePage(byte[] dataWithoutParity)
     {
         ResetPage();
-        _rawPageData = dataWithoutParity[7..];
+        dataWithoutParity.AsSpan(7).CopyTo(_rawPageData);
         _dataId = (byte)GpsRawHelper.GetBitU(dataWithoutParity, 48, 2);
         _pageId = (byte)GpsRawHelper.GetBitU(dataWithoutParity, 50, 6);
         var word4Start = 24U * 2;
@@ -126,7 +126,7 @@ public partial class GpsSubFrame5 : GpsSubframeBase
 
     private byte _dataId;
     private byte _pageId;
-    private byte[] _rawPageData = new byte[23];
+    private readonly byte[] _rawPageData = new byte[23];
 
     /// <summary>Transmitted two-bit data ID. Changing it reinterprets the current page payload.</summary>
     public byte DataId
@@ -134,23 +134,31 @@ public partial class GpsSubFrame5 : GpsSubframeBase
         get => Type == Subframe5Type.None ? _dataId : (byte)1;
         set
         {
-            if (value > 3) throw new ArgumentOutOfRangeException(nameof(value));
+            if (value > 3)
+                throw new ArgumentOutOfRangeException(nameof(value));
             ChangePageIdentity(value, PageId);
         }
     }
 
-    /// <summary>Transmitted six-bit SV/page ID, not the page's position in the 25-page cycle.</summary>
+    /// <summary>
+    /// Transmitted six-bit SV/page ID, not the page's position in the 25-page cycle.
+    /// An out-of-width legacy SatelliteNumber leaves the retained ID visible; serialization still validates that value.
+    /// </summary>
     public byte PageId
     {
-        get => Type switch
-        {
-            Subframe5Type.Almanac => checked((byte)SatelliteNumber),
-            Subframe5Type.ToaAndHealth => 51,
-            _ => _pageId,
-        };
+        get =>
+            Type switch
+            {
+                Subframe5Type.Almanac => SatelliteNumber is >= 0 and <= 63
+                    ? (byte)SatelliteNumber
+                    : _pageId,
+                Subframe5Type.ToaAndHealth => 51,
+                _ => _pageId,
+            };
         set
         {
-            if (value > 63) throw new ArgumentOutOfRangeException(nameof(value));
+            if (value > 63)
+                throw new ArgumentOutOfRangeException(nameof(value));
             ChangePageIdentity(DataId, value);
         }
     }
@@ -164,24 +172,30 @@ public partial class GpsSubFrame5 : GpsSubframeBase
         get => Type == Subframe5Type.None ? _rawPageData : null;
         set
         {
-            if (Type != Subframe5Type.None) throw new InvalidOperationException("Raw page data requires an unmodeled page.");
+            if (Type != Subframe5Type.None)
+                throw new InvalidOperationException("Raw page data requires an unmodeled page.");
             ArgumentNullException.ThrowIfNull(value);
             GpsNavigationVisitor.RequireLength(value, 23, nameof(value));
-            _rawPageData = value;
+            value.CopyTo(_rawPageData, 0);
         }
     }
 
     private void ChangePageIdentity(byte dataId, byte pageId)
     {
-        if (DataId == dataId && PageId == pageId) return;
+        if (DataId == dataId && PageId == pageId)
+            return;
         var source = new byte[30];
         _rawPageData.CopyTo(source, 7);
         // A fresh legacy almanac object has no active payload until its fields or identity are supplied.
-        if (Type != Subframe5Type.None && !(Type == Subframe5Type.Almanac && SatelliteNumber == 0 && Health is null))
+        if (
+            Type != Subframe5Type.None
+            && !(Type == Subframe5Type.Almanac && SatelliteNumber == 0 && Health is null)
+        )
             SerializeFields(source);
         RawGpsCodec.Unsigned(source, 48, 2, dataId);
         RawGpsCodec.Unsigned(source, 50, 6, pageId);
         DeserializePage(source);
+        RetainPagePayload(source.AsSpan(6));
     }
 
     private Subframe5Type _type;
@@ -190,13 +204,24 @@ public partial class GpsSubFrame5 : GpsSubframeBase
         get => _type;
         set
         {
-            if (value == Subframe5Type.None && _type != Subframe5Type.None
-                && !(_type == Subframe5Type.Almanac && SatelliteNumber == 0 && Health is null))
+            if (
+                value == Subframe5Type.None
+                && _type != Subframe5Type.None
+                && !(_type == Subframe5Type.Almanac && SatelliteNumber == 0 && Health is null)
+            )
             {
                 var source = new byte[30];
                 _rawPageData.CopyTo(source, 7);
-                SerializeFields(source);
-                _rawPageData = source[7..];
+                try
+                {
+                    SerializeFields(source);
+                    source.AsSpan(7).CopyTo(_rawPageData);
+                }
+                catch (ArgumentException)
+                {
+                    // Legacy Type assignments also allow incomplete or out-of-range fields.
+                    // Retain the last wire payload until the caller supplies a serializable layout.
+                }
             }
             _dataId = DataId;
             _pageId = PageId;

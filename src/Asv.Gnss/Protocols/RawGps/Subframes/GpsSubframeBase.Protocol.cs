@@ -16,16 +16,20 @@ public abstract partial class GpsSubframeBase : IProtocolMessage<byte>, IVisitab
     private bool _alertFlag;
     private bool _antiSpoofFlag;
     private static readonly Field TelemetryMessageField = GpsNavigationVisitor.Field(
-        nameof(TelemetryMessage), UInt16Type.Default
+        nameof(TelemetryMessage),
+        UInt16Type.Default
     );
     private static readonly Field IntegrityStatusFlagField = GpsNavigationVisitor.Field(
-        nameof(IntegrityStatusFlag), BoolType.Default
+        nameof(IntegrityStatusFlag),
+        BoolType.Default
     );
     private static readonly Field AlertFlagField = GpsNavigationVisitor.Field(
-        nameof(AlertFlag), BoolType.Default
+        nameof(AlertFlag),
+        BoolType.Default
     );
     private static readonly Field AntiSpoofFlagField = GpsNavigationVisitor.Field(
-        nameof(AntiSpoofFlag), BoolType.Default
+        nameof(AntiSpoofFlag),
+        BoolType.Default
     );
     private static readonly Field TowField = GpsNavigationVisitor.Field(
         nameof(TOW1_5Epoh),
@@ -120,7 +124,9 @@ public abstract partial class GpsSubframeBase : IProtocolMessage<byte>, IVisitab
             source,
             buffer[..RawGpsProtocol.PacketSize],
             PreviousWordParity,
-            _pagePayloadChanged || !source.SequenceEqual(_sourceData) || PreviousWordParity != _sourceWordParity
+            _pagePayloadChanged
+                || !source.SequenceEqual(_sourceData)
+                || PreviousWordParity != _sourceWordParity
         );
         buffer = buffer[RawGpsProtocol.PacketSize..];
     }
@@ -131,7 +137,10 @@ public abstract partial class GpsSubframeBase : IProtocolMessage<byte>, IVisitab
     protected void RetainPagePayload(ReadOnlySpan<byte> payload)
     {
         if (payload.Length != 24)
-            throw new ArgumentException("A GPS page payload must contain 24 bytes.", nameof(payload));
+            throw new ArgumentException(
+                "A GPS page payload must contain 24 bytes.",
+                nameof(payload)
+            );
         _pagePayloadChanged |= !payload.SequenceEqual(_sourceData.AsSpan(6));
         payload.CopyTo(_sourceData.AsSpan(6));
     }

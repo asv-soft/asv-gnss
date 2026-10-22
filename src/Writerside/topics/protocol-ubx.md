@@ -17,9 +17,13 @@ var protocol = Protocol.Create(builder =>
 The stream parser is `UbxMessageParser` and its message model is `UbxMessageBase`.
 See [Quick Start](quick-start.md) for router, port, and subscription setup. Registration selects decoders; the receiver must already be configured to emit the required data.
 
-## Default message coverage
+## Legacy model compatibility
 
-The default set includes ACK, CFG, INF, MON, NAV, and RXM messages. UBX uses sync bytes `B5 62`; message identity combines class and message ID into a `ushort`.
+`RegisterUbxProtocol` preserves the ACK, CFG, INF, MON, NAV, and RXM model types below. It also recognizes additional class/ID pairs from the [X20 HPG 2.11 profile](protocol-ubx-x20.md), using typed X20 models for IDs without a registered legacy model. A custom model registered through its `configure` callback keeps priority. UBX uses sync bytes `B5 62`; message identity combines class and message ID into a `ushort`.
+
+The `configure` callback sees both the legacy and added X20 IDs. Its `Remove` and `Clear` operations are honored; payload selection does not add removed messages back.
+
+Use `RegisterUbxX20Protocol` for all 163 documented X20 payload variants, including poll/data layouts sharing one ID. Choose one UBX registration per protocol builder. The standard registration retains its 8 KB frame buffer; the explicit X20 profile accepts the full UBX length range with a bounded 65,543-byte buffer.
 
 | Message model |
 |---------------|
@@ -37,6 +41,7 @@ The default set includes ACK, CFG, INF, MON, NAV, and RXM messages. UBX uses syn
 | `UbxInfError` |
 | `UbxInfNotice` |
 | `UbxInfTest` |
+| `UbxInfWarning` |
 | `UbxMonHw` |
 | `UbxMonMsgpp` |
 | `UbxMonRxbuf` |
@@ -54,13 +59,19 @@ The default set includes ACK, CFG, INF, MON, NAV, and RXM messages. UBX uses syn
 
 Receiver firmware determines which commands and payload versions are accepted. Registration does not configure receiver output. Use the receiver microservice for request/response workflows and acknowledgements. The standalone `UbxMessageFactory` is empty; use `RegisterUbxProtocol`. Existing payload models implement `IVisitable`; see [Quick Start](quick-start.md) for field traversal and its editing constraints.
 
+X20 additions preserve existing property signatures and native wire offsets. `UbxNavPvt.Flags3` retains all 16 raw bits, including correction-age and authentication indicators. `UbxRxmSfrbx.SigId` aliases the former reserved byte; navigation-word projections are restricted to supported legacy GPS/GLONASS signals. NAV-STATUS indoor-detection and selective-L5 field definitions are firmware-gated in the manufacturer PDF (protocol 52.00 or later); their presence in a model does not mean firmware 50.11 provides those features. The explicit X20 models use native integer values with scale/unit metadata, while legacy models retain their existing converted units.
+
+Several legacy NAV, MON-VER, and RXM-SFRBX serializers remain read-only. The new X20 models have separate read/write implementations; selecting the X20 profile does not alter those legacy serializer contracts.
+
 ## Implementation reference
 
 Coverage above follows `Protocols/Ubx/UbxProtocol.cs` under `src/Asv.Gnss`. Inspect concrete message classes for field names, units, and supported payload revisions.
 
-## Specification message catalog
+## Legacy M8 specification message catalog
 
 Source: `Protocols/Ubx/Docs/u-blox8-M8_ReceiverDescrProtSpec_UBX-13003221.pdf`, UBX-13003221 R23, section 32.7 (PDF pp. 190-195). Each mnemonic is listed once; poll/output variants and payload versions share a row. MGA subtype mnemonics remain separate even when class/ID is shared.
+
+This historical table inventories the legacy M8 models only. Additional X20 models and their exact variants are listed in the [separate X20 catalog](protocol-ubx-x20.md); an X20 model does not establish compatibility with every M8 payload revision.
 
 **Status:** **Model present** means a concrete payload model exists in the current checkout; it does not certify complete field, revision, encoding, or firmware coverage. **Partial** identifies a known incomplete decoder. **Not implemented** means no matching concrete model was found. **Default** reports whether the standard registration adds that model. Models outside the default set require explicit registration. See the limitations above before transmitting messages.
 
@@ -127,7 +138,7 @@ Page references below are **PDF page numbers (1-based)**, including covers and f
 | 0x04 / 0x00 | INF-ERROR | Model present | `UbxInfError` | Yes | 307 |
 | 0x04 / 0x02 | INF-NOTICE | Model present | `UbxInfNotice` | Yes | 308 |
 | 0x04 / 0x03 | INF-TEST | Model present | `UbxInfTest` | Yes | 308 |
-| 0x04 / 0x01 | INF-WARNING | Not implemented | - | No | 309 |
+| 0x04 / 0x01 | INF-WARNING | Model present | `UbxInfWarning` | Yes | 309 |
 | 0x21 / 0x11 | LOG-BATCH | Not implemented | - | No | 310 |
 | 0x21 / 0x07 | LOG-CREATE | Not implemented | - | No | 313 |
 | 0x21 / 0x03 | LOG-ERASE | Not implemented | - | No | 314 |

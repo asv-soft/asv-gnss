@@ -85,11 +85,29 @@ public partial class GpsSubframe4
             nameof(DeltaT_LS),
             DoubleType.Default
         );
-        private static readonly Field WN_LSFField = GpsNavigationVisitor.Field(nameof(WN_LSF), Int32Type.Default);
-        private static readonly Field DNField = GpsNavigationVisitor.Field(nameof(DN), Int32Type.Default);
-        private static readonly Field DeltaT_LSFField = GpsNavigationVisitor.Field(nameof(DeltaT_LSF), Int32Type.Default);
+        private static readonly Field WN_LSFField = GpsNavigationVisitor.Field(
+            nameof(WN_LSF),
+            Int32Type.Default
+        );
+        private static readonly Field DNField = GpsNavigationVisitor.Field(
+            nameof(DN),
+            Int32Type.Default
+        );
+        private static readonly Field DeltaT_LSFField = GpsNavigationVisitor.Field(
+            nameof(DeltaT_LSF),
+            Int32Type.Default
+        );
         internal static StructType Fields { get; } =
-            new([A0Field, A1Field, TotField, WNtField, DeltaT_LSField, WN_LSFField, DNField, DeltaT_LSFField]);
+            new([
+                A0Field,
+                A1Field,
+                TotField,
+                WNtField,
+                DeltaT_LSField,
+                WN_LSFField,
+                DNField,
+                DeltaT_LSFField,
+            ]);
 
         public void Accept(IVisitor visitor)
         {

@@ -137,6 +137,30 @@ public partial class UbxNavStatus : UbxMessageBase
         set => _fixStat = value;
     }
 
+    /// <summary>
+    /// Indoor-detection flag from fixStat bit 2. The X20 HPG 2.11 interface description
+    /// reserves this interpretation for protocol versions 52.00 and later.
+    /// </summary>
+    public bool IsIndoorDetected
+    {
+        get => (_fixStat & 0x04) != 0;
+        set => _fixStat = value ? (byte)(_fixStat | 0x04) : (byte)(_fixStat & ~0x04);
+    }
+
+    /// <summary>
+    /// Selective L5 state from fixStat bits 3 and 4: 0 disabled, 1 L5 off, 2 L5 on,
+    /// 3 reserved. Defined for protocol versions 52.00 and later, not X20 protocol 50.11.
+    /// </summary>
+    public byte SelectiveL5State
+    {
+        get => (byte)((_fixStat >> 3) & 0x03);
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, (byte)3);
+            _fixStat = (byte)((_fixStat & ~0x18) | (value << 3));
+        }
+    }
+
     #region FixStat bits
 
     /// <summary>

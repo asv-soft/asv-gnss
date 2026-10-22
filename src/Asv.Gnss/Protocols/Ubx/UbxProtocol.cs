@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Asv.IO;
 
 namespace Asv.Gnss;
@@ -26,6 +27,7 @@ public static class UbxProtocol
             .Add<UbxInfError>()
             .Add<UbxInfNotice>()
             .Add<UbxInfTest>()
+            .Add<UbxInfWarning>()
             .Add<UbxMonHw>()
             .Add<UbxMonMsgpp>()
             .Add<UbxMonRxbuf>()
@@ -38,8 +40,9 @@ public static class UbxProtocol
             .Add<UbxNavStatus>()
             .Add<UbxNavSvin>()
             .Add<UbxRxmSfrbx>();
+        UbxX20GeneratedFactory.RegisterMissing(factory, new HashSet<ushort>(factory.Build().GetSupportedIds()));
         configure?.Invoke(factory);
-        var messageFactory = factory.Build();
+        var messageFactory = new UbxCompatibleMessageFactory(factory.Build());
         builder.Register(Info, (core,stat) => new UbxMessageParser(messageFactory, core,stat));
     }
     
@@ -121,6 +124,9 @@ public static class UbxProtocol
         /// High Rate Navigation Results Messages: High rate time, position, speed, heading
         /// </summary>
         HNR = 0x28,
+
+        /// <summary>Secondary navigation solution messages.</summary>
+        NAV2 = 0x29,
 
         NMEA = 0xF0,
 

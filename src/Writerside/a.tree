@@ -13,10 +13,13 @@
         <toc-element topic="protocol-nmea.md"/>
         <toc-element topic="protocol-rtcm-v2.md"/>
         <toc-element topic="protocol-rtcm-v3.md"/>
-        <toc-element topic="protocol-ubx.md"/>
+        <toc-element topic="protocol-ubx.md">
+            <toc-element topic="protocol-ubx-x20.md"/>
+        </toc-element>
         <toc-element topic="protocol-asterix.md"/>
         <toc-element topic="protocol-asv.md"/>
         <toc-element topic="protocol-gbas.md"/>
+        <toc-element topic="protocol-rinex.md"/>
         <toc-element topic="protocol-sbf.md"/>
         <toc-element topic="protocol-comnav.md"/>
         <toc-element topic="protocol-raw-gps.md"/>

@@ -60,7 +60,7 @@ public class UbxNavVisitorTest
         Assert.Equal(nameof(UbxNavSatGnssId.GLONASS), constellation.Field.GetEnum<byte>()[6].Name);
         Assert.Equal((int)UbxQualityIndEnum.CodeLockedAndTimeSynchronized, visitor.First(nameof(UbxNavSatelliteItem.QualityInd)).Value);
         Assert.All(visitor.Visits, visit => Assert.False(string.IsNullOrWhiteSpace(visit.Field.GetDescription())));
-        Assert.Equal(24, UbxNavSatelliteItem.StructType.Fields.Length);
+        Assert.Equal(27, UbxNavSatelliteItem.StructType.Fields.Length);
     }
 
     [Fact]

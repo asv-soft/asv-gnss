@@ -5,10 +5,24 @@ namespace Asv.Gnss;
 
 public sealed partial class GlonassWord14
 {
-    private static readonly Field FrameNumberField = GlonassWordEncoding.Field(nameof(FrameNumber), UInt8Type.Default);
-    private static readonly Field B1Field = GlonassWordEncoding.Field(nameof(B1), DoubleType.Default, "s");
-    private static readonly Field B2Field = GlonassWordEncoding.Field(nameof(B2), DoubleType.Default, "s/day");
-    private static readonly Field KPField = GlonassWordEncoding.Field(nameof(KP), UInt8Type.Default);
+    private static readonly Field FrameNumberField = GlonassWordEncoding.Field(
+        nameof(FrameNumber),
+        UInt8Type.Default
+    );
+    private static readonly Field B1Field = GlonassWordEncoding.Field(
+        nameof(B1),
+        DoubleType.Default,
+        "s"
+    );
+    private static readonly Field B2Field = GlonassWordEncoding.Field(
+        nameof(B2),
+        DoubleType.Default,
+        "s/day"
+    );
+    private static readonly Field KPField = GlonassWordEncoding.Field(
+        nameof(KP),
+        UInt8Type.Default
+    );
     private byte _frameNumber;
     private double _b1;
     private double _b2;
@@ -25,13 +39,25 @@ public sealed partial class GlonassWord14
     }
 
     /// <summary>Frame-five UT1 correction coefficient, in seconds (11-bit sign-magnitude, 2^-10).</summary>
-    public double B1 { get => _b1; set => _b1 = value; }
+    public double B1
+    {
+        get => _b1;
+        set => _b1 = value;
+    }
 
     /// <summary>Frame-five daily change of the UT1 correction, in seconds per mean solar day (2^-16).</summary>
-    public double B2 { get => _b2; set => _b2 = value; }
+    public double B2
+    {
+        get => _b2;
+        set => _b2 = value;
+    }
 
     /// <summary>Frame-five two-bit notification of an upcoming UTC leap-second correction.</summary>
-    public byte KP { get => _kp; set => _kp = value; }
+    public byte KP
+    {
+        get => _kp;
+        set => _kp = value;
+    }
 
     public override void Deserialize(byte[] data)
     {
@@ -72,9 +98,14 @@ public sealed partial class GlonassWord14
 
 public sealed partial class GlonassWord15
 {
-    private static readonly Field FrameNumberField = GlonassWordEncoding.Field(nameof(FrameNumber), UInt8Type.Default);
-    private static readonly Field ReservedDataField = GlonassWordEncoding.Field(nameof(ReservedData), new ArrayType(UInt8Type.Default, 9));
-    private static readonly Field HealthField = GlonassWordEncoding.Field(nameof(ln), UInt8Type.Default);
+    private static readonly Field FrameNumberField = GlonassWordEncoding.Field(
+        nameof(FrameNumber),
+        UInt8Type.Default
+    );
+    private static readonly Field ReservedDataField = GlonassWordEncoding.Field(
+        nameof(ReservedData),
+        new ArrayType(UInt8Type.Default, 9)
+    );
     private byte _frameNumber;
 
     /// <summary>
@@ -106,9 +137,14 @@ public sealed partial class GlonassWord15
         set
         {
             if (value is null || value.Length != 9 || (value[0] & 0x80) != 0)
-                throw new ArgumentException("Reserved data requires nine bytes with one leading zero padding bit.", nameof(value));
+                throw new ArgumentException(
+                    "Reserved data requires nine bytes with one leading zero padding bit.",
+                    nameof(value)
+                );
             if (FrameNumber != 5)
-                throw new InvalidOperationException("Reserved data is editable only in the fifth frame.");
+                throw new InvalidOperationException(
+                    "Reserved data is editable only in the fifth frame."
+                );
             for (var index = 0; index < 71; index++)
             {
                 var bit = GlonassWordEncoding.Read(value, 1 + index, 1);
@@ -152,8 +188,6 @@ public sealed partial class GlonassWord15
         {
             visitor.VisitUnknown(ReservedDataField, type);
         }
-        var health = ln;
-        UInt8Type.Accept(visitor, HealthField, ref health);
-        ln = health;
+        AcceptHealth(visitor);
     }
 }

@@ -1,0 +1,647 @@
+{
+  "source_url": "https://raw.githubusercontent.com/ntpsec/gpsd/fc2f63a0c5452565db211e706e8950ad8528ae7d/test/daemon/ublox-glo.log",
+  "source_sha256": "767aa0fb33233c56d592bcb7ddce25d7ac88cbb768cb176296face092703f5b2",
+  "source_byte_count": 168595,
+  "recording_date": "2023-06-28",
+  "recording_location": "Moscow, RU",
+  "receiver_firmware": "ROM SPG 5.10 (7b202e), HW 000A0000, protocol 34.10",
+  "sv_id": 12,
+  "frequency_channel": -1,
+  "superframe_number": 2158,
+  "message_count": 75,
+  "bit_count": 6375,
+  "trailing_zero_padding_bits": 1,
+  "output_byte_count": 797,
+  "output_sha256": "21d2822aa684c57c96b412691cf2286ec354d3da1acfb66b63decdf40adbcde3",
+  "expected_fields_from_icd_bit_positions": {
+    "firstString": {
+      "P1": 0,
+      "TofLocalSec": 64350,
+      "VelocityX": 162.63294219970703,
+      "AccelerationX": 9.313225746154785e-07,
+      "PositionX": -8971239.2578125
+    },
+    "string4": {
+      "Nt": 1275,
+      "Slot": 12,
+      "M": 1
+    },
+    "string5": {
+      "Na": 1275,
+      "N4": 7,
+      "TauC": -2.3283064365386963e-09,
+      "TauGPS": 3.91155481338501e-08,
+      "ln": 0
+    },
+    "frame5String14": {
+      "B1": -0.037109375,
+      "B2": 0.000274658203125,
+      "KP": 0
+    },
+    "frame5String15": {
+      "ln": 0
+    }
+  },
+  "frames": [
+    {
+      "source_byte_offset": 12766,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 1,
+      "native_hex_with_three_leading_zero_bits": "0108e9029a250d1859eab5",
+      "native_bit_offset": 0
+    },
+    {
+      "source_byte_offset": 13898,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 2,
+      "native_hex_with_three_leading_zero_bits": "0218e0a6d72b01f2237993",
+      "native_bit_offset": 85
+    },
+    {
+      "source_byte_offset": 15030,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 3,
+      "native_hex_with_three_leading_zero_bits": "0380162429d79a2c57b60f",
+      "native_bit_offset": 170
+    },
+    {
+      "source_byte_offset": 16162,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 4,
+      "native_hex_with_three_leading_zero_bits": "0481df2d000002227db1fe",
+      "native_bit_offset": 255
+    },
+    {
+      "source_byte_offset": 17278,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 5,
+      "native_hex_with_three_leading_zero_bits": "059f70000000a3800054dc",
+      "native_bit_offset": 340
+    },
+    {
+      "source_byte_offset": 18410,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 6,
+      "native_hex_with_three_leading_zero_bits": "06a18438e2a410e08194ff",
+      "native_bit_offset": 425
+    },
+    {
+      "source_byte_offset": 19542,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 7,
+      "native_hex_with_three_leading_zero_bits": "078854104a7e97d6a18229",
+      "native_bit_offset": 510
+    },
+    {
+      "source_byte_offset": 20674,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 8,
+      "native_hex_with_three_leading_zero_bits": "08a201bc6fac15e6085698",
+      "native_bit_offset": 595
+    },
+    {
+      "source_byte_offset": 21790,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 9,
+      "native_hex_with_three_leading_zero_bits": "09db2824d7a697f46238aa",
+      "native_bit_offset": 680
+    },
+    {
+      "source_byte_offset": 22922,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 10,
+      "native_hex_with_three_leading_zero_bits": "0aa3855fc3141412882829",
+      "native_bit_offset": 765
+    },
+    {
+      "source_byte_offset": 24038,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 11,
+      "native_hex_with_three_leading_zero_bits": "0bd7e5385bae97f2c0ca64",
+      "native_bit_offset": 850
+    },
+    {
+      "source_byte_offset": 25170,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 12,
+      "native_hex_with_three_leading_zero_bits": "0ca48cdc37d8179484659d",
+      "native_bit_offset": 935
+    },
+    {
+      "source_byte_offset": 26302,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 13,
+      "native_hex_with_three_leading_zero_bits": "0dc5eb4b65b697f520ccaa",
+      "native_bit_offset": 1020
+    },
+    {
+      "source_byte_offset": 27434,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 14,
+      "native_hex_with_three_leading_zero_bits": "0ea58798a13c17bd8270a6",
+      "native_bit_offset": 1105
+    },
+    {
+      "source_byte_offset": 28550,
+      "packet_byte_count": 32,
+      "frame_number": 1,
+      "string_number": 15,
+      "native_hex_with_three_leading_zero_bits": "0fdd3f5e698e97f7c0c2e1",
+      "native_bit_offset": 1190
+    },
+    {
+      "source_byte_offset": 29666,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 1,
+      "native_hex_with_three_leading_zero_bits": "0108ea029a250d1859eacb",
+      "native_bit_offset": 1275
+    },
+    {
+      "source_byte_offset": 30798,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 2,
+      "native_hex_with_three_leading_zero_bits": "0218e0a6d72b01f2237993",
+      "native_bit_offset": 1360
+    },
+    {
+      "source_byte_offset": 31914,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 3,
+      "native_hex_with_three_leading_zero_bits": "0380162429d79a2c57b60f",
+      "native_bit_offset": 1445
+    },
+    {
+      "source_byte_offset": 33046,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 4,
+      "native_hex_with_three_leading_zero_bits": "0481df2d000002227db1fe",
+      "native_bit_offset": 1530
+    },
+    {
+      "source_byte_offset": 34146,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 5,
+      "native_hex_with_three_leading_zero_bits": "059f70000000a3800054dc",
+      "native_bit_offset": 1615
+    },
+    {
+      "source_byte_offset": 35278,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 6,
+      "native_hex_with_three_leading_zero_bits": "06a607d3ddd010b281ce0e",
+      "native_bit_offset": 1700
+    },
+    {
+      "source_byte_offset": 36394,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 7,
+      "native_hex_with_three_leading_zero_bits": "075fb475625697efd07874",
+      "native_bit_offset": 1785
+    },
+    {
+      "source_byte_offset": 37526,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 8,
+      "native_hex_with_three_leading_zero_bits": "08a783d089d814290711a2",
+      "native_bit_offset": 1870
+    },
+    {
+      "source_byte_offset": 38642,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 9,
+      "native_hex_with_three_leading_zero_bits": "09d75f8879f697f0c04afb",
+      "native_bit_offset": 1955
+    },
+    {
+      "source_byte_offset": 39758,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 10,
+      "native_hex_with_three_leading_zero_bits": "0aa804cd10b2143e08ee81",
+      "native_bit_offset": 2040
+    },
+    {
+      "source_byte_offset": 40874,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 11,
+      "native_hex_with_three_leading_zero_bits": "0bca639ac05697f5900c82",
+      "native_bit_offset": 2125
+    },
+    {
+      "source_byte_offset": 42006,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 12,
+      "native_hex_with_three_leading_zero_bits": "0ca988a254980750077c05",
+      "native_bit_offset": 2210
+    },
+    {
+      "source_byte_offset": 43138,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 13,
+      "native_hex_with_three_leading_zero_bits": "0dee7509c4ee9801147c71",
+      "native_bit_offset": 2295
+    },
+    {
+      "source_byte_offset": 44238,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 14,
+      "native_hex_with_three_leading_zero_bits": "0eaa066585b20f560675f2",
+      "native_bit_offset": 2380
+    },
+    {
+      "source_byte_offset": 45370,
+      "packet_byte_count": 32,
+      "frame_number": 2,
+      "string_number": 15,
+      "native_hex_with_three_leading_zero_bits": "0f022e1b2866980cb4f2f8",
+      "native_bit_offset": 2465
+    },
+    {
+      "source_byte_offset": 46486,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 1,
+      "native_hex_with_three_leading_zero_bits": "0108eb029a250d1859ea74",
+      "native_bit_offset": 2550
+    },
+    {
+      "source_byte_offset": 47602,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 2,
+      "native_hex_with_three_leading_zero_bits": "0218e0a6d72b01f2237993",
+      "native_bit_offset": 2635
+    },
+    {
+      "source_byte_offset": 48718,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 3,
+      "native_hex_with_three_leading_zero_bits": "0380162429d79a2c57b60f",
+      "native_bit_offset": 2720
+    },
+    {
+      "source_byte_offset": 49850,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 4,
+      "native_hex_with_three_leading_zero_bits": "0481df2d000002227db1fe",
+      "native_bit_offset": 2805
+    },
+    {
+      "source_byte_offset": 50934,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 5,
+      "native_hex_with_three_leading_zero_bits": "059f70000000a3800054dc",
+      "native_bit_offset": 2890
+    },
+    {
+      "source_byte_offset": 52034,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 6,
+      "native_hex_with_three_leading_zero_bits": "06ab06295bc812698270dc",
+      "native_bit_offset": 2975
+    },
+    {
+      "source_byte_offset": 53102,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 7,
+      "native_hex_with_three_leading_zero_bits": "07d8422f6fb6980c5400f8",
+      "native_bit_offset": 3060
+    },
+    {
+      "source_byte_offset": 54202,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 8,
+      "native_hex_with_three_leading_zero_bits": "08ac81ed5d400fd58476a2",
+      "native_bit_offset": 3145
+    },
+    {
+      "source_byte_offset": 55286,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 9,
+      "native_hex_with_three_leading_zero_bits": "09b4ea44ef569802743ec4",
+      "native_bit_offset": 3230
+    },
+    {
+      "source_byte_offset": 56386,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 10,
+      "native_hex_with_three_leading_zero_bits": "0aad02b0e0c00f3c814591",
+      "native_bit_offset": 3315
+    },
+    {
+      "source_byte_offset": 57454,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 11,
+      "native_hex_with_three_leading_zero_bits": "0b3e3556d0b6980f73bcc7",
+      "native_bit_offset": 3400
+    },
+    {
+      "source_byte_offset": 58554,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 12,
+      "native_hex_with_three_leading_zero_bits": "0cae81f4f11c0c8e82f699",
+      "native_bit_offset": 3485
+    },
+    {
+      "source_byte_offset": 59638,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 13,
+      "native_hex_with_three_leading_zero_bits": "0dd90b6c7776980353b23e",
+      "native_bit_offset": 3570
+    },
+    {
+      "source_byte_offset": 60722,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 14,
+      "native_hex_with_three_leading_zero_bits": "0eaf85f896b40f020383ce",
+      "native_bit_offset": 3655
+    },
+    {
+      "source_byte_offset": 61806,
+      "packet_byte_count": 32,
+      "frame_number": 3,
+      "string_number": 15,
+      "native_hex_with_three_leading_zero_bits": "0fc5f580089e9803b380e1",
+      "native_bit_offset": 3740
+    },
+    {
+      "source_byte_offset": 62906,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 1,
+      "native_hex_with_three_leading_zero_bits": "0108ec029a250d1859eac8",
+      "native_bit_offset": 3825
+    },
+    {
+      "source_byte_offset": 63974,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 2,
+      "native_hex_with_three_leading_zero_bits": "0218e0a6d72b01f2237993",
+      "native_bit_offset": 3910
+    },
+    {
+      "source_byte_offset": 65074,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 3,
+      "native_hex_with_three_leading_zero_bits": "0380162429d79a2c57b60f",
+      "native_bit_offset": 3995
+    },
+    {
+      "source_byte_offset": 66174,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 4,
+      "native_hex_with_three_leading_zero_bits": "0481df2d000002227db1fe",
+      "native_bit_offset": 4080
+    },
+    {
+      "source_byte_offset": 67274,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 5,
+      "native_hex_with_three_leading_zero_bits": "059f70000000a3800054dc",
+      "native_bit_offset": 4165
+    },
+    {
+      "source_byte_offset": 68374,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 6,
+      "native_hex_with_three_leading_zero_bits": "06b0813c6fc614030396a8",
+      "native_bit_offset": 4250
+    },
+    {
+      "source_byte_offset": 69458,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 7,
+      "native_hex_with_three_leading_zero_bits": "07e71293cc1e9800933e7f",
+      "native_bit_offset": 4335
+    },
+    {
+      "source_byte_offset": 70558,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 8,
+      "native_hex_with_three_leading_zero_bits": "0831aa5492281c8c8370b4",
+      "native_bit_offset": 4420
+    },
+    {
+      "source_byte_offset": 71658,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 9,
+      "native_hex_with_three_leading_zero_bits": "09feaf03553e97fb8448a6",
+      "native_bit_offset": 4505
+    },
+    {
+      "source_byte_offset": 72758,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 10,
+      "native_hex_with_three_leading_zero_bits": "0ab285d126da1f8c84558f",
+      "native_bit_offset": 4590
+    },
+    {
+      "source_byte_offset": 73874,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 11,
+      "native_hex_with_three_leading_zero_bits": "0b8a7915d83e97ff647a18",
+      "native_bit_offset": 4675
+    },
+    {
+      "source_byte_offset": 75006,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 12,
+      "native_hex_with_three_leading_zero_bits": "0cb30f8e383e2268812e1e",
+      "native_bit_offset": 4760
+    },
+    {
+      "source_byte_offset": 76138,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 13,
+      "native_hex_with_three_leading_zero_bits": "0d4df626cd2e9808e406e0",
+      "native_bit_offset": 4845
+    },
+    {
+      "source_byte_offset": 77270,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 14,
+      "native_hex_with_three_leading_zero_bits": "0eb40649d4a0229203644b",
+      "native_bit_offset": 4930
+    },
+    {
+      "source_byte_offset": 78402,
+      "packet_byte_count": 32,
+      "frame_number": 4,
+      "string_number": 15,
+      "native_hex_with_three_leading_zero_bits": "0f80be3dfb7e97ff044475",
+      "native_bit_offset": 5015
+    },
+    {
+      "source_byte_offset": 79518,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 1,
+      "native_hex_with_three_leading_zero_bits": "0108ed029a250d1859ea77",
+      "native_bit_offset": 5100
+    },
+    {
+      "source_byte_offset": 80650,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 2,
+      "native_hex_with_three_leading_zero_bits": "0218e0a6d72b01f2237993",
+      "native_bit_offset": 5185
+    },
+    {
+      "source_byte_offset": 81782,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 3,
+      "native_hex_with_three_leading_zero_bits": "0300162429d79a2c57b640",
+      "native_bit_offset": 5270
+    },
+    {
+      "source_byte_offset": 82898,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 4,
+      "native_hex_with_three_leading_zero_bits": "0481df2d002832227db17f",
+      "native_bit_offset": 5355
+    },
+    {
+      "source_byte_offset": 84062,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 5,
+      "native_hex_with_three_leading_zero_bits": "059f70000000a3800054dc",
+      "native_bit_offset": 5440
+    },
+    {
+      "source_byte_offset": 85210,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 6,
+      "native_hex_with_three_leading_zero_bits": "06b501454cac1ed9028cdc",
+      "native_bit_offset": 5525
+    },
+    {
+      "source_byte_offset": 86374,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 7,
+      "native_hex_with_three_leading_zero_bits": "076e2954039e9822648807",
+      "native_bit_offset": 5610
+    },
+    {
+      "source_byte_offset": 87538,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 8,
+      "native_hex_with_three_leading_zero_bits": "08b685823b70140e833ca2",
+      "native_bit_offset": 5695
+    },
+    {
+      "source_byte_offset": 88654,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 9,
+      "native_hex_with_three_leading_zero_bits": "09b13166135697fac47abf",
+      "native_bit_offset": 5780
+    },
+    {
+      "source_byte_offset": 89818,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 10,
+      "native_hex_with_three_leading_zero_bits": "0ab705e1fd7020dd0228db",
+      "native_bit_offset": 5865
+    },
+    {
+      "source_byte_offset": 90982,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 11,
+      "native_hex_with_three_leading_zero_bits": "0b3c377ad9b69824c446f0",
+      "native_bit_offset": 5950
+    },
+    {
+      "source_byte_offset": 92146,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 12,
+      "native_hex_with_three_leading_zero_bits": "0cb80125b716150a01e7ae",
+      "native_bit_offset": 6035
+    },
+    {
+      "source_byte_offset": 93278,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 13,
+      "native_hex_with_three_leading_zero_bits": "0de0348dd736980044447d",
+      "native_bit_offset": 6120
+    },
+    {
+      "source_byte_offset": 94426,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 14,
+      "native_hex_with_three_leading_zero_bits": "0e84c090be10b6bf798ff9",
+      "native_bit_offset": 6205
+    },
+    {
+      "source_byte_offset": 95590,
+      "packet_byte_count": 32,
+      "frame_number": 5,
+      "string_number": 15,
+      "native_hex_with_three_leading_zero_bits": "0fc7366641aa7211b476f3",
+      "native_bit_offset": 6290
+    }
+  ]
+}

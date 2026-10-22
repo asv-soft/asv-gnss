@@ -102,3 +102,22 @@ A read-only visitor preserves values, absent properties, collection references, 
 Native scalar values and collection elements are passed by `ref` to their backing storage, so edits are visible during the visitor callback. Repeated traversal of initialized collections reuses their storage; changing a variable array's size allocates a replacement array. List sizes must be changed through `BeginList` before visiting elements; callbacks must keep the collection structure stable during element traversal. Enum values and converted coordinate models use typed conversion steps.
 
 Traversal reflects the existing object model and converted property units. It is separate from UBX binary serialization and does not automatically recompute related count fields, flags, or derived values after an edit. In `UbxRxmSfrbx`, the visitor exposes the payload identifiers, channel, version, reserved fields, and `RawData` words; the separately decoded `GpsSubFrame` and `GlonassWord` models are not traversed.
+
+## Read a RINEX file
+
+Use the contextual file reader for RINEX observation, navigation or meteorological data:
+
+```c#
+using Asv.Gnss;
+using System.Linq;
+
+var records = await RinexFile.ReadAsync("station.rnx.gz");
+var epochs = records.OfType<RinexObservationEpochMessage>();
+foreach (var epoch in epochs)
+{
+    Console.WriteLine($"{epoch.Epoch}: {epoch.Satellites.Count} satellites");
+}
+RinexFile.Write("station-copy.rnx", records);
+```
+
+Gzip input is detected automatically. For incremental parsing, register `RegisterRinexProtocol()` and call `RinexMessageParser.Complete()` at EOF. See [RINEX coverage and examples](protocol-rinex.md) for version coverage, header context, time systems and canonical writing.

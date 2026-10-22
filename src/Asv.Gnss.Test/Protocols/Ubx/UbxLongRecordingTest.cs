@@ -19,12 +19,14 @@ public class UbxLongRecordingTest
         using var stream = new RecordedGnssStream();
         using var sourceHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         using var orderHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+        using var legacyOrderHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         var buffer = new byte[8192];
         var tokenBuffer = new byte[32];
         var counts = new Dictionary<Type, int>();
         var constellations = new Dictionary<UbxGnssTypeEnum, int>();
         var unknownMessages = 0;
         var decodedMessages = 0;
+        var legacyMessages = 0;
         NmeaMessageRmc? firstRmc = null;
         NmeaMessageRmc? lastRmc = null;
         NmeaMessageGga? firstGga = null;
@@ -33,6 +35,8 @@ public class UbxLongRecordingTest
         NmeaMessageGst? lastGst = null;
         UbxRxmSfrbx? firstSfrbx = null;
         UbxRxmSfrbx? lastSfrbx = null;
+        UbxX20RxmRawxData1? firstRawx = null;
+        UbxX20RxmRawxData1? lastRawx = null;
 
         int read;
         while ((read = source.Read(buffer)) > 0)
@@ -51,6 +55,11 @@ public class UbxLongRecordingTest
                         lastSfrbx = sfrbx;
                         constellations[sfrbx.UbxGnssId] = constellations.GetValueOrDefault(sfrbx.UbxGnssId) + 1;
                         token = $"U:{sfrbx.Class:X2}{sfrbx.SubClass:X2}";
+                        break;
+                    case UbxX20RxmRawxData1 rawx:
+                        firstRawx ??= rawx;
+                        lastRawx = rawx;
+                        token = $"U:{rawx.Class:X2}{rawx.SubClass:X2}";
                         break;
                     case NmeaMessageRmc rmc:
                         firstRmc ??= rmc;
@@ -81,13 +90,20 @@ public class UbxLongRecordingTest
                 var tokenLength = Encoding.ASCII.GetBytes(token, tokenBuffer);
                 orderHash.AppendData(tokenBuffer.AsSpan(0, tokenLength));
                 decodedMessages++;
+                if (message is not UbxX20MessageBase)
+                {
+                    if (legacyMessages > 0)
+                    {
+                        legacyOrderHash.AppendData("\n"u8);
+                    }
+                    legacyOrderHash.AppendData(tokenBuffer.AsSpan(0, tokenLength));
+                    legacyMessages++;
+                }
             }
             foreach (var error in stream.Errors)
             {
                 var unknown = Assert.IsType<ProtocolParserUnknownMessageException>(error);
                 Assert.Equal(UbxProtocol.Info, unknown.Parser);
-                // RXM-RAWX (0x0215) is present in this recording but is not registered by the library.
-                Assert.Contains("MSG_ID=533'", unknown.Message);
                 unknownMessages++;
             }
             // Retain only aggregate counters and the first/last semantic samples across chunks.
@@ -96,15 +112,18 @@ public class UbxLongRecordingTest
         }
 
         Assert.Equal("BA2E782FE06B0B2F6C4BF0E54D5819AA921DCD8699DCA1264BC686CA9295156A", Convert.ToHexString(sourceHash.GetHashAndReset()));
-        Assert.Equal("19889AB7C4703B8BF71D18D957671F6C01B8247FC04833202CEF2E78EBF4ED86", Convert.ToHexString(orderHash.GetHashAndReset()));
-        Assert.Equal(111_046, decodedMessages);
-        Assert.Equal(4_521, unknownMessages);
-        Assert.Equal(5, counts.Count);
+        Assert.Equal("C800FE1DA23B89E78F7BA5E4D3D2D55669515F988E580E2231B668A55EE42567", Convert.ToHexString(orderHash.GetHashAndReset()));
+        Assert.Equal("19889AB7C4703B8BF71D18D957671F6C01B8247FC04833202CEF2E78EBF4ED86", Convert.ToHexString(legacyOrderHash.GetHashAndReset()));
+        Assert.Equal(115_567, decodedMessages);
+        Assert.Equal(111_046, legacyMessages);
+        Assert.Equal(0, unknownMessages);
+        Assert.Equal(6, counts.Count);
         Assert.Equal(92_962, counts[typeof(UbxRxmSfrbx)]);
         Assert.Equal(4_521, counts[typeof(NmeaMessageRmc)]);
         Assert.Equal(4_521, counts[typeof(NmeaMessageGga)]);
         Assert.Equal(4_521, counts[typeof(NmeaMessageGll)]);
         Assert.Equal(4_521, counts[typeof(NmeaMessageGst)]);
+        Assert.Equal(4_521, counts[typeof(UbxX20RxmRawxData1)]);
         Assert.Equal(5, constellations.Count);
         Assert.Equal(8_762, constellations[UbxGnssTypeEnum.GPS]);
         Assert.Equal(13_369, constellations[UbxGnssTypeEnum.SBAS]);
@@ -169,5 +188,32 @@ public class UbxLongRecordingTest
         Assert.Equal(80, lastSfrbx.Chn);
         Assert.Equal(0x38903684u, lastSfrbx.RawData[0]);
         Assert.Equal(0x37B54E80u, lastSfrbx.RawData[^1]);
+
+        Assert.NotNull(firstRawx);
+        Assert.NotNull(lastRawx);
+        Assert.Equal(422922.005, firstRawx.RcvTow);
+        Assert.Equal(427442.006, lastRawx.RcvTow);
+        Assert.Equal((ushort)2137, firstRawx.Week);
+        Assert.Equal(firstRawx.Week, lastRawx.Week);
+        Assert.Equal((sbyte)18, firstRawx.LeapS);
+        Assert.Equal((byte)62, firstRawx.NumMeas);
+        Assert.Equal((byte)60, lastRawx.NumMeas);
+        Assert.Equal((byte)1, firstRawx.Version);
+        Assert.Equal((byte)1, firstRawx.RecStat);
+        Assert.Equal(new byte[] { 0xB7, 0x11 }, firstRawx.Reserved0);
+        Assert.Equal(21756763.55634079, firstRawx.Meas[0].PrMes);
+        Assert.Equal(114332579.33629781, firstRawx.Meas[0].CpMes);
+        Assert.Equal(-1109.247802734375f, firstRawx.Meas[0].DoMes);
+        Assert.Equal((byte)4, firstRawx.Meas[0].SvId);
+        Assert.Equal((ushort)64500, firstRawx.Meas[0].Locktime);
+        Assert.Equal((byte)46, firstRawx.Meas[0].Cno);
+        Assert.Equal(23257012.950790454, lastRawx.Meas[^1].PrMes);
+        Assert.Equal((byte)6, lastRawx.Meas[^1].GnssId);
+        Assert.Equal((byte)8, lastRawx.Meas[^1].SvId);
+        Assert.Equal((byte)2, lastRawx.Meas[^1].SigId);
+        Assert.Equal("74729565CB391DB7B6719756D47D5F6DC2A7F3231A6E1C66FD4CB6AA7ED9E040",
+            Convert.ToHexString(SHA256.HashData(UbxTestHelper.Serialize(firstRawx).AsSpan(6, firstRawx.GetByteSize() - 8))));
+        Assert.Equal("369CC3840184BBD4999CAC8354C0AE3AFD7A9FE9F5535AB14161F7C2A17E6002",
+            Convert.ToHexString(SHA256.HashData(UbxTestHelper.Serialize(lastRawx).AsSpan(6, lastRawx.GetByteSize() - 8))));
     }
 }

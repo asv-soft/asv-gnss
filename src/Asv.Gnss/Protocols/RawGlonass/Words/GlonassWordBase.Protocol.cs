@@ -68,7 +68,10 @@ public abstract partial class GlonassWordBase
     protected void ChangeFrameNumber(ref byte frameNumber, byte value)
     {
         if (value > 5)
-            throw new ArgumentOutOfRangeException(nameof(value), "The frame number must be zero (unknown) or between one and five.");
+            throw new ArgumentOutOfRangeException(
+                nameof(value),
+                "The frame number must be zero (unknown) or between one and five."
+            );
         if ((frameNumber == 5) == (value == 5))
         {
             frameNumber = value;

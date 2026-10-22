@@ -11,6 +11,8 @@ Open a local recording of any extension and attempt to decode its contents:
 dotnet run --project src/Asv.Gnss.Shell -- inspect --file "path/to/recording.bin"
 ```
 
+RINEX OBS/NAV/MET files are also supported through their native header and record context. For example, use `inspect -f "station.rnx"`. The reader flushes the final RINEX record at EOF. Gzip input is available through the library's `RinexFile.Read` / `ReadAsync` API; see [RINEX](protocol-rinex.md).
+
 `-f` is the short form of `--file`. The centered viewer shows the message index,
 protocol, and message name in a paginated table. The selected row is highlighted;
 the panel on the right displays its decoded contents as formatted text.

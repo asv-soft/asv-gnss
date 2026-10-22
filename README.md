@@ -8,7 +8,7 @@
 [![Build and Publish Release Version](https://github.com/asv-soft/asv-gnss/actions/workflows/release-action.yml/badge.svg)](https://github.com/asv-soft/asv-gnss/actions/workflows/release-action.yml)
 [![Deploy debug Nuget for Windows](https://github.com/asv-soft/asv-gnss/actions/workflows/release-debug-action.yml/badge.svg)](https://github.com/asv-soft/asv-gnss/actions/workflows/release-debug-action.yml)
 
-`Asv.Gnss` is a .NET library for parsing GNSS, aviation, and receiver-control protocols. The project is distributed as the `Asv.Gnss` NuGet package and also includes console tools for RTCM v3 and ASTERIX stream diagnostics.
+`Asv.Gnss` is a .NET library for parsing GNSS, aviation, receiver-control protocols, and RINEX data files. The project is distributed as the `Asv.Gnss` NuGet package and also includes console tools for mixed-protocol file inspection, RTCM v3, and ASTERIX stream diagnostics.
 
 ## Documentation
 
@@ -16,12 +16,14 @@ Read the [Asv.Gnss documentation](https://asv.me/asv-gnss/) for installation, qu
 
 ## Features
 
+- Read and write RINEX 2.10/2.11, 3.00–3.05, and 4.00–4.02 observation, navigation, and meteorological records, with stream registration and gzip file reading. See [RINEX coverage and examples](src/Writerside/topics/protocol-rinex.md).
+
 - Parse and serialize NMEA 0183 messages: `GBS`, `GGA`, `GLL`, `GSA`, `GST`, `GSV`, `RMC`, `VTG`, `ZDA`.
 - Parse RTCM v2 and RTCM v3, including legacy messages, ephemeris, stationary RTK, GLONASS bias, and MSM3/MSM4/MSM5/MSM7 messages.
-- Support u-blox UBX messages: `ACK`, `CFG`, `INF`, `MON`, `NAV`, `RXM`.
+- Parse and serialize the 163 UBX message variants in the u-blox ZED-X20P X20 HPG 2.11 interface, including `NAV2`, `MGA`, `SEC`, `TIM`, and configuration values for 826 keys. Existing UBX registrations retain their legacy model types. See [X20 coverage and examples](src/Writerside/topics/protocol-ubx-x20.md).
 - Parse ASTERIX categories `001`, `002`, `004`, `010`, `020`, `021`, `034`, `048`, and `247`.
 - Parse and serialize 303 native Javad GREIS message IDs, with receiver commands, response labels, DTP file-transfer codecs, and the GREIS 4.2.01 object catalog. See [Javad / GREIS coverage](src/Writerside/topics/protocol-javad.md).
-- Parse and serialize native GPS LNAV subframes and GLONASS FDMA strings with parity validation, typed visitors, and bit-stream protocol registration.
+- Parse and serialize native GPS LNAV subframes and GLONASS FDMA strings with parity validation, typed visitors, and bit-stream protocol registration, including GPS NMCT/special-message/UTC pages and explicit GLONASS fifth-frame layouts.
 - Additional protocols and parsers: ADS-B, ASV, SBF, and ComNav.
 - Integration with `Asv.IO`: protocol registration, routers, ports, GNSS device discovery, and NMEA/RTCM/UBX microservices.
 
@@ -102,6 +104,34 @@ var explorer = DeviceExplorer.Create(router, builder =>
 {
     builder.Factories.RegisterGnssDevice();
 });
+```
+
+## RINEX Files
+
+Read a plain or gzip-compressed OBS/NAV/MET file, inspect typed records, and write it back:
+
+```csharp
+using Asv.Gnss;
+using System.Linq;
+
+var records = await RinexFile.ReadAsync("station.rnx.gz");
+foreach (var epoch in records.OfType<RinexObservationEpochMessage>())
+{
+    Console.WriteLine($"{epoch.Epoch}: {epoch.Satellites.Count} satellites");
+}
+RinexFile.Write("station-copy.rnx", records);
+```
+
+For incremental input, register `builder.Protocols.RegisterRinexProtocol()`, obtain a
+`RinexMessageParser`, feed bytes through `Push`, and call `Complete()` at EOF. The parser
+publishes a header followed by typed records. Time tags retain the file's time system;
+blank observations remain distinct from zero. See [the complete RINEX guide](src/Writerside/topics/protocol-rinex.md)
+for coverage, canonical writing, event handling, and unsupported file families.
+
+Inspect a RINEX file in the console viewer:
+
+```bash
+dotnet run --project src/Asv.Gnss.Shell -- inspect -f "station.rnx"
 ```
 
 ## UBX Helper API

@@ -229,7 +229,10 @@ public class RawGlonassProtocolTest
             _ when id % 2 == 0 => ["С", "M", "Prn", "DelaT2", "LOmega", "i", "e"],
             _ => ["omega", "ToaSec", "DeltaT", "DeltaDT", "Frequency", "ln"],
         };
-        Assert.Equal(expected.OrderBy(x => x), collector.Fields.Select(f => f.Name).OrderBy(x => x));
+        Assert.Equal(
+            expected.OrderBy(x => x),
+            collector.Fields.Select(f => f.Name).OrderBy(x => x)
+        );
         foreach (var field in collector.Fields)
         {
             var type = message.GetType().GetProperty(field.Name)!.PropertyType;

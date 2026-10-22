@@ -17,7 +17,7 @@ public class UbxMessageParser : ProtocolParser<UbxMessageBase, ushort>
     /// <summary>
     /// Represents a fixed-size byte buffer.
     /// </summary>
-    private readonly byte[] _buffer = new byte[MaxPacketSize];
+    private readonly byte[] _buffer;
 
     /// The current index position in the buffer.
     /// /
@@ -85,10 +85,31 @@ public class UbxMessageParser : ProtocolParser<UbxMessageBase, ushort>
     }
     
     private readonly ILogger<UbxMessageParser> _logger;
+    private readonly UbxParserMessageFactory _messageFactory;
 
     public UbxMessageParser(IProtocolMessageFactory<UbxMessageBase, ushort> messageFactory, IProtocolContext context,
-        IStatisticHandler? statisticHandler) : base(messageFactory, context, statisticHandler)
+        IStatisticHandler? statisticHandler) : this(messageFactory, context, statisticHandler, MaxPacketSize)
     {
+    }
+
+    /// <summary>Creates a UBX parser with an explicit bounded frame buffer.</summary>
+    /// <param name="messageFactory">Factory for decoded message variants.</param>
+    /// <param name="context">Protocol services.</param>
+    /// <param name="statisticHandler">Optional parent statistics.</param>
+    /// <param name="maxPacketSize">Maximum complete frame size, including the six-byte header and two-byte checksum.</param>
+    public UbxMessageParser(IProtocolMessageFactory<UbxMessageBase, ushort> messageFactory, IProtocolContext context,
+        IStatisticHandler? statisticHandler, int maxPacketSize) : this(new UbxParserMessageFactory(
+            messageFactory ?? throw new ArgumentNullException(nameof(messageFactory))), context, statisticHandler, maxPacketSize)
+    {
+    }
+
+    private UbxMessageParser(UbxParserMessageFactory messageFactory, IProtocolContext context,
+        IStatisticHandler? statisticHandler, int maxPacketSize) : base(messageFactory, context, statisticHandler)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxPacketSize, UbxProtocol.HeaderOffset + 2);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(maxPacketSize, ushort.MaxValue + UbxProtocol.HeaderOffset + 2);
+        _buffer = new byte[maxPacketSize];
+        _messageFactory = messageFactory;
         _logger = context.LoggerFactory.CreateLogger<UbxMessageParser>();
     }
 
@@ -149,6 +170,7 @@ public class UbxMessageParser : ProtocolParser<UbxMessageBase, ushort>
                 var spanMsg = new ReadOnlySpan<byte>(_buffer, 0, _payloadReadBytes + 8);
                 try
                 {
+                    _messageFactory.SelectPayload(msgId, spanMsg.Slice(UbxProtocol.HeaderOffset, _payloadReadBytes));
                     InternalParsePacket(msgId, ref spanMsg);
                     Reset();
                     return true;

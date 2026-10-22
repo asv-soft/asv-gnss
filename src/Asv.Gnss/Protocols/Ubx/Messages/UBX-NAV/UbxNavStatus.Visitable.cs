@@ -12,6 +12,8 @@ public partial class UbxNavStatus
     private static readonly Field IsWknSetField = UbxVisitor.Field(nameof(IsWknSet), BoolType.Default, "Week Number valid.");
     private static readonly Field IsTowSetField = UbxVisitor.Field(nameof(IsTowSet), BoolType.Default, "Time of Week valid.");
     private static readonly Field FixStatField = UbxVisitor.Field(nameof(FixStat), UInt8Type.Default, "Fix Status Information (see graphic below)");
+    private static readonly Field IsIndoorDetectedField = UbxVisitor.Field(nameof(IsIndoorDetected), BoolType.Default, "Indoor-detection flag; defined for protocol versions 52.00 and later, not X20 protocol 50.11.");
+    private static readonly Field SelectiveL5StateField = UbxVisitor.Field(nameof(SelectiveL5State), UInt8Type.Default, "Selective L5 state: 0 disabled, 1 L5 off, 2 L5 on, 3 reserved; defined for protocol versions 52.00 and later.");
     private static readonly Field IsDiffCorrField = UbxVisitor.Field(nameof(IsDiffCorr), BoolType.Default, "Differential corrections available.");
     private static readonly Field IsCarrSolnValidField = UbxVisitor.Field(nameof(IsCarrSolnValid), BoolType.Default, "Valid carrSoln.");
     private static readonly Field MapMatchingField = UbxVisitor.Enum<int>(nameof(MapMatching), Int32Type.Default, "Map matching status.",
@@ -47,6 +49,8 @@ public partial class UbxNavStatus
         IsWknSetField,
         IsTowSetField,
         FixStatField,
+        IsIndoorDetectedField,
+        SelectiveL5StateField,
         IsDiffCorrField,
         IsCarrSolnValidField,
         MapMatchingField,
@@ -70,6 +74,12 @@ public partial class UbxNavStatus
         BoolType.Accept(visitor, IsWknSetField, IsWknSetField.DataType, ref _isWknSet);
         BoolType.Accept(visitor, IsTowSetField, IsTowSetField.DataType, ref _isTowSet);
         UInt8Type.Accept(visitor, FixStatField, FixStatField.DataType, ref _fixStat);
+        var isIndoorDetected = IsIndoorDetected;
+        BoolType.Accept(visitor, IsIndoorDetectedField, IsIndoorDetectedField.DataType, ref isIndoorDetected);
+        IsIndoorDetected = isIndoorDetected;
+        var selectiveL5State = SelectiveL5State;
+        UInt8Type.Accept(visitor, SelectiveL5StateField, SelectiveL5StateField.DataType, ref selectiveL5State);
+        SelectiveL5State = selectiveL5State;
         BoolType.Accept(visitor, IsDiffCorrField, IsDiffCorrField.DataType, ref _isDiffCorr);
         BoolType.Accept(visitor, IsCarrSolnValidField, IsCarrSolnValidField.DataType, ref _isCarrSolnValid);
         var mapMatchingValue = (int)MapMatching;
