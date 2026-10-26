@@ -8,7 +8,7 @@ using R3;
 
 namespace Asv.Gnss;
 
-public interface IUbxMicroserviceClient : IMicroserviceClient
+public interface IUbxMicroserviceClient : IGnssProtocolMicroserviceClient<UbxMessageBase>
 {
     Task Push<T>(T packet, int timeoutMs = 3000, int attemptCount = 5, CancellationToken cancel = default)
         where T : UbxMessageBase, new();
@@ -29,9 +29,8 @@ public interface IUbxMicroserviceClient : IMicroserviceClient
 }
 
 
-public class UbxMicroserviceClient : MicroserviceClient<UbxMessageBase>, IUbxMicroserviceClient
+public class UbxMicroserviceClient : GnssProtocolMicroserviceClient<UbxMessageBase>, IUbxMicroserviceClient
 {
-    private readonly GnssDeviceId _deviceId;
     private readonly ReactiveProperty<DateTime?> _dateTimeUtc = new();
     private readonly ReactiveProperty<GeoPoint> _positionMsl = new();
     private readonly ReactiveProperty<GeoPoint> _positionGeoid = new();
@@ -45,10 +44,9 @@ public class UbxMicroserviceClient : MicroserviceClient<UbxMessageBase>, IUbxMic
     private readonly IDisposable _sab3;
     private readonly ILogger _logger;
 
-    public UbxMicroserviceClient(IMicroserviceContext context, GnssDeviceId id) : base(context, $"{id}.{UbxProtocol.Info.Id}")
+    public UbxMicroserviceClient(IMicroserviceContext context, GnssDeviceId id) : base(context, id, UbxProtocol.Info)
     {
         _logger = context.LoggerFactory.CreateLogger($"{id}.{UbxProtocol.Info.Id}");
-        _deviceId = id;
         _sub2 = InternalFilter<UbxNavPvt>().Subscribe(msg =>
         {
             _dateTimeUtc.Value = msg.UtcTime;
@@ -135,17 +133,6 @@ public class UbxMicroserviceClient : MicroserviceClient<UbxMessageBase>, IUbxMic
 
     protected override void FillMessageBeforeSent(UbxMessageBase message)
     {
-    }
-
-    protected override bool FilterDeviceMessages(UbxMessageBase arg)
-    {
-         var endpointId = arg.GetEndpointId();
-         if (endpointId == null)
-         {
-             return false;
-         }
-
-         return _deviceId.EndpointId == endpointId;
     }
 
     protected override void Dispose(bool disposing)

@@ -121,3 +121,7 @@ RinexFile.Write("station-copy.rnx", records);
 ```
 
 Gzip input is detected automatically. For incremental parsing, register `RegisterRinexProtocol()` and call `RinexMessageParser.Complete()` at EOF. See [RINEX coverage and examples](protocol-rinex.md) for version coverage, header context, time systems and canonical writing.
+
+## Receiver identity and typed streams
+
+Each exact endpoint represents one receiver, even when it sends several GNSS protocols. See [GNSS devices and microservices](gnss-devices.md) for typed subscriptions, canonical addresses, discovery exclusions, and disposal rules.

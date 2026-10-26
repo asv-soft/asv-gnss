@@ -9,6 +9,7 @@
     <toc-element topic="overview.md"/>
     <toc-element topic="installation.md"/>
     <toc-element topic="quick-start.md"/>
+    <toc-element topic="gnss-devices.md"/>
     <toc-element topic="supported-protocols.md">
         <toc-element topic="protocol-nmea.md"/>
         <toc-element topic="protocol-rtcm-v2.md"/>

@@ -26,7 +26,7 @@ Read the [Asv.Gnss documentation](https://asv.me/asv-gnss/) for installation, qu
 - Parse and serialize native GPS LNAV subframes and GLONASS FDMA strings with parity validation, typed visitors, and bit-stream protocol registration, including GPS NMCT/special-message/UTC pages and explicit GLONASS fifth-frame layouts.
 - Parse and serialize ADS-B / Mode S AVR and Beast receiver streams, with CRC/parity status and typed identification, airborne/surface position fields and velocity. See [ADS-B coverage and limits](src/Writerside/topics/protocol-ads-b.md).
 - Additional protocols and parsers: ASV, SBF, and ComNav.
-- Integration with `Asv.IO`: protocol registration, routers, ports, GNSS device discovery, and NMEA/RTCM/UBX microservices.
+- Integration with `Asv.IO`: protocol registration, routers, ports, GNSS device discovery, and separate typed microservices for 12 GNSS protocol families.
 
 ## Requirements
 
@@ -106,6 +106,8 @@ var explorer = DeviceExplorer.Create(router, builder =>
     builder.Factories.RegisterGnssDevice();
 });
 ```
+
+One logical receiver is created per exact, case-sensitive endpoint. Its protocol clients share that identity. See [GNSS devices and microservices](src/Writerside/topics/gnss-devices.md) for supported families, typed subscriptions, address lookup, and lifetime rules. Raw GPS/GLONASS do not create devices or microservices.
 
 ## RINEX Files
 

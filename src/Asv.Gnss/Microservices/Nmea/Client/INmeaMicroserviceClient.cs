@@ -6,7 +6,7 @@ using R3;
 
 namespace Asv.Gnss;
 
-public interface INmeaMicroserviceClient : IMicroserviceClient
+public interface INmeaMicroserviceClient : IGnssProtocolMicroserviceClient<NmeaMessageBase>
 {
     ReadOnlyReactiveProperty<TimeOnly?> PositionTimeUtc { get; }
     ReadOnlyReactiveProperty<GeoPoint> PositionMsl { get; }
@@ -20,9 +20,8 @@ public interface INmeaMicroserviceClient : IMicroserviceClient
     
 }
 
-public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmeaMicroserviceClient
+public class NmeaMicroserviceClient : GnssProtocolMicroserviceClient<NmeaMessageBase>, INmeaMicroserviceClient
 {
-    private readonly GnssDeviceId _deviceId;
     private readonly ReactiveProperty<GeoPoint> _positionMsl = new();
     private readonly ReactiveProperty<GeoPoint> _positionGeoid = new();
     private readonly ReactiveProperty<NmeaGpsQuality?> _gpsQuality = new();
@@ -36,9 +35,8 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
     private readonly ReactiveProperty<NmeaDataStatus?> _positionStatus = new();
 
     public NmeaMicroserviceClient(IMicroserviceContext context, GnssDeviceId deviceId) 
-        : base(context, $"{deviceId}.{NmeaProtocol.Info.Id}")
+        : base(context, deviceId, NmeaProtocol.Info)
     {
-        _deviceId = deviceId;
         _sub2 = InternalFilter<NmeaMessageGga>().Subscribe(x =>
         {
             _positionMsl.Value = new GeoPoint(x.Latitude,x.Longitude,x.AntennaAltitudeMsl);
@@ -71,17 +69,6 @@ public class NmeaMicroserviceClient : MicroserviceClient<NmeaMessageBase>, INmea
     protected override void FillMessageBeforeSent(NmeaMessageBase message)
     {
         
-    }
-
-    protected override bool FilterDeviceMessages(NmeaMessageBase arg)
-    {
-        var endpointId = arg.GetEndpointId();
-        if (endpointId == null)
-        {
-            return false;
-        }
-
-        return _deviceId.EndpointId == endpointId;
     }
 
     protected override void Dispose(bool disposing)

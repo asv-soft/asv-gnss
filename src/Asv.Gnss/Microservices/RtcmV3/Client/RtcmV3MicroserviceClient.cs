@@ -7,7 +7,7 @@ using R3;
 namespace Asv.Gnss;
 
 
-public interface IRtcmV3MicroserviceClient : IMicroserviceClient
+public interface IRtcmV3MicroserviceClient : IGnssProtocolMicroserviceClient<RtcmV3MessageBase>
 {
     ReadOnlyReactiveProperty<DateTime?> UtcTime { get; }
     ReadOnlyReactiveProperty<RtcmV3Msm4Base> Msm4 { get; }
@@ -16,9 +16,8 @@ public interface IRtcmV3MicroserviceClient : IMicroserviceClient
     ReadOnlyReactiveProperty<RtcmV3Message1230> GlonassBias { get; }
 }
 
-public class RtcmV3MicroserviceClient : MicroserviceClient<RtcmV3MessageBase>, IRtcmV3MicroserviceClient
+public class RtcmV3MicroserviceClient : GnssProtocolMicroserviceClient<RtcmV3MessageBase>, IRtcmV3MicroserviceClient
 {
-    private readonly GnssDeviceId _deviceId;
     private readonly ReactiveProperty<DateTime?> _utcTime = new();
     private readonly ReactiveProperty<RtcmV3Msm4Base> _msm4 = new();
     private readonly ReactiveProperty<GeoPoint> _referenceStationPosition = new();
@@ -30,9 +29,8 @@ public class RtcmV3MicroserviceClient : MicroserviceClient<RtcmV3MessageBase>, I
 
 
     public RtcmV3MicroserviceClient(IMicroserviceContext context, GnssDeviceId deviceId)
-        : base(context, $"{deviceId}.{RtcmV3Protocol.Info.Id}")
+        : base(context, deviceId, RtcmV3Protocol.Info)
     {
-        _deviceId = deviceId;
 
         _sub2 = InternalFilter<RtcmV3Msm4Base>().Subscribe(msg =>
         {
@@ -49,17 +47,6 @@ public class RtcmV3MicroserviceClient : MicroserviceClient<RtcmV3MessageBase>, I
 
     protected override void FillMessageBeforeSent(RtcmV3MessageBase message)
     {
-    }
-
-    protected override bool FilterDeviceMessages(RtcmV3MessageBase arg)
-    {
-        var endpointId = arg.GetEndpointId();
-        if (endpointId == null)
-        {
-            return false;
-        }
-
-        return _deviceId.EndpointId == endpointId;
     }
 
     protected override void Dispose(bool disposing)
